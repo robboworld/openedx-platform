@@ -4,6 +4,7 @@ Slightly customized python-social-auth backend for SAML 2.0 support
 
 
 import logging
+from urllib.parse import unquote
 from copy import deepcopy
 
 import requests
@@ -17,6 +18,7 @@ from social_core.backends.saml import OID_EDU_PERSON_ENTITLEMENT, SAMLAuth, SAML
 from social_core.exceptions import AuthForbidden, AuthMissingParameter
 
 from openedx.core.djangoapps.theming.helpers import get_current_request
+from common.djangoapps.student.helpers import is_safe_login_or_logout_redirect
 from common.djangoapps.third_party_auth.exceptions import IncorrectConfigurationException
 
 STANDARD_SAML_PROVIDER_KEY = 'standard_saml_provider'
@@ -89,12 +91,68 @@ class SAMLAuthBackend(SAMLAuth):  # pylint: disable=abstract-method
         """
         Handle exceptions that happen during SAML authentication
         """
+        # For IdP-initiated flows (where the user doesn't first hit /auth/login/...),
+        # allow callers to provide a post-auth redirect by packing it into RelayState.
+        # Store it in the session so the rest of the pipeline behaves consistently.
+        try:
+            request = get_current_request()
+            # Allow RelayState to carry both IdP slug and a post-auth destination.
+            # Format: "<idp_slug>|<next>", where <next> is typically a relative LMS path.
+            self._maybe_set_next_url_from_relay_state(request)
+        except Exception:  # pylint: disable=broad-exception-caught  # pragma: no cover
+            # Never fail auth due to redirect bookkeeping.
+            pass
+
         try:
             return super().auth_complete(*args, **kwargs)
         # We are seeing errors of MultiValueDictKeyError looking for the parameter 'RelayState'.
         # We would like to have a more specific error to handle for observability purposes.
         except MultiValueDictKeyError as e:
-            raise AuthMissingParameter(self.name, e.args[0]) from e
+            raise AuthMissingParameter(self.name, e.args[0] if e.args else '') from e
+
+    @staticmethod
+    def _maybe_set_next_url_from_relay_state(request):
+        """Optionally extract a safe `next` from RelayState and rewrite RelayState to the IdP slug.
+
+        This is specifically to support IdP-initiated flows where Auth0 (and some IdPs) can only
+        reliably influence the SAML POST via RelayState.
+        """
+        if request is None or not hasattr(request, 'POST'):
+            return
+        if not hasattr(request, 'session'):
+            return
+
+        relay_state = None
+        try:
+            relay_state = request.POST.get('RelayState')
+        except Exception:  # pylint: disable=broad-exception-caught  # pragma: no cover
+            relay_state = None
+
+        if not relay_state or '|' not in str(relay_state):
+            return
+
+        slug_part, next_part = str(relay_state).split('|', 1)
+        slug_part = slug_part.strip()
+        next_part = next_part.strip()
+        if not slug_part or not next_part:
+            return
+
+        # URL-decode next (Auth0 or callers may URL-encode it).
+        next_decoded = unquote(next_part)
+
+        # Only store next if it's safe per existing Open edX redirect policy.
+        if is_safe_login_or_logout_redirect(
+            redirect_to=next_decoded,
+            request_host=request.get_host(),
+            dot_client_id=(request.GET.get('client_id') if hasattr(request, 'GET') else None),
+            require_https=request.is_secure(),
+        ):
+            request.session['next'] = next_decoded
+
+        # Always rewrite RelayState to just the IdP slug so the SAML backend can locate the provider.
+        post_copy = request.POST.copy()
+        post_copy['RelayState'] = slug_part
+        request._post = post_copy  # pylint: disable=protected-access
 
     def get_user_id(self, details, response):
         """
@@ -233,14 +291,24 @@ class EdXSAMLIdentityProvider(SAMLIdentityProvider):
         unless self.conf[conf_key] overrides the default by specifying
         another attribute to use.
         """
-        key = self.conf.get(conf_key, default_attribute)
+        # social-core versions differ in how they pass default attributes:
+        # - Older: a single attribute name string
+        # - Newer: a tuple of candidate attribute names
+        configured = self.conf.get(conf_key)
+
+        if configured is None:
+            candidates = default_attribute if isinstance(default_attribute, (tuple, list)) else (default_attribute,)
+            key = next((candidate for candidate in candidates if candidate in attributes), None)
+        else:
+            key = configured
+
         if key in attributes:
-            try:
-                return attributes[key][0]
-            except IndexError:
-                log.warning('[THIRD_PARTY_AUTH] SAML attribute value not found. '
-                            'SamlAttribute: {attribute}'.format(attribute=key))
-        return self.conf['attr_defaults'].get(conf_key) or None
+            value = attributes.get(key)
+            if isinstance(value, list):
+                return value[0] if value else None
+            return value
+
+        return self.conf.get('attr_defaults', {}).get(conf_key) or None
 
     @property
     def saml_sp_configuration(self):
