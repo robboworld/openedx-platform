@@ -138,7 +138,7 @@ def get_login_session_form(request):
 )
 @ensure_csrf_cookie
 @xframe_allow_whitelisted
-def login_and_registration_form(request, initial_mode="login"):
+def login_and_registration_form(request, initial_mode="login"): # noqa: R0915
     """Render the combined login/registration form, defaulting to login
 
     This relies on the JS to asynchronously load the actual form from
