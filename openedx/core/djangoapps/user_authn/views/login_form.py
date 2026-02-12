@@ -205,7 +205,7 @@ def login_and_registration_form(request, initial_mode="login"):
     # Enterprise/B2B users: Eligible only when the specific rollout waffle flag is enabled
     enterprise_customer = enterprise_customer_for_request(request)
     if enterprise_customer:
-        is_segment_eligible = ENABLE_ENTERPRISE_REDIRECT_TO_AUTHN.is_enabled()
+        is_segment_eligible = ENABLE_ENTERPRISE_REDIRECT_TO_AUTHN.is_enabled(request)
     else:
         is_segment_eligible = True
 
