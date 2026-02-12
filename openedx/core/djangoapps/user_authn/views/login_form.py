@@ -58,7 +58,7 @@ def _apply_third_party_auth_overrides(request, form_desc):
     if third_party_auth.is_enabled():
         running_pipeline = third_party_auth.pipeline.get(request)
         if running_pipeline:
-            current_provider = third_party_auth.provider.Registry.get_from_pipeline(running_pipeline, kwargs=running_pipeline.get('kwargs'))
+            current_provider = third_party_auth.provider.Registry.get_from_pipeline(running_pipeline)
             if current_provider and enterprise_customer_for_request(request):
                 pipeline_kwargs = running_pipeline.get('kwargs')
 
@@ -195,10 +195,11 @@ def login_and_registration_form(request, initial_mode="login"):
     running_pipeline = pipeline.get(request)
     if running_pipeline:
         saml_provider = third_party_auth.utils.is_saml_provider(
-            running_pipeline.get('backend')
+            running_pipeline.get('backend'),
+            running_pipeline.get('kwargs', {})
         )
 
-    has_external_provider = bool(tpa_hint_provider or saml_provider)
+    has_external_provider = bool(tpa_hint_provider or saml_provider or running_pipeline)
 
     # Determine eligibility based on user segment
     # B2C users: Always eligible when global AuthN MFE is enabled
