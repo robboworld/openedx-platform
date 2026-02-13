@@ -220,11 +220,9 @@ def _maybe_redirect_to_authn_mfe(request, initial_mode, redirect_to):
     # External providers (SAML / TPA hint) must NEVER redirect to MFE.
     # Check for any running pipeline first (this catches all third-party auth)
     running_pipeline = pipeline.get(request)
-    
     # If there's ANY running pipeline, treat it as an external provider
     # This handles SAML, OAuth, and any other third-party auth flows
     has_running_pipeline = running_pipeline is not None
-    
     # Also explicitly check for SAML if pipeline exists
     saml_provider = False
     if running_pipeline:
@@ -235,10 +233,8 @@ def _maybe_redirect_to_authn_mfe(request, initial_mode, redirect_to):
             backend=backend_name,
             kwargs=kwargs,
         )
-
     # Check for TPA hint in request or redirect URL
     has_tpa_hint = _has_tpa_hint(request, redirect_to)
-    
     # Treat ANY of these as external provider (hard stop for MFE redirect)
     has_external_provider = bool(has_running_pipeline or saml_provider or has_tpa_hint)
 
