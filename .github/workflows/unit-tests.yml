@@ -158,6 +158,12 @@ jobs:
       - name: install system requirements
         run: |
           sudo apt-get update && sudo apt-get install libxmlsec1-dev
+          
+      - name: Upgrade Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install --only-upgrade docker-ce docker-ce-cli containerd.io
+          docker --version
 
       - name: install requirements
         run: |
