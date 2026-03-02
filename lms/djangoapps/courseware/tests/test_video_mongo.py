@@ -365,7 +365,7 @@ class TestGetHtmlMethod(BaseTestVideoXBlock):
             'autoAdvance': False,
             'saveStateEnabled': True,
             'saveStateUrl': '',
-            'autoplay': settings.FEATURES.get('AUTOPLAY_VIDEOS', True),
+            'autoplay': settings.AUTOPLAY_VIDEOS,
             'streams': '1.00:3_yD_cEKoCk',
             'sources': '[]',
             'duration': 111.0,
@@ -2320,8 +2320,6 @@ class TestVideoWithBumper(TestVideo):  # pylint: disable=test-inherits-tests
     """
     CATEGORY = "video"
     METADATA = {}
-    # Use temporary FEATURES in this test without affecting the original
-    FEATURES = dict(settings.FEATURES)
 
     @patch('xmodule.video_block.bumper_utils.get_bumper_settings')
     def test_is_bumper_enabled(self, get_bumper_settings):
@@ -2330,21 +2328,14 @@ class TestVideoWithBumper(TestVideo):  # pylint: disable=test-inherits-tests
 
         Assume that bumper settings are correct.
         """
-        self.FEATURES.update({
-            "SHOW_BUMPER_PERIODICITY": 1,
-            "ENABLE_VIDEO_BUMPER": True,
-        })
-
         get_bumper_settings.return_value = {
             "video_id": "edx_video_id",
             "transcripts": {},
         }
-        with override_settings(FEATURES=self.FEATURES):
+        with override_settings(SHOW_BUMPER_PERIODICITY=1, ENABLE_VIDEO_BUMPER=True):
             assert bumper_utils.is_bumper_enabled(self.block)
 
-        self.FEATURES.update({"ENABLE_VIDEO_BUMPER": False})
-
-        with override_settings(FEATURES=self.FEATURES):
+        with override_settings(ENABLE_VIDEO_BUMPER=False):
             assert not bumper_utils.is_bumper_enabled(self.block)
 
     @patch('xblock.utils.resources.ResourceLoader.render_django_template', side_effect=mock_render_template)
@@ -2464,8 +2455,6 @@ class TestAutoAdvanceVideo(TestVideo):  # lint-amnesty, pylint: disable=test-inh
     maxDiff = None
     CATEGORY = "video"
     METADATA = {}
-    # Use temporary FEATURES in this test without affecting the original
-    FEATURES = dict(settings.FEATURES)
 
     def prepare_expected_context(self, autoadvanceenabled_flag, autoadvance_flag):
         """
@@ -2537,7 +2526,7 @@ class TestAutoAdvanceVideo(TestVideo):  # lint-amnesty, pylint: disable=test-inh
         return context
 
     def assert_content_matches_expectations(
-        self, autoadvanceenabled_must_be, autoadvance_must_be, mock_render_django_template
+        self, autoadvanceenabled_must_be, autoadvance_must_be, mock_render_django_template, global_setting=False
     ):
         """
         Check (assert) that loading video.html produces content that corresponds
@@ -2545,7 +2534,7 @@ class TestAutoAdvanceVideo(TestVideo):  # lint-amnesty, pylint: disable=test-inh
         Helper function to avoid code repetition.
         """
 
-        with override_settings(FEATURES=self.FEATURES):
+        with override_settings(ENABLE_AUTOADVANCE_VIDEOS=global_setting):
             self.block.student_view(None)
 
         expected_context = self.prepare_expected_context(
@@ -2590,11 +2579,11 @@ class TestAutoAdvanceVideo(TestVideo):  # lint-amnesty, pylint: disable=test-inh
         - in that case (when the controls are visible) the video will autoadvance
           (because that's the default), in other cases it won't
         """
-        self.FEATURES.update({"ENABLE_AUTOADVANCE_VIDEOS": global_setting})
         self.change_course_setting_autoadvance(new_value=course_setting)
 
         self.assert_content_matches_expectations(
             autoadvanceenabled_must_be=(global_setting and course_setting),
             autoadvance_must_be=(global_setting and course_setting),
             mock_render_django_template=mock_render_django_template,
+            global_setting=global_setting,
         )

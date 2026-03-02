@@ -17,7 +17,7 @@ from openedx.core.lib.courses import get_course_by_id
 
 User = get_user_model()
 
-TEXTBOOK_ENABLED = settings.FEATURES.get("ENABLE_TEXTBOOK", False)
+TEXTBOOK_ENABLED = settings.ENABLE_TEXTBOOK
 
 
 class ProgressCourseApp(CourseApp):

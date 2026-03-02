@@ -975,7 +975,7 @@ class TestHandleXBlockCallback(SharedModuleStoreTestCase, LoginEnrollmentTestCas
 
 
 @ddt.ddt
-@patch.dict('django.conf.settings.FEATURES', {'ENABLE_XBLOCK_VIEW_ENDPOINT': True})
+@override_settings(ENABLE_XBLOCK_VIEW_ENDPOINT=True)
 class TestXBlockView(SharedModuleStoreTestCase, LoginEnrollmentTestCase):
     """
     Test the handle_xblock_callback function
@@ -1123,7 +1123,7 @@ class TestTOC(ModuleStoreTestCase):
 
 
 @ddt.ddt
-@patch.dict('django.conf.settings.FEATURES', {'ENABLE_SPECIAL_EXAMS': True})
+@override_settings(ENABLE_SPECIAL_EXAMS=True)
 class TestProctoringRendering(ModuleStoreTestCase):
     """Check the Table of Contents for a course"""
     def setUp(self):
@@ -1708,7 +1708,7 @@ class DetachedXBlock(XBlock):
         return frag
 
 
-@patch.dict('django.conf.settings.FEATURES', {'DISPLAY_DEBUG_INFO_TO_STAFF': True, 'DISPLAY_HISTOGRAMS_TO_STAFF': True})
+@override_settings(DISPLAY_DEBUG_INFO_TO_STAFF=True, DISPLAY_HISTOGRAMS_TO_STAFF=True)
 @patch('lms.djangoapps.courseware.block_render.has_access', Mock(return_value=True, autospec=True))
 class TestStaffDebugInfo(SharedModuleStoreTestCase):
     """Tests to verify that Staff Debug Info panel and histograms are displayed to staff."""
@@ -1746,7 +1746,7 @@ class TestStaffDebugInfo(SharedModuleStoreTestCase):
             self.block
         )
 
-    @patch.dict('django.conf.settings.FEATURES', {'DISPLAY_DEBUG_INFO_TO_STAFF': False})
+    @override_settings(DISPLAY_DEBUG_INFO_TO_STAFF=False)
     def test_staff_debug_info_disabled(self):
         block = render.get_block(
             self.user,
@@ -1828,7 +1828,7 @@ class TestStaffDebugInfo(SharedModuleStoreTestCase):
         result_fragment = block.render(STUDENT_VIEW)
         assert 'Staff Debug' not in result_fragment.content
 
-    @patch.dict('django.conf.settings.FEATURES', {'DISPLAY_HISTOGRAMS_TO_STAFF': False})
+    @override_settings(DISPLAY_HISTOGRAMS_TO_STAFF=False)
     def test_histogram_disabled(self):
         block = render.get_block(
             self.user,
