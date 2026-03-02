@@ -8,11 +8,11 @@ backend tables.
 
 import json
 from unittest import skipUnless
-from unittest.mock import patch
 
 from django.conf import settings
 from django.db import connections
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from lms.djangoapps.courseware.models import BaseStudentModuleHistory, StudentModule, StudentModuleHistory
 from lms.djangoapps.courseware.tests.factories import COURSE_KEY
@@ -20,7 +20,7 @@ from lms.djangoapps.courseware.tests.factories import LOCATION
 from lms.djangoapps.courseware.tests.factories import StudentModuleFactory
 
 
-@skipUnless(settings.FEATURES["ENABLE_CSMH_EXTENDED"], "CSMH Extended needs to be enabled")
+@skipUnless(settings.ENABLE_CSMH_EXTENDED, "CSMH Extended needs to be enabled")
 class TestStudentModuleHistoryBackends(TestCase):
     """ Tests of data in CSMH and CSMHE """
     # Tell Django to clean out all databases, not just default
@@ -44,8 +44,7 @@ class TestStudentModuleHistoryBackends(TestCase):
                                         max_grade=csm.max_grade)
             csmh.save()
 
-    @patch.dict("django.conf.settings.FEATURES", {"ENABLE_CSMH_EXTENDED": True})
-    @patch.dict("django.conf.settings.FEATURES", {"ENABLE_READING_FROM_MULTIPLE_HISTORY_TABLES": True})
+    @override_settings(ENABLE_CSMH_EXTENDED=True, ENABLE_READING_FROM_MULTIPLE_HISTORY_TABLES=True)
     def test_get_history_true_true(self):
         student_module = StudentModule.objects.all()
         history = BaseStudentModuleHistory.get_history(student_module)
@@ -57,8 +56,7 @@ class TestStudentModuleHistoryBackends(TestCase):
         assert {'type': 'csmh', 'order': 2} == json.loads(history[4].state)
         assert {'type': 'csmh', 'order': 1} == json.loads(history[5].state)
 
-    @patch.dict("django.conf.settings.FEATURES", {"ENABLE_CSMH_EXTENDED": True})
-    @patch.dict("django.conf.settings.FEATURES", {"ENABLE_READING_FROM_MULTIPLE_HISTORY_TABLES": False})
+    @override_settings(ENABLE_CSMH_EXTENDED=True, ENABLE_READING_FROM_MULTIPLE_HISTORY_TABLES=False)
     def test_get_history_true_false(self):
         student_module = StudentModule.objects.all()
         history = BaseStudentModuleHistory.get_history(student_module)
@@ -67,8 +65,7 @@ class TestStudentModuleHistoryBackends(TestCase):
         assert {'type': 'csmhe', 'order': 2} == json.loads(history[1].state)
         assert {'type': 'csmhe', 'order': 1} == json.loads(history[2].state)
 
-    @patch.dict("django.conf.settings.FEATURES", {"ENABLE_CSMH_EXTENDED": False})
-    @patch.dict("django.conf.settings.FEATURES", {"ENABLE_READING_FROM_MULTIPLE_HISTORY_TABLES": True})
+    @override_settings(ENABLE_CSMH_EXTENDED=False, ENABLE_READING_FROM_MULTIPLE_HISTORY_TABLES=True)
     def test_get_history_false_true(self):
         student_module = StudentModule.objects.all()
         history = BaseStudentModuleHistory.get_history(student_module)
@@ -77,8 +74,7 @@ class TestStudentModuleHistoryBackends(TestCase):
         assert {'type': 'csmh', 'order': 2} == json.loads(history[1].state)
         assert {'type': 'csmh', 'order': 1} == json.loads(history[2].state)
 
-    @patch.dict("django.conf.settings.FEATURES", {"ENABLE_CSMH_EXTENDED": False})
-    @patch.dict("django.conf.settings.FEATURES", {"ENABLE_READING_FROM_MULTIPLE_HISTORY_TABLES": False})
+    @override_settings(ENABLE_CSMH_EXTENDED=False, ENABLE_READING_FROM_MULTIPLE_HISTORY_TABLES=False)
     def test_get_history_false_false(self):
         student_module = StudentModule.objects.all()
         history = BaseStudentModuleHistory.get_history(student_module)
