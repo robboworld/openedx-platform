@@ -104,7 +104,6 @@ from openedx.features.enterprise_support.tests.factories import (
     EnterpriseCustomerUserFactory,
     EnterpriseCustomerFactory
 )
-from openedx.features.enterprise_support.tests.mixins.enterprise import EnterpriseTestConsentRequired
 from openedx.features.enterprise_support.api import add_enterprise_customer_to_session
 from enterprise.api.v1.serializers import EnterpriseCustomerSerializer
 
@@ -2670,9 +2669,9 @@ class TestRenderXBlockSelfPaced(TestRenderXBlock):  # lint-amnesty, pylint: disa
         return options
 
 
-class EnterpriseConsentTestCase(EnterpriseTestConsentRequired, ModuleStoreTestCase):
+class EnterpriseConsentTestCase(ModuleStoreTestCase):
     """
-    Ensure that the Enterprise Data Consent redirects are in place only when consent is required.
+    Ensure that courseware views redirect when the CoursewareViewRedirectURL filter provides a URL.
     """
 
     def setUp(self):
@@ -2683,20 +2682,22 @@ class EnterpriseConsentTestCase(EnterpriseTestConsentRequired, ModuleStoreTestCa
         CourseOverview.load_from_module_store(self.course.id)
         CourseEnrollmentFactory(user=self.user, course_id=self.course.id)
 
-    @patch('openedx.features.enterprise_support.api.enterprise_customer_for_request')
-    def test_consent_required(self, mock_enterprise_customer_for_request):
+    @patch('openedx_filters.learning.filters.CoursewareViewRedirectURL.run_filter')
+    def test_consent_required(self, mock_run_filter):
         """
-        Test that enterprise data sharing consent is required when enabled for the various courseware views.
+        Test that courseware views redirect to the URL returned by the CoursewareViewRedirectURL filter.
         """
-        # ENT-924: Temporary solution to replace sensitive SSO usernames.
-        mock_enterprise_customer_for_request.return_value = None
+        redirect_url = 'http://example.com/grant_consent'
+        mock_run_filter.return_value = ([redirect_url], MagicMock(), MagicMock())
 
         course_id = str(self.course.id)
         for url in (
                 reverse("progress", kwargs=dict(course_id=course_id)),
                 reverse("student_progress", kwargs=dict(course_id=course_id, student_id=str(self.user.id))),
         ):
-            self.verify_consent_required(self.client, url)  # lint-amnesty, pylint: disable=no-value-for-parameter
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response['Location'], redirect_url)
 
 
 @ddt.ddt
@@ -2766,7 +2767,13 @@ class AccessUtilsTestCase(ModuleStoreTestCase):
             EnterpriseCourseEnrollmentFactory(enterprise_customer_user=enterprise_customer_user, course_id=course.id)
         set_current_request(request)
 
-        access_response = check_course_open_for_learner(staff_user, course)
+        if setup_enterprise_enrollment:
+            # Mock the filter to simulate an enterprise plugin redirecting the learner.
+            with patch('openedx_filters.learning.filters.CoursewareViewRedirectURL.run_filter') as mock_filter:
+                mock_filter.return_value = (['http://enterprise-portal.example.com/'], MagicMock(), MagicMock())
+                access_response = check_course_open_for_learner(staff_user, course)
+        else:
+            access_response = check_course_open_for_learner(staff_user, course)
         assert bool(access_response) == expected_has_access
         assert access_response.error_code == expected_error_code
 

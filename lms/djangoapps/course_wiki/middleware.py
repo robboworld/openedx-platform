@@ -2,19 +2,19 @@
 
 
 from urllib.parse import urlparse
+
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.deprecation import MiddlewareMixin
+from openedx_filters.learning.filters import CoursewareViewRedirectURL
 from wiki.models import reverse
 
+from common.djangoapps.student.models import CourseEnrollment
 from lms.djangoapps.courseware.access import has_access
 from lms.djangoapps.courseware.courses import get_course_overview_with_access, get_course_with_access
 from openedx.core.lib.request_utils import course_id_from_url
-from openedx.features.enterprise_support.api import get_enterprise_consent_url
-from common.djangoapps.student.models import CourseEnrollment
-
 from xmodule.modulestore.django import modulestore
 
 
@@ -96,10 +96,14 @@ class WikiAccessMiddleware(MiddlewareMixin):
                     # we'll redirect them to the course about page
                     return redirect('about_course', str(course_id))
 
-                # If we need enterprise data sharing consent for this course, then redirect to the form.
-                consent_url = get_enterprise_consent_url(request, str(course_id), source='WikiAccessMiddleware')
-                if consent_url:
-                    return redirect(consent_url)
+                # If a plugin requires a redirect for this course, redirect now.
+                redirect_urls, _, _ = CoursewareViewRedirectURL.run_filter(
+                    redirect_urls=[],
+                    request=request,
+                    course_key=course_id,
+                )
+                if redirect_urls:
+                    return redirect(redirect_urls[0])
 
             # set the course onto here so that the wiki template can show the course navigation
             request.course = course

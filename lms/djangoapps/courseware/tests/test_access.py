@@ -952,15 +952,15 @@ class CourseOverviewAccessTestCase(ModuleStoreTestCase):
                 # read: CourseAccessRole + django_comment_client.Role
                 num_queries = 2
             else:
-                # read: CourseAccessRole + EnterpriseCourseEnrollment
-                num_queries = 2
+                # read: CourseAccessRole
+                num_queries = 1
         elif user_attr_name == 'user_normal':
             if course_attr_name == 'course_started':
                 # read: CourseAccessRole + django_comment_client.Role + FBEEnrollmentExclusion + CourseMode
                 num_queries = 4
             else:
-                # read: CourseAccessRole + CourseEnrollmentAllowed + EnterpriseCourseEnrollment
-                num_queries = 3
+                # read: CourseAccessRole + CourseEnrollmentAllowed
+                num_queries = 2
         elif user_attr_name == 'user_anonymous':
             if course_attr_name == 'course_started':
                 # read: CourseMode

@@ -8,7 +8,6 @@ from logging import getLogger
 
 from crum import get_current_request
 from django.conf import settings
-from enterprise.models import EnterpriseCourseEnrollment, EnterpriseCustomerUser
 from pytz import UTC
 
 from common.djangoapps.student.models import CourseEnrollment
@@ -20,13 +19,13 @@ from lms.djangoapps.courseware.access_response import (
     EnrollmentRequiredAccessError,
     IncorrectActiveEnterpriseAccessError,
     StartDateEnterpriseLearnerError,
-    StartDateError,
+    StartDateError
 )
 from lms.djangoapps.courseware.masquerade import get_course_masquerade, is_masquerading_as_student
 from openedx.features.course_experience import (
     COURSE_ENABLE_UNENROLLED_ACCESS_FLAG,
     COURSE_PRE_START_ACCESS_FLAG,
-    ENFORCE_MASQUERADE_START_DATES,
+    ENFORCE_MASQUERADE_START_DATES
 )
 from xmodule.course_block import COURSE_VISIBILITY_PUBLIC  # lint-amnesty, pylint: disable=wrong-import-order
 
@@ -70,58 +69,22 @@ def adjust_start_date(user, days_early_for_beta, start, course_key):
     return start
 
 
-def enterprise_learner_enrolled(request, user, course_key):
+def _get_courseware_redirect_url(request, course_key):
     """
-    Determine if the learner should be redirected to the enterprise learner portal by checking their enterprise
-    memberships/enrollments.  If all of the following are true, then we are safe to redirect the learner:
-
-    * The learner is linked to an enterprise customer,
-    * The enterprise customer has subsidized the learner's enrollment in the requested course,
-    * The enterprise customer has the learner portal enabled.
-
-    NOTE: This function MUST be called from a view, or it will throw an exception.
+    Return the first courseware redirect URL provided by plugins, or None.
 
     Args:
-        request (django.http.HttpRequest): The current request being handled.  Must not be None.
-        user (User): The requesting enter, potentially an enterprise learner.
-        course_key (str): The requested course to check for enrollment.
+        request (django.http.HttpRequest): The current request.
+        course_key: The course key for the view being accessed.
 
     Returns:
-        bool: True if the learner is enrolled via a linked enterprise customer and can safely be redirected to the
-        enterprise learner dashboard.
+        str or None: The first redirect URL returned by plugins, or None if no redirect is needed.
     """
-    from openedx.features.enterprise_support.api import enterprise_customer_from_session_or_learner_data
-
-    if not user.is_authenticated:
-        return False
-
-    # enterprise_customer_data is either None (if learner is not linked to any customer) or a serialized
-    # EnterpriseCustomer representing the learner's active linked customer.
-    enterprise_customer_data = enterprise_customer_from_session_or_learner_data(request)
-    learner_portal_enabled = enterprise_customer_data and enterprise_customer_data["enable_learner_portal"]
-    if not learner_portal_enabled:
-        return False
-
-    # Additionally make sure the enterprise learner is actually enrolled in the requested course, subsidized
-    # via the discovered customer.
-    enterprise_enrollments = EnterpriseCourseEnrollment.objects.filter(
-        course_id=course_key,
-        enterprise_customer_user__user_id=user.id,
-        enterprise_customer_user__enterprise_customer__uuid=enterprise_customer_data["uuid"],
+    from openedx_filters.learning.filters import CoursewareViewRedirectURL
+    redirect_urls, _, _ = CoursewareViewRedirectURL.run_filter(
+        redirect_urls=[], request=request, course_key=course_key
     )
-    enterprise_enrollment_exists = enterprise_enrollments.exists()
-    log.info(
-        (
-            "[enterprise_learner_enrolled] Checking for an enterprise enrollment for "
-            "lms_user_id=%s in course_key=%s via enterprise_customer_uuid=%s. "
-            "Exists: %s"
-        ),
-        user.id,
-        course_key,
-        enterprise_customer_data["uuid"],
-        enterprise_enrollment_exists,
-    )
-    return enterprise_enrollment_exists
+    return redirect_urls[0] if redirect_urls else None
 
 
 def check_start_date(user, days_early_for_beta, start, course_key, display_error_to_user=True, now=None):
@@ -155,10 +118,10 @@ def check_start_date(user, days_early_for_beta, start, course_key, display_error
         if should_grant_access:
             return ACCESS_GRANTED
 
-        # Before returning a StartDateError, determine if the learner should be redirected to the enterprise learner
-        # portal by returning StartDateEnterpriseLearnerError instead.
+        # Before returning a StartDateError, determine if a plugin requires a redirect (e.g. enterprise learner
+        # portal), and if so return StartDateEnterpriseLearnerError instead.
         request = get_current_request()
-        if request and enterprise_learner_enrolled(request, user, course_key):
+        if request and _get_courseware_redirect_url(request, course_key):
             return StartDateEnterpriseLearnerError(start, display_error_to_user=display_error_to_user)
 
         return StartDateError(start, display_error_to_user=display_error_to_user)
@@ -232,22 +195,17 @@ def check_public_access(course, visibilities):
 
 def check_data_sharing_consent(course_id):
     """
-    Grants access if the user is do not need DataSharing consent, otherwise returns data sharing link.
+    Grants access if no courseware redirect is pending for this course; otherwise returns an access error.
 
     Returns:
         AccessResponse: Either ACCESS_GRANTED or DataSharingConsentRequiredAccessError
     """
-    from openedx.features.enterprise_support.api import get_enterprise_consent_url
-
-    consent_url = get_enterprise_consent_url(
-        request=get_current_request(),
-        course_id=str(course_id),
-        return_to="courseware",
-        enrollment_exists=True,
-        source="CoursewareAccess",
-    )
-    if consent_url:
-        return DataSharingConsentRequiredAccessError(consent_url=consent_url)
+    request = get_current_request()
+    if not request:
+        return ACCESS_GRANTED
+    redirect_url = _get_courseware_redirect_url(request, course_id)
+    if redirect_url:
+        return DataSharingConsentRequiredAccessError(consent_url=redirect_url)
     return ACCESS_GRANTED
 
 
@@ -259,6 +217,7 @@ def check_correct_active_enterprise_customer(user, course_id):
     Returns:
         AccessResponse: Either ACCESS_GRANTED or IncorrectActiveEnterpriseAccessError
     """
+    from enterprise.models import EnterpriseCourseEnrollment, EnterpriseCustomerUser
     enterprise_enrollments = EnterpriseCourseEnrollment.objects.filter(
         course_id=course_id, enterprise_customer_user__user_id=user.id
     )
