@@ -50,7 +50,7 @@ class CourseModeForm(forms.ModelForm):
         required=False,
         help_text=_(
             "OPTIONAL: After this date/time, users will no longer be able to submit photos for verification.  "
-            "This appies ONLY to modes that require verification."
+            "This applies ONLY to modes that require verification."
         ),
         widget=admin.widgets.AdminSplitDateTime,
     )
