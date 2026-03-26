@@ -2045,7 +2045,7 @@ XBLOCK_MIXINS = (
 # .. toggle_use_cases: temporary
 # .. toggle_creation_date: 2024-11-10
 # .. toggle_target_removal_date: 2026-04-10
-USE_EXTRACTED_WORD_CLOUD_BLOCK = True
+USE_EXTRACTED_WORD_CLOUD_BLOCK = False
 
 # .. toggle_name: USE_EXTRACTED_ANNOTATABLE_BLOCK
 # .. toggle_default: True
@@ -2072,7 +2072,7 @@ USE_EXTRACTED_POLL_QUESTION_BLOCK = True
 # .. toggle_use_cases: temporary
 # .. toggle_creation_date: 2024-11-10
 # .. toggle_target_removal_date: 2026-04-10
-USE_EXTRACTED_LTI_BLOCK = True
+USE_EXTRACTED_LTI_BLOCK = False
 
 # .. toggle_name: USE_EXTRACTED_HTML_BLOCK
 # .. toggle_default: True
@@ -2110,7 +2110,7 @@ USE_EXTRACTED_PROBLEM_BLOCK = False
 # .. toggle_use_cases: temporary
 # .. toggle_creation_date: 2024-11-10
 # .. toggle_target_removal_date: 2026-04-10
-USE_EXTRACTED_VIDEO_BLOCK = True
+USE_EXTRACTED_VIDEO_BLOCK = False
 
 ############################## Marketing Site ##############################
 
