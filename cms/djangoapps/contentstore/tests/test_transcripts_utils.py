@@ -95,7 +95,7 @@ class TestSaveSubsToStore(SharedModuleStoreTestCase):
         for content_location in [self.content_location, self.content_copied_location]:
             try:
                 content = contentstore().find(content_location)
-                contentstore().delete(content.usage_key)
+                contentstore().delete(content.location)
             except NotFoundError:
                 pass
 
@@ -202,7 +202,7 @@ class TestDownloadYoutubeSubs(TestYoutubeSubsBase):
         content_location = StaticContent.compute_location(self.course.id, filename)
         try:
             content = contentstore().find(content_location)
-            contentstore().delete(content.usage_key)
+            contentstore().delete(content.location)
         except NotFoundError:
             pass
 

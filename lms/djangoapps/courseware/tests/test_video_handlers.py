@@ -117,7 +117,7 @@ def _upload_file(subs_file, location, filename):  # lint-amnesty, pylint: disabl
     )
     content = StaticContent(content_location, filename, mime_type, subs_file.read())
     contentstore().save(content)
-    del_cached_content(content.usage_key)
+    del_cached_content(content.location)
 
 
 @normalize_repr

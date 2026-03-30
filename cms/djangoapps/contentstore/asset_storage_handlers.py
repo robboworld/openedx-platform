@@ -544,7 +544,7 @@ def update_course_run_asset(course_key, upload_file):
         content.thumbnail_location = thumbnail_location
 
     contentstore().save(content)
-    del_cached_content(content.usage_key)
+    del_cached_content(content.location)
 
     return content
 
@@ -574,7 +574,7 @@ def _upload_asset(request, course_key):
         return JsonResponse({'error': str(exception)}, status=413)
 
     # readback the saved content - we need the database timestamp
-    readback = contentstore().find(content.usage_key)
+    readback = contentstore().find(content.location)
     locked = getattr(content, 'locked', False)
     length = getattr(content, 'length', None)
     return JsonResponse({
@@ -582,7 +582,7 @@ def _upload_asset(request, course_key):
             content.name,
             content.content_type,
             readback.last_modified_at,
-            content.usage_key,
+            content.location,
             content.thumbnail_location,
             locked,
             course_key,
@@ -725,7 +725,7 @@ def delete_asset(course_key, asset_key):
 
     _delete_thumbnail(content.thumbnail_location, course_key, asset_key)
     contentstore().delete(content.get_id())
-    del_cached_content(content.usage_key)
+    del_cached_content(content.location)
 
 
 def _check_existence_and_get_asset_content(asset_key):  # lint-amnesty, pylint: disable=missing-function-docstring
