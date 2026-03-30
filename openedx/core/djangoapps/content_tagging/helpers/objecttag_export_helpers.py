@@ -58,7 +58,7 @@ def _get_course_tagged_object_and_children(
     tagged_course = TaggedContent(
         display_name=course.display_name_with_default,
         block_id=course_id,
-        category=course.category,
+        category=course.scope_ids.block_type,
         object_tags=object_tag_cache.get(course_id, {}),
         children=None,
     )
@@ -107,7 +107,7 @@ def _get_xblock_tagged_object_and_children(
     tagged_block = TaggedContent(
         display_name=block.display_name_with_default,
         block_id=block_id,
-        category=block.category,
+        category=block.scope_ids.block_type,
         object_tags=object_tag_cache.get(block_id, {}),
         children=None,
     )

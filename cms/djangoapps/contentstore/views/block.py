@@ -363,8 +363,7 @@ def xblock_outline_handler(request, usage_key_string):
                     root_xblock,
                     include_child_info=True,
                     course_outline=True,
-                    include_children_predicate=lambda xblock: not xblock.category
-                    == "vertical",
+                    include_children_predicate=lambda xblock: xblock.scope_ids.block_type != "vertical",
                 )
             )
     else:

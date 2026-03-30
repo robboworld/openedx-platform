@@ -571,7 +571,7 @@ class SplitModuleCourseTests(SplitModuleTest):
         # check metadata -- NOTE no promised order
         course = self.findByIdInResult(courses, "head12345")
         assert course.location.org == 'testx'
-        assert course.category == 'course', 'wrong category'
+        assert course.scope_ids.block_type == 'course', 'wrong category'
         assert len(course.tabs) == 5, 'wrong number of tabs'
         assert course.display_name == 'The Ancient Greek Hero', 'wrong display name'
         assert course.advertised_start == 'Fall 2013', 'advertised_start'
@@ -625,7 +625,7 @@ class SplitModuleCourseTests(SplitModuleTest):
             assert course is not None, 'published courses'
             assert course.location.course_key.org == 'testx'
             assert course.location.course_key.course == 'wonderful'
-            assert course.category == 'course', 'wrong category'
+            assert course.scope_ids.block_type == 'course', 'wrong category'
             assert len(course.tabs) == 3, 'wrong number of tabs'
             assert course.display_name == 'The most wonderful course', course.display_name
             assert course.advertised_start is None
@@ -655,7 +655,7 @@ class SplitModuleCourseTests(SplitModuleTest):
         course = modulestore().get_course(locator)
         assert course.location.course_key.org is None
         assert course.location.version_guid == head_course.previous_version
-        assert course.category == 'course'
+        assert course.scope_ids.block_type == 'course'
         assert len(course.tabs) == 5
         assert course.display_name == 'The Ancient Greek Hero'
         assert course.graceperiod == datetime.timedelta(hours=2)
@@ -671,7 +671,7 @@ class SplitModuleCourseTests(SplitModuleTest):
         assert course.location.course_key.org == 'testx'
         assert course.location.course_key.course == 'GreekHero'
         assert course.location.course_key.run == 'run'
-        assert course.category == 'course'
+        assert course.scope_ids.block_type == 'course'
         assert len(course.tabs) == 5
         assert course.display_name == 'The Ancient Greek Hero'
         assert course.advertised_start == 'Fall 2013'
@@ -742,11 +742,11 @@ class SplitModuleCourseTests(SplitModuleTest):
         persisted_course = modulestore().persist_xblock_dag(test_course, TEST_OTHER_USER_ID)
         assert len(persisted_course.children) == 1
         persisted_chapter = persisted_course.get_children()[0]
-        assert persisted_chapter.category == 'chapter'
+        assert persisted_chapter.scope_ids.block_type == 'chapter'
         assert persisted_chapter.display_name == 'chapter n'
         assert len(persisted_chapter.children) == 1
         persisted_problem = persisted_chapter.get_children()[0]
-        assert persisted_problem.category == 'problem'
+        assert persisted_problem.scope_ids.block_type == 'problem'
         assert persisted_problem.data == test_def_content
         # update it
         persisted_problem.display_name = 'altered problem'
@@ -981,7 +981,7 @@ class SplitModuleItemTests(SplitModuleTest):
         block = modulestore().get_item(locator)
         assert block.location.org == 'testx'
         assert block.location.course == 'GreekHero'
-        assert block.category == 'chapter'
+        assert block.scope_ids.block_type == 'chapter'
         assert block.display_name == 'Hercules'
         assert block.edited_by == TEST_ASSISTANT_USER_ID
 
@@ -1105,7 +1105,7 @@ class SplitModuleItemTests(SplitModuleTest):
             "chapter1", "chap", "chapter2", "chapter3"
         ]
         for child in children:
-            assert child.category == 'chapter'
+            assert child.scope_ids.block_type == 'chapter'
             assert child.location.block_id in expected_ids
             expected_ids.remove(child.location.block_id)
         assert len(expected_ids) == 0
@@ -1170,7 +1170,7 @@ class TestItemCrud(SplitModuleTest):
         assert history_info['original_version'] == premod_history['original_version']
         assert history_info['edited_by'] == 'user123'
         # check block's info: category, definition_locator, and display_name
-        assert new_block.category == 'sequential'
+        assert new_block.scope_ids.block_type == 'sequential'
         assert new_block.definition_locator is not None
         assert new_block.display_name == 'new sequential'
         # check that block does not exist in previous version
@@ -1635,7 +1635,7 @@ class TestCourseCreation(SplitModuleTest):
         assert structure_info['edited_by'] == TEST_USER_ID
         # check the returned course object
         assert isinstance(new_course, CourseBlock)
-        assert new_course.category == 'course'
+        assert new_course.scope_ids.block_type == 'course'
         assert not new_course.show_calculator
         assert new_course.allow_anonymous
         assert len(new_course.children) == 0
@@ -1749,7 +1749,7 @@ class TestCourseCreation(SplitModuleTest):
             root_block_id='top', root_category='chapter'
         )
         assert new_course.location.block_id == 'top'
-        assert new_course.category == 'chapter'
+        assert new_course.scope_ids.block_type == 'chapter'
         # look at db to verify
         db_structure = modulestore().db_connection.get_structure(
             new_course.location.as_object_id(new_course.location.version_guid)
@@ -1994,7 +1994,7 @@ class TestPublish(SplitModuleTest):
             source = modulestore().get_item(source_course_loc.make_usage_key(expected.type, expected.id))
             pub_copy = modulestore().get_item(dest_course_loc.make_usage_key(expected.type, expected.id))
             # everything except previous_version & children should be the same
-            assert source.category == pub_copy.category
+            assert source.scope_ids.block_type == pub_copy.scope_ids.block_type
             assert source.update_version == pub_copy.source_version,\
                 f"Versions don't match for {expected}: {source.update_version} != {pub_copy.update_version}"
             assert self.user_id == pub_copy.edited_by,\

@@ -28,7 +28,7 @@ class BlockCountsTransformer(BlockStructureTransformer):
         transform method.
         """
         # collect basic xblock fields
-        block_structure.request_xblock_fields('category')
+        # Note: block type is available via xblock.scope_ids.block_type (not an XBlock Field).
 
     def transform(self, usage_info, block_structure):
         """
@@ -49,6 +49,6 @@ class BlockCountsTransformer(BlockStructureTransformer):
                     block_type,
                     (
                         descendants_type_count +
-                        (1 if (block_structure.get_xblock_field(block_key, 'category') == block_type) else 0)
+                        (1 if (block_structure.get_xblock(block_key).scope_ids.block_type == block_type) else 0)
                     )
                 )

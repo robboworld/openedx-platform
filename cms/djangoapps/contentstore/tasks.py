@@ -1256,7 +1256,7 @@ def _scan_course_for_links(course_key):
     for block in blocks:
         # Excluding 'drag-and-drop-v2' as it contains data of object type instead of string, causing errors,
         # and it doesn't contain user-facing links to scan.
-        if block.category == 'drag-and-drop-v2':
+        if block.scope_ids.block_type == 'drag-and-drop-v2':
             continue
         block_id = str(block.location)
         block_info = get_block_info(block)

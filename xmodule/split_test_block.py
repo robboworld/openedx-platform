@@ -360,7 +360,7 @@ class SplitTestBlock(  # lint-amnesty, pylint: disable=abstract-method
         for active_child_block in children:
             active_child = self.runtime.get_block_for_descriptor(active_child_block)
             rendered_child = active_child.render(StudioEditableBlock.get_preview_view_name(active_child), context)
-            if active_child.category == 'vertical':
+            if active_child.scope_ids.block_type == 'vertical':
                 group_name, group_id = self.get_data_for_vertical(active_child)
                 if group_name:
                     rendered_child.content = rendered_child.content.replace(

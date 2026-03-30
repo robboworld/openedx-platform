@@ -2160,12 +2160,12 @@ class SplitMongoModuleStore(SplitBulkWriteMixin, ModuleStoreWriteBase):
     def _persist_subdag(self, course_key, xblock, user_id, structure_blocks, new_id):  # lint-amnesty, pylint: disable=missing-function-docstring
         # persist the definition if persisted != passed
         partitioned_fields = self.partition_xblock_fields_by_scope(xblock)
-        new_def_data = self._serialize_fields(xblock.category, partitioned_fields[Scope.content])
+        new_def_data = self._serialize_fields(xblock.scope_ids.block_type, partitioned_fields[Scope.content])
         is_updated = False
         current_definition_locator = getattr(xblock, "definition_locator", xblock.scope_ids.def_id)
         if current_definition_locator is None or isinstance(current_definition_locator.definition_id, LocalId):
             xblock.definition_locator = self.create_definition_from_data(
-                course_key, new_def_data, xblock.category, user_id
+                course_key, new_def_data, xblock.scope_ids.block_type, user_id
             )
             is_updated = True
         elif new_def_data:
@@ -2200,7 +2200,7 @@ class SplitMongoModuleStore(SplitBulkWriteMixin, ModuleStoreWriteBase):
             is_updated = is_updated or structure_blocks[block_key].fields['children'] != children
 
         block_fields = partitioned_fields[Scope.settings]
-        block_fields = self._serialize_fields(xblock.category, block_fields)
+        block_fields = self._serialize_fields(xblock.scope_ids.block_type, block_fields)
         if not is_new and not is_updated:
             is_updated = self._compare_settings(block_fields, structure_blocks[block_key].fields)
         if children:
@@ -2210,7 +2210,7 @@ class SplitMongoModuleStore(SplitBulkWriteMixin, ModuleStoreWriteBase):
             if is_new:
                 block_info = self._new_block(
                     user_id,
-                    xblock.category,
+                    xblock.scope_ids.block_type,
                     block_fields,
                     xblock.definition_locator.definition_id,
                     new_id,

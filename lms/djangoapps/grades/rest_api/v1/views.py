@@ -471,7 +471,7 @@ class SubmissionHistoryView(GradeViewMixin, PaginatedAPIView):
             for subsection in section.get_children():
                 for vertical in subsection.get_children():
                     for block in vertical.get_children():
-                        if block.category == 'problem' and getattr(block, 'has_score', False):
+                        if block.scope_ids.block_type == 'problem' and getattr(block, 'has_score', False):
                             blocks.append(block)
         return blocks
 

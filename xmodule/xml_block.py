@@ -471,12 +471,12 @@ class XmlMixin:
                 aside.add_xml_to_node(aside_node)
                 xml_object.append(aside_node)
 
-        not_to_clean_fields = self.metadata_to_not_to_clean.get(self.category, ())
+        not_to_clean_fields = self.metadata_to_not_to_clean.get(self.scope_ids.block_type, ())
         self.clean_metadata_from_xml(xml_object, excluded_fields=not_to_clean_fields)
 
         # Set the tag on both nodes so we get the file path right.
-        xml_object.tag = self.category
-        node.tag = self.category
+        xml_object.tag = self.scope_ids.block_type
+        node.tag = self.scope_ids.block_type
 
         # Add the non-inherited metadata
         for attr in sorted(own_metadata(self)):
@@ -507,8 +507,8 @@ class XmlMixin:
             url_path = name_to_pathname(self.url_name)
             # if folder is course then create file with name {course_run}.xml
             filepath = self._format_filepath(
-                self.category,
-                self.location.run if self.category == "course" else url_path,
+                self.scope_ids.block_type,
+                self.location.run if self.scope_ids.block_type == "course" else url_path,
             )
             self.runtime.export_fs.makedirs(os.path.dirname(filepath), recreate=True)
             with self.runtime.export_fs.open(filepath, "wb") as fileobj:
@@ -527,7 +527,7 @@ class XmlMixin:
             node.set("url_name", self.url_name)
 
         # Special case for course pointers:
-        if self.category == "course":
+        if self.scope_ids.block_type == "course":
             # add org and course attributes on the pointer tag
             node.set("org", self.location.org)
             node.set("course", self.location.course)

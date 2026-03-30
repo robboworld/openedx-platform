@@ -249,7 +249,7 @@ def _update_node_tree_and_dictionary(block, link, link_state, node_tree, diction
             xblock_id,
             {
                 'display_name': xblock.display_name,
-                'category': getattr(xblock, 'category', ''),
+                'category': getattr(getattr(xblock, 'scope_ids', None), 'block_type', ''),
             }
         )
         # Sets new current node and creates the node if it doesn't exist
@@ -258,7 +258,7 @@ def _update_node_tree_and_dictionary(block, link, link_state, node_tree, diction
     # Add block-level details for the last xblock in the path (URL and broken/locked links)
     updated_dictionary[xblock_id].setdefault(
         'url',
-        f'/course/{block.course_id}/editor/{block.category}/{block.location}'
+        f'/course/{block.course_id}/editor/{block.scope_ids.block_type}/{block.location}'
     )
 
     # The link_state == True condition is maintained for backward compatibility.

@@ -67,7 +67,6 @@ class EffortEstimationTransformer(BlockStructureTransformer):
         Pooling leaf estimates higher up the tree (e.g. in verticals, then sequentials, then chapters) is done by
         transform() below at run time, because which blocks each user sees can be different.
         """
-        block_structure.request_xblock_fields('category')
         block_structure.request_xblock_fields('global_speed', 'only_on_web')  # video fields
 
         collection_cache = {}  # collection methods can stuff some temporary data here
@@ -81,8 +80,8 @@ class EffortEstimationTransformer(BlockStructureTransformer):
             for block_key in block_structure.topological_traversal():
                 xblock = block_structure.get_xblock(block_key)
 
-                if xblock.category in collections:
-                    collections[xblock.category](block_structure, block_key, xblock, collection_cache)
+                if xblock.scope_ids.block_type in collections:
+                    collections[xblock.scope_ids.block_type](block_structure, block_key, xblock, collection_cache)
 
         except cls.MissingEstimationData:
             # Some bit of required data is missing. Likely some duration info is missing from the video pipeline.

@@ -154,7 +154,7 @@ class TestSplitCopyTemplate(MixedSplitTestCase):
         while block_keys:
             key = block_keys.pop()
             block = self.store.get_item(key)
-            new_blocks[block.category] = block
+            new_blocks[block.scope_ids.block_type] = block
             block_keys.update(set(getattr(block, "children", [])))
 
         # Check that auto-publish blocks with no children are indeed published:

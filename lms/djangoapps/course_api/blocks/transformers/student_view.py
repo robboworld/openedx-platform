@@ -28,8 +28,6 @@ class StudentViewTransformer(BlockStructureTransformer):
         Collect student_view_multi_device and student_view_data values for each block
         """
         # collect basic xblock fields
-        block_structure.request_xblock_fields('category')
-
         for block_key in block_structure.topological_traversal():
             block = block_structure.get_xblock(block_key)
 
@@ -73,5 +71,5 @@ class StudentViewTransformer(BlockStructureTransformer):
         Mutates block_structure based on the given usage_info.
         """
         for block_key in block_structure.post_order_traversal():
-            if block_structure.get_xblock_field(block_key, 'category') not in self.requested_student_view_data:
+            if block_structure.get_xblock(block_key).scope_ids.block_type not in self.requested_student_view_data:
                 block_structure.remove_transformer_block_field(block_key, self, self.STUDENT_VIEW_DATA)

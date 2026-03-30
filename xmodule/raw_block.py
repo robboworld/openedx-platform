@@ -103,4 +103,4 @@ class EmptyDataRawMixin:
         """Return an XML Element from stored data, or an empty element if data is empty."""
         if self.data:
             return etree.fromstring(self.data)
-        return etree.Element(self.category)
+        return etree.Element(self.scope_ids.block_type)

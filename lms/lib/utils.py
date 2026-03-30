@@ -25,7 +25,7 @@ def get_parent_unit(xblock):
         grandparent = parent.get_parent()
         if grandparent is None:
             return None
-        if parent.category == "vertical" and grandparent.category == "sequential":
+        if parent.scope_ids.block_type == "vertical" and grandparent.scope_ids.block_type == "sequential":
             return parent
         xblock = parent
 

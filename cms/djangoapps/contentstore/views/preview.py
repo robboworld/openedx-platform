@@ -163,7 +163,7 @@ def _prepare_runtime_for_preview(request, block):
     """
 
     course_id = block.location.course_key
-    display_name_only = (block.category == 'static_tab')
+    display_name_only = (block.scope_ids.block_type == 'static_tab')
 
     wrappers = [
         # This wrapper wraps the block in the template specified above
@@ -337,7 +337,7 @@ def _studio_wrap_xblock(xblock, view, frag, context, display_name_only=False):
             can_move = False
 
         if upstream_link.error_message is None and upstream_link.upstream_ref:
-            can_edit = xblock.category in editable_library_components
+            can_edit = xblock.scope_ids.block_type in editable_library_components
 
         # Is this a course or a library?
         is_course = xblock.context_key.is_course

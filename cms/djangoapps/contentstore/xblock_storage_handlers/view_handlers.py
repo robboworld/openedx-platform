@@ -579,7 +579,7 @@ def _save_xblock(
             )
 
         # Save gating info
-        if xblock.category == "sequential" and course.enable_subsection_gating:
+        if xblock.scope_ids.block_type == "sequential" and course.enable_subsection_gating:
             if is_prereq is not None:
                 if is_prereq:
                     gating_api.add_prerequisite(
@@ -601,7 +601,7 @@ def _save_xblock(
         # If publish is set to 'republish' and this item is not in direct only categories and has previously been
         # published, then this item should be republished. This is used by staff locking to ensure that changing the
         # draft value of the staff lock will also update the published version, but only at the unit level.
-        if publish == "republish" and xblock.category not in DIRECT_ONLY_CATEGORIES:
+        if publish == "republish" and xblock.scope_ids.block_type not in DIRECT_ONLY_CATEGORIES:
             if modulestore().has_published_version(xblock):
                 publish = "make_public"
 
@@ -610,7 +610,7 @@ def _save_xblock(
             modulestore().publish(xblock.location, user.id)
 
         # If summary_configuration_enabled is not None, use AIAsideSummary to update it.
-        if xblock.category == "vertical" and summary_configuration_enabled is not None:
+        if xblock.scope_ids.block_type == "vertical" and summary_configuration_enabled is not None:
             AiAsideSummaryConfig(course.id).set_summary_settings(xblock.location, {
                 'enabled': summary_configuration_enabled
             })
@@ -883,8 +883,8 @@ def _move_item(source_usage_key, target_parent_usage_key, user, target_index=Non
         source_item = store.get_item(source_usage_key)
         source_parent = source_item.get_parent()
         target_parent = store.get_item(target_parent_usage_key)
-        source_type = source_item.category
-        target_parent_type = target_parent.category
+        source_type = source_item.scope_ids.block_type
+        target_parent_type = target_parent.scope_ids.block_type
         error = None
 
         # Store actual/initial index of the source item. This would be sent back with response,
@@ -1102,7 +1102,7 @@ def _get_gating_info(course, xblock):
         dict: Gating information
     """
     info = {}
-    if xblock.category == "sequential" and course.enable_subsection_gating:
+    if xblock.scope_ids.block_type == "sequential" and course.enable_subsection_gating:
         if not hasattr(course, "gating_prerequisites"):
             # Cache gating prerequisites on course block so that we are not
             # hitting the database for every xblock in the course
@@ -1211,7 +1211,7 @@ def create_xblock_info(  # lint-amnesty, pylint: disable=too-many-statements
 
     release_date = _get_release_date(xblock, user)
 
-    if xblock.category != "course" and not is_concise:
+    if xblock.scope_ids.block_type != "course" and not is_concise:
         visibility_state = _compute_visibility_state(
             xblock, child_info, is_xblock_unit and has_changes, is_self_paced(course)
         )
@@ -1240,7 +1240,7 @@ def create_xblock_info(  # lint-amnesty, pylint: disable=too-many-statements
     explanatory_message = None
 
     # is_entrance_exam is inherited metadata.
-    if xblock.category == "chapter" and getattr(xblock, "is_entrance_exam", None):
+    if xblock.scope_ids.block_type == "chapter" and getattr(xblock, "is_entrance_exam", None):
         # Entrance exam section should not be deletable, draggable and not have 'New Subsection' button.
         xblock_actions["deletable"] = xblock_actions["childAddable"] = xblock_actions[
             "draggable"
@@ -1263,7 +1263,7 @@ def create_xblock_info(  # lint-amnesty, pylint: disable=too-many-statements
     xblock_info = {
         "id": str(xblock.location),
         "display_name": xblock.display_name_with_default,
-        "category": xblock.category,
+        "category": xblock.scope_ids.block_type,
         "has_children": xblock.has_children,
     }
 
@@ -1278,7 +1278,7 @@ def create_xblock_info(  # lint-amnesty, pylint: disable=too-many-statements
             }
         )
 
-    if xblock.category == "course":
+    if xblock.scope_ids.block_type == "course":
         discussions_config = DiscussionsConfiguration.get(course.id)
         show_unit_level_discussions_toggle = (
             discussions_config.enabled
@@ -1336,20 +1336,20 @@ def create_xblock_info(  # lint-amnesty, pylint: disable=too-many-statements
             }
         )
 
-        if xblock.category == "sequential":
+        if xblock.scope_ids.block_type == "sequential":
             xblock_info.update(
                 {
                     "hide_after_due": xblock.hide_after_due,
                 }
             )
-        elif xblock.category in ("chapter", "course"):
-            if xblock.category == "chapter":
+        elif xblock.scope_ids.block_type in ("chapter", "course"):
+            if xblock.scope_ids.block_type == "chapter":
                 xblock_info.update(
                     {
                         "highlights": xblock.highlights,
                     }
                 )
-            elif xblock.category == "course":
+            elif xblock.scope_ids.block_type == "course":
                 xblock_info.update(
                     {
                         "highlights_enabled_for_messaging": course.highlights_enabled_for_messaging,
@@ -1370,7 +1370,7 @@ def create_xblock_info(  # lint-amnesty, pylint: disable=too-many-statements
 
         # update xblock_info with special exam information if the feature flag is enabled
         if settings.FEATURES.get("ENABLE_SPECIAL_EXAMS"):
-            if xblock.category == "course":
+            if xblock.scope_ids.block_type == "course":
                 xblock_info.update(
                     {
                         "enable_proctored_exams": xblock.enable_proctored_exams,
@@ -1378,7 +1378,7 @@ def create_xblock_info(  # lint-amnesty, pylint: disable=too-many-statements
                         "enable_timed_exams": xblock.enable_timed_exams,
                     }
                 )
-            elif xblock.category == "sequential":
+            elif xblock.scope_ids.block_type == "sequential":
                 rules_url = settings.PROCTORING_SETTINGS.get("LINK_URLS", {}).get(
                     "online_proctoring_rules", ""
                 )
@@ -1441,7 +1441,7 @@ def create_xblock_info(  # lint-amnesty, pylint: disable=too-many-statements
             # if xblock is a Unit we add the discussion_enabled option
             xblock_info["discussion_enabled"] = xblock.discussion_enabled
 
-        if xblock.category == "sequential":
+        if xblock.scope_ids.block_type == "sequential":
             # Entrance exam subsection should be hidden. in_entrance_exam is
             # inherited metadata, all children will have it.
             if getattr(xblock, "in_entrance_exam", False):

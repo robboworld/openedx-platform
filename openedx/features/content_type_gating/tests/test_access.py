@@ -142,7 +142,7 @@ def _assert_block_is_gated(store, block, is_gated, user, course, request_factory
         assert 'student_view_url' in course_api_block
     else:
         assert 'authorization_denial_reason' not in course_api_block
-        if block.category == 'html':
+        if block.scope_ids.block_type == 'html':
             assert 'student_view_data' in course_api_block
 
 

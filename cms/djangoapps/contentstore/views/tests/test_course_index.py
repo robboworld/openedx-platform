@@ -115,7 +115,7 @@ class TestCourseOutline(CourseTestCase):
         course_structure = create_xblock_info(
             course_block,
             include_child_info=True,
-            include_children_predicate=lambda xblock: not xblock.category == 'vertical'
+            include_children_predicate=lambda xblock: xblock.scope_ids.block_type != 'vertical'
         )
 
         # Verify that None is returned for a non-existent locator

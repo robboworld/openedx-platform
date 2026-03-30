@@ -17,7 +17,7 @@ class SelfPacedDateOverrideProvider(FieldOverrideProvider):
         if name == 'due':
             return None
         # Remove release dates for course content
-        if name == 'start' and block.category != 'course':
+        if name == 'start' and block.scope_ids.block_type != 'course':
             return None
 
         return default

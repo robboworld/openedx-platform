@@ -90,7 +90,7 @@ class _TestLTIBase(BaseTestXmodule):
         self.expected_context = {
             'display_name': self.block.display_name,
             'input_fields': self.correct_headers,
-            'element_class': self.block.category,
+            'element_class': self.block.scope_ids.block_type,
             'element_id': self.block.location.html_id(),
             'launch_url': 'http://www.example.com',  # default value
             'open_in_a_new_page': True,

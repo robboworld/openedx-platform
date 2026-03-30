@@ -528,7 +528,7 @@ class GetItemTest(ItemTest):
             """
             self.assertEqual(str(xblock.location), xblock_info["id"])
             self.assertEqual(xblock.display_name, xblock_info["display_name"])
-            self.assertEqual(xblock.category, xblock_info["category"])
+            self.assertEqual(xblock.scope_ids.block_type, xblock_info["category"])
 
         for usage_key in (
             problem_usage_key,
@@ -727,7 +727,7 @@ class DuplicateHelper:
         """
         if is_child:
             if original_item.display_name is None:
-                return duplicated_item.display_name == original_item.category
+                return duplicated_item.display_name == original_item.scope_ids.block_type
             return duplicated_item.display_name == original_item.display_name
         if original_item.display_name is not None:
             return (
@@ -737,7 +737,7 @@ class DuplicateHelper:
                 )
             )
         return duplicated_item.display_name == "Duplicate of {display_name}".format(
-            display_name=original_item.category
+            display_name=original_item.scope_ids.block_type
         )
 
     def _duplicate_item(self, parent_usage_key, source_usage_key, display_name=None):
@@ -2469,8 +2469,8 @@ class TestEditSplitModule(ItemTest):
         self.assertEqual(2, len(split_test.children))
         vertical_0 = self.get_item_from_modulestore(split_test.children[0])
         vertical_1 = self.get_item_from_modulestore(split_test.children[1])
-        self.assertEqual("vertical", vertical_0.category)
-        self.assertEqual("vertical", vertical_1.category)
+        self.assertEqual("vertical", vertical_0.scope_ids.block_type)
+        self.assertEqual("vertical", vertical_1.scope_ids.block_type)
         self.assertEqual(
             "Group ID " + str(MINIMUM_UNUSED_PARTITION_ID + 1), vertical_0.display_name
         )
@@ -3836,7 +3836,7 @@ class TestLibraryXBlockInfo(ModuleStoreTestCase):
         """
         Validate that the xblock info is correct for the test component.
         """
-        self.assertEqual(xblock_info["category"], original_block.category)
+        self.assertEqual(xblock_info["category"], original_block.scope_ids.block_type)
         self.assertEqual(xblock_info["id"], str(original_block.location))
         self.assertEqual(xblock_info["display_name"], original_block.display_name)
         self.assertIsNone(xblock_info.get("has_changes", None))

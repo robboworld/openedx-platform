@@ -685,7 +685,7 @@ class _BuiltInProblemBlock(  # pylint: disable=too-many-public-methods,too-many-
                            "Answer ID": "98e6a8e915904d5389821a94e48babcf_10_1"
             })
         """
-        if self.category != "problem":
+        if self.scope_ids.block_type != "problem":
             raise NotImplementedError()
 
         if limit_responses == 0:

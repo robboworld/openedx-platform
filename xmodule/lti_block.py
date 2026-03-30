@@ -508,7 +508,7 @@ class _BuiltInLTIBlock(
             # These parameters do not participate in OAuth signing.
             'launch_url': self.launch_url.strip(),
             'element_id': self.location.html_id(),
-            'element_class': self.category,
+            'element_class': self.scope_ids.block_type,
             'open_in_a_new_page': self.open_in_a_new_page,
             'display_name': self.display_name,
             'form_url': self.runtime.handler_url(self, 'preview_handler').rstrip('/?'),

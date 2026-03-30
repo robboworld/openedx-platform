@@ -245,7 +245,7 @@ def course_expiration_wrapper(user, block, view, frag, context):  # pylint: disa
     if context.get('is_mobile_app'):
         return frag
 
-    if block.category != 'vertical':
+    if block.scope_ids.block_type != 'vertical':
         return frag
 
     course_expiration_fragment = generate_course_expired_fragment_from_key(

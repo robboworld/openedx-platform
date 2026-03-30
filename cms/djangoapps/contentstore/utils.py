@@ -634,7 +634,7 @@ def find_release_date_source(xblock):
     """
 
     # Stop searching at the section level
-    if xblock.category == 'chapter':
+    if xblock.scope_ids.block_type == 'chapter':
         return xblock
 
     parent_location = modulestore().get_parent_location(xblock.location,
@@ -661,7 +661,7 @@ def find_staff_lock_source(xblock):
         return xblock
 
     # Stop searching at the section level
-    if xblock.category == 'chapter':
+    if xblock.scope_ids.block_type == 'chapter':
         return None
 
     parent_location = modulestore().get_parent_location(xblock.location,
@@ -1276,13 +1276,13 @@ def gather_block_attributes(source_item, display_name=None, is_child=False):
             duplicate_metadata[field.name] = field.read_from(source_item)
 
     if is_child:
-        display_name = display_name or source_item.display_name or source_item.category
+        display_name = display_name or source_item.display_name or source_item.scope_ids.block_type
 
     if display_name is not None:
         duplicate_metadata['display_name'] = display_name
     else:
         if source_item.display_name is None:
-            duplicate_metadata['display_name'] = _("Duplicate of {0}").format(source_item.category)
+            duplicate_metadata['display_name'] = _("Duplicate of {0}").format(source_item.scope_ids.block_type)
         else:
             duplicate_metadata['display_name'] = _("Duplicate of '{0}'").format(source_item.display_name)
 

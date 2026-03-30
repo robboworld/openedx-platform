@@ -415,7 +415,7 @@ def get_ccx_schedule(course, ccx):
                 visited = {
                     'location': str(child.location),
                     'display_name': child.display_name,
-                    'category': child.category,
+                    'category': child.scope_ids.block_type,
                     'start': start,
                     'due': due,
                     'hidden': hidden,
@@ -424,7 +424,7 @@ def get_ccx_schedule(course, ccx):
                 visited = {
                     'location': str(child.location),
                     'display_name': child.display_name,
-                    'category': child.category,
+                    'category': child.scope_ids.block_type,
                     'start': start,
                     'hidden': hidden,
                 }

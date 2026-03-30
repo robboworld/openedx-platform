@@ -82,10 +82,10 @@ def is_unit(xblock, parent_xblock=None):
     Returns true if the specified xblock is a vertical that is treated as a unit.
     A unit is a vertical that is a direct child of a sequential (aka a subsection).
     """
-    if xblock.category == 'vertical':
+    if xblock.scope_ids.block_type == 'vertical':
         if parent_xblock is None:
             parent_xblock = get_parent_xblock(xblock)
-        parent_category = parent_xblock.category if parent_xblock else None
+        parent_category = parent_xblock.scope_ids.block_type if parent_xblock else None
         return parent_category == 'sequential'
     return False
 
@@ -94,7 +94,7 @@ def is_library_content(xblock):
     """
     Returns true if the specified xblock is library content.
     """
-    return xblock.category == 'library_content'
+    return xblock.scope_ids.block_type == 'library_content'
 
 
 def get_parent_if_split_test(xblock):
@@ -102,7 +102,7 @@ def get_parent_if_split_test(xblock):
     Returns the parent of the specified xblock if it is a split test, otherwise returns None.
     """
     parent_xblock = get_parent_xblock(xblock)
-    if parent_xblock and parent_xblock.category == 'split_test':
+    if parent_xblock and parent_xblock.scope_ids.block_type == 'split_test':
         return parent_xblock
 
 
@@ -117,7 +117,7 @@ def xblock_has_own_studio_page(xblock, parent_xblock=None):
         - a direct child of a unit
       3. XBlocks that support children
     """
-    category = xblock.category
+    category = xblock.scope_ids.block_type
 
     if is_unit(xblock, parent_xblock):
         return True
@@ -151,7 +151,7 @@ def xblock_studio_url(xblock, parent_xblock=None, find_parent=False):
                 return None
         else:
             return None
-    category = xblock.category
+    category = xblock.scope_ids.block_type
     if category == 'course':
         return reverse_course_url('course_handler', xblock.location.course_key)
     elif category in ('chapter', 'sequential'):
@@ -204,8 +204,8 @@ def xblock_type_display_name(xblock, default_display_name=None):
     :return:
     """
 
-    if hasattr(xblock, 'category'):
-        category = xblock.category
+    if hasattr(xblock, 'scope_ids'):
+        category = xblock.scope_ids.block_type
         if category == 'vertical' and not is_unit(xblock):
             return _('Vertical')
     else:
@@ -238,7 +238,7 @@ def xblock_primary_child_category(xblock):
     """
     Returns the primary child category for the specified xblock, or None if there is not a primary category.
     """
-    category = xblock.category
+    category = xblock.scope_ids.block_type
     if category == 'course':
         return 'chapter'
     elif category == 'chapter':

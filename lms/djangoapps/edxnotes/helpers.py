@@ -251,15 +251,15 @@ def get_block_context(course, block):
         'location': str(block.location),
         'display_name': Text(block.display_name_with_default),
     }
-    if block.category == 'chapter' and block.get_parent():
+    if block.scope_ids.block_type == 'chapter' and block.get_parent():
         # course is a locator w/o branch and version
         # so for uniformity we replace it with one that has them
         course = block.get_parent()
         block_dict['index'] = get_index(block_dict['location'], course.children)
-    elif block.category == 'vertical':
+    elif block.scope_ids.block_type == 'vertical':
         # Use the MFE-aware URL generator instead of always using the legacy URL format
         block_dict['url'] = get_courseware_url(block.location)
-    if block.category in ('chapter', 'sequential'):
+    if block.scope_ids.block_type in ('chapter', 'sequential'):
         block_dict['children'] = [str(child) for child in block.children]
 
     return block_dict

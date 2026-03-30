@@ -365,7 +365,7 @@ def _course_outline_json(request, course_block):
     Returns a JSON representation of the course block and recursively all of its children.
     """
     is_concise = request.GET.get('format') == 'concise'
-    include_children_predicate = lambda xblock: not xblock.category == 'vertical'
+    include_children_predicate = lambda xblock: xblock.scope_ids.block_type != 'vertical'
     if is_concise:
         include_children_predicate = lambda xblock: xblock.has_children
     return create_xblock_info(

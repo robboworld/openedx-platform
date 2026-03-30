@@ -167,7 +167,7 @@ class PersonalizedLearnerScheduleCallToAction:
                 },
                 'research_event_data': {
                     'block_id': str(xblock.location),
-                    'location': f'{xblock.category}-view',
+                    'location': f'{xblock.scope_ids.block_type}-view',
                 },
             }
 

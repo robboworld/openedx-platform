@@ -28,7 +28,7 @@ def offer_banner_wrapper(user, block, view, frag, context):  # pylint: disable=W
     A wrapper that prepends the First Purchase Discount banner if
     the user hasn't upgraded yet.
     """
-    if block.category != 'vertical':
+    if block.scope_ids.block_type != 'vertical':
         return frag
 
     offer_banner_fragment = None

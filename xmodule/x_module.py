@@ -321,15 +321,6 @@ class XModuleMixin(XModuleFields, XBlock):  # pylint: disable=too-many-public-me
         return self.context_key
 
     @property
-    def category(self):
-        """
-        Return the block type, formerly known as "category".
-
-        Preferred forms for new code: `self.usage_key.block_type` or `self.scope_ids.blocks_type`
-        """
-        return self.scope_ids.block_type
-
-    @property
     def location(self):
         """
         Return the usage key identifying this block instance, formerly called the "location".
@@ -1551,7 +1542,7 @@ class ModuleStoreRuntime(_MetricsMixin, _ConfigurableFragmentWrapper, _ModuleSys
 
     def add_block_as_child_node(self, block, node):
         """Append the block’s XML to the given parent XML node."""
-        child = etree.SubElement(node, block.category)
+        child = etree.SubElement(node, block.scope_ids.block_type)
         child.set("url_name", block.url_name)
         block.add_xml_to_node(child)
 

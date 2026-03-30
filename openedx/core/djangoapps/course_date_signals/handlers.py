@@ -67,7 +67,7 @@ def _gather_graded_items(root, due):  # lint-amnesty, pylint: disable=missing-fu
             # Open response assessments (ORA) contain their own set of due dates
             # and we do not want to potentially conflict with due dates that are set from Studio.
             # So here we do not assign a due date to items that are ORA.
-            if next_item.category != 'openassessment':
+            if next_item.scope_ids.block_type != 'openassessment':
                 collected_items.append((
                     next_item.location,
                     {'due': due if _has_assignment_blocks(next_item) else None}
@@ -76,7 +76,7 @@ def _gather_graded_items(root, due):  # lint-amnesty, pylint: disable=missing-fu
             # especially if we find ourselves needing more exceptions.
             has_non_ora_scored_content = (
                 has_non_ora_scored_content or
-                (next_item.has_score and next_item.category != 'openassessment')
+                (next_item.has_score and next_item.scope_ids.block_type != 'openassessment')
             )
 
         items.extend(next_item.get_children())
@@ -96,11 +96,11 @@ def _get_custom_pacing_children(subsection, num_weeks):
     section_date_items = []
     while items:
         next_item = items.pop()
-        is_problem = next_item.category not in {'sequential', 'vertical'}
+        is_problem = next_item.scope_ids.block_type not in {'sequential', 'vertical'}
         if is_problem:
             has_content = True
         # Open response assessment problems have their own due dates
-        if next_item.category != 'openassessment':
+        if next_item.scope_ids.block_type != 'openassessment':
             section_date_items.append((next_item.location, {'due': timedelta(weeks=num_weeks)}))
             items.extend(next_item.get_children())
             if is_problem:

@@ -185,7 +185,7 @@ class SearchIndexerBase(metaclass=ABCMeta):
 
             item_content_groups = None
 
-            if item.category == "split_test":  # lint-amnesty, pylint: disable=too-many-nested-blocks
+            if item.scope_ids.block_type == "split_test":  # lint-amnesty, pylint: disable=too-many-nested-blocks
                 split_partition = item.get_selected_partition()
                 for split_test_child in item.get_children():
                     if split_partition:

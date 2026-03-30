@@ -51,7 +51,7 @@ class TestBlocksView(SharedModuleStoreTestCase):
             str(item.location)
             for item in cls.store.get_items(cls.course_key)
             # remove all orphaned items in the course, except for the root 'course' block
-            if cls.store.get_parent_location(item.location) or item.category == 'course'
+            if cls.store.get_parent_location(item.location) or item.scope_ids.block_type == 'course'
         }
 
     def setUp(self):
@@ -421,7 +421,7 @@ class TestBlocksInCourseView(TestBlocksView, CompletionWaffleTestMixin):  # pyli
             item.location
             for item in self.store.get_items(self.course_key)
             # remove all orphaned items in the course, except for the root 'course' block
-            if self.store.get_parent_location(item.location) or item.category == 'course'
+            if self.store.get_parent_location(item.location) or item.scope_ids.block_type == 'course'
         }
 
     def test_no_course_id(self):
@@ -441,7 +441,7 @@ class TestBlocksInCourseView(TestBlocksView, CompletionWaffleTestMixin):  # pyli
 
     def test_completion_one_unit(self):
         for item in self.store.get_items(self.course_key):
-            if item.category == 'html':
+            if item.scope_ids.block_type == 'html':
                 block_usage_key = item.location
                 break
 
@@ -568,7 +568,7 @@ class TestBlockMetadataView(SharedModuleStoreTestCase):  # pylint: disable=test-
             str(item.location)
             for item in cls.store.get_items(cls.course_key)
             # remove all orphaned items in the course, except for the root 'course' block
-            if cls.store.get_parent_location(item.location) or item.category == 'course'
+            if cls.store.get_parent_location(item.location) or item.scope_ids.block_type == 'course'
         }
 
     def setUp(self):
