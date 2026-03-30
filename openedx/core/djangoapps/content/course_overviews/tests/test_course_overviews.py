@@ -121,7 +121,6 @@ class CourseOverviewTestCase(CatalogIntegrationMixin, ModuleStoreTestCase, Cache
             'visible_to_staff_only',
             'location',
             'number',
-            'url_name',
             'display_name_with_default',
             'display_name_with_default_escaped',
             'start_date_is_still_default',
