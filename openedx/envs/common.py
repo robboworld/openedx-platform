@@ -2988,3 +2988,7 @@ MAINTENANCE_BANNER_TEXT: str | None
 # .. setting_description: The name that will appear on the landing page of Studio, as well as in various emails and
 #   templates. (Note: set to 'Studio' by default in the LMS).
 STUDIO_NAME: str
+
+STANDARD_COMPLIANT_XBLOCKS = [
+    "WordCloudBlock",
+]
