@@ -2350,6 +2350,36 @@ ORA_PEER_LEASE_EXPIRATION_HOURS = 8
 # .. setting_description: Amount of time before a lease on a staff submission expires
 ORA_STAFF_LEASE_EXPIRATION_HOURS = 8
 
+# .. setting_name: ORA_REMINDER_MAX_COUNT
+# .. setting_default: 3
+# .. setting_description: Maximum number of reminder notifications sent per learner per ORA
+#   for incomplete peer/self review steps.
+ORA_REMINDER_MAX_COUNT = 3
+
+# .. setting_name: ORA_REMINDER_INTERVAL_HOURS
+# .. setting_default: 48
+# .. setting_description: Number of hours between consecutive ORA reminder notifications.
+ORA_REMINDER_INTERVAL_HOURS = 48
+
+# .. setting_name: ORA_REMINDER_INITIAL_DELAY_HOURS
+# .. setting_default: 0
+# .. setting_description: Number of hours after ORA submission before the first reminder
+#   notification is sent. Set to 0 for an immediate first reminder upon submission.
+ORA_REMINDER_INITIAL_DELAY_HOURS = 0
+
+# .. setting_name: ORA_REMINDER_SWEEP_INTERVAL_SECONDS
+# .. setting_default: 1800
+# .. setting_description: How often (in seconds) the platform-wide ORA reminder sweeper
+#   task re-schedules itself. Each sweep picks up all reminders whose next_reminder_at
+#   has passed. Default is 1800 (30 minutes).
+ORA_REMINDER_SWEEP_INTERVAL_SECONDS = 1800
+
+# .. setting_name: ORA_REMINDER_SWEEP_BATCH_SIZE
+# .. setting_default: 1000
+# .. setting_description: Maximum number of ORA reminder rows processed per sweep cycle.
+#   If more are due, the remaining will be picked up in the next sweep.
+ORA_REMINDER_SWEEP_BATCH_SIZE = 1000
+
 ##### LMS DEADLINE DISPLAY TIME_ZONE #######
 TIME_ZONE_DISPLAYED_FOR_DEADLINES = 'UTC'
 

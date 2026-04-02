@@ -38,3 +38,17 @@ DISABLE_EMAIL_NOTIFICATIONS = WaffleFlag(f'{WAFFLE_NAMESPACE}.disable_email_noti
 # .. toggle_target_removal_date: 2026-05-27
 # .. toggle_warning: When the flag is ON, Notifications will go through ace push channels.
 ENABLE_PUSH_NOTIFICATIONS = CourseWaffleFlag(f'{WAFFLE_NAMESPACE}.enable_push_notifications', __name__)
+
+# .. toggle_name: notifications.enable_ora_reminders
+# .. toggle_implementation: WaffleFlag
+# .. toggle_default: False
+# .. toggle_description: Waffle flag to enable ORA reminder notifications for learners
+#   who have pending self or peer review steps after submitting an ORA response.
+# .. toggle_use_cases: open_edx
+# .. toggle_creation_date: 2026-03-26
+# .. toggle_target_removal_date: None
+# .. toggle_warning: When the flag is ON, learners will receive periodic reminders
+#   for incomplete peer/self review steps.
+# .. toggle_tickets: None
+ENABLE_ORA_REMINDERS = WaffleFlag(f'{WAFFLE_NAMESPACE}.enable_ora_reminders', __name__)
+

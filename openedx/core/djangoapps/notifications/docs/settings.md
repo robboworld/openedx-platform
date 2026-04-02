@@ -47,6 +47,7 @@ Notification keys are listed in the table below. More notifications may be added
 | 12 | updates | course_updates | False             | Course updates |
 | 13 | grading | ora_staff_notifications | False             | New ORA submission for staff |
 | 14 | grading | ora_grade_assigned | False             | ORA grade received |
+| 15 | grading | ora_reminder | False             | ORA peer/self review reminder |
 
 ### Example configuration for overriding notification preferences:
 

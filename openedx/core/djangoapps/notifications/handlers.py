@@ -24,6 +24,10 @@ from openedx.core.djangoapps.notifications.tasks import create_notification_pref
 User = get_user_model()
 log = logging.getLogger(__name__)
 
+# Notification type emitted by ora2 on submission for ORAs with peer/self review steps.
+# This type is used only as a trigger; it is not stored as a notification itself.
+ORA_SUBMISSION_NOTIFICATION_TYPE = 'ora_submission_created'
+
 AUDIENCE_FILTER_CLASSES = {
     'discussion_roles': ForumRoleAudienceFilter,
     'course_roles': CourseRoleAudienceFilter,
