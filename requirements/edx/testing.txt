@@ -1050,7 +1050,7 @@ openedx-atlas==0.7.0
     #   enterprise-integrated-channels
     #   openedx-authz
     #   openedx-forum
-git+https://github.org/openedx/openedx-authz.git@bmtcril/handle_ccx
+git+https://github.com/openedx/openedx-authz.git@bmtcril/handle_ccx
     # via -r requirements/edx/base.txt
 openedx-calc==5.0.0
     # via
