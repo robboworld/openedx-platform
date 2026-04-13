@@ -38,4 +38,3 @@ DISABLE_EMAIL_NOTIFICATIONS = WaffleFlag(f'{WAFFLE_NAMESPACE}.disable_email_noti
 # .. toggle_target_removal_date: 2026-05-27
 # .. toggle_warning: When the flag is ON, Notifications will go through ace push channels.
 ENABLE_PUSH_NOTIFICATIONS = CourseWaffleFlag(f'{WAFFLE_NAMESPACE}.enable_push_notifications', __name__)
-
