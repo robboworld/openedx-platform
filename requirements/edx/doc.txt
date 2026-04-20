@@ -1622,7 +1622,7 @@ wrapt==2.1.2
     # via
     #   -r requirements/edx/base.txt
     #   xblocks-contrib
-xblock[django]==6.0.0
+xblock[django]==6.1.0
     # via
     #   -r requirements/edx/base.txt
     #   acid-xblock

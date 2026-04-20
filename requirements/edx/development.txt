@@ -2308,7 +2308,7 @@ wrapt==2.1.2
     #   -r requirements/edx/doc.txt
     #   -r requirements/edx/testing.txt
     #   xblocks-contrib
-xblock[django]==6.0.0
+xblock[django]==6.1.0
     # via
     #   -r requirements/edx/doc.txt
     #   -r requirements/edx/testing.txt
