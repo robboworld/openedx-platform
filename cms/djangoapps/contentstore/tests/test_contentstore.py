@@ -2142,13 +2142,6 @@ class EntryPageTestCase(TestCase):
         resp = self.client.get_html(page)
         self.assertEqual(resp.status_code, status_code)  # noqa: PT009
 
-    @override_waffle_flag(toggles.LEGACY_STUDIO_LOGGED_OUT_HOME, True)
-    def test_how_it_works_legacy(self):
-        self._test_page("/howitworks")
-
-    def test_how_it_works_redirect_to_signin(self):
-        self._test_page("/howitworks", 302)
-
     def test_signup(self):
         # deprecated signup url redirects to LMS register.
         self._test_page("/signup", 301)
