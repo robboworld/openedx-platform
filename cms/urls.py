@@ -8,8 +8,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.admin import autodiscover as django_autodiscover
 from django.urls import include, path, re_path
-from django.views.generic import RedirectView
 from django.utils.translation import gettext_lazy as _
+from django.views.generic import RedirectView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from edx_api_doc_tools import make_docs_urls
 

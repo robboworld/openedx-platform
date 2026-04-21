@@ -10,7 +10,6 @@ Part of https://github.com/openedx/edx-platform/issues/36275.
 
 import datetime
 import time
-from unittest import mock
 from urllib.parse import unquote
 
 from ddt import data, ddt, unpack
