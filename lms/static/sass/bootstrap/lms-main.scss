@@ -44,7 +44,5 @@ $static-path: '../..';
 // Extra theme-specific rules
 @import 'lms/theme/extras';
 
-@import '../brand-header-overrides';
-
 // Experiments
 @import 'experiments';
