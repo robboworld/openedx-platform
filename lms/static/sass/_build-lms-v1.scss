@@ -92,6 +92,3 @@
 
 // Extra theme-specific rules
 @import 'lms/theme/extras';
-
-// Fork overrides (after theme extras so Indigo’s _extras.scss does not shadow this file).
-@import 'brand-header-overrides';
