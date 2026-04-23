@@ -78,7 +78,6 @@ from openedx.core.djangoapps.authz.decorators import user_has_course_permission
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from openedx.core.djangoapps.credit.tasks import update_credit_course_requirements
 from openedx.core.djangoapps.models.course_details import CourseDetails
-from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from openedx.core.djangolib.js_utils import dump_js_escaped_json
 from openedx.core.lib.api.view_utils import view_auth_classes
 from openedx.core.lib.course_tabs import CourseTabPluginManager
@@ -99,7 +98,6 @@ from ..courseware_index import CoursewareSearchIndexer, SearchIndexingError
 from ..tasks import rerun_course as rerun_course_task
 from ..toggles import (
     default_enable_flexible_peer_openassessments,
-    use_new_advanced_settings_page,
     use_new_grading_page,
     use_new_group_configurations_page,
     use_new_schedule_details_page,
@@ -115,7 +113,6 @@ from ..utils import (
     get_group_configurations_context,
     get_group_configurations_url,
     get_lms_link_for_item,
-    get_proctored_exam_settings_url,
     get_schedule_details_url,
     get_studio_home_url,
     get_textbooks_url,
@@ -1522,24 +1519,7 @@ def advanced_settings_handler(request, course_key_string):
             advanced_dict.get('mobile_available')['deprecated'] = True
 
         if 'text/html' in request.META.get('HTTP_ACCEPT', '') and request.method == 'GET':
-            if use_new_advanced_settings_page(course_key):
-                return redirect(get_advanced_settings_url(course_key))
-            publisher_enabled = configuration_helpers.get_value_for_org(
-                course_block.location.org,
-                'ENABLE_PUBLISHER',
-                settings.FEATURES.get('ENABLE_PUBLISHER', False)
-            )
-            # gather any errors in the currently stored proctoring settings.
-            proctoring_errors = CourseMetadata.validate_proctoring_settings(course_block, advanced_dict, request.user)
-
-            return render_to_response('settings_advanced.html', {
-                'context_course': course_block,
-                'advanced_dict': advanced_dict,
-                'advanced_settings_url': reverse_course_url('advanced_settings_handler', course_key),
-                'publisher_enabled': publisher_enabled,
-                'mfe_proctored_exam_settings_url': get_proctored_exam_settings_url(course_block.id),
-                'proctoring_errors': proctoring_errors,
-            })
+            return redirect(get_advanced_settings_url(course_key))
         elif 'application/json' in request.META.get('HTTP_ACCEPT', ''):
             if request.method == 'GET':
                 return JsonResponse(CourseMetadata.fetch(course_block))

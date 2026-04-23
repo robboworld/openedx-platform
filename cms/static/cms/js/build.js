@@ -27,7 +27,6 @@
             'js/factories/manage_users',
             'js/factories/outline',
             'js/factories/settings',
-            'js/factories/settings_advanced',
             'js/factories/settings_graders'
         ]),
         /**
