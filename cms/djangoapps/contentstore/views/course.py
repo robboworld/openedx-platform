@@ -101,7 +101,6 @@ from ..toggles import (
     default_enable_flexible_peer_openassessments,
     use_new_advanced_settings_page,
     use_new_grading_page,
-    use_new_group_configurations_page,
     use_new_schedule_details_page,
 )
 from ..utils import (
@@ -112,7 +111,6 @@ from ..utils import (
     get_course_rerun_context,
     get_course_settings,
     get_grading_url,
-    get_group_configurations_context,
     get_group_configurations_url,
     get_lms_link_for_item,
     get_proctored_exam_settings_url,
@@ -1873,10 +1871,7 @@ def group_configurations_list_handler(request, course_key_string):
         course = get_course_and_check_manage_group_configurations_access(course_key, request.user)
 
         if 'text/html' in request.META.get('HTTP_ACCEPT', 'text/html'):
-            if use_new_group_configurations_page(course_key):
-                return redirect(get_group_configurations_url(course_key))
-            group_configurations_context = get_group_configurations_context(course, store)
-            return render_to_response('group_configurations.html', group_configurations_context)
+            return redirect(get_group_configurations_url(course_key))
         elif "application/json" in request.META.get('HTTP_ACCEPT'):
             if request.method == 'POST':
                 # create a new group configuration for the course
