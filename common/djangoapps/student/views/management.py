@@ -25,13 +25,9 @@ from django.shortcuts import redirect
 from django.template.context_processors import csrf
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.views.decorators.csrf import (  # lint-amnesty, pylint: disable=unused-import  # noqa: F401
-    csrf_exempt,
-    ensure_csrf_cookie,
-)
+from django.views.decorators.csrf import ensure_csrf_cookie  # lint-amnesty, pylint: disable=unused-import  # noqa: F401
 from django.views.decorators.http import (  # lint-amnesty, pylint: disable=unused-import
     require_GET,
-    require_http_methods,  # noqa: F401
     require_POST,
 )
 from edx_ace import ace
@@ -113,7 +109,6 @@ from openedx.core.djangolib.markup import HTML, Text
 from openedx.core.lib.api.authentication import BearerAuthenticationAllowInactiveUser
 from openedx.features.course_experience.url_helpers import make_learning_mfe_courseware_url
 from openedx.features.discounts.applicability import FIRST_PURCHASE_DISCOUNT_OVERRIDE_FLAG
-from openedx.features.enterprise_support.utils import is_enterprise_learner
 from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
 
 log = logging.getLogger("edx.student")
@@ -235,7 +230,6 @@ def compose_activation_email(
     message_context = generate_activation_email_context(user, user_registration)
     message_context.update({
         'confirm_activation_link': _get_activation_confirmation_link(message_context['key'], redirect_url),
-        'is_enterprise_learner': is_enterprise_learner(user),
         'is_first_purchase_discount_overridden': FIRST_PURCHASE_DISCOUNT_OVERRIDE_FLAG.is_enabled(),
         'route_enabled': route_enabled,
         'routed_user': user.username,
@@ -708,7 +702,7 @@ def activate_account(request, key):
         url_path = '/login?{}'.format(urllib.parse.urlencode(params))  # noqa: UP032
         return redirect(settings.AUTHN_MICROFRONTEND_URL + url_path)
 
-    response = redirect(redirect_url) if redirect_url and is_enterprise_learner(request.user) else redirect('dashboard')
+    response = redirect(redirect_url) if redirect_url else redirect('dashboard')
     if show_account_activation_popup:
         response.delete_cookie(
             settings.SHOW_ACTIVATE_CTA_POPUP_COOKIE_NAME,
