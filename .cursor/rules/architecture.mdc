@@ -1,0 +1,48 @@
+---
+description: Архитектура comprehensive-темы robbo-theme (Open edX) — слои, резолвинг, деплой
+globs: themes/robbo-theme/**
+alwaysApply: false
+---
+
+# Архитектура `themes/robbo-theme`
+
+Comprehensive theme (ветка от Indigo): светлые поверхности, зелёные акценты (`#15803d`, `#f0fdf4`), тёмная палитра с зелёным оттенком. Имя темы в Django — **`robbo-theme`** (имя каталога).
+
+## Как платформа подключает тему
+
+- Каталоги тем задаются **`COMPREHENSIVE_THEME_DIRS`**; в каждой базе лежат папки тем. Каталог считается темой, если в нём есть подкаталог **`lms`** и/или **`cms`** (`openedx/core/djangoapps/theming/helpers_dirs.py`, `is_theme_dir`).
+- На запросе **`CurrentSiteThemeMiddleware`** выставляет `request.site_theme`: приоритет — query `site_theme` → превью пользователя → первая **`SiteTheme`** у `request.site` в БД → иначе объект по **`DEFAULT_SITE_THEME`**, если задан (`openedx/core/djangoapps/theming/middleware.py`).
+- Корень файлов темы для текущего приложения: `<base>/<theme_dir_name>/lms` или `.../cms` (`Theme.path` в `helpers_dirs.py`).
+
+## Структура репозитория темы
+
+| Слой | LMS | CMS (Studio) |
+|------|-----|----------------|
+| Шаблоны | `lms/templates/**` | `cms/templates/**` |
+| Sass | `lms/static/sass/**` | `cms/static/sass/**` |
+| Скомпилированный CSS | `lms/static/css/**` | `cms/static/css/**` |
+| JS, изображения, шрифты | `lms/static/js`, `images`, `fonts` | аналогично под `cms/static` |
+
+Шаблоны — **точечные оверрайды**: путь тот же, что в `edx-platform` (Mako). Если файл есть в теме, используется он; иначе — шаблон ядра (`get_template_path_with_theme` в `openedx/core/djangoapps/theming/helpers.py`).
+
+Типичные зоны оверрайда в этой теме: `header/*`, `footer.html`, главная (`index.html`, `index_overlay.html`), `static_templates/*`, `courseware/*`, `discovery/*`, фрагменты дашборда; в Studio — в т.ч. `cms/templates/widgets/footer.html`.
+
+## Стили
+
+- Токены и шрифты: `lms/static/sass/partials/lms/theme/_variables.scss`, `cms/static/sass/partials/cms/theme/_variables.scss` (и при необходимости `_variables-v1.scss` в CMS).
+- Глобальные и компонентные правки: `_extras.scss`, модули в `extra/`, `home/`, `courseware/`, `dashboard/`, и т.д.
+- В дереве лежат **уже собранные** `*.css`; после изменений **SCSS** их нужно пересобрать (см. правило `openedx-tutor-scope.mdc`: `tutor dev exec` + `npm run compile-sass-dev` в контейнере при наличии Tutor).
+
+## JavaScript и тёмная тема
+
+- `lms/static/js/dark-theme.js`: переключение по cookie; имена **`indigo-toggle-dark`** (cookie) и класс **`indigo-dark-theme`** на `body` — **наследие Indigo**, стили в SCSS завязаны на те же имена; менять только согласованно с SCSS и шаблоном переключателя.
+- `lms/static/js/responsive-nav.js` подключается из переопределённого `lms/templates/header/header.html` (`<%block name="js_extra">`).
+
+## Развёртывание (ориентир)
+
+- Монт каталога темы в окружение Open edX (например `/openedx/themes/robbo-theme`) и **`DEFAULT_SITE_THEME = "robbo-theme"`**; при конфликте с другой темой — проверить **Django admin → Site / Site configuration** и записи `SiteTheme` (см. `themes/robbo-theme/README.rst`).
+
+## Ловушки
+
+- **`tasks/init.sh`** в теме по-прежнему может назначать сайтам тему **`indigo`** — артефакт форка; для Robbo опираться на README и настройки окружения/БД, а не на скрипт без правки.
+- Правки только в рамках задачи; Tutor (`config.yml`, плагины) — по явному согласию пользователя (см. `openedx-tutor-scope.mdc`).
