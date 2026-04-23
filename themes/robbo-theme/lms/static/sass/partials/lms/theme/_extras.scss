@@ -3,7 +3,7 @@
 $content_padding_top: 24px;
 $content-padding-bottom: 10px;
 $header-height: 75px;
-$footer-height: 125.5px;
+$footer-height: 240px;
 body, h1, h2, h3, h4, h5, h6, p, label, button {
   font-family: $font-family-title !important;
 }
@@ -236,25 +236,9 @@ nav.wrapper-preview-menu {
 /////////////////// Footer
 .wrapper-footer {
   box-shadow: none;
-  padding: 25px 40px;
-
-  .wrapper-logo {
-      display: none;
-  }
-  .copyright {
-      display: none;
-  }
-  .nav-legal ul {
-      display: inline-block;
-  }
-  footer#footer-openedx .footer-about-openedx {
-      a {
-          float: none;
-      }
-      p {
-          text-align: right;
-      }
-  }
+  padding: 28px 40px;
+  background-color: #fff;
+  border-top: 1px solid $gray-light;
 }
 .container, .main-container, .find-courses {
   max-width: 1600px;

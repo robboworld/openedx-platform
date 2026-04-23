@@ -1,7 +1,16 @@
-// Robbo site footer (LMS + shared class names with Studio)
+// Robbo footer in Studio (mirrors LMS `.robbo-site-footer`; self-contained for CMS Sass)
 
 $robbo-footer-logo-bg: #15803d;
 $robbo-footer-text: #515661;
+$robbo-footer-hover: #111827;
+
+.wrapper-footer.wrapper.robbo-studio-footer-wrap,
+.wrapper-footer.robbo-studio-footer-wrap {
+    background: #fff;
+    border-top: 1px solid #e7e7e7;
+    padding: 28px 40px;
+    box-shadow: none;
+}
 
 .robbo-site-footer {
     background: #fff;
@@ -18,7 +27,7 @@ $robbo-footer-text: #515661;
     padding: 0 15px;
     box-sizing: border-box;
 
-    @include media-breakpoint-down(sm) {
+    @media (max-width: 576px) {
         grid-template-columns: 1fr;
         justify-items: center;
         text-align: center;
@@ -30,7 +39,7 @@ $robbo-footer-text: #515661;
     align-items: center;
     justify-content: flex-start;
 
-    @include media-breakpoint-down(sm) {
+    @media (max-width: 576px) {
         justify-content: center;
     }
 }
@@ -74,10 +83,6 @@ $robbo-footer-text: #515661;
     color: $robbo-footer-text;
 }
 
-.robbo-footer__nav {
-    display: block;
-}
-
 .robbo-footer__links {
     list-style: none;
     margin: 0;
@@ -99,7 +104,7 @@ $robbo-footer-text: #515661;
 
         &:hover,
         &:focus {
-            color: $dark;
+            color: $robbo-footer-hover;
             text-decoration: underline;
         }
     }
@@ -110,7 +115,7 @@ $robbo-footer-text: #515661;
     justify-self: end;
     min-width: 0;
 
-    @include media-breakpoint-down(sm) {
+    @media (max-width: 576px) {
         justify-self: center;
         text-align: center;
     }
@@ -134,27 +139,6 @@ $robbo-footer-text: #515661;
 
     &:hover,
     &:focus {
-        color: $dark;
-    }
-}
-
-body.indigo-dark-theme {
-    .robbo-site-footer {
-        background: #fff;
-    }
-
-    .robbo-footer__copyright,
-    .robbo-footer__links a,
-    .robbo-footer__contacts-title,
-    .robbo-footer__contacts-line,
-    .robbo-footer__contacts-line a {
-        color: $robbo-footer-text;
-    }
-
-    .robbo-footer__links a:hover,
-    .robbo-footer__links a:focus,
-    .robbo-footer__contacts-line a:hover,
-    .robbo-footer__contacts-line a:focus {
-        color: $dark;
+        color: $robbo-footer-hover;
     }
 }

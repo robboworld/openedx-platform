@@ -6,6 +6,7 @@ from datetime import date, datetime, timedelta, timezone
 from itertools import product
 from random import randint
 from unittest import mock
+from urllib.parse import urljoin, urlparse
 from uuid import uuid4
 
 import ddt
@@ -177,8 +178,12 @@ class TestCourseSerializer(LearnerDashboardBaseTest):
         input_data = test_enrollment.course_overview
         output_data = CourseSerializer(input_data, context=test_context).data
 
+        expected_banner = input_data.image_urls["small"]
+        if settings.LMS_ROOT_URL and expected_banner and not urlparse(expected_banner).netloc:
+            expected_banner = urljoin(settings.LMS_ROOT_URL.rstrip("/") + "/", expected_banner)
+
         assert output_data == {
-            "bannerImgSrc": test_enrollment.course_overview.banner_image_url,
+            "bannerImgSrc": expected_banner,
             "courseName": test_enrollment.course_overview.display_name_with_default,
             "courseNumber": test_enrollment.course_overview.display_number_with_default,
             "socialShareUrl": test_context["course_share_urls"][course_id],

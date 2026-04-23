@@ -3,7 +3,7 @@ Serializers for Learner Home
 """
 
 from datetime import date, timedelta
-from urllib.parse import urlencode, urljoin
+from urllib.parse import urlencode, urljoin, urlparse
 
 from django.conf import settings
 from django.urls import reverse
@@ -68,10 +68,29 @@ class CourseSerializer(serializers.Serializer):
 
     requires_context = True
 
-    bannerImgSrc = serializers.URLField(source="image_urls.small")
+    bannerImgSrc = serializers.SerializerMethodField()
     courseName = serializers.CharField(source="display_name_with_default")
     courseNumber = serializers.CharField(source="display_number_with_default")
     socialShareUrl = serializers.SerializerMethodField()
+
+    def get_bannerImgSrc(self, obj):
+        """
+        Absolute URL for the course card image.
+
+        CourseOverview stores paths like ``/asset-v1:...`` which resolve correctly
+        when the dashboard is rendered on the LMS host. The Learner Home MFE is
+        often served from another origin; relative URLs would load from the MFE
+        host and break. Prefix with LMS_ROOT_URL when the URL has no netloc.
+        """
+        url = obj.image_urls["small"]
+        if not url:
+            return url
+        if urlparse(url).netloc:
+            return url
+        lms_root = getattr(settings, "LMS_ROOT_URL", None) or ""
+        if not lms_root:
+            return url
+        return urljoin(lms_root.rstrip("/") + "/", url)
 
     def get_socialShareUrl(self, instance):
         return self.context.get("course_share_urls", {}).get(instance.id)
