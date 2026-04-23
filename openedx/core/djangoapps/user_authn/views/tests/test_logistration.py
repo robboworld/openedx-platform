@@ -107,7 +107,8 @@ class LoginAndRegistrationTest(ThirdPartyAuthTestMixin, UrlResetMixin, ModuleSto
 
     @ddt.data(
         ("signin_user", "login"),
-        ("register_user", "register"),
+        # /register is served as login while self-registration is disabled (Robbo).
+        ("register_user", "login"),
     )
     @ddt.unpack
     def test_login_and_registration_form(self, url_name, initial_mode):

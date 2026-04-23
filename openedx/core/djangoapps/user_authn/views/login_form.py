@@ -235,10 +235,13 @@ def login_and_registration_form(request, initial_mode="login"):
     ]
 
     # Otherwise, render the combined login/registration page
+    # Temporary (Robbo): public self-registration is hidden — only sign-in is offered.
+    # /register still resolves here but opens the login form; restore previous lines to re-enable.
+    layout_initial_mode = 'login' if initial_mode == 'register' else initial_mode
     context = {
         'data': {
             'login_redirect_url': redirect_to,
-            'initial_mode': initial_mode,
+            'initial_mode': layout_initial_mode,
             'third_party_auth': third_party_auth_context(request, redirect_to, third_party_auth_hint),
             'third_party_auth_hint': third_party_auth_hint or '',
             'platform_name': configuration_helpers.get_value('PLATFORM_NAME', settings.PLATFORM_NAME),
@@ -258,7 +261,7 @@ def login_and_registration_form(request, initial_mode="login"):
             'password_reset_form_desc': json.loads(form_descriptions['password_reset']),
             'account_creation_allowed': configuration_helpers.get_value(
                 'ALLOW_PUBLIC_ACCOUNT_CREATION', settings.FEATURES.get('ALLOW_PUBLIC_ACCOUNT_CREATION', True)),
-            'register_links_allowed': settings.FEATURES.get('SHOW_REGISTRATION_LINKS', True),
+            'register_links_allowed': False,
             'is_account_recovery_feature_enabled': is_secondary_email_feature_enabled(),
             'enterprise_slug_login_url': get_enterprise_slug_login_url(),
             'is_enterprise_enable': enterprise_enabled(),
