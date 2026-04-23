@@ -2,13 +2,13 @@
 // Indigo ships its own partials/lms/theme/_extras.scss first on the Sass include path,
 // so overrides must not live in that partial — use this file instead.
 
-$brand-header-green: #00af41;
+// Match Robbo LMS theme bar: solid brand green (reference), not frosted Indigo strip.
+$brand-header-green: #00b140;
 
 header.global-header {
-  background: rgba($brand-header-green, 0.92) !important;
+  background: $brand-header-green !important;
   border-bottom: none !important;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.12) !important;
-  backdrop-filter: blur(6px);
+  box-shadow: none !important;
 
   .header-logo .logo-white {
     display: none !important;
@@ -22,21 +22,12 @@ header.global-header {
     display: none !important;
   }
 
-  a.discover-new-link,
-  .nav-links .main .nav-tab a[href="/courses"] {
-    display: none !important;
-  }
-
   .nav-links .main .nav-item:empty {
     display: none;
   }
 
-  .nav-links .main .nav-tab:has(a[href="/courses"]) {
-    display: none !important;
-  }
-
-  .nav-links .main,
-  .nav-links .secondary {
+  // Do not target `.secondary .nav-item a` — the user dropdown lives there and uses a white panel.
+  .nav-links .main {
     .nav-item a:not(.btn) {
       color: #fff !important;
     }
@@ -50,6 +41,21 @@ header.global-header {
         color: #fff !important;
         border-bottom-color: #fff !important;
       }
+    }
+  }
+
+  body:not(.indigo-dark-theme) & .nav-links .secondary .dropdown-user-menu {
+    background: #fff !important;
+    color: #111827 !important;
+  }
+
+  body:not(.indigo-dark-theme) & .nav-links .secondary .dropdown-user-menu a[role="menuitem"] {
+    color: #111827 !important;
+
+    &:hover,
+    &:focus {
+      color: #111827 !important;
+      background-color: #f3f4f6 !important;
     }
   }
 
@@ -101,6 +107,58 @@ header.global-header {
 }
 
 body.indigo-dark-theme header.global-header {
-  background: rgba($brand-header-green, 0.92) !important;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2) !important;
+  background: $brand-header-green !important;
+  box-shadow: none !important;
+}
+
+// After all Indigo fork rules: edx `.global-header` sets overflow:hidden and tab links use
+// negative margin-bottom — clip pill buttons. This file loads last in _build-lms-v1.scss.
+header.global-header {
+  overflow: visible !important;
+}
+
+header.global-header .main-header {
+  box-sizing: border-box;
+  min-height: 64px;
+  padding: 6px 0;
+}
+
+// Reference: text links (not pills); undo edx negative margins.
+header.global-header .nav-links .main .nav-tab a.tab-nav-link {
+  margin-bottom: 0 !important;
+  display: inline-block !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 6px 0 !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  line-height: 1.35 !important;
+  letter-spacing: 0.01em;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-bottom: 2px solid transparent !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+header.global-header .nav-links .main .nav-tab a.tab-nav-link:hover,
+header.global-header .nav-links .main .nav-tab a.tab-nav-link.active {
+  background: transparent !important;
+  border-bottom-color: #fff !important;
+}
+
+// Click focus: no white box (outline). Keyboard: light ring only.
+header.global-header .nav-links .main .nav-tab a.tab-nav-link:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+header.global-header .nav-links .main .nav-tab a.tab-nav-link:active {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+header.global-header .nav-links .main .nav-tab a.tab-nav-link:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.45) !important;
+  outline-offset: 3px !important;
 }

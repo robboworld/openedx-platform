@@ -316,6 +316,8 @@ def courses(request):
             'course_discovery_meanings': course_discovery_meanings,
             'set_default_filter': set_default_filter,
             'programs_list': programs_list,
+            # Match learner dashboard header: primary nav tabs are hidden when unset (Mako treats as falsy).
+            'show_dashboard_tabs': True,
         }
     )
 
