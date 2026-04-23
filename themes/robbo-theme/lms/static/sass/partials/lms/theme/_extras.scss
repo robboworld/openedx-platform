@@ -2,8 +2,7 @@
 
 $content_padding_top: 24px;
 $content-padding-bottom: 10px;
-$header-height: 75px;
-$footer-height: 240px;
+$header-height: 62px;
 body, h1, h2, h3, h4, h5, h6, p, label, button {
   font-family: $font-family-title !important;
 }
@@ -78,7 +77,6 @@ h1, h2, h3, h1 span, h2 span, h3 span, .nav-item {
     padding-bottom: $content-padding-bottom;
     margin-top: $header-height;
   }
-  min-height: calc(100vh - #{$header-height + $content-padding-top + $content-padding-bottom + $footer-height}); // sticky footer
 }
 
 ////////////////// Fonts
@@ -233,12 +231,13 @@ nav.wrapper-preview-menu {
   border-bottom-color: $primary;
 }
 
-/////////////////// Footer
+/////////////////// Footer (sticky to viewport bottom, fixed flex footprint)
 .wrapper-footer {
   box-shadow: none;
-  padding: 28px 40px;
+  padding: 20px clamp(20px, 4vw, 45px);
   background-color: #fff;
-  border-top: 1px solid $gray-light;
+  border-top: 1px solid #e0e0e0;
+  flex: 0 0 auto;
 }
 .container, .main-container, .find-courses {
   max-width: 1600px;
@@ -248,8 +247,21 @@ nav.wrapper-preview-menu {
 }
 .window-wrap {
   position: relative;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: visible;
+
+  // main fills space so footer sits at bottom when content is short
+  > #content.content-wrapper.main-container {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
 }
 #lean_overlay {
   z-index: 250;
