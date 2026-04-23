@@ -6,7 +6,6 @@ from .course_details import CourseDetailsSerializer  # noqa: F401
 from .course_index import CourseIndexSerializer  # noqa: F401
 from .course_rerun import CourseRerunSerializer  # noqa: F401
 from .course_team import CourseTeamSerializer  # noqa: F401
-from .course_waffle_flags import CourseWaffleFlagsSerializer  # noqa: F401
 from .grading import CourseGradingModelSerializer, CourseGradingSerializer  # noqa: F401
 from .group_configurations import CourseGroupConfigurationsSerializer  # noqa: F401
 from .home import CourseHomeTabSerializer, LibraryTabSerializer, StudioHomeSerializer  # noqa: F401
