@@ -31,7 +31,9 @@ $robbo-header-green: #00b140;
 header.global-header {
     background: $robbo-header-green;
     border: none;
+    border-bottom: none !important;
     padding: 0;
+    padding-bottom: 0 !important;
     // Baseline `.global-header` sets overflow:hidden and clips pill nav; win over load order.
     overflow: visible !important;
     box-shadow: none;
@@ -170,10 +172,6 @@ header.global-header {
 
             @include media-breakpoint-up(lg) {
                 @include margin-right(0);
-            }
-
-            .btn-holder .nav-item {
-                padding-top: 0;
             }
 
             .register-btn {
