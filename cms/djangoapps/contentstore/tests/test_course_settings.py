@@ -39,8 +39,7 @@ from cms.djangoapps.models.settings.course_grading import (
 from cms.djangoapps.models.settings.course_metadata import CourseMetadata
 from cms.djangoapps.models.settings.encoder import CourseSettingsEncoder
 from cms.djangoapps.models.settings.waffle import MATERIAL_RECOMPUTE_ONLY_FLAG
-from common.djangoapps.course_modes.models import CourseMode
-from common.djangoapps.student.roles import CourseInstructorRole, CourseStaffRole
+from common.djangoapps.student.roles import CourseStaffRole
 from common.djangoapps.student.tests.factories import UserFactory
 from common.djangoapps.util import milestones_helpers
 from common.djangoapps.xblock_django.models import XBlockStudioConfigurationFlag
@@ -1691,5 +1690,3 @@ class CourseGraderUpdatesTest(CourseTestCase):
         self.assertEqual(obj, grader)  # noqa: PT009
         current_graders = CourseGradingModel.fetch(self.course.id).graders
         self.assertEqual(len(self.starting_graders) + 1, len(current_graders))  # noqa: PT009
-
-
