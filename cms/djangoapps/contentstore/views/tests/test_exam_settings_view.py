@@ -25,7 +25,6 @@ from common.djangoapps.util.testing import UrlResetMixin
     },
 )
 @override_waffle_flag(toggles.LEGACY_STUDIO_CERTIFICATES, True)
-@override_waffle_flag(toggles.LEGACY_STUDIO_SCHEDULE_DETAILS, True)
 @override_waffle_flag(toggles.LEGACY_STUDIO_CONFIGURATIONS, True)
 @override_waffle_flag(toggles.LEGACY_STUDIO_GRADING, True)
 @override_waffle_flag(toggles.LEGACY_STUDIO_ADVANCED_SETTINGS, True)
@@ -52,7 +51,6 @@ class TestExamSettingsView(CourseTestCase, UrlResetMixin):
     @override_waffle_flag(toggles.LEGACY_STUDIO_EXAM_SETTINGS, True)
     @ddt.data(
         "certificates_list_handler",
-        "settings_handler",
         "group_configurations_list_handler",
         "grading_handler",
         "advanced_settings_handler"
@@ -69,7 +67,6 @@ class TestExamSettingsView(CourseTestCase, UrlResetMixin):
 
     @ddt.data(
         "certificates_list_handler",
-        "settings_handler",
         "group_configurations_list_handler",
         "grading_handler",
         "advanced_settings_handler"
