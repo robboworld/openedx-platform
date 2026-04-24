@@ -1,0 +1,79 @@
+/**
+ * Robbo MFE shell — выравнивает Indigo header/footer с LMS robbo-theme
+ * (зелёная шапка #00b140, светлый футер как на robbo-site-footer).
+ * Подключается в сборке MFE через Dockerfile (см. плагин).
+ */
+
+/* ---- Header (Indigo @edly-io/frontend-component-header) ---- */
+.site-header-desktop {
+  background: #00b140 !important;
+  box-shadow: none !important;
+}
+
+.site-header-desktop .nav-link,
+.site-header-desktop .logo a,
+.site-header-desktop .btn-link,
+.site-header-desktop .dropdown-toggle {
+  color: #fff !important;
+}
+
+.site-header-desktop .nav-link:hover,
+.site-header-desktop .nav-link:focus,
+.site-header-desktop .nav-link.active,
+.site-header-desktop .expanded .nav-link {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #fff !important;
+}
+
+.site-header-desktop .secondary-menu-container .nav-link:hover,
+.site-header-desktop .secondary-menu-container .nav-link:focus,
+.site-header-desktop .secondary-menu-container .nav-link.active {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #fff !important;
+}
+
+.site-header-desktop .main-nav .menu .menu-content {
+  border-top-color: #15803d !important;
+}
+
+.site-header-mobile {
+  background: #00b140 !important;
+}
+
+.site-header-mobile .nav-link {
+  color: #fff !important;
+}
+
+.icon-button:hover,
+.icon-button:focus {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* ---- Footer (Indigo @edly-io/indigo-frontend-component-footer) ---- */
+.wrapper.wrapper-footer {
+  background: #fff !important;
+  border-top: 1px solid #e5e7eb;
+  margin-top: auto;
+}
+
+.wrapper.wrapper-footer #footer.tutor-container {
+  background: #fff !important;
+  color: #777;
+}
+
+.wrapper.wrapper-footer .footer-top {
+  background: #fff !important;
+}
+
+.wrapper.wrapper-footer .powered-area,
+.wrapper.wrapper-footer .logo-list {
+  color: #777;
+}
+
+.wrapper.wrapper-footer .logo-list a {
+  opacity: 1;
+}
+
+.wrapper.wrapper-footer .copyright-site {
+  color: #777;
+}

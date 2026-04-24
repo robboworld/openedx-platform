@@ -1,0 +1,22 @@
+# Справочник бренда Robbo для согласования LMS (Sass) и MFE (Paragon / design tokens).
+# Источник переменных LMS: lms/static/sass/partials/lms/theme/_variables.scss
+
+primary: "#15803d"
+primary_light: "#f0fdf4"
+dark_surface: "#111827"
+text_dark_theme: "#F8F8F8"
+
+fonts:
+  title: "Inter, sans-serif"
+  body: "Crimson, 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+
+# Google Fonts для заголовков (как в _variables.scss)
+google_fonts_url: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+
+# Статика темы для MFE (пути от корня LMS после collectstatic / dev):
+mfe_logo_paths:
+  default: "/static/robbo-theme/images/Vector.svg"
+  white: "/static/robbo-theme/images/logo-mfe-white.svg"
+
+# Цвета шапки/футера для Indigo MFE см. tutor-plugin-robbo-mfe-branding/.../robbo-mfe-shell.css
+# (подключается при сборке образа mfe, не из этого файла).

@@ -5,10 +5,18 @@
 
 ## [0.1.0] - 23.04.2026
 
+### Изменено
+
+- **[Документация MFE + правила Cursor]** [PRODUCTION.md](tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md): добавлен блок **«Скопировать в чат Cursor»** для поручения агенту полной настройки Tutor/плагина. Правила `.cursor/rules/openedx-tutor-scope.mdc` и `tutor-robbo-mfe-branding.mdc` **объединены** в [.cursor/rules/openedx-tutor-robbo.mdc](.cursor/rules/openedx-tutor-robbo.mdc); ссылки в `architecture.mdc` и README плагина обновлены.
+
 ### Добавлено
 
+- **[MFE + Tutor — документация]** [tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md](tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md) — блок для вставки в чат Cursor + справочник продакшена. Правила объединены в [.cursor/rules/openedx-tutor-robbo.mdc](.cursor/rules/openedx-tutor-robbo.mdc) (удалены `openedx-tutor-scope.mdc`, `tutor-robbo-mfe-branding.mdc`).
+- **[MFE + Tutor]** Единый брендинг с LMS: pip-пакет [`tutor-plugin-robbo-mfe-branding`](tutor-plugin-robbo-mfe-branding/README.md) патчит `mfe-lms-common-settings` / dev / prod — в `MFE_CONFIG` задаются логотипы Robbo (`/static/robbo-theme/images/Vector.svg`, `logo-mfe-white.svg`) и **`PARAGON_THEME_URLS` только для светлой темы** (Paragon + `@openedx/brand-openedx` с jsDelivr, плейсхолдеры `$paragonVersion` / `$brandVersion`). Для **шапки и футера Indigo** в образ MFE подмешивается [`robbo-mfe-shell.css`](tutor-plugin-robbo-mfe-branding/tutor_plugin_robbo_mfe_branding/templates/robbo-mfe-shell.css) (зелёная полоса `#00b140`, светлый футер как на LMS). После обновления плагина: `tutor config save`, **`tutor images build mfe`**, перезапуск стека. Включение плагина: `pip install -e ./tutor-plugin-robbo-mfe-branding`, `robbo-mfe-branding` в `config.yml`.
+- **[Тема]** Справочник токенов для согласования с MFE: [`themes/robbo-theme/mfe-brand-tokens.yaml`](themes/robbo-theme/mfe-brand-tokens.yaml); SVG **`logo-mfe-white.svg`** для `LOGO_WHITE_URL` на тёмных хедерах MFE.
 - **[LMS] Шапка по референсу:** зелёная полоса (`#00b140`), белый текст навигации; логотип заменён на **словесный знак «РОББО®»** (`navbar-logo-header.html`, стили в `extra/_header.scss`); переключатель темы в шапке скрыт.
-- **[Правила Cursor]** В `.cursor/rules/openedx-tutor-scope.mdc` добавлено исключение: после правок **`.scss`** в этом репозитории агент запускает сборку Sass командой `tutor dev exec lms bash -lc 'cd /openedx/edx-platform && npm run compile-sass-dev'`.
+- **[Правила Cursor]** В `.cursor/rules/openedx-tutor-robbo.mdc` (ранее отдельно в `openedx-tutor-scope.mdc`): после правок **`.scss`** в этом репозитории агент запускает сборку Sass командой `tutor dev exec lms bash -lc 'cd /openedx/edx-platform && npm run compile-sass-dev'`.
+- **[Tutor]** В `config.yml` оператора: **`INDIGO_ENABLE_DARK_TOGGLE: false`** — скрыт переключатель тёмной темы в UI (LMS + MFE через Indigo), без удаления кода; тёмный режим можно снова включить позже той же настройкой и при необходимости расширением `PARAGON_THEME_URLS`.
 - **[Правила Cursor]** `.cursor/rules/changelog-and-commits.mdc`: при запросе **закоммитить** — обновлять `CHANGELOG.md` под текущей версией; при фразе **«обнови changelog под текущей версией»** — править только описание существующего верхнего раздела версии, без нового номера.
 
 ### Изменено
@@ -31,4 +39,4 @@
 - **[LMS+Studio] Футер:** из списка документов удалён пункт **«Согласие на получение рекламы»** (`lms/templates/footer.html`, `cms/templates/widgets/footer.html`).
 - **[LMS] Шапка:** у ссылок «Мои курсы» / «Каталог» убран **белый квадрат при клике** (outline/`tap-highlight`; для клавиатуры оставлен лёгкий `:focus-visible`).
 
-Где изменено: `themes/robbo-theme` (`lms/static/sass/extra/_footer.scss`, `lms/static/sass/extra/_header.scss`, `lms/static/sass/home/_home.scss`, `lms/static/sass/partials/lms/theme/_extras.scss`, `lms/templates/footer.html`, `lms/templates/courseware/courses.html`, `lms/templates/header/*.html`), `themes/robbo-theme/cms/static/sass/partials/cms/theme/_footer.scss`, `themes/robbo-theme/cms/templates/widgets/footer.html`, `lms/static/sass/_brand-header-overrides.scss`, `lms/djangoapps/courseware/views/views.py`, `.cursor/rules/openedx-tutor-scope.mdc`, `.cursor/rules/changelog-and-commits.mdc`, `CHANGELOG.md`.
+Где изменено: `themes/robbo-theme` (в т.ч. `mfe-brand-tokens.yaml`, `lms/static/images/logo-mfe-white.svg`, `lms/static/sass/extra/_footer.scss`, `lms/static/sass/extra/_header.scss`, `lms/static/sass/home/_home.scss`, `lms/static/sass/partials/lms/theme/_extras.scss`, `lms/templates/footer.html`, `lms/templates/courseware/courses.html`, `lms/templates/header/*.html`), `themes/robbo-theme/cms/static/sass/partials/cms/theme/_footer.scss`, `themes/robbo-theme/cms/templates/widgets/footer.html`, `tutor-plugin-robbo-mfe-branding/` (в т.ч. `docs/PRODUCTION.md`), `lms/static/sass/_brand-header-overrides.scss`, `lms/djangoapps/courseware/views/views.py`, `.cursor/rules/openedx-tutor-robbo.mdc`, `.cursor/rules/architecture.mdc`, `.cursor/rules/changelog-and-commits.mdc`, `CHANGELOG.md`; у оператора также `~/.local/share/tutor/config.yml` (плагин `robbo-mfe-branding` и `INDIGO_ENABLE_DARK_TOGGLE`).

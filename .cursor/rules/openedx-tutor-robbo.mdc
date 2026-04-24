@@ -1,0 +1,52 @@
+---
+description: Open edX (репозиторий), Tutor, плагин robbo-mfe-branding, документация, продакшен MFE
+alwaysApply: true
+---
+
+# Open edX, Tutor и Robbo MFE branding
+
+Единое правило: **область правок** в `openedx-platform`, работа с **Tutor**, плагин **`tutor-plugin-robbo-mfe-branding`** (в Tutor — `robbo-mfe-branding`). Раньше это были отдельные файлы `openedx-tutor-scope.mdc` и `tutor-robbo-mfe-branding.mdc`.
+
+## Сначала документация
+
+- **По каждой задаче** прежде чем глубоко копать код или «изобретать» решение, **опереться на документацию**: в ней часто есть готовый ответ, рекомендованный способ и ограничения версий.
+- Проверять по порядку, что уместно: официальные источники **Open edX** (например [docs.openedx.org](https://docs.openedx.org/)), **Tutor** — [docs.tutor.edly.io](https://docs.tutor.edly.io/) и [GitHub `overhangio/tutor`](https://github.com/overhangio/tutor), **релевантные README/CHANGELOG/ADR** внутри `openedx-platform` и плагинов/темы в репозитории.
+- Если в документации описан стандартный путь (настройка, флаг, плагин, MFE, тема) — **предпочитать его** собственной эвристике, если он не противоречит задаче и правилам области правок ниже.
+- При необходимости **уточнить формулировки и актуальность** внешних страниц (версия релиза, устаревшие разделы) — использовать веб-поиск или чтение страницы, не полагаться только на память.
+
+## Где можно менять код без дополнительных вопросов
+
+- Вносить изменения **только в кодовой базе `openedx-platform`** (репозиторий / дерево приложения Open edX), в рамках **текущей задачи**.
+
+## Tutor и окружение развёртывания
+
+- Любые правки в **Tutor** (корень развёртывания Tutor, `config.yml`, `env/`, плагины Tutor, патчи окружения, скрипты и конфигурация, относящиеся к Tutor, а не к исходникам edx) — **только после явного подтверждения пользователя** в чате.
+- **Исключение:** пользователь вставил в чат **блок «Скопировать в чат Cursor»** из [`tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md`](tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md) (или приложил этот файл с явной просьбой выполнить настройку по нему) — считать это **поручением** на правки `config.yml` / шаги Tutor, перечисленные в том блоке, в пределах настройки Robbo MFE branding.
+- Если подтверждения нет — **не редактировать** `config.yml` и чужой `env/`; ограничиться `openedx-platform` или задать короткий вопрос.
+
+### Сборка Sass после правок SCSS (разрешённый вызов Tutor)
+
+- Если в задаче затрагивались файлы **`.scss` / Sass** в `openedx-platform` (темы, `lms/static/sass`, CMS и т.д.), после правок **выполни пересборку стилей** сам (не ограничивайся подсказкой пользователю), если в окружении доступен `tutor`:
+
+```bash
+tutor dev exec lms bash -lc 'cd /openedx/edx-platform && npm run compile-sass-dev' 2>&1
+```
+
+- Это **не** правка конфигурации Tutor: однократный `tutor dev exec` в контейнер LMS с рабочим каталогом платформы в контейнере (`/openedx/edx-platform`).
+- Если `tutor` недоступен или команда падает (окружение не поднято), кратко опиши ошибку и что нужно пользователю для сборки.
+
+## Плагин Robbo MFE branding (`robbo-mfe-branding`)
+
+- **Назначение:** см. [`tutor-plugin-robbo-mfe-branding/README.md`](tutor-plugin-robbo-mfe-branding/README.md) — `MFE_CONFIG` (логотипы, `PARAGON_THEME_URLS`), окраска шапки/футера Indigo через **`robbo-mfe-shell.css`** при сборке образа `mfe`.
+- **Код плагина:** [`tutor-plugin-robbo-mfe-branding/tutor_plugin_robbo_mfe_branding/__init__.py`](tutor-plugin-robbo-mfe-branding/tutor_plugin_robbo_mfe_branding/__init__.py).
+- **CSS оболочки:** [`tutor-plugin-robbo-mfe-branding/tutor_plugin_robbo_mfe_branding/templates/robbo-mfe-shell.css`](tutor-plugin-robbo-mfe-branding/tutor_plugin_robbo_mfe_branding/templates/robbo-mfe-shell.css).
+- **Токены (справочно):** [`themes/robbo-theme/mfe-brand-tokens.yaml`](themes/robbo-theme/mfe-brand-tokens.yaml).
+- **Продакшен и классы изменений (A/B/C):** [`tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md`](tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md). Длинные чеклисты продакшена **не дублировать** в ответе — дать ссылку на этот файл.
+- После правок в плагине (`.py`, `robbo-mfe-shell.css`, `pyproject.toml`) указывать пользователю минимум: `pip install -e …/tutor-plugin-robbo-mfe-branding`, `tutor config save`, а при изменениях, вшиваемых в сборку MFE (класс **B** в PRODUCTION.md) — **`tutor images build mfe`**.
+- **Зависимости:** плагины **`mfe`** и **`indigo`** должны быть включены; порядок `PLUGINS` не менять без проверки сгенерированного `env/plugins/mfe/build/mfe/Dockerfile`.
+- Не смешивать в одном изменении несвязанные правки edx-platform и плагина без запроса пользователя.
+
+## Одна задача — один фокус
+
+- При выполнении плана, ревью диффа или списка изменений: **не трогать** файлы, шаги или правки, которые **не относятся к текущей задаче** (чужие фиксы, «заодно» улучшения, несвязанные рефакторинги).
+- Не расширять объём работы без запроса пользователя.

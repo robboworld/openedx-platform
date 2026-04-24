@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tutor-plugin-robbo-mfe-branding"
+version = "0.1.0"
+description = "Robbo MFE branding: MFE_CONFIG logos, PARAGON_THEME_URLS (light only), Tutor patches"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = ["tutor>=16.0", "tutor-mfe"]
+
+[project.entry-points."tutor.plugin.v1"]
+robbo-mfe-branding = "tutor_plugin_robbo_mfe_branding"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["tutor_plugin_robbo_mfe_branding*"]
+
+[tool.setuptools.package-data]
+tutor_plugin_robbo_mfe_branding = ["templates/**/*"]
