@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Open edX, Tutor и Robbo theme/MFE overrides
 
-Единое правило: **область правок** в `openedx-platform`, работа с **Tutor**, comprehensive theme **`themes/robbo-theme`**, локальные MFE overrides и плагин **`tutor-plugin-robbo-mfe-branding`** (в Tutor — `robbo-mfe-branding`).
+Единое правило: **область правок** в `openedx-platform`, работа с **Tutor**, comprehensive theme **`themes/robbo-theme`**, MFE overrides из meta-repo и плагин **`tutor-plugin-robbo-mfe-branding`** (в Tutor — `robbo-mfe-branding`).
 
 ## Сначала документация
 
@@ -16,7 +16,7 @@ alwaysApply: true
 
 ## Где можно менять код без дополнительных вопросов
 
-- Вносить изменения **только в кодовой базе `openedx-platform`** (репозиторий / дерево приложения Open edX), в рамках **текущей задачи**.
+- Вносить изменения **только в кодовой базе `openedx-platform`** (этот submodule: `robbo-openedx-stack/repos/openedx-platform`) или в явно запрошенных соседних submodules meta-repo, в рамках **текущей задачи**.
 
 ## Tutor и окружение развёртывания
 
@@ -38,9 +38,9 @@ tutor dev exec lms bash -lc 'cd /openedx/edx-platform && npm run compile-sass-de
 ## Текущая архитектура Robbo и MFE
 
 - **LMS/CMS** оформляются через comprehensive theme [`themes/robbo-theme`](themes/robbo-theme) (Mako templates + Sass/CSS + статика). После правок `.scss` в теме выполнять пересборку Sass как указано выше.
-- **MFE интерфейс** сейчас правится не через общий shell-патч, а через локальные override-репозитории `frontend-app-*`, подключённые `tutor mounts add`. Подробности и текущий список — в [`.cursor/rules/architecture.mdc`](.cursor/rules/architecture.mdc).
-- Минимальный набор MFE overrides находится вне `openedx-platform`: `/home/manris/Projects/Robbo/mfe-overrides/frontend-app-learner-dashboard`, `frontend-app-learning`, `frontend-app-authn`, `frontend-app-profile`, `frontend-app-account`.
-- Для MFE dev: если сервис падает с `fedx-scripts: not found`, установить зависимости в mounted repo (`npm clean-install`). Если порт MFE занят общим `mfe`, остановить его (`tutor dev stop mfe`) и запускать конкретный сервис, например `tutor dev start --detach learner-dashboard`.
+- **MFE интерфейс** сейчас правится не через общий shell-патч, а через override-репозитории `frontend-app-*` в meta-repo, подключённые `tutor mounts add`. Подробности и текущий список — в [`.cursor/rules/architecture.mdc`](.cursor/rules/architecture.mdc).
+- Минимальный набор MFE overrides находится в `robbo-openedx-stack/repos/mfe-overrides/`: `frontend-app-learner-dashboard`, `frontend-app-learning`, `frontend-app-authn`, `frontend-app-profile`, `frontend-app-account`.
+- Для MFE dev: если сервис падает с `fedx-scripts: not found`, установить зависимости в mounted repo (`npm clean-install`). `learner-dashboard` запускается отдельным сервисом (`tutor dev start --detach learner-dashboard`), а общий `mfe` контейнер нужен для встроенных MFE вроде `authoring` на порту `2001`.
 
 ## Плагин Robbo MFE branding (`robbo-mfe-branding`)
 
