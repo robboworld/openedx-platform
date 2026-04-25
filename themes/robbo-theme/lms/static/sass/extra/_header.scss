@@ -151,12 +151,45 @@ header.global-header {
             .nav-tab {
                 float: none !important;
 
-                // Visual details (bold text + underline) finalized in `_brand-header-overrides.scss` (loads last).
                 a {
                     color: #fff !important;
+                    display: inline-block !important;
                     text-decoration: none;
                     margin-bottom: 0 !important;
+                    border: none !important;
+                    border-radius: 0 !important;
+                    padding: 6px 0 !important;
+                    font-weight: 700 !important;
+                    font-size: 15px !important;
+                    line-height: 1.35 !important;
+                    letter-spacing: 0.01em;
+                    background: transparent !important;
+                    box-shadow: none !important;
+                    border-bottom: 2px solid transparent !important;
                     -webkit-tap-highlight-color: transparent;
+
+                    &.active,
+                    &:hover {
+                        color: #fff !important;
+                        background: transparent !important;
+                        border-bottom-color: #fff !important;
+                    }
+
+                    &:focus {
+                        outline: none !important;
+                        box-shadow: none !important;
+                        background: transparent !important;
+                    }
+
+                    &:active {
+                        background: transparent !important;
+                        box-shadow: none !important;
+                    }
+
+                    &:focus-visible {
+                        outline: 2px solid rgba(255, 255, 255, 0.45) !important;
+                        outline-offset: 3px !important;
+                    }
                 }
             }
         }
