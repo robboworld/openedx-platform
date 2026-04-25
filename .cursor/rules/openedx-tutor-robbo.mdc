@@ -1,11 +1,11 @@
 ---
-description: Open edX (репозиторий), Tutor, плагин robbo-mfe-branding, документация, продакшен MFE
+description: Open edX, Tutor 20, robbo-theme LMS/CMS, MFE overrides и robbo-mfe-branding
 alwaysApply: true
 ---
 
-# Open edX, Tutor и Robbo MFE branding
+# Open edX, Tutor и Robbo theme/MFE overrides
 
-Единое правило: **область правок** в `openedx-platform`, работа с **Tutor**, плагин **`tutor-plugin-robbo-mfe-branding`** (в Tutor — `robbo-mfe-branding`). Раньше это были отдельные файлы `openedx-tutor-scope.mdc` и `tutor-robbo-mfe-branding.mdc`.
+Единое правило: **область правок** в `openedx-platform`, работа с **Tutor**, comprehensive theme **`themes/robbo-theme`**, локальные MFE overrides и плагин **`tutor-plugin-robbo-mfe-branding`** (в Tutor — `robbo-mfe-branding`).
 
 ## Сначала документация
 
@@ -35,16 +35,21 @@ tutor dev exec lms bash -lc 'cd /openedx/edx-platform && npm run compile-sass-de
 - Это **не** правка конфигурации Tutor: однократный `tutor dev exec` в контейнер LMS с рабочим каталогом платформы в контейнере (`/openedx/edx-platform`).
 - Если `tutor` недоступен или команда падает (окружение не поднято), кратко опиши ошибку и что нужно пользователю для сборки.
 
+## Текущая архитектура Robbo и MFE
+
+- **LMS/CMS** оформляются через comprehensive theme [`themes/robbo-theme`](themes/robbo-theme) (Mako templates + Sass/CSS + статика). После правок `.scss` в теме выполнять пересборку Sass как указано выше.
+- **MFE интерфейс** сейчас правится не через общий shell-патч, а через локальные override-репозитории `frontend-app-*`, подключённые `tutor mounts add`. Подробности и текущий список — в [`.cursor/rules/architecture.mdc`](.cursor/rules/architecture.mdc).
+- Минимальный набор MFE overrides находится вне `openedx-platform`: `/home/manris/Projects/Robbo/mfe-overrides/frontend-app-learner-dashboard`, `frontend-app-learning`, `frontend-app-authn`, `frontend-app-profile`, `frontend-app-account`.
+- Для MFE dev: если сервис падает с `fedx-scripts: not found`, установить зависимости в mounted repo (`npm clean-install`). Если порт MFE занят общим `mfe`, остановить его (`tutor dev stop mfe`) и запускать конкретный сервис, например `tutor dev start --detach learner-dashboard`.
+
 ## Плагин Robbo MFE branding (`robbo-mfe-branding`)
 
-- **Назначение:** см. [`tutor-plugin-robbo-mfe-branding/README.md`](tutor-plugin-robbo-mfe-branding/README.md) — `MFE_CONFIG` (логотипы, `PARAGON_THEME_URLS`), окраска шапки/футера Indigo через **`robbo-mfe-shell.css`** при сборке образа `mfe`.
+- **Текущая роль:** максимум минимальный runtime `MFE_CONFIG` (логотипы, `PARAGON_THEME_URLS`), если он нужен и не мешает. Не считать этот плагин основным способом оформления MFE интерфейса.
+- **Не возвращать без отдельного решения:** `robbo-mfe-shell.css`, `PLUGIN_SLOTS` footer/header override, Dockerfile-патчи для MFE shell/header/footer. Эти попытки сняты с критического пути; интерфейс MFE переносится в локальные `frontend-app-*` overrides.
 - **Код плагина:** [`tutor-plugin-robbo-mfe-branding/tutor_plugin_robbo_mfe_branding/__init__.py`](tutor-plugin-robbo-mfe-branding/tutor_plugin_robbo_mfe_branding/__init__.py).
-- **CSS оболочки:** [`tutor-plugin-robbo-mfe-branding/tutor_plugin_robbo_mfe_branding/templates/robbo-mfe-shell.css`](tutor-plugin-robbo-mfe-branding/tutor_plugin_robbo_mfe_branding/templates/robbo-mfe-shell.css).
-- **Токены (справочно):** [`themes/robbo-theme/mfe-brand-tokens.yaml`](themes/robbo-theme/mfe-brand-tokens.yaml).
-- **Продакшен и классы изменений (A/B/C):** [`tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md`](tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md). Длинные чеклисты продакшена **не дублировать** в ответе — дать ссылку на этот файл.
-- После правок в плагине (`.py`, `robbo-mfe-shell.css`, `pyproject.toml`) указывать пользователю минимум: `pip install -e …/tutor-plugin-robbo-mfe-branding`, `tutor config save`, а при изменениях, вшиваемых в сборку MFE (класс **B** в PRODUCTION.md) — **`tutor images build mfe`**.
+- **Продакшен-дока плагина:** [`tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md`](tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md) может содержать устаревший путь shell CSS; сверяться с `architecture.mdc` как с текущей архитектурой.
 - **Зависимости:** плагины **`mfe`** и **`indigo`** должны быть включены; порядок `PLUGINS` не менять без проверки сгенерированного `env/plugins/mfe/build/mfe/Dockerfile`.
-- Не смешивать в одном изменении несвязанные правки edx-platform и плагина без запроса пользователя.
+- Не смешивать в одном изменении несвязанные правки edx-platform, Tutor-плагина и внешних MFE override-репозиториев без запроса пользователя.
 
 ## Одна задача — один фокус
 

@@ -10,9 +10,6 @@ from tutor import hooks
 _PKG = "tutor_plugin_robbo_mfe_branding"
 
 hooks.Filters.ENV_TEMPLATE_ROOTS.add_item(str(resources.files(_PKG) / "templates"))
-hooks.Filters.ENV_TEMPLATE_TARGETS.add_item(
-    ("robbo-mfe-shell.css", "plugins/mfe/build/mfe")
-)
 
 _PARAGON_THEME_URLS = """
 MFE_CONFIG["PARAGON_THEME_URLS"] = {
@@ -57,28 +54,3 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("mfe-lms-production-settings", _PATCH_MFE_PROD),
     ]
 )
-
-# Indigo header/footer ship fixed colors; override via CSS bundled at MFE image build.
-# Context path is plugins/mfe/build/mfe (same dir as Dockerfile).
-_ROBBO_MFE_ENTRY_SCSS = {
-    "authn": "src/index.scss",
-    "learner-dashboard": "src/App.scss",
-    "learning": "src/index.scss",
-    "profile": "src/index.scss",
-    "account": "src/index.scss",
-    "discussions": "src/index.scss",
-}
-
-
-def _pre_npm_build_patch(entry_scss: str) -> str:
-    return f"""
-COPY robbo-mfe-shell.css /openedx/app/src/robbo-mfe-shell.css
-RUN grep -qF 'robbo-mfe-shell.css' /openedx/app/{entry_scss} 2>/dev/null || printf '%s\\n' '@import "./robbo-mfe-shell.css";' >> /openedx/app/{entry_scss}
-"""
-
-
-for _name, _entry in _ROBBO_MFE_ENTRY_SCSS.items():
-    hooks.Filters.ENV_PATCHES.add_item(
-        (f"mfe-dockerfile-pre-npm-build-{_name}", _pre_npm_build_patch(_entry)),
-        priority=hooks.priorities.LOW,
-    )

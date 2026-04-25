@@ -22,6 +22,10 @@ linked here.
 
 Useful information to include:
 
+- Change class for Robbo/Tutor rollout (required when relevant): `A` / `B` / `C`
+  - `A`: runtime-only `MFE_CONFIG` changes
+  - `B`: MFE build-time changes (Docker/CSS/slots), requires `tutor images build mfe`
+  - `C`: LMS comprehensive theme-only changes
 - Which edX user roles will this change impact? Common user roles are "Learner", "Course Author",
 "Developer", and "Operator".
 - Include screenshots for changes to the UI (ideally, both "before" and "after" screenshots, if applicable).
