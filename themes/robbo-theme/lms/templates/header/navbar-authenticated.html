@@ -5,6 +5,7 @@
 <%namespace name='static' file='../static_content.html'/>
 <%namespace file='../main.html' import="login_query"/>
 <%!
+from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
@@ -25,32 +26,32 @@ from openedx.core.djangoapps.site_configuration import helpers as configuration_
     help_link = doc_link
 %>
 
-<div class="nav-links">
-  <div class="main">
+<nav class="main robbo-header-primary-nav robbo-main-header__primary" aria-label=${_("Main navigation")}>
+    <ul class="robbo-header-primary-nav__list">
     ## show_dashboard_tabs is only set on dashboard/program views; omitting it hides this block on /courses etc.
-    <div class="mobile-nav-item hidden-mobile nav-item nav-tab">
-      <a class="${'active ' if reverse('dashboard') == request.path else ''}tab-nav-link" href="${reverse('dashboard')}"
+      <li class="mobile-nav-item hidden-mobile nav-item nav-tab">
+        <a class="${'active ' if reverse('dashboard') == request.path else ''}tab-nav-link" href="${reverse('dashboard')}"
            aria-current="${'page' if reverse('dashboard') == request.path else 'false'}">
            ${_("My Courses")}
-      </a>
-    </div>
+        </a>
+      </li>
     % if show_program_listing:
-      <div class="mobile-nav-item hidden-mobile nav-item nav-tab">
+      <li class="mobile-nav-item hidden-mobile nav-item nav-tab">
         <a class="${'active ' if reverse('program_listing_view') in request.path else ''}tab-nav-link" href="${reverse('program_listing_view')}"
-           aria-current="${'page' if reverse('program_listing_view') == request.path else 'false'}">
+           aria-current="${'page' if reverse('program_listing_view') in request.path else 'false'}">
            ${_("Programs")}
         </a>
-      </div>
+      </li>
     % endif
-    <div class="mobile-nav-item hidden-mobile nav-item nav-tab">
-      <a class="${'active ' if reverse('courses') == request.path else ''}tab-nav-link discover-new-link" href="${marketing_link('COURSES')}"
-         aria-current="${'page' if '/courses' in request.path else 'false'}">
+      <li class="mobile-nav-item hidden-mobile nav-item nav-tab">
+        <a class="${'active ' if reverse('courses') == request.path else ''}tab-nav-link discover-new-link" href="${marketing_link('COURSES')}"
+           aria-current="${'page' if '/courses' in request.path else 'false'}">
         ${_('Course catalog')}
-      </a>
-    </div>
-  </div>
-  <div class="secondary d-flex align-items-center">
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <div class="secondary d-flex align-items-center robbo-main-header__trailing">
     <%include file="./theme-toggle-button.html" />
     <%include file="user_dropdown.html"/>
   </div>
-</div>

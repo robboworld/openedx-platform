@@ -438,7 +438,7 @@ a.robbo-courses-catalog__btn--primary,
   line-height: 1.2;
   min-width: var(--robbo-cat-cta-min-w);
   padding: 0.5rem 1.25rem;
-  text-decoration: none;
+  text-decoration: none !important;
   max-width: 100%;
   width: var(--robbo-cat-cta-min-w);
 }
@@ -451,14 +451,17 @@ a.robbo-courses-catalog__btn--primary {
     background: var(--robbo-cat-cta-bg);
     border-color: var(--robbo-cat-cta-bg);
     color: #fff !important;
+    text-decoration: none !important;
   }
   &:hover {
     background: var(--robbo-cat-cta-bg-hover);
     border-color: var(--robbo-cat-cta-bg-hover);
     color: #fff !important;
+    text-decoration: none !important;
   }
   &:active {
     filter: brightness(0.95);
+    text-decoration: none !important;
     transform: translateY(1px);
   }
   &:focus,
@@ -466,6 +469,7 @@ a.robbo-courses-catalog__btn--primary {
     box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.35);
     color: #fff !important;
     outline: none;
+    text-decoration: none !important;
   }
 }
 

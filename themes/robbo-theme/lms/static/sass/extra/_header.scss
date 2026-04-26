@@ -27,6 +27,12 @@ body {
 
 // Robbo header — brand green bar, white nav (reference layout)
 $robbo-header-green: #00b140;
+// Wordmark (РОББО): 30px; primary tabs («Мои курсы», «Каталог»): 22px; bar fits both
+$robbo-header-bar-min-h: 80px;
+$robbo-header-nav-font: 22px;
+$robbo-header-wordmark: 30px;
+$robbo-header-user-menu-fs: 1.125rem; // Sign in / Register
+$robbo-header-profile-toggle-fs: 1rem; // 16px: −2px vs 18px for .toggle-user-dropdown
 
 header.global-header {
     background: $robbo-header-green;
@@ -45,20 +51,49 @@ header.global-header {
         display: block;
     }
 
-    .main-header {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 12px;
+    // Three columns: wordmark+menu | primary nav (center) | user/auth — no absolute full-bar overlay
+    .main-header.robbo-main-header {
         box-sizing: border-box;
-        min-height: 64px;
+        display: grid;
+        grid-template-columns: minmax(0, auto) minmax(0, 1fr) minmax(0, auto);
+        align-items: center;
+        column-gap: 16px;
+        row-gap: 8px;
+        min-height: $robbo-header-bar-min-h;
         padding: 6px 0;
         position: relative;
+        min-width: 0;
 
         @include media-breakpoint-up(lg) {
-            gap: 20px;
-            min-height: 64px;
+            column-gap: 24px;
+            min-height: $robbo-header-bar-min-h;
         }
+    }
+
+    .robbo-main-header__leading {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+        z-index: 2;
+    }
+
+    .robbo-main-header__primary {
+        justify-self: center;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .robbo-main-header__trailing {
+        justify-self: end;
+    }
+
+    .hamburger-menu,
+    .header-logo {
+        position: relative;
+        z-index: 2;
     }
 
     .theme-toggle-button {
@@ -83,7 +118,7 @@ header.global-header {
             }
 
             .logo {
-                height: 24px;
+                height: 32px;
                 margin: 0;
             }
         }
@@ -94,7 +129,7 @@ header.global-header {
         }
 
         .header-logo-wordmark {
-            font-size: 1.125rem;
+            font-size: $robbo-header-wordmark;
             font-weight: 700;
             color: #fff;
             letter-spacing: 0.04em;
@@ -114,83 +149,92 @@ header.global-header {
         }
     }
 
+    // .nav-links is the same node as .main-header (compat with LMS / Indigo selectors)
     .nav-links {
-        display: flex;
-        flex: 1 1 auto;
-        align-items: center;
-        justify-content: flex-end;
-        width: auto;
         min-width: 0;
-        margin: 0;
-        float: none !important;
-        position: relative;
 
-        .main {
+        .main,
+        nav.main {
+            box-sizing: border-box;
+            float: none !important;
+            margin: 0;
+            min-width: 0;
+        }
+
+        .robbo-header-primary-nav__list {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            justify-content: center;
             gap: 8px 28px;
+            justify-content: center;
+            list-style: none;
             margin: 0;
             min-width: 0;
-            float: none !important;
+            padding: 0;
 
             @include media-breakpoint-up(lg) {
-                position: absolute;
-                left: 50%;
-                transform: translateX(-50%);
-                z-index: 1;
                 flex-wrap: nowrap;
-                pointer-events: none;
+            }
+        }
 
-                .nav-tab {
-                    pointer-events: auto;
-                }
+        .main .nav-tab,
+        nav.main .nav-tab {
+            float: none !important;
+        }
+
+        .main .nav-tab a,
+        nav.main .nav-tab a {
+            -webkit-tap-highlight-color: transparent;
+            background: transparent !important;
+            border: none !important;
+            border-bottom: 2px solid transparent !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            color: #fff !important;
+            display: inline-block !important;
+            font-size: $robbo-header-nav-font !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.01em;
+            line-height: 1.35 !important;
+            margin: 0 !important;
+            padding: 0.2em 0 !important;
+            text-decoration: none;
+
+            &:active {
+                background: transparent !important;
+                box-shadow: none !important;
             }
 
-            .nav-tab {
-                float: none !important;
+            &:focus {
+                background: transparent !important;
+                box-shadow: none !important;
+                outline: none !important;
+            }
 
-                a {
-                    color: #fff !important;
-                    display: inline-block !important;
-                    text-decoration: none;
-                    margin-bottom: 0 !important;
-                    border: none !important;
-                    border-radius: 0 !important;
-                    padding: 6px 0 !important;
-                    font-weight: 700 !important;
-                    font-size: 15px !important;
-                    line-height: 1.35 !important;
-                    letter-spacing: 0.01em;
-                    background: transparent !important;
-                    box-shadow: none !important;
-                    border-bottom: 2px solid transparent !important;
-                    -webkit-tap-highlight-color: transparent;
+            &:focus-visible {
+                outline: 2px solid rgba(255, 255, 255, 0.45) !important;
+                outline-offset: 3px !important;
+            }
 
-                    &.active,
-                    &:hover {
-                        color: #fff !important;
-                        background: transparent !important;
-                        border-bottom-color: #fff !important;
-                    }
+            &.active,
+            &:hover {
+                background: transparent !important;
+                border-bottom-color: #fff !important;
+                color: #fff !important;
+            }
+        }
 
-                    &:focus {
-                        outline: none !important;
-                        box-shadow: none !important;
-                        background: transparent !important;
-                    }
+        // Marketing / guest links without .nav-tab (same type scale)
+        .main .nav-item:not(.nav-tab) > a,
+        nav.main .nav-item:not(.nav-tab) > a {
+            color: #fff !important;
+            font-size: $robbo-header-nav-font;
+            font-weight: 600;
+            text-decoration: none;
 
-                    &:active {
-                        background: transparent !important;
-                        box-shadow: none !important;
-                    }
-
-                    &:focus-visible {
-                        outline: 2px solid rgba(255, 255, 255, 0.45) !important;
-                        outline-offset: 3px !important;
-                    }
-                }
+            &:hover,
+            &:focus {
+                text-decoration: underline;
             }
         }
 
@@ -209,8 +253,9 @@ header.global-header {
 
             .register-btn {
                 background: #fff;
-                color: $robbo-header-green !important;
                 border: 1px solid #fff;
+                color: $robbo-header-green !important;
+                font-size: $robbo-header-user-menu-fs;
                 font-weight: 600;
 
                 &:hover {
@@ -220,8 +265,9 @@ header.global-header {
 
             .sign-in-btn {
                 background: transparent;
-                color: #fff !important;
                 border: 1px solid #fff;
+                color: #fff !important;
+                font-size: $robbo-header-user-menu-fs;
                 font-weight: 600;
 
                 &:hover {
@@ -232,14 +278,14 @@ header.global-header {
             .toggle-user-dropdown {
                 display: inline-flex;
                 align-items: center;
-                gap: 8px;
-                padding: 8px 18px;
+                gap: 6px;
+                padding: 6px 16px;
                 margin: 0;
                 background: transparent;
                 color: #fff !important;
-                font-size: 14px;
+                font-size: $robbo-header-profile-toggle-fs;
                 font-weight: 700;
-                line-height: 20px;
+                line-height: 1.35;
                 border-radius: 999px;
                 border: 1px solid #fff;
                 box-sizing: border-box;
@@ -307,10 +353,10 @@ header.global-header {
     }
 
     .hamburger-menu {
-        height: 17px;
-        width: 20px;
+        height: 21px;
+        width: 24px;
         left: 15px;
-        top: 18px;
+        top: 16px;
         background: none;
         border: 0;
         padding: 0;
@@ -334,11 +380,13 @@ header.global-header {
 
     // Indigo fork `lms/static/sass/_brand-header-overrides.scss` hides discover/catalog for duplicate /courses UX.
     a.discover-new-link,
-    .nav-links .main .nav-tab a[href="/courses"] {
+    .nav-links .main .nav-tab a[href="/courses"],
+    .nav-links nav.main .nav-tab a[href="/courses"] {
         display: inline-flex !important;
     }
 
-    .nav-links .main .nav-tab:has(a[href="/courses"]) {
+    .nav-links .main .nav-tab:has(a[href="/courses"]),
+    .nav-links nav.main .nav-tab:has(a[href="/courses"]) {
         display: flex !important;
     }
 }
@@ -346,7 +394,7 @@ header.global-header {
 .mobile-menu {
     position: absolute;
     left: 0;
-    top: 64px;
+    top: $robbo-header-bar-min-h;
     z-index: 9999;
     margin: 0;
     border: none;
@@ -500,21 +548,24 @@ body.indigo-dark-theme {
         overflow: visible !important;
 
         a.discover-new-link,
-        .nav-links .main .nav-tab a[href="/courses"] {
+        .nav-links .main .nav-tab a[href="/courses"],
+        .nav-links nav.main .nav-tab a[href="/courses"] {
             display: inline-flex !important;
         }
 
-        .nav-links .main .nav-tab:has(a[href="/courses"]) {
+        .nav-links .main .nav-tab:has(a[href="/courses"]),
+        .nav-links nav.main .nav-tab:has(a[href="/courses"]) {
             display: flex !important;
         }
 
         .nav-links {
-            .main {
+            .main,
+            nav.main {
                 .nav-tab {
                     a {
                         color: #fff !important;
                         background: transparent !important;
-                        margin-bottom: 0 !important;
+                        margin: 0 !important;
 
                         &.active,
                         &:hover {
