@@ -1,8 +1,6 @@
 ---
-description: Open edX, Tutor 20, robbo-theme LMS/CMS, MFE overrides и robbo-mfe-branding
 alwaysApply: true
 ---
-
 # Open edX, Tutor и Robbo theme/MFE overrides
 
 Единое правило: **область правок** в `openedx-platform`, работа с **Tutor**, comprehensive theme **`themes/robbo-theme`**, MFE overrides из meta-repo и плагин **`tutor-plugin-robbo-mfe-branding`** (в Tutor — `robbo-mfe-branding`).

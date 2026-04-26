@@ -11,13 +11,24 @@ from django.urls import reverse
 
   <div class="robbo-guest-hero-stack">
   <header class="robbo-guest-topbar" role="banner">
-    <div class="robbo-guest-topbar__inner">
-      <a class="robbo-guest-topbar__brand" href="/">РОББО</a>
-      <p class="robbo-guest-topbar__tagline">skill.robbo.ru - образовательная платформа</p>
-      <div class="robbo-guest-topbar__actions">
-        <a class="robbo-guest-topbar__btn" href="${reverse('signin_user') | h}">Вход</a>
-        <a class="robbo-guest-topbar__btn" href="${reverse('register_user') | h}">Регистрация</a>
+    ## Вёрстка как Tilda t228 (page133250156): gutter 40px | лого | центр (меню) | кнопки | gutter.
+    <div class="robbo-guest-topbar__main">
+      <div class="robbo-guest-topbar__gutter" aria-hidden="true"></div>
+      <div class="robbo-guest-topbar__left">
+        <a class="robbo-guest-topbar__brand" href="https://online.robbo.ru/" target="_blank" rel="noopener noreferrer">
+          <img class="robbo-guest-topbar__logo" src="${static.url('images/guest-landing/topbar-logo.png')}" width="1680" height="635" alt="Робототехника для мальчиков и девочек от 5 до 15 лет" decoding="async" />
+        </a>
       </div>
+      <div class="robbo-guest-topbar__center">
+        <a class="robbo-guest-topbar__tagline" href="#program" aria-label="Перейти к разделу «Описание курса»">skill.robbo.ru - образовательная платформа</a>
+      </div>
+      <div class="robbo-guest-topbar__right">
+        <div class="robbo-guest-topbar__actions">
+          <a class="robbo-guest-topbar__btn robbo-guest-topbar__btn--solid" href="${reverse('signin_user') | h}">Вход</a>
+          <a class="robbo-guest-topbar__btn robbo-guest-topbar__btn--outline" href="${reverse('register_user') | h}">Регистрация</a>
+        </div>
+      </div>
+      <div class="robbo-guest-topbar__gutter" aria-hidden="true"></div>
     </div>
   </header>
 
@@ -37,13 +48,18 @@ from django.urls import reverse
     </a>
   </header>
   </div>
+  <script src="${static.url('js/guest-landing-topbar.js')}"></script>
 
   <nav class="robbo-guest-subnav" aria-label="Разделы страницы">
     <a href="#about">О нас</a>
+    <a href="https://edurobbo.ru/doc" target="_blank" rel="noopener noreferrer">Сведения об образовательной организации</a>
     <a href="#program">Программа</a>
-    <a href="#aboutus">Как проходит обучение</a>
+    <a href="#teachers">Преподаватели</a>
+    <a href="#aboutus">Как будет проходить обучение</a>
     <a href="#registration">Регистрация</a>
   </nav>
+
+  <div id="teachers" class="robbo-guest-fragment-anchor" aria-hidden="true"></div>
 
   <section id="about" class="robbo-guest-about" aria-labelledby="robbo-guest-about-title">
     <div class="robbo-guest-about__grid">
@@ -62,7 +78,7 @@ from django.urls import reverse
   </section>
 
   <section id="program" class="robbo-guest-band robbo-guest-band--green" aria-labelledby="robbo-guest-program-title">
-    <div class="robbo-guest-band__inner">
+    <div class="robbo-guest-band__inner robbo-guest-band__inner--t225">
       <h2 id="robbo-guest-program-title" class="robbo-guest-band__title">Описание курса</h2>
       <div class="robbo-guest-band__text">
         <p>Курс <strong>«Российские микроконтроллеры: локализация, архитектура, портирование»</strong> дает инженерам и руководителям системное представление о российской компонентной базе популярных МК и инструменты для перехода с импортных решений на аналоги. Участники изучат архитектуры ARM, AVR, RISC-V, документацию производителей «Микрон», «Миландр», «НИИЭТ», а также на кейсах отработают навыки подбора МК и миграции кода.</p>
@@ -71,8 +87,8 @@ from django.urls import reverse
     </div>
   </section>
 
-  <section id="aboutus" class="robbo-guest-band robbo-guest-band--green robbo-guest-band--tight-top" aria-labelledby="robbo-guest-how-title">
-    <div class="robbo-guest-band__inner robbo-guest-band__inner--center">
+  <section id="aboutus" class="robbo-guest-band robbo-guest-band--green" aria-labelledby="robbo-guest-how-title">
+    <div class="robbo-guest-band__inner robbo-guest-band__inner--center robbo-guest-band__inner--t225-heading">
       <h2 id="robbo-guest-how-title" class="robbo-guest-band__title robbo-guest-band__title--caps">Как будет проходить обучение</h2>
     </div>
   </section>
@@ -80,21 +96,21 @@ from django.urls import reverse
   <section class="robbo-guest-how robbo-guest-band robbo-guest-band--green robbo-guest-band--cards" aria-label="Формат обучения">
     <div class="robbo-guest-how__grid">
       <article class="robbo-guest-how__item">
-        <img class="robbo-guest-how__icon" src="${static.url('images/guest-landing/icon-calendar.svg')}" width="80" height="80" alt="" />
+        <img class="robbo-guest-how__icon" src="${static.url('images/guest-landing/icon-calendar.svg')}" width="96" height="96" alt="" />
         <div class="robbo-guest-how__text">
           <p><strong>Старт модулей каждую неделю</strong></p>
           <p>Курс рассчитан на 5 недель. Каждый понедельник открывается новый модуль, что позволяет последовательно проходить программу и эффективно усваивать материал.</p>
         </div>
       </article>
       <article class="robbo-guest-how__item">
-        <img class="robbo-guest-how__icon" src="${static.url('images/guest-landing/icon-time.svg')}" width="80" height="80" alt="" />
+        <img class="robbo-guest-how__icon" src="${static.url('images/guest-landing/icon-time.svg')}" width="96" height="96" alt="" />
         <div class="robbo-guest-how__text">
           <p><strong>Обучение в удобном темпе</strong></p>
           <p>Вы можете учиться в любое удобное время. Доступ ко всем материалам сохраняется навсегда после завершения курса.</p>
         </div>
       </article>
       <article class="robbo-guest-how__item">
-        <img class="robbo-guest-how__icon" src="${static.url('images/guest-landing/icon-device.svg')}" width="80" height="80" alt="" />
+        <img class="robbo-guest-how__icon" src="${static.url('images/guest-landing/icon-phone.svg')}" width="96" height="96" alt="" />
         <div class="robbo-guest-how__text">
           <p><strong>Доступ с любого устройства</strong></p>
           <p>Проходите курс с любого устройства — компьютер, планшет или смартфон. Учитесь там, где вам комфортно.</p>
@@ -106,13 +122,50 @@ from django.urls import reverse
   <section id="registration" class="robbo-guest-register" style="--robbo-guest-register-image: url('${static.url('images/guest-landing/registration-cover.png')}');" aria-labelledby="robbo-guest-reg-title">
     <div class="robbo-guest-register__overlay"></div>
     <div class="robbo-guest-register__inner">
-      <h2 id="robbo-guest-reg-title" class="robbo-guest-register__title">Регистрация на <br />образовательной платформе РОББО</h2>
-      <p class="robbo-guest-register__hint">Создайте учётную запись на платформе — это займёт несколько минут.</p>
-      <div class="robbo-guest-register__actions">
-        <a class="robbo-guest-btn robbo-guest-btn--submit" href="${reverse('register_user') | h}">Перейти к регистрации</a>
-        <a class="robbo-guest-btn robbo-guest-btn--ghost" href="${reverse('signin_user') | h}">Вход для пользователей</a>
-      </div>
+      <h2 id="robbo-guest-reg-title" class="robbo-guest-register__title">Регистрация на образовательной платформе РОББО</h2>
+      <form id="robbo-guest-register-form" class="robbo-guest-register__form" method="post" action="${reverse('create_account') | h}" novalidate>
+        <div class="robbo-guest-register__fields">
+          <div class="robbo-guest-register__field">
+            <label class="sr-only" for="robbo-reg-name">ФИО</label>
+            <input class="robbo-guest-register__input" id="robbo-reg-name" name="name" type="text" autocomplete="name" placeholder="ФИО" required />
+            <p class="robbo-guest-register__field-error" id="robbo-reg-name-err" hidden role="alert"></p>
+          </div>
+          <div class="robbo-guest-register__field">
+            <label class="sr-only" for="robbo-reg-email">Email</label>
+            <input class="robbo-guest-register__input" id="robbo-reg-email" name="email" type="email" autocomplete="email" placeholder="Email" required />
+            <p class="robbo-guest-register__field-error" id="robbo-reg-email-err" hidden role="alert"></p>
+          </div>
+          <div class="robbo-guest-register__field">
+            <label class="sr-only" for="robbo-reg-company">Название компании</label>
+            <input class="robbo-guest-register__input" id="robbo-reg-company" name="company" type="text" autocomplete="organization" placeholder="Название компании" />
+            <p class="robbo-guest-register__field-error" id="robbo-reg-company-err" hidden role="alert"></p>
+          </div>
+          <div class="robbo-guest-register__field">
+            <label class="sr-only" for="robbo-reg-username">Придумайте логин</label>
+            <input class="robbo-guest-register__input" id="robbo-reg-username" name="username" type="text" autocomplete="username" placeholder="Придумайте логин" required />
+            <p class="robbo-guest-register__field-error" id="robbo-reg-username-err" hidden role="alert"></p>
+          </div>
+          <div class="robbo-guest-register__field">
+            <label class="sr-only" for="robbo-reg-password">Придумайте пароль</label>
+            <input class="robbo-guest-register__input" id="robbo-reg-password" name="password" type="password" autocomplete="new-password" placeholder="Придумайте пароль" required />
+            <p class="robbo-guest-register__field-error" id="robbo-reg-password-err" hidden role="alert"></p>
+          </div>
+        </div>
+        <div class="robbo-guest-register__checks">
+          <label class="robbo-guest-register__check">
+            <input class="robbo-guest-register__checkbox" type="checkbox" name="marketing_emails_opt_in" value="true" />
+            <span>Я согласен(а) получать новости и рекламные рассылки</span>
+          </label>
+          <label class="robbo-guest-register__check">
+            <input class="robbo-guest-register__checkbox" type="checkbox" name="honor_code" value="true" required />
+            <span>Я даю согласие на <a href="https://robbo.ru/wp-content/uploads/agree.pdf" target="_blank" rel="noopener noreferrer">обработку своих персональных данных</a> на условиях <a href="https://robbo.ru/wp-content/uploads/policy.pdf" target="_blank" rel="noopener noreferrer">политики конфиденциальности</a></span>
+          </label>
+        </div>
+        <p class="robbo-guest-register__form-error" id="robbo-guest-register-form-error" hidden role="alert" aria-live="polite"></p>
+        <button type="submit" class="robbo-guest-btn robbo-guest-btn--submit robbo-guest-register__submit">Отправить</button>
+      </form>
     </div>
+    <script src="${static.url('js/guest-landing-register.js')}"></script>
   </section>
 
   <footer id="footer-guest" class="robbo-site-footer robbo-guest-footer" lang="ru">

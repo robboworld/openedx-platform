@@ -3,7 +3,17 @@
 $content_padding_top: 24px;
 $content-padding-bottom: 10px;
 $header-height: 64px;
-body, h1, h2, h3, h4, h5, h6, p, label, button {
+// Гостевая главная: ProximaNova из `_guest-landing.scss` (как Tilda); иначе Inter с !important перебивает наследование.
+body:not(.robbo-guest-landing-page),
+body:not(.robbo-guest-landing-page) h1,
+body:not(.robbo-guest-landing-page) h2,
+body:not(.robbo-guest-landing-page) h3,
+body:not(.robbo-guest-landing-page) h4,
+body:not(.robbo-guest-landing-page) h5,
+body:not(.robbo-guest-landing-page) h6,
+body:not(.robbo-guest-landing-page) p,
+body:not(.robbo-guest-landing-page) label,
+body:not(.robbo-guest-landing-page) button {
   font-family: $font-family-title !important;
 }
 html {
@@ -16,10 +26,12 @@ body, body.view-profile {
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
 }
-input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active{
+// На гостевой главной поля регистрации — свой фон при autofill (см. `_guest-landing.scss`);
+// глобальное `-webkit-background-clip: text` убирает «белую заливку» у инпутов.
+body:not(.robbo-guest-landing-page) input:-webkit-autofill,
+body:not(.robbo-guest-landing-page) input:-webkit-autofill:hover,
+body:not(.robbo-guest-landing-page) input:-webkit-autofill:focus,
+body:not(.robbo-guest-landing-page) input:-webkit-autofill:active {
     -webkit-background-clip: text;
     -webkit-text-fill-color: $dark;
     transition: background-color 5000s ease-in-out 0s;
@@ -65,7 +77,13 @@ section.wiki .btn.btn-primary {
   font-family: $font-family-title;
 }
 
-h1, h2, h3, h1 span, h2 span, h3 span, .nav-item {
+body:not(.robbo-guest-landing-page) h1,
+body:not(.robbo-guest-landing-page) h2,
+body:not(.robbo-guest-landing-page) h3,
+body:not(.robbo-guest-landing-page) h1 span,
+body:not(.robbo-guest-landing-page) h2 span,
+body:not(.robbo-guest-landing-page) h3 span,
+body:not(.robbo-guest-landing-page) .nav-item {
   font-family: $font-family-title;
 }
 
