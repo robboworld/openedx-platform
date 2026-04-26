@@ -150,6 +150,12 @@ from openedx.features.course_experience.utils import dates_banner_should_display
 from openedx.features.course_experience.waffle import ENABLE_COURSE_ABOUT_SIDEBAR_HTML
 from openedx.features.enterprise_support.api import data_sharing_consent_required
 
+from ..robbo_catalog import (
+    build_robbo_catalog_featured,
+    get_robbo_catalog_hero,
+    get_robbo_catalog_stubs,
+    get_robbo_courses_account_banners,
+)
 from ..block_render import get_block, get_block_by_usage_id, get_block_for_descriptor
 from ..tabs import _get_dynamic_tabs
 from ..toggles import (
@@ -291,20 +297,19 @@ def courses(request):
     """
     Render "find courses" page.  The course selection work is done in courseware.courses.
     """
-    courses_list = []
+    # Robbo: catalog always loads from modulestore; course discovery UI is disabled in theme.
+    courses_list = get_courses(
+        request.user,
+        filter_={"catalog_visibility": CATALOG_VISIBILITY_CATALOG_AND_ABOUT},
+    )
+    if configuration_helpers.get_value("ENABLE_COURSE_SORTING_BY_START_DATE",
+                                       settings.FEATURES["ENABLE_COURSE_SORTING_BY_START_DATE"]):
+        courses_list = sort_by_start_date(courses_list)
+    else:
+        courses_list = sort_by_announcement(courses_list)
+
     course_discovery_meanings = getattr(settings, 'COURSE_DISCOVERY_MEANINGS', {})
     set_default_filter = ENABLE_COURSE_DISCOVERY_DEFAULT_LANGUAGE_FILTER.is_enabled()
-    if not settings.FEATURES.get('ENABLE_COURSE_DISCOVERY'):
-        courses_list = get_courses(
-            request.user,
-            filter_={"catalog_visibility": CATALOG_VISIBILITY_CATALOG_AND_ABOUT},
-        )
-
-        if configuration_helpers.get_value("ENABLE_COURSE_SORTING_BY_START_DATE",
-                                           settings.FEATURES["ENABLE_COURSE_SORTING_BY_START_DATE"]):
-            courses_list = sort_by_start_date(courses_list)
-        else:
-            courses_list = sort_by_announcement(courses_list)
 
     # Add marketable programs to the context.
     programs_list = get_programs_with_type(request.site, include_hidden=False)
@@ -316,6 +321,10 @@ def courses(request):
             'course_discovery_meanings': course_discovery_meanings,
             'set_default_filter': set_default_filter,
             'programs_list': programs_list,
+            'robbo_catalog_hero': get_robbo_catalog_hero(),
+            'robbo_catalog_stubs': get_robbo_catalog_stubs(),
+            'robbo_catalog_featured': build_robbo_catalog_featured(request, courses_list),
+            'robbo_courses_account': get_robbo_courses_account_banners(request),
             # Match learner dashboard header: primary nav tabs are hidden when unset (Mako treats as falsy).
             'show_dashboard_tabs': True,
         }

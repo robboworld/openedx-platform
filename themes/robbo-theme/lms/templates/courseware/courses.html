@@ -1,101 +1,261 @@
 <%page expression_filter="h"/>
 <%!
-  import json
+# Theme must not require lms.djangoapps.courseware.robbo_catalog (omitted in some images).
+# try/except: use the module if present, else inline hero/stubs/featured.
+  from mako.runtime import UNDEFINED
   from django.utils.translation import gettext as _
-  from openedx.core.djangolib.js_utils import js_escaped_string, dump_js_escaped_json
+  from django.conf import settings
+  import re
+  from html import unescape
+  from opaque_keys import InvalidKeyError
+  from opaque_keys.edx.keys import CourseKey
+  from openedx.features.course_experience import course_home_url
+  from openedx.core.djangoapps.models.course_details import CourseDetails
+
+  try:
+      from lms.djangoapps.courseware import robbo_catalog as _robbo_py
+  except ImportError:
+      _robbo_py = None
+  try:
+      from lms.djangoapps.courseware.robbo_catalog import get_robbo_courses_account_banners as _robbo_account_banners
+  except ImportError:
+      def _robbo_account_banners(request):
+          return {
+              'mode': 'none',
+              'top_title': '',
+              'top_body': None,
+              'featured_line': '',
+          }
+
+  def _html_snip(html, max_len=500):
+      text = re.sub(r'<[^>]+>', ' ', str(html or ''))
+      text = unescape(' '.join(text.split()))
+      if len(text) > max_len:
+          return text[: max_len - 1].rstrip() + '…'
+      return text
+
+  def _inline_hero():
+      return {
+          'heading': 'Описание курсов',
+          'lede': (
+              'Каталог направлений: микроконтроллеры, СУБД, САПР, Linux, робототехника, ИИ, Python '
+              'и промышленная автоматика.'
+          ),
+      }
+
+  def _inline_stubs():
+      # Kept in sync with lms.djangoapps.courseware.robbo_catalog.get_robbo_catalog_stubs
+      return [
+          {
+              'id': 'mcu-advanced',
+              'title': 'Российские микроконтроллеры: продвинутый уровень',
+              'description': (
+                  'Углублённое изучение архитектуры отечественных микросхем и создание сложных '
+                  'систем автоматизации на их основе. Мастерство разработки устройств с учётом '
+                  'специфики локальных компонентов.'
+              ),
+              'image': 'stub-mcu-advanced.png',
+              'notify_label': 'Сообщить об открытии',
+          },
+          {
+              'id': 'postgres',
+              'title': 'PostgreSQL: работа с базами данных',
+              'description': (
+                  'Освоение принципов проектирования реляционных баз данных и написания сложных '
+                  'запросов для управления большими массивами информации. Практика администрирования и '
+                  'оптимизации производительности в среде PostgreSQL.'
+              ),
+              'image': 'featured-mcu.png',
+              'notify_label': 'Сообщить об открытии',
+          },
+          {
+              'id': 'freecad',
+              'title': 'Проектирование в FreeCAD',
+              'description': (
+                  'Изучение инструментов параметрического 3D-моделирования для создания точных '
+                  'инженерных деталей и сборных конструкций. Подготовка технической документации и '
+                  'моделей для производства в открытом ПО.'
+              ),
+              'image': 'stub-freecad.png',
+              'notify_label': 'Сообщить об открытии',
+          },
+          {
+              'id': 'linux-admin',
+              'title': 'Системное администрирование Linux',
+              'description': (
+                  'Настройка и поддержка серверных решений на базе ОС Linux, включая управление '
+                  'правами доступа и сетевую безопасность. Навыки работы в терминале и автоматизации '
+                  'задач для обеспечения стабильной ИТ-инфраструктуры.'
+              ),
+              'image': 'stub-linux.png',
+              'notify_label': 'Сообщить об открытии',
+          },
+          {
+              'id': 'manipulators',
+              'title': 'Программирование промышленных манипуляторов',
+              'description': (
+                  'Разработка алгоритмов движения и логики работы роботизированных рук для '
+                  'автоматизации производственных линий. Изучение интерфейсов взаимодействия и систем '
+                  'машинного зрения в робототехнике.'
+              ),
+              'image': 'stub-manipulators.png',
+              'notify_label': 'Сообщить об открытии',
+          },
+          {
+              'id': 'ai-production',
+              'title': 'Применение ИИ в производственных процессах',
+              'description': (
+                  'Внедрение нейросетей и алгоритмов анализа данных для прогнозирования износа '
+                  'оборудования и оптимизации выпуска продукции. Использование технологий машинного '
+                  'обучения для повышения эффективности предприятия.'
+              ),
+              'image': 'stub-ai.png',
+              'notify_label': 'Сообщить об открытии',
+          },
+          {
+              'id': 'python',
+              'title': 'Программирование на Python',
+              'description': (
+                  'Создание прикладного ПО и скриптов на одном из самых популярных языков мира для '
+                  'решения широкого спектра технических задач. От основ синтаксиса до разработки '
+                  'инструментов обработки данных и интеграции сервисов.'
+              ),
+              'image': 'stub-python.png',
+              'notify_label': 'Сообщить об открытии',
+          },
+          {
+              'id': 'industrial-controllers',
+              'title': 'Отечественные промышленные контроллеры',
+              'description': (
+                  'Изучение принципов работы и программирования локальных ПЛК для управления '
+                  'индустриальными объектами в рамках импортозамещения. Практические навыки создания '
+                  'надёжных систем промышленной автоматизации (АСУ ТП).'
+              ),
+              'image': 'stub-industrial.png',
+              'notify_label': 'Сообщить об открытии',
+          },
+      ]
+
+  def _pick_first_course(courses_list):
+      if not courses_list:
+          return None
+      cfg = getattr(settings, 'ROBBO_CATALOG_FEATURED_COURSE_ID', None)
+      if cfg:
+          try:
+              want = CourseKey.from_string(cfg)
+          except InvalidKeyError:
+              want = None
+          if want is not None:
+              for c in courses_list:
+                  if getattr(c, 'id', None) == want:
+                      return c
+      return courses_list[0]
+
+  def _build_featured(request, courses_list):
+      if _robbo_py is not None:
+          return _robbo_py.build_robbo_catalog_featured(request, courses_list)
+      course = _pick_first_course(courses_list)
+      if not course:
+          return None
+      title = course.display_name_with_default
+      short = (getattr(course, 'short_description', None) or '').strip()
+      if not short:
+          try:
+              det = CourseDetails.fetch(course.id)
+          except Exception:
+              det = None
+          if det and det.overview:
+              short = _html_snip(det.overview, 500)
+      if not short:
+          short = (
+              'Практический курс по российским микроконтроллерам: архитектура, локализация и '
+              'портирование сценариев с открытой и проприетарной периферией.'
+          )
+      img = getattr(settings, 'ROBBO_CATALOG_FEATURED_IMAGE', 'stub-postgres.png')
+      cta = course_home_url(course.id)
+      if request and hasattr(request, 'build_absolute_uri') and cta.startswith('/'):
+          cta = request.build_absolute_uri(cta)
+      return {
+          'course_id': str(course.id),
+          'title': title,
+          'description': short,
+          'cta_url': cta,
+          'cta_label': 'Начать обучение',
+          'image': img,
+          'image_alt': title,
+      }
+
+  def _resolve_hero(ctx_hero):
+      if ctx_hero is not UNDEFINED:
+          return ctx_hero
+      if _robbo_py is not None:
+          return _robbo_py.get_robbo_catalog_hero()
+      return _inline_hero()
+
+  def _resolve_stubs(ctx_stubs):
+      if ctx_stubs is not UNDEFINED:
+          return ctx_stubs
+      if _robbo_py is not None:
+          return _robbo_py.get_robbo_catalog_stubs()
+      return _inline_stubs()
+
+  def _resolve_featured(request, ctx_featured, courses_list):
+      if ctx_featured is not UNDEFINED:
+          return ctx_featured
+      return _build_featured(request, courses_list)
 %>
 <%inherit file="../main.html" />
+<%namespace name='static' file='../static_content.html'/>
 <%
-  course_discovery_enabled = settings.FEATURES.get('ENABLE_COURSE_DISCOVERY')
+  # Materialize: get_courses may return a LazySequence; list() is the real course count
+  if courses is UNDEFINED:
+      courses_list = []
+  else:
+      courses_list = list(courses or [])
+  robbo_hero = _resolve_hero(robbo_catalog_hero)
+  robbo_stubs = _resolve_stubs(robbo_catalog_stubs)
+  robbo_feat = _resolve_featured(request, robbo_catalog_featured, courses_list)
+  robbo_show_featured = robbo_feat is not None
+  if robbo_courses_account is not UNDEFINED:
+      robbo_account = robbo_courses_account
+  else:
+      robbo_account = _robbo_account_banners(request)
 %>
 
-<%namespace name='static' file='../static_content.html'/>
 <%block name="js_extra">
-  <script type="text/javascript" src="${static.url('common/js/vendor/bootstrap.bundle.js')}"></script>
+  <script type="text/javascript" src="${static.url('js/robbo_courses_catalog.js')}" defer></script>
 </%block>
-% if course_discovery_enabled:
-<%block name="header_extras">
-  % for template_name in ["course_card", "filter_bar", "filter", "facet", "facet_option"]:
-  <script type="text/template" id="${template_name}-tpl">
-      <%static:include path="discovery/${template_name}.underscore" />
-  </script>
-  % endfor
-  <%static:require_module module_name="js/discovery/discovery_factory" class_name="DiscoveryFactory">
-    DiscoveryFactory(
-      ${course_discovery_meanings | n, dump_js_escaped_json},
-      getParameterByName('search_query'),
-      "${user_language | n, js_escaped_string}",
-      "${user_timezone | n, js_escaped_string}",
-      ${set_default_filter | n, dump_js_escaped_json}
-    );
-  </%static:require_module>
-</%block>
-% endif
 
 <%block name="pagetitle">${_("Courses")}</%block>
 
-<main id="main" aria-label="Content" tabindex="-1">
-    <section class="find-courses">
-      <section class="courses-container">
-        <!-- NEW IN INDIGO Heading was added. -->
-        <div class="course-heading-area">
-          <h2>Unlock Your Potential: Discover New Courses Today!</h2>
-          <p>Explore a world of knowledge and enhance your skills with our diverse range of courses</p>
+<main id="main" class="robbo-courses-catalog" aria-label="Content" tabindex="-1">
+  <div class="robbo-courses-catalog__wrap">
+    % if robbo_account['mode'] != 'none':
+      <div class="robbo-courses-catalog__account-banner" role="alert" aria-live="polite">
+        <span class="robbo-courses-catalog__account-banner-icon" aria-hidden="true">!</span>
+        <div class="robbo-courses-catalog__account-banner-copy">
+          <strong class="robbo-courses-catalog__account-banner-title">${robbo_account['top_title']}</strong>
+          <p class="robbo-courses-catalog__account-banner-text">
+            % if robbo_account['top_body'] is not None:
+              ${robbo_account['top_body']|n, decode.utf8}
+            % endif
+          </p>
         </div>
-        <!-- NEW IN INDIGO Modified search bar and filters. -->
-        % if course_discovery_enabled:
-          <div class="saerch-bar-discover">
-            <div class="dropdown filter-block">
-              <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <svg class="filter-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M2 3C2 2.44772 2.44772 2 3 2H13C13.5523 2 14 2.44772 14 3V4.25245C14 4.51767 13.8946 4.77202 13.7071 4.95956L9.62623 9.04044C9.43869 9.22798 9.33333 9.48233 9.33333 9.74755V11.3333L6.66667 14V9.74755C6.66667 9.48233 6.56131 9.22798 6.37377 9.04044L2.29289 4.95956C2.10536 4.77202 2 4.51767 2 4.25245V3Z" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <span>Filters</span>
-                <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M5.29289 7.29289C5.68342 6.90237 6.31658 6.90237 6.7071 7.29289L9.99999 10.5858L13.2929 7.29289C13.6834 6.90237 14.3166 6.90237 14.7071 7.29289C15.0976 7.68342 15.0976 8.31658 14.7071 8.70711L10.7071 12.7071C10.3166 13.0976 9.68341 13.0976 9.29289 12.7071L5.29289 8.70711C4.90237 8.31658 4.90237 7.68342 5.29289 7.29289Z" fill="#9CA3AF"/>
-                  </svg>
-              </a>
-              <div class="dropdown-menu search-facets-lists" aria-labelledby="dropdownMenuLink">
-                  <aside aria-label="${_('Refine Your Search')}" class="search-facets phone-menu">
-                    <h2 class="header-search-facets">${_('Refine Your Search')}</h2>
-                    <section class="search-facets-lists">
-                    </section>
-                  </aside>
-              </div>
-            </div>
-            <div class="discover-search">
-            <div id="discovery-form" role="search" aria-label="course" class="wrapper-search-context">
-              <form class="wrapper-search-input">
-                <label for="discovery-input" class="sr">${_('Search for a course')}</label>
-                <div class="input-holder">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M8 4C5.79086 4 4 5.79086 4 8C4 10.2091 5.79086 12 8 12C10.2091 12 12 10.2091 12 8C12 5.79086 10.2091 4 8 4ZM2 8C2 4.68629 4.68629 2 8 2C11.3137 2 14 4.68629 14 8C14 9.29583 13.5892 10.4957 12.8907 11.4765L17.7071 16.2929C18.0976 16.6834 18.0976 17.3166 17.7071 17.7071C17.3166 18.0976 16.6834 18.0976 16.2929 17.7071L11.4765 12.8907C10.4957 13.5892 9.29583 14 8 14C4.68629 14 2 11.3137 2 8Z" fill="#9CA3AF"/>
-                    </svg>
-                  <input id="discovery-input" class="discovery-input" placeholder="${_('Explore course')}" type="text"/>
-                </div>
-                <div class="button-holder">
-                  <button type="submit" class="button postfix discovery-submit" title="${_('Search')}">
-                    Search
-                  </button>
-                </div>
-              </form>
-              <div id="discovery-message" class="search-status-label"></div>
-            </div>
-            <div id="filter-bar" class="filters hide-phone is-collapsed">
-            </div>
-          </div>
-        </div>
-      % endif
+      </div>
+    % endif
+    <header class="robbo-courses-catalog__hero" aria-labelledby="robbo-catalog-heading">
+      <h1 id="robbo-catalog-heading" class="robbo-courses-catalog__heading">${robbo_hero['heading']}</h1>
+      <p class="robbo-courses-catalog__lede">${robbo_hero['lede']}</p>
+    </header>
 
-        <div class="course-holder courses${'' if course_discovery_enabled else ' no-course-discovery'}" role="region" aria-label="${_('List of Courses')}">
-          <ul class="courses-listing courses-list">
-            %for course in courses:
-            <li class="courses-listing-item">
-              <%include file="../course.html" args="course=course" />
-            </li>
-            %endfor
-          </ul>
-        </div>
-      </section>
+    % if robbo_show_featured:
+      <%include file="_robbo_featured.html" args="featured=robbo_feat, account=robbo_account" />
+    % endif
+
+    <section class="robbo-courses-catalog__stubs" aria-label="${_('Upcoming courses')}">
+      % for stub in robbo_stubs:
+        <%include file="_robbo_stub_card.html" args="stub=stub" />
+      % endfor
     </section>
+  </div>
 </main>

@@ -47,10 +47,28 @@ MFE_CONFIG["LOGO_WHITE_URL"] = "{% if ENABLE_HTTPS %}https{% else %}http{% endif
 MFE_CONFIG["FAVICON_URL"] = "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/favicon.ico"
 """
 
+# Tutor sets FEATURES["ENABLE_COURSE_DISCOVERY"] = True. Stock courseware.views.courses
+# then skips get_courses() and leaves courses_list empty while the Robbo theme expects
+# server-rendered cards (discovery UI is off in theme). Disable discovery so the catalog
+# view fills `courses` from MySQL CourseOverview.
+_PATCH_ROBBO_LMS_SERVER_CATALOG = """
+FEATURES["ENABLE_COURSE_DISCOVERY"] = False
+"""
+
+# Robbo support: Authn / activation copy, help links (configuration_helpers in login & emails).
+_PATCH_ROBBO_SUPPORT = """
+SUPPORT_SITE_LINK = "https://support.robbo.world/"
+ACTIVATION_EMAIL_SUPPORT_LINK = "https://support.robbo.world/"
+"""
+
 hooks.Filters.ENV_PATCHES.add_items(
     [
         ("mfe-lms-common-settings", _PARAGON_THEME_URLS),
         ("mfe-lms-development-settings", _PATCH_MFE_DEV),
         ("mfe-lms-production-settings", _PATCH_MFE_PROD),
+        ("openedx-lms-development-settings", _PATCH_ROBBO_LMS_SERVER_CATALOG),
+        ("openedx-lms-production-settings", _PATCH_ROBBO_LMS_SERVER_CATALOG),
+        ("openedx-lms-development-settings", _PATCH_ROBBO_SUPPORT),
+        ("openedx-lms-production-settings", _PATCH_ROBBO_SUPPORT),
     ]
 )

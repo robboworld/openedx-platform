@@ -1,0 +1,23 @@
+<%page args="stub" expression_filter="h"/>
+<%namespace name='static' file='../static_content.html'/>
+<article class="robbo-courses-catalog__stub" data-stub-id="${stub['id']}" aria-labelledby="stub-title-${stub['id']}">
+  <div class="robbo-courses-catalog__stub-body">
+    <h3 id="stub-title-${stub['id']}" class="robbo-courses-catalog__stub-title">${stub['title']}</h3>
+    <p class="robbo-courses-catalog__stub-desc">${stub['description']}</p>
+    <div class="robbo-courses-catalog__stub-actions">
+      <button type="button" class="robbo-courses-catalog__btn robbo-courses-catalog__btn--secondary robbo-courses-catalog__stub-notify" data-stub-id="${stub['id']}">
+        <span class="robbo-courses-catalog__stub-notify-label">${stub['notify_label']}</span>
+      </button>
+    </div>
+  </div>
+  <div class="robbo-courses-catalog__stub-media" role="presentation">
+    <img
+      class="robbo-courses-catalog__stub-img"
+      src="${static.url('images/catalog/' + stub['image'])}"
+      alt="${stub['title']}"
+      width="552"
+      height="320"
+      loading="lazy"
+    />
+  </div>
+</article>

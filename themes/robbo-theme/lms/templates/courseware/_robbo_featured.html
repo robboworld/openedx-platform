@@ -1,0 +1,27 @@
+<%page args="featured, account" expression_filter="h"/>
+<%namespace name='static' file='../static_content.html'/>
+<article class="robbo-courses-catalog__featured" aria-labelledby="robbo-featured-title">
+  <div class="robbo-courses-catalog__featured-body">
+    % if account and account.get('mode') in ('anonymous', 'inactive') and account.get('featured_line'):
+      <p class="robbo-courses-catalog__featured-access-note" role="status">
+        <span class="robbo-courses-catalog__featured-access-icon" aria-hidden="true">!</span>
+        <span class="robbo-courses-catalog__featured-access-text">${account['featured_line']}</span>
+      </p>
+    % endif
+    <h2 id="robbo-featured-title" class="robbo-courses-catalog__featured-title">${featured['title']}</h2>
+    <p class="robbo-courses-catalog__featured-desc">${featured['description']}</p>
+    <a class="robbo-courses-catalog__btn robbo-courses-catalog__btn--primary" href="${featured['cta_url']}">
+      ${featured['cta_label']}
+    </a>
+  </div>
+  <div class="robbo-courses-catalog__featured-media" role="presentation">
+    <img
+      class="robbo-courses-catalog__featured-img"
+      src="${static.url('images/catalog/' + featured['image'])}"
+      alt="${featured['image_alt']}"
+      width="552"
+      height="320"
+      loading="lazy"
+    />
+  </div>
+</article>

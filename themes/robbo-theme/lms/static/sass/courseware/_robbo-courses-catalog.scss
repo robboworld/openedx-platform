@@ -1,0 +1,539 @@
+// /courses (Robbo catalog): scoped layout — tokens on root, no global !important.
+.robbo-courses-catalog {
+  --robbo-cat-gap: clamp(1rem, 2.5vw, 1.75rem);
+  --robbo-cat-pad: clamp(1rem, 3vw, 1.5rem);
+  --robbo-cat-radius: 10px;
+  --robbo-cat-card-bg: #fff;
+  --robbo-cat-border: 1px solid #e5e7eb;
+  --robbo-cat-text: #111827;
+  --robbo-cat-muted: #6b7280;
+  --robbo-cat-hero-mb: clamp(1.5rem, 4vw, 2.5rem);
+  --robbo-cat-max: 1200px;
+  // CTA: reference — vibrant green, white label (independent of LMS $primary)
+  --robbo-cat-cta-bg: #00c853;
+  --robbo-cat-cta-bg-hover: #00b34a;
+  --robbo-cat-cta-fg: #fff;
+  // Featured primary CTA
+  --robbo-cat-cta-min-w: 220px;
+  --robbo-cat-cta-min-h: 60px;
+  --robbo-cat-cta-pill: 30px;
+  --robbo-cat-cta-font: clamp(0.95rem, 1.1vw, 1.0625rem);
+  // Stub card illustrations: height −20% vs 220px; blend; anchored bottom-right in card (see .stub-media)
+  --robbo-cat-stub-img-h: 176px;
+  --robbo-cat-stub-img-blend: multiply;
+  // Stub "notify" button (secondary)
+  --robbo-cat-stub-notify-fg: #0f172a;
+  --robbo-cat-stub-notify-fg-hover: #065f46;
+  --robbo-cat-stub-notify-surface: #fff;
+  --robbo-cat-stub-notify-surface-hover: #ecfdf3;
+  --robbo-cat-stub-notify-shade: rgba(15, 23, 42, 0.06);
+  --robbo-cat-stub-notify-elev-hover: rgba(0, 200, 83, 0.14);
+  --robbo-cat-stub-btn-border: #cbd5e1;
+  --robbo-cat-stub-btn-bg-hover: #f0fdf4;
+  --robbo-cat-stub-btn-bg-active: #e8ecf1;
+  --robbo-cat-stub-btn-ring: rgba(0, 200, 83, 0.28);
+  // Warning badge (alerts: guest / activation)
+  --robbo-cat-warn: #e8b006;
+  --robbo-cat-warn-on: #fff;
+
+  background: #f9fafb;
+  box-sizing: border-box;
+  min-height: 40vh;
+  padding: var(--robbo-cat-pad) 0 3rem;
+  width: 100%;
+}
+
+.robbo-courses-catalog__wrap {
+  box-sizing: border-box;
+  margin: 0 auto;
+  max-width: var(--robbo-cat-max);
+  padding: 0 var(--robbo-cat-pad);
+  width: 100%;
+}
+
+// Full-width notice (LMS /courses; guest sign-in or inactive activation — same model as dashboard copy).
+.robbo-courses-catalog__account-banner {
+  align-items: flex-start;
+  background: #f0f0f0;
+  border: 1px solid #e5e5e5;
+  border-radius: var(--robbo-cat-radius);
+  box-sizing: border-box;
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: var(--robbo-cat-hero-mb);
+  padding: clamp(0.85rem, 2vw, 1.1rem) clamp(1rem, 2.5vw, 1.25rem);
+  width: 100%;
+}
+
+.robbo-courses-catalog__account-banner-icon {
+  align-items: center;
+  background: var(--robbo-cat-warn);
+  border-radius: 50%;
+  color: var(--robbo-cat-warn-on);
+  display: flex;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  font-weight: 800;
+  height: 1.4rem;
+  justify-content: center;
+  line-height: 1;
+  margin-top: 0.1rem;
+  width: 1.4rem;
+}
+
+.robbo-courses-catalog__account-banner-copy {
+  min-width: 0;
+}
+
+.robbo-courses-catalog__account-banner-title {
+  color: var(--robbo-cat-text);
+  display: block;
+  font-size: 1rem;
+  line-height: 1.3;
+  margin: 0 0 0.4rem;
+}
+
+.robbo-courses-catalog__account-banner-text {
+  color: var(--robbo-cat-text);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 65ch;
+}
+
+.robbo-courses-catalog__account-banner-link {
+  color: var(--robbo-cat-cta-bg);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.1em;
+  &:hover,
+  &:focus {
+    color: var(--robbo-cat-cta-bg-hover);
+  }
+}
+
+// Inline on featured card (second placement).
+.robbo-courses-catalog__featured-access-note {
+  align-items: center;
+  color: var(--robbo-cat-text);
+  display: flex;
+  font-size: 0.875rem;
+  gap: 0.45rem;
+  line-height: 1.4;
+  margin: 0 0 0.6rem;
+}
+
+.robbo-courses-catalog__featured-access-icon {
+  align-items: center;
+  background: var(--robbo-cat-warn);
+  border-radius: 50%;
+  color: var(--robbo-cat-warn-on);
+  display: flex;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 800;
+  height: 1.15rem;
+  justify-content: center;
+  line-height: 1;
+  width: 1.15rem;
+}
+
+.robbo-courses-catalog__featured-access-text {
+  flex: 1;
+  min-width: 0;
+}
+
+// Hero: two columns from md up (reference: heading left, text right).
+.robbo-courses-catalog__hero {
+  display: grid;
+  gap: var(--robbo-cat-gap);
+  margin-bottom: var(--robbo-cat-hero-mb);
+  @include media-breakpoint-up(md) {
+    align-items: start;
+    column-gap: clamp(1.5rem, 4vw, 3rem);
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  }
+}
+
+.robbo-courses-catalog__heading {
+  color: var(--robbo-cat-text);
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.robbo-courses-catalog__lede {
+  color: var(--robbo-cat-muted);
+  font-size: clamp(0.875rem, 1.2vw, 1rem);
+  line-height: 1.5;
+  margin: 0;
+  @include media-breakpoint-up(md) {
+    padding-top: 0.2rem;
+  }
+}
+
+// Featured course (real): horizontal card (reference: copy left, image right; CTA bottom-left).
+.robbo-courses-catalog__featured {
+  --robbo-feat-pad: clamp(1.25rem, 3.5vw, 2.5rem);
+
+  background: #f8f8f8;
+  border: var(--robbo-cat-border);
+  border-radius: clamp(12px, 2vw, 15px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  display: grid;
+  gap: var(--robbo-cat-gap);
+  margin-bottom: var(--robbo-cat-hero-mb);
+  overflow: hidden;
+  padding: var(--robbo-feat-pad);
+  @include media-breakpoint-up(lg) {
+    // Text column keeps natural (content) height; only the media column stretches (see below).
+    align-items: start;
+    gap: 0;
+    // Image column bleeds to top/right/bottom card edges; text keeps inset.
+    grid-template-columns: minmax(0, 1.1fr) minmax(220px, 40%);
+    padding: 0 0 0 var(--robbo-feat-pad);
+  }
+}
+
+.robbo-courses-catalog__featured-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  order: 0;
+  @include media-breakpoint-up(lg) {
+    padding: var(--robbo-feat-pad) var(--robbo-feat-pad) var(--robbo-feat-pad) 0;
+  }
+}
+
+.robbo-courses-catalog__featured-title {
+  color: var(--robbo-cat-text);
+  font-size: clamp(1.125rem, 1.8vw, 1.375rem);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 0.5rem;
+}
+
+.robbo-courses-catalog__featured-desc {
+  color: var(--robbo-cat-muted);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  margin: 0 0 0.75rem;
+}
+
+.robbo-courses-catalog__featured-media {
+  box-sizing: border-box;
+  min-height: 0;
+  min-width: 0;
+  order: 1;
+  overflow: hidden;
+  width: 100%;
+  // Match exclusive of `media-breakpoint-up(lg)` (992px): theme `down(lg)` maps to xl in some builds and would overlap.
+  @media (max-width: 991.98px) {
+    // Full-bleed strip under text within the same card (padding lives on article).
+    margin-left: calc(-1 * var(--robbo-feat-pad));
+    margin-right: calc(-1 * var(--robbo-feat-pad));
+    width: calc(100% + 2 * var(--robbo-feat-pad));
+  }
+  @include media-breakpoint-up(lg) {
+    align-self: stretch;
+    height: 100%;
+    min-height: 0;
+    position: relative;
+  }
+}
+
+// Desktop: absolute fill avoids % height quirks on replaced elements; cover fills the cell edge-to-edge.
+.robbo-courses-catalog__featured-img {
+  aspect-ratio: 552 / 320;
+  display: block;
+  height: auto;
+  max-height: none;
+  max-width: 100%;
+  object-fit: cover;
+  object-position: right center;
+  width: 100%;
+  @include media-breakpoint-up(lg) {
+    aspect-ratio: auto;
+    height: 100%;
+    inset: 0;
+    margin: 0;
+    max-height: none;
+    max-width: none;
+    min-height: 0;
+    min-width: 0;
+    object-fit: cover;
+    object-position: right center;
+    position: absolute;
+    width: 100%;
+  }
+}
+
+// Stub grid: 1 col mobile, 2 from md. Cards in a row share height; inner flex pins media to the bottom.
+.robbo-courses-catalog__stubs {
+  align-items: stretch;
+  display: grid;
+  gap: var(--robbo-cat-gap);
+  grid-template-columns: 1fr;
+  @include media-breakpoint-up(md) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.robbo-courses-catalog__stub {
+  background: var(--robbo-cat-card-bg);
+  border: var(--robbo-cat-border);
+  border-radius: var(--robbo-cat-radius);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--robbo-cat-gap);
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  padding: var(--robbo-cat-pad);
+  position: relative;
+  @include media-breakpoint-up(lg) {
+    // Reserve a dedicated art lane and pin the bitmap to the card's bottom-right corner.
+    display: block;
+    min-height: calc(var(--robbo-cat-stub-img-h) + (2 * var(--robbo-cat-pad)));
+    padding-right: calc(var(--robbo-cat-pad) + clamp(10.5rem, 23vw, 14rem));
+  }
+}
+
+.robbo-courses-catalog__stub-body {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-width: 0;
+  order: 0;
+  @media (max-width: 991.98px) {
+    flex: 1 1 auto;
+  }
+  @include media-breakpoint-up(lg) {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.robbo-courses-catalog__stub-title {
+  color: var(--robbo-cat-text);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.robbo-courses-catalog__stub-desc {
+  color: var(--robbo-cat-muted);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.robbo-courses-catalog__stub-actions {
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
+  margin-top: auto;
+  padding-top: 0.15rem;
+  width: 100%;
+}
+
+.robbo-courses-catalog__stub-notify-label {
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+
+.robbo-courses-catalog__stub-media {
+  background: transparent;
+  box-sizing: border-box;
+  min-height: 0;
+  min-width: 0;
+  order: 1;
+  @media (max-width: 991.98px) {
+    margin-top: auto;
+    min-height: var(--robbo-cat-stub-img-h);
+    position: relative;
+    width: 100%;
+  }
+  @include media-breakpoint-up(lg) {
+    height: 0;
+    min-height: 0;
+    min-width: 0;
+    pointer-events: none;
+    position: static;
+    width: 0;
+  }
+}
+
+.robbo-courses-catalog__stub-img {
+  background: transparent;
+  bottom: 10px;
+  display: block;
+  height: 158px;
+  left: auto;
+  margin: 0 7px 10px 0;
+  max-width: 100%;
+  mix-blend-mode: var(--robbo-cat-stub-img-blend);
+  object-fit: contain;
+  object-position: right bottom;
+  padding-left: 8px;
+  padding-right: 8px;
+  position: absolute;
+  right: 0;
+  top: auto;
+  width: auto;
+  @include media-breakpoint-up(lg) {
+    // Anchor to the actual card corner, not the inner media wrapper.
+    right: 0;
+    bottom: 0;
+  }
+}
+
+.robbo-courses-catalog__btn {
+  border-radius: 8px;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.25;
+  padding: 0.6rem 1.1rem;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    color 0.15s ease,
+    transform 0.12s ease;
+}
+
+// Primary CTA follows text flow (text column is not stretched to match image height).
+.robbo-courses-catalog__featured .robbo-courses-catalog__btn--primary {
+  align-self: flex-start;
+}
+
+// `a` here is subject to global LMS/Bootstrap `a` / `:visited` (blue) — same idea as .robbo-guest CTA.
+a.robbo-courses-catalog__btn--primary,
+.robbo-courses-catalog__btn--primary {
+  align-items: center;
+  -webkit-font-smoothing: antialiased;
+  background: var(--robbo-cat-cta-bg);
+  border: 1px solid var(--robbo-cat-cta-bg);
+  border-radius: var(--robbo-cat-cta-pill);
+  box-sizing: border-box;
+  color: #fff;
+  display: inline-flex;
+  font-size: var(--robbo-cat-cta-font);
+  font-weight: 700;
+  height: var(--robbo-cat-cta-min-h);
+  justify-content: center;
+  line-height: 1.2;
+  min-width: var(--robbo-cat-cta-min-w);
+  padding: 0.5rem 1.25rem;
+  text-decoration: none;
+  max-width: 100%;
+  width: var(--robbo-cat-cta-min-w);
+}
+
+a.robbo-courses-catalog__btn--primary {
+  &,
+  &:link,
+  &:visited,
+  &:active {
+    background: var(--robbo-cat-cta-bg);
+    border-color: var(--robbo-cat-cta-bg);
+    color: #fff !important;
+  }
+  &:hover {
+    background: var(--robbo-cat-cta-bg-hover);
+    border-color: var(--robbo-cat-cta-bg-hover);
+    color: #fff !important;
+  }
+  &:active {
+    filter: brightness(0.95);
+    transform: translateY(1px);
+  }
+  &:focus,
+  &:focus-visible {
+    box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.35);
+    color: #fff !important;
+    outline: none;
+  }
+}
+
+// Non-link primary (e.g. future <button> CTA) — no :visited/ LMS link color fight.
+button.robbo-courses-catalog__btn--primary {
+  &:hover {
+    background: var(--robbo-cat-cta-bg-hover);
+    border-color: var(--robbo-cat-cta-bg-hover);
+    color: #fff;
+  }
+  &:active {
+    filter: brightness(0.95);
+    transform: translateY(1px);
+  }
+  &:focus-visible {
+    box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.35);
+    outline: none;
+  }
+}
+
+// Stub "notify" CTA: soft pill, green accent on interaction (separate from generic .btn--secondary).
+.robbo-courses-catalog__stub .robbo-courses-catalog__stub-notify {
+  align-items: center;
+  background: var(--robbo-cat-stub-notify-surface);
+  border: 1px solid var(--robbo-cat-stub-btn-border);
+  border-radius: 9999px;
+  box-shadow:
+    0 1px 2px var(--robbo-cat-stub-notify-shade),
+    0 6px 18px rgba(15, 23, 42, 0.05);
+  color: var(--robbo-cat-stub-notify-fg);
+  display: inline-flex;
+  gap: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  justify-content: center;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  margin: 0;
+  min-height: 2.625rem;
+  padding: 0.625rem 1.25rem;
+  text-align: center;
+  width: 234px;
+  max-width: 100%;
+  white-space: normal;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    color 0.18s ease,
+    transform 0.15s ease;
+  &:hover {
+    background: var(--robbo-cat-stub-notify-surface-hover);
+    border-color: var(--robbo-cat-cta-bg);
+    box-shadow:
+      0 2px 10px var(--robbo-cat-stub-notify-elev-hover),
+      0 10px 24px rgba(0, 200, 83, 0.12);
+    color: var(--robbo-cat-stub-notify-fg-hover);
+    transform: translateY(-1px);
+  }
+  &:active {
+    background: var(--robbo-cat-stub-btn-bg-active);
+    box-shadow: inset 0 1px 2px var(--robbo-cat-stub-notify-shade);
+    color: var(--robbo-cat-stub-notify-fg);
+    transform: translateY(0);
+  }
+  &:focus-visible {
+    border-color: var(--robbo-cat-cta-bg);
+    box-shadow: 0 0 0 3px var(--robbo-cat-stub-btn-ring);
+    outline: none;
+  }
+}

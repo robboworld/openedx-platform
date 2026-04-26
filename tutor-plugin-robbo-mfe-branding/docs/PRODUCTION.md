@@ -36,14 +36,20 @@ BEGIN CURSOR PROMPT — Robbo MFE branding + Tutor
        - cms:"<ABS_PATH_OPENEDX>/themes/robbo-theme:/openedx/themes/robbo-theme"
      (если у команды уже есть свои маунты sass/css — не удаляй без согласования.)
 
-5) Выполни: `tutor config save`
+5) Для Robbo-каталога `/courses` (server-rendered карточки) убедись, что отключён discovery:
+   - `FEATURES["ENABLE_COURSE_DISCOVERY"] = False`
+   - в текущем плагине это выставляется автоматически через ENV patches
+     `openedx-lms-development-settings` и `openedx-lms-production-settings`;
+     после обновления плагина обязателен `tutor config save`.
 
-6) Пересобери образ MFE (в shell CSS и Dockerfile-патчи плагина входят в сборку):
+6) Выполни: `tutor config save`
+
+7) Пересобери образ MFE (в shell CSS и Dockerfile-патчи плагина входят в сборку):
    tutor images build mfe
 
-7) Перезапусти стек так, как принято в этом окружении (например `tutor local launch` или `tutor dev launch`). Если образы не пересобирались на шаге 6 — всё равно перезапусти сервисы после config save.
+8) Перезапусти стек так, как принято в этом окружении (например `tutor local launch` или `tutor dev launch`). Если образы не пересобирались на шаге 7 — всё равно перезапусти сервисы после config save.
 
-8) Проверь: LMS открывается, MFE authn и learner-dashboard — зелёная шапка как на LMS, логотипы Robbo, футер в светлом стиле. При сбоях смотри README плагина и раздел «Справочник оператора» в этом же файле PRODUCTION.md.
+9) Проверь: LMS открывается, MFE authn и learner-dashboard — зелёная шапка как на LMS, логотипы Robbo, футер в светлом стиле. При сбоях смотри README плагина и раздел «Справочник оператора» в этом же файле PRODUCTION.md.
 
 Правило агента: openedx-tutor-robbo.mdc. Не правь посторонние файлы вне задачи.
 
@@ -67,6 +73,12 @@ END CURSOR PROMPT
 Правки патчей **`mfe-lms-common-settings`**, **`mfe-lms-production-settings`**, которые задают только **`MFE_CONFIG`** (логотипы, `PARAGON_THEME_URLS` и т.д., отдаётся через `/api/mfe_config/v1`).
 
 **Действия:** обновить код плагина → `pip install -e ./tutor-plugin-robbo-mfe-branding` → `tutor config save` → перезапуск LMS (и при необходимости прокси). Образ **`mfe` пересобирать не обязательно**.
+
+Для Robbo-каталога `/courses` в том же цикле проверь, что в сгенерированном LMS settings итоговое значение:
+
+- `FEATURES["ENABLE_COURSE_DISCOVERY"] = False`
+
+Иначе стандартный `courseware.views.courses` в Open edX при discovery=`True` не наполняет `courses_list` серверными курсами и страница каталога в теме может выглядеть пустой.
 
 ### B. Изменения, вшиваемые в сборку MFE (нужна пересборка образа)
 
@@ -97,6 +109,7 @@ END CURSOR PROMPT
 - Правка `robbo-mfe-shell.css` без **`tutor images build mfe`** — старый UI.
 - Логотипы 404 — тема не в образе/маунтах или неверный `LMS_HOST`/HTTPS в `MFE_CONFIG`.
 - Кэш браузера — инкогнито или сброс кэша.
+- На `/courses` нет карточек при наличии курсов в БД — проверь `ENABLE_COURSE_DISCOVERY` (должен быть `False` для текущего Robbo-каталога), затем `tutor config save` + перезапуск LMS.
 
 ### Ссылки
 
