@@ -1,5 +1,6 @@
 // Include custom dashborad
-.window-wrap #content.content-wrapper {
+// Skip 64px top offset on guest landing (custom topbar inside page; no fixed LMS header).
+body:not(.robbo-guest-landing-page) .window-wrap #content.content-wrapper {
     padding: 0 !important;
     margin: 0 !important;
     max-width: 100%;

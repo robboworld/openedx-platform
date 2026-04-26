@@ -1,0 +1,147 @@
+<%page expression_filter="h"/>
+<%namespace name='static' file='static_content.html'/>
+<%!
+from datetime import datetime
+
+from django.urls import reverse
+%>
+## Гостевая главная: кастомный хедер/футер по макету Tilda; стандартные header/footer Open edX отключены через body.robbo-guest-landing-page.
+<section class="robbo-guest-landing" lang="ru">
+  <p class="robbo-guest-skip-target"><a class="robbo-guest-skip-target__link" href="#about">К содержанию страницы</a></p>
+
+  <div class="robbo-guest-hero-stack">
+  <header class="robbo-guest-topbar" role="banner">
+    <div class="robbo-guest-topbar__inner">
+      <a class="robbo-guest-topbar__brand" href="/">РОББО</a>
+      <p class="robbo-guest-topbar__tagline">skill.robbo.ru - образовательная платформа</p>
+      <div class="robbo-guest-topbar__actions">
+        <a class="robbo-guest-topbar__btn" href="${reverse('signin_user') | h}">Вход</a>
+        <a class="robbo-guest-topbar__btn" href="${reverse('register_user') | h}">Регистрация</a>
+      </div>
+    </div>
+  </header>
+
+  <header class="robbo-guest-hero" style="--robbo-guest-hero-image: url('${static.url('images/guest-landing/hero-cover.png')}');">
+    <div class="robbo-guest-hero__inner">
+      <h1 class="robbo-guest-hero__title">Российские микроконтроллеры: локализация, архитектура, портирование</h1>
+      <div class="robbo-guest-hero__descr">
+        <p>Для прохождения курса по отечественным микроконтроллерам необходимо зарегистрироваться на <strong class="robbo-guest-hero__accent">образовательной платформе РОББО.</strong></p>
+        <p>В рамках курса вы познакомитесь с архитектурой российских МК, особенностями разработки и получите практические навыки работы с отечественной компонентной базой.</p>
+      </div>
+      <div class="robbo-guest-hero__cta">
+        <a class="robbo-guest-btn robbo-guest-btn--hero" href="#registration">Регистрация на образовательной платформе</a>
+      </div>
+    </div>
+    <a href="#about" class="robbo-guest-hero__scroll" aria-label="Прокрутить к разделу «О нас»">
+      <svg width="39" height="19" viewBox="0 0 38.417 18.592" aria-hidden="true"><path fill="currentColor" d="M19.208 18.592a.98.98 0 01-.673-.261L.327 1.74a1.02 1.02 0 011.413-1.413L19.208 16.24 36.743.261a1.02 1.02 0 011.348 1.479L19.881 18.332a.977.977 0 01-.673.26z"/></svg>
+    </a>
+  </header>
+  </div>
+
+  <nav class="robbo-guest-subnav" aria-label="Разделы страницы">
+    <a href="#about">О нас</a>
+    <a href="#program">Программа</a>
+    <a href="#aboutus">Как проходит обучение</a>
+    <a href="#registration">Регистрация</a>
+  </nav>
+
+  <section id="about" class="robbo-guest-about" aria-labelledby="robbo-guest-about-title">
+    <div class="robbo-guest-about__grid">
+      <div class="robbo-guest-about__lead">
+        <h2 id="robbo-guest-about-title" class="robbo-guest-about__brand">РОББО</h2>
+        <p class="robbo-guest-about__tagline">Открытые технологии будущего</p>
+      </div>
+      <div class="robbo-guest-about__body">
+        <p>Уже 19 лет мы внедряем технологии на базе открытого кода (Open Source), развиваем робототехнику и занимаемся системной интеграцией сложных инженерных систем. Наши продукты и методики востребованы в <strong class="robbo-guest-text-accent">44 странах мира</strong>.</p>
+        <ul class="robbo-guest-about__list">
+          <li><strong class="robbo-guest-text-accent">Институты развития:</strong> лидерский проект АСИ, Лидер НТИ, резидент «Сколково» и кластера «Ломоносов».</li>
+          <li><strong class="robbo-guest-text-accent">При поддержки:</strong> Минпромторг, Минцифры, Минобрнауки, Минэкономразвития.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="program" class="robbo-guest-band robbo-guest-band--green" aria-labelledby="robbo-guest-program-title">
+    <div class="robbo-guest-band__inner">
+      <h2 id="robbo-guest-program-title" class="robbo-guest-band__title">Описание курса</h2>
+      <div class="robbo-guest-band__text">
+        <p>Курс <strong>«Российские микроконтроллеры: локализация, архитектура, портирование»</strong> дает инженерам и руководителям системное представление о российской компонентной базе популярных МК и инструменты для перехода с импортных решений на аналоги. Участники изучат архитектуры ARM, AVR, RISC-V, документацию производителей «Микрон», «Миландр», «НИИЭТ», а также на кейсах отработают навыки подбора МК и миграции кода.</p>
+        <p>Отдельный блок посвящен нормативным требованиям: слушатели разберут уровни локализации по ПП РФ №719 и №878 и научатся рассчитывать баллы за российские компоненты. По итогу курса каждый сможет самостоятельно оценить применимость отечественных МК в своих проектах и рассчитать трудоемкость перехода с учетом технических и юридических ограничений.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="aboutus" class="robbo-guest-band robbo-guest-band--green robbo-guest-band--tight-top" aria-labelledby="robbo-guest-how-title">
+    <div class="robbo-guest-band__inner robbo-guest-band__inner--center">
+      <h2 id="robbo-guest-how-title" class="robbo-guest-band__title robbo-guest-band__title--caps">Как будет проходить обучение</h2>
+    </div>
+  </section>
+
+  <section class="robbo-guest-how robbo-guest-band robbo-guest-band--green robbo-guest-band--cards" aria-label="Формат обучения">
+    <div class="robbo-guest-how__grid">
+      <article class="robbo-guest-how__item">
+        <img class="robbo-guest-how__icon" src="${static.url('images/guest-landing/icon-calendar.svg')}" width="80" height="80" alt="" />
+        <div class="robbo-guest-how__text">
+          <p><strong>Старт модулей каждую неделю</strong></p>
+          <p>Курс рассчитан на 5 недель. Каждый понедельник открывается новый модуль, что позволяет последовательно проходить программу и эффективно усваивать материал.</p>
+        </div>
+      </article>
+      <article class="robbo-guest-how__item">
+        <img class="robbo-guest-how__icon" src="${static.url('images/guest-landing/icon-time.svg')}" width="80" height="80" alt="" />
+        <div class="robbo-guest-how__text">
+          <p><strong>Обучение в удобном темпе</strong></p>
+          <p>Вы можете учиться в любое удобное время. Доступ ко всем материалам сохраняется навсегда после завершения курса.</p>
+        </div>
+      </article>
+      <article class="robbo-guest-how__item">
+        <img class="robbo-guest-how__icon" src="${static.url('images/guest-landing/icon-device.svg')}" width="80" height="80" alt="" />
+        <div class="robbo-guest-how__text">
+          <p><strong>Доступ с любого устройства</strong></p>
+          <p>Проходите курс с любого устройства — компьютер, планшет или смартфон. Учитесь там, где вам комфортно.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="registration" class="robbo-guest-register" style="--robbo-guest-register-image: url('${static.url('images/guest-landing/registration-cover.png')}');" aria-labelledby="robbo-guest-reg-title">
+    <div class="robbo-guest-register__overlay"></div>
+    <div class="robbo-guest-register__inner">
+      <h2 id="robbo-guest-reg-title" class="robbo-guest-register__title">Регистрация на <br />образовательной платформе РОББО</h2>
+      <p class="robbo-guest-register__hint">Создайте учётную запись на платформе — это займёт несколько минут.</p>
+      <div class="robbo-guest-register__actions">
+        <a class="robbo-guest-btn robbo-guest-btn--submit" href="${reverse('register_user') | h}">Перейти к регистрации</a>
+        <a class="robbo-guest-btn robbo-guest-btn--ghost" href="${reverse('signin_user') | h}">Вход для пользователей</a>
+      </div>
+    </div>
+  </section>
+
+  <footer id="footer-guest" class="robbo-site-footer robbo-guest-footer" lang="ru">
+    <div class="robbo-site-footer__inner">
+      <div class="robbo-footer__left">
+        <div class="robbo-footer__brand">
+          <span class="robbo-footer__logo" aria-label="РОББО">РОББО<sup class="robbo-footer__reg" aria-hidden="true">®</sup></span>
+        </div>
+        <p class="robbo-footer__copyright">© ООО «РОББО ТЕХНОЛОГИИ», ${datetime.now().year}</p>
+      </div>
+      <div class="robbo-footer__center">
+        <nav class="robbo-footer__nav" aria-label="Документы">
+          <ul class="robbo-footer__links">
+            <li>
+              <a href="https://edurobbo.ru/doc" target="_blank" rel="noopener noreferrer">Сведения об образовательной организации</a>
+            </li>
+            <li>
+              <a href="https://robbo.ru/wp-content/uploads/policy.pdf" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>
+            </li>
+            <li>
+              <a href="https://robbo.ru/wp-content/uploads/agree.pdf" target="_blank" rel="noopener noreferrer">Согласие на обработку персональных данных</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="robbo-footer__contacts">
+        <p class="robbo-footer__contacts-title">Контактные данные:</p>
+        <p class="robbo-footer__contacts-line">Почта <a href="mailto:skill@robbo.ru">skill@robbo.ru</a></p>
+      </div>
+    </div>
+  </footer>
+</section>

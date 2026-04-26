@@ -147,6 +147,12 @@ def index(request, extra_context=None, user=AnonymousUser()):
 
     context = {'courses': courses}
 
+    # Guest homepage (robbo-theme): full-page landing with local header/footer. Omit LMS
+    # global header/footer so fixed-header spacing and chrome are not in the DOM.
+    if not user.is_authenticated:
+        context['disable_header'] = True
+        context['disable_footer'] = True
+
     context['homepage_overlay_html'] = configuration_helpers.get_value('homepage_overlay_html')
 
     # This appears to be an unused context parameter, at least for the master templates...

@@ -70,8 +70,9 @@ h1, h2, h3, h1 span, h2 span, h3 span, .nav-item {
 }
 
 // It is necessary to specify `:not(.courseware) >` in order to not affect the style
-// of `#content.content-wrapper` inside the unit iframe in the MFE
-:not(.courseware) > #content.content-wrapper {
+// of `#content.content-wrapper` inside the unit iframe in the MFE.
+// Guest homepage uses its own header inside #content — skip offset under fixed global-header.
+body:not(.robbo-guest-landing-page) :not(.courseware) > #content.content-wrapper {
   @include media-breakpoint-up(lg) {
     padding-top: $content-padding-top;
     padding-bottom: $content-padding-bottom;
@@ -1713,6 +1714,7 @@ body.indigo-dark-theme {
 @import '../../../courseware/about';
 @import '../../../courseware/bookmarks';
 @import '../../../home/home';
+@import '../../../home/guest-landing';
 @import '../../../programs/programs';
 @import '../../../certificates/certificate';
 @import '../../../xblock/xblock';

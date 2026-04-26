@@ -8,7 +8,16 @@ from django.urls import reverse
 from openedx.core.djangolib.markup import HTML, Text
 %>
 
+<%block name="bodyclass">
+% if not user.is_authenticated:
+robbo-guest-landing-page
+% endif
+</%block>
+
 <main id="main" aria-label="Content" tabindex="-1">
+% if not user.is_authenticated:
+    <%include file="index_guest_landing.html" />
+% else:
     <section class="home style-logout">
       <header>
         <div class="outer-wrapper">
@@ -50,6 +59,7 @@ from openedx.core.djangolib.markup import HTML, Text
       <%include file="${courses_list}" />
 
     </section>
+% endif
 </main>
 
 % if show_homepage_promo_video:

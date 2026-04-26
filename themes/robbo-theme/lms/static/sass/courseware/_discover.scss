@@ -1,5 +1,5 @@
 // Include custom discover
-.window-wrap #content.content-wrapper {
+body:not(.robbo-guest-landing-page) .window-wrap #content.content-wrapper {
     padding: 0 !important;
     margin: 0 !important;
     max-width: 100%;

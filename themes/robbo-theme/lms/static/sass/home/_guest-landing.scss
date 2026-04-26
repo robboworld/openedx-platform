@@ -1,0 +1,643 @@
+// Guest homepage — adapted from Tilda export (page133250156), tokens aligned with source (#00af41, #ff6600).
+$robbo-tilda-green: #00af41;
+$robbo-tilda-orange-hero: #ff6600;
+$robbo-tilda-orange-cta: #e84c15;
+$robbo-guest-max-width: 1200px;
+$robbo-guest-pad: clamp(1rem, 4vw, 2.5rem);
+
+.robbo-guest-landing {
+    --robbo-tilda-green: #{$robbo-tilda-green};
+    --robbo-tilda-orange-hero: #{$robbo-tilda-orange-hero};
+    --robbo-tilda-orange-cta: #{$robbo-tilda-orange-cta};
+    margin: 0 auto;
+}
+
+.robbo-guest-skip-target {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.robbo-guest-skip-target__link:focus {
+    position: fixed;
+    z-index: 10000;
+    top: 8px;
+    left: 8px;
+    width: auto;
+    height: auto;
+    clip: auto;
+    padding: 0.5rem 1rem;
+    margin: 0;
+    background: #fff;
+    color: $robbo-tilda-green;
+    border: 2px solid $robbo-tilda-green;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+// Только гостевая главная: скрываем стандартный хедер/футер LMS (кастомные — внутри лендинга).
+// Для анонимов header/footer ещё отключаются в student index (disable_*), но правила ниже —
+// подстраховка и сброс отступов #content.
+body.robbo-guest-landing-page {
+    // Без зазора сверху: глобальные правила dashboard/discover задают #content margin-top: 64px (lg+),
+    // а в _extras.scss — ещё отступ под fixed header; на лендинге шапка своя и скрыта.
+    // На гостевой главной не применяются правила dashboard/discover (max-width: 100% там) —
+    // иначе снова включается базовый .content-wrapper с max-width контейнера и полями по бокам.
+    .window-wrap #content.content-wrapper.main-container,
+    .window-wrap #content.content-wrapper {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: none !important;
+        box-sizing: border-box !important;
+        background: transparent !important;
+    }
+
+    // Плашка под любой зазор сверху (фон body по умолчанию белый).
+    // overflow-x: hidden на .window-wrap мешает полноширинному лендингу — ослабляем.
+    .window-wrap {
+        background-color: #333;
+        overflow-x: visible;
+    }
+
+    // Mako может оставить пробелы внутри — :empty не сработает; хедер лендинга не использует блок marketing_hero.
+    .marketing-hero {
+        display: none !important;
+    }
+
+    // .nav-skip.sr-only тянет белый фон из %a11y-ensure-contrast + правила skipnav — визуальная полоса сверху.
+    .nav-skip.sr-only {
+        background: transparent !important;
+        border: 0 !important;
+        padding: 0 !important;
+        clip: rect(0, 0, 0, 0) !important;
+        clip-path: inset(50%) !important;
+        width: 1px !important;
+        height: 1px !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        white-space: nowrap !important;
+        top: 0 !important;
+        left: 0 !important;
+    }
+
+    #main {
+        margin: 0;
+        padding: 0;
+        max-width: none;
+    }
+
+    .global-header {
+        display: none !important;
+    }
+
+    .wrapper-footer {
+        display: none !important;
+    }
+
+    .content-wrapper.main-container {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        max-width: none;
+        box-sizing: border-box;
+    }
+}
+
+// Первый блок как на Tilda (page133250156): полная высота окна, дальше обычный поток документа — без sticky/анимаций.
+.robbo-guest-hero-stack {
+    position: relative;
+}
+
+.robbo-guest-topbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    // Как в Tilda (первый блок меню): тёмная полупрозрачная плашка.
+    background: rgba(56, 56, 56, 0.4);
+    border: none;
+    box-shadow: none;
+}
+
+.robbo-guest-topbar__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, auto) minmax(0, 1fr) minmax(0, auto);
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0.65rem $robbo-guest-pad;
+    min-height: 4.25rem;
+    @include media-breakpoint-down(md) {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+    }
+}
+
+.robbo-guest-topbar__brand {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: $robbo-tilda-green !important;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+    @include media-breakpoint-down(md) {
+        order: 1;
+    }
+    &:hover,
+    &:focus {
+        color: lighten($robbo-tilda-green, 4%) !important;
+        text-decoration: none;
+    }
+}
+
+.robbo-guest-topbar__tagline {
+    margin: 0;
+    text-align: center;
+    font-size: clamp(0.6875rem, 1.5vw, 0.8125rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #fff;
+    line-height: 1.35;
+    padding: 0 0.5rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+    @include media-breakpoint-down(md) {
+        order: 3;
+        max-width: 22rem;
+    }
+}
+
+.robbo-guest-topbar__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    @include media-breakpoint-down(md) {
+        order: 2;
+        justify-content: center;
+    }
+}
+
+.robbo-guest-topbar__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 1.15rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #111 !important;
+    background: #fff;
+    border-radius: 999px;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease;
+    &:hover,
+    &:focus {
+        background: #f3f4f6;
+        color: #111 !important;
+        text-decoration: none;
+    }
+    &:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+    }
+}
+
+.robbo-guest-hero {
+    position: relative;
+    box-sizing: border-box;
+    overflow: hidden;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $robbo-guest-pad;
+    padding-top: clamp(5rem, 12vw, 6.5rem);
+    background-color: #333;
+    background-image:
+        linear-gradient(to bottom, rgba(51, 51, 51, 0.5), rgba(51, 51, 51, 0.4)),
+        var(--robbo-guest-hero-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    text-align: center;
+}
+
+.robbo-guest-hero__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 56rem;
+    margin: 0 auto;
+}
+
+.robbo-guest-hero__title {
+    margin: 0 0 1.25rem;
+    font-size: clamp(1.375rem, 4vw, 3.25rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: #fff;
+}
+
+.robbo-guest-hero__descr {
+    margin: 0 0 1.75rem;
+    font-size: clamp(1rem, 2.2vw, 1.375rem);
+    line-height: 1.45;
+    color: #fff;
+    p {
+        margin: 0 0 1rem;
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.robbo-guest-hero__accent {
+    color: $robbo-tilda-green;
+    font-weight: 700;
+}
+
+.robbo-guest-hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.robbo-guest-btn--hero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 1.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #fff !important;
+    background: $robbo-tilda-orange-hero;
+    border: none;
+    border-radius: 5px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    &:hover,
+    &:focus {
+        opacity: 0.92;
+        color: #fff !important;
+        text-decoration: none;
+    }
+    &:focus-visible {
+        outline: 3px solid #fff;
+        outline-offset: 3px;
+    }
+}
+
+.robbo-guest-hero__scroll {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 50%;
+    z-index: 1;
+    transform: translateX(-50%);
+    color: #fafafa;
+    opacity: 0.9;
+    &:hover {
+        opacity: 1;
+        color: #fff;
+    }
+}
+
+.robbo-guest-subnav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.25rem;
+    padding: 0.75rem $robbo-guest-pad;
+    background: #f8faf8;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    a {
+        color: #374151;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        &:hover,
+        &:focus {
+            color: $robbo-tilda-green;
+            border-bottom-color: $robbo-tilda-green;
+        }
+    }
+}
+
+.robbo-guest-about {
+    padding: clamp(3rem, 8vw, 7rem) $robbo-guest-pad;
+    background: #fff;
+}
+
+.robbo-guest-about__grid {
+    max-width: $robbo-guest-max-width;
+    margin: 0 auto;
+    display: grid;
+    gap: 2rem;
+    @include media-breakpoint-up(lg) {
+        grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+        align-items: start;
+    }
+}
+
+.robbo-guest-about__brand {
+    margin: 0 0 0.35rem;
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    font-weight: 700;
+    color: $robbo-tilda-green;
+}
+
+.robbo-guest-about__tagline {
+    margin: 0;
+    font-size: clamp(1.125rem, 2vw, 1.625rem);
+    font-weight: 600;
+    color: $robbo-tilda-green;
+}
+
+.robbo-guest-about__body {
+    font-size: 1rem;
+    line-height: 1.55;
+    color: #333;
+    p {
+        margin: 0 0 1rem;
+    }
+}
+
+.robbo-guest-text-accent {
+    color: $robbo-tilda-green;
+}
+
+.robbo-guest-about__list {
+    margin: 1rem 0 0;
+    padding-left: 1.2rem;
+    li + li {
+        margin-top: 0.65rem;
+    }
+}
+
+.robbo-guest-band--green {
+    background: $robbo-tilda-green;
+    color: #fff;
+}
+
+.robbo-guest-band--tight-top {
+    padding-top: 0;
+    margin-top: -0.5rem;
+}
+
+.robbo-guest-band__inner {
+    max-width: $robbo-guest-max-width;
+    margin: 0 auto;
+    padding: clamp(2.5rem, 6vw, 4.5rem) $robbo-guest-pad;
+    &--center {
+        text-align: center;
+        padding-bottom: 0.5rem;
+    }
+}
+
+.robbo-guest-band--cards {
+    padding-top: 0;
+    padding-bottom: clamp(2.5rem, 6vw, 5rem);
+}
+
+.robbo-guest-band__title {
+    margin: 0 0 1.25rem;
+    font-size: clamp(1.375rem, 3vw, 2.625rem);
+    font-weight: 700;
+    text-align: center;
+    color: inherit;
+    &--caps {
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+    }
+}
+
+.robbo-guest-band__text {
+    font-size: clamp(1rem, 2vw, 1.375rem);
+    line-height: 1.55;
+    p {
+        margin: 0 0 1rem;
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.robbo-guest-how__grid {
+    max-width: $robbo-guest-max-width;
+    margin: 0 auto;
+    padding: 0 $robbo-guest-pad 2rem;
+    display: grid;
+    gap: 1.75rem;
+    @include media-breakpoint-up(md) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.robbo-guest-how__item {
+    text-align: center;
+}
+
+.robbo-guest-how__icon {
+    display: block;
+    margin: 0 auto 1rem;
+    max-width: 80px;
+    height: auto;
+}
+
+.robbo-guest-how__text {
+    font-size: 1.125rem;
+    line-height: 1.5;
+    color: #fff;
+    p {
+        margin: 0 0 0.5rem;
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.robbo-guest-register {
+    position: relative;
+    min-height: 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $robbo-guest-pad;
+    background-color: #1a1a1a;
+    background-image: var(--robbo-guest-register-image);
+    background-size: cover;
+    background-position: center;
+}
+
+.robbo-guest-register__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+}
+
+.robbo-guest-register__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 36rem;
+    text-align: center;
+}
+
+.robbo-guest-register__title {
+    margin: 0 0 1rem;
+    font-size: clamp(1.25rem, 3vw, 2rem);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.25;
+}
+
+.robbo-guest-register__hint {
+    margin: 0 0 1.5rem;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.robbo-guest-register__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    @include media-breakpoint-up(sm) {
+        flex-direction: row;
+        justify-content: center;
+    }
+}
+
+.robbo-guest-btn--submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 1.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: #fff !important;
+    background: $robbo-tilda-orange-cta;
+    border-radius: 7px;
+    border: none;
+    transition: opacity 0.2s ease;
+    &:hover {
+        opacity: 0.92;
+        color: #fff !important;
+        text-decoration: none;
+    }
+    &:focus-visible {
+        outline: 3px solid #fff;
+        outline-offset: 2px;
+    }
+}
+
+.robbo-guest-btn--ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 1.25rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.12);
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    border-radius: 7px;
+    &:hover {
+        background: rgba(255, 255, 255, 0.22);
+        color: #fff !important;
+        text-decoration: none;
+    }
+}
+
+// Футер как в `footer.html` темы; только фон — зелёный Tilda, контраст текста/ссылок под заливку.
+.robbo-guest-footer.robbo-site-footer {
+    background: $robbo-tilda-green;
+    padding: clamp(1.25rem, 3vw, 2rem) $robbo-guest-pad;
+    box-sizing: border-box;
+}
+
+.robbo-guest-footer.robbo-site-footer .robbo-site-footer__inner {
+    padding: 0;
+    max-width: 1162px;
+}
+
+.robbo-guest-footer.robbo-site-footer .robbo-footer__copyright,
+.robbo-guest-footer.robbo-site-footer .robbo-footer__links a,
+.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-title,
+.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-line,
+.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-line a {
+    color: #fff;
+}
+
+.robbo-guest-footer.robbo-site-footer .robbo-footer__links a:hover,
+.robbo-guest-footer.robbo-site-footer .robbo-footer__links a:focus,
+.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-line a:hover,
+.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-line a:focus {
+    color: #f0fdf4;
+}
+
+.robbo-guest-footer.robbo-site-footer .robbo-footer__logo {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+body.indigo-dark-theme {
+    .robbo-guest-subnav {
+        background: $primary-light-d;
+        border-bottom-color: $border-color-d;
+        a {
+            color: $text-color-d;
+            &:hover {
+                color: $primary-d;
+                border-bottom-color: $primary-d;
+            }
+        }
+    }
+    .robbo-guest-about {
+        background: $primary-light-d;
+    }
+    .robbo-guest-about__body {
+        color: $text-color-primary;
+    }
+
+    // Не даём общему правилу `.robbo-site-footer { background: #fff }` перебить зелёный гостевой футер.
+    .robbo-guest-footer.robbo-site-footer {
+        background: $robbo-tilda-green;
+    }
+
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__copyright,
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__links a,
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-title,
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-line,
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-line a {
+        color: #fff;
+    }
+
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__links a:hover,
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__links a:focus,
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-line a:hover,
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-line a:focus {
+        color: #f0fdf4;
+    }
+}
