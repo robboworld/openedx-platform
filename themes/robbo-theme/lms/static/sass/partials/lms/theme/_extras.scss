@@ -276,8 +276,8 @@ nav.wrapper-preview-menu {
   overflow-x: hidden;
   overflow-y: visible;
 
-  // main fills space so footer sits at bottom when content is short
-  > #content.content-wrapper.main-container {
+  // Main + Django pages (`main_django.html`, e.g. /logout): grow #content so footer stays at bottom
+  > #content.content-wrapper {
     flex: 1 1 auto;
     min-height: 0;
     width: 100%;
