@@ -69,6 +69,12 @@ SUPPORT_SITE_LINK = "https://support.robbo.world/"
 ACTIVATION_EMAIL_SUPPORT_LINK = "https://support.robbo.world/"
 """
 
+# Theme strings in Mako use gettext; `themes/conf/locale/<lang>/LC_MESSAGES/django.po`
+# must be on LOCALE_PATHS (empty COMPREHENSIVE_THEME_LOCALE_PATHS in production.py skips them).
+_PATCH_ROBBO_THEME_LOCALE_PATHS = """
+COMPREHENSIVE_THEME_LOCALE_PATHS = [REPO_ROOT / "themes/conf/locale"]
+"""
+
 # Keep unconfirmed-email prompts active across LMS/MFE flows.
 _PATCH_ROBBO_EMAIL_CONFIRMATION = """
 MARKETING_EMAILS_OPT_IN = True
@@ -88,5 +94,7 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_SUPPORT),
         ("openedx-lms-development-settings", _PATCH_ROBBO_EMAIL_CONFIRMATION),
         ("openedx-lms-production-settings", _PATCH_ROBBO_EMAIL_CONFIRMATION),
+        ("openedx-lms-development-settings", _PATCH_ROBBO_THEME_LOCALE_PATHS),
+        ("openedx-lms-production-settings", _PATCH_ROBBO_THEME_LOCALE_PATHS),
     ]
 )
