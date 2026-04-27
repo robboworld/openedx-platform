@@ -5621,3 +5621,5 @@ USE_EXTRACTED_VIDEO_BLOCK = False
 ROBBO_CATALOG_FEATURED_COURSE_ID = None
 # File name under the theme’s `lms/static/images/catalog/` (staticfiles path `images/catalog/...`).
 ROBBO_CATALOG_FEATURED_IMAGE = 'stub-postgres.png'
+# Recipients for learner requests to be notified when a stub course opens.
+ROBBO_COURSE_INTEREST_RECIPIENTS = ['e.sovkov@robbo.ru']

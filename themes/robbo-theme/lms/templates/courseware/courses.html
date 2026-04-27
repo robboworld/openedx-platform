@@ -286,7 +286,15 @@
 
 <%block name="pagetitle">${_("Courses")}</%block>
 
-<main id="main" class="robbo-courses-catalog" aria-label="Content" tabindex="-1">
+<main
+  id="main"
+  class="robbo-courses-catalog"
+  aria-label="Content"
+  tabindex="-1"
+  data-course-interest-url="/api/robbo/course-interest/"
+  data-register-url="${reverse('register_user')}"
+  data-authenticated="${'true' if request.user.is_authenticated else 'false'}"
+>
   <div class="robbo-courses-catalog__wrap">
     % if robbo_account['mode'] != 'none':
       <div class="robbo-courses-catalog__account-banner" role="alert" aria-live="polite">
@@ -301,8 +309,7 @@
         </div>
       </div>
     % endif
-    <header class="robbo-courses-catalog__hero" aria-labelledby="robbo-catalog-heading">
-      <h1 id="robbo-catalog-heading" class="robbo-courses-catalog__heading">${robbo_hero['heading']}</h1>
+    <header class="robbo-courses-catalog__hero">
       <p class="robbo-courses-catalog__lede">${robbo_hero['lede']}</p>
     </header>
 

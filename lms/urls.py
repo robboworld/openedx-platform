@@ -16,6 +16,7 @@ from edx_django_utils.plugins import get_plugin_url_patterns
 from common.djangoapps.student import views as student_views
 from common.djangoapps.util import views as util_views
 from lms.djangoapps.branding import views as branding_views
+from lms.djangoapps.courseware import robbo_course_interest
 from lms.djangoapps.courseware.masquerade import MasqueradeView
 from lms.djangoapps.courseware.block_render import (
     handle_xblock_callback,
@@ -354,6 +355,11 @@ urlpatterns += [
         'reset_deadlines',
         util_views.reset_course_deadlines,
         name=RESET_COURSE_DEADLINES_NAME,
+    ),
+    path(
+        'api/robbo/course-interest/',
+        robbo_course_interest.course_interest,
+        name='robbo_course_interest',
     ),
 
     re_path(r'^courses/?$', branding_views.courses, name='courses'),
