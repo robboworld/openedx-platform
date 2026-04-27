@@ -63,6 +63,13 @@ conf/locale/fake*/LC_MESSAGES/*.mo
 conf/locale/messages.mo
 conf/plugins-locale/
 conf/locale/*/LC_MESSAGES/
+# Fork/override: track custom RU translations (see conf/locale/config.yaml; upstream uses Atlas, not git).
+!conf/locale/ru/
+!conf/locale/ru/LC_MESSAGES/
+!conf/locale/ru/LC_MESSAGES/django.po
+!conf/locale/ru/LC_MESSAGES/djangojs.po
+!conf/locale/ru/LC_MESSAGES/django.mo
+!conf/locale/ru/LC_MESSAGES/djangojs.mo
 /*/static/js/i18n/
 /*/static/js/xblock.v1-i18n/
 
