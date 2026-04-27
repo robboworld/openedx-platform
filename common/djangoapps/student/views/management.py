@@ -688,7 +688,7 @@ def activate_account(request, key):
         url_path = '/login?{}'.format(urllib.parse.urlencode(params))
         return redirect(settings.AUTHN_MICROFRONTEND_URL + url_path)
 
-    response = redirect(redirect_url) if redirect_url and is_enterprise_learner(request.user) else redirect('dashboard')
+    response = redirect(redirect_url) if redirect_url and is_enterprise_learner(request.user) else redirect('courses')
     if show_account_activation_popup:
         response.delete_cookie(
             settings.SHOW_ACTIVATE_CTA_POPUP_COOKIE_NAME,
