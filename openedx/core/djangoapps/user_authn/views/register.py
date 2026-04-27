@@ -114,6 +114,22 @@ REGISTER_USER = Signal()
 REAL_IP_KEY = 'openedx.core.djangoapps.util.ratelimit.real_ip'
 
 
+def _log_registration_company_field(user, params):
+    """
+    Log company from the registration request (e.g. Robbo) for auditing until
+    the value is stored in the DB. Grep LMS logs for: user_authn.registration.company
+    """
+    if "company" not in params:
+        return
+    log.info(
+        "user_authn.registration.company: user_id=%s username=%r email=%r company=%r",
+        user.id,
+        user.username,
+        user.email,
+        params.get("company", ""),
+    )
+
+
 @transaction.non_atomic_requests
 def create_account_with_params(request, params):  # pylint: disable=too-many-statements
     """
@@ -220,6 +236,7 @@ def create_account_with_params(request, params):  # pylint: disable=too-many-sta
     with outer_atomic():
         # first, create the account
         (user, profile, registration) = do_create_account(form, custom_form)
+        _log_registration_company_field(user, params)
 
         third_party_provider, running_pipeline = _link_user_to_third_party_provider(
             is_third_party_auth_enabled, third_party_auth_credentials_in_api, user, request, params,
