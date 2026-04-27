@@ -4,8 +4,7 @@
 from datetime import datetime
 from django.urls import reverse
 %>
-  ## Гостевая главная: кастомный хедер/футер по макету Tilda; стандартные header/footer Open edX отключены через
-  body.robbo-guest-landing-page.
+  ## Гостевая главная: кастомный хедер/футер по макету Tilda; стандартные header/footer Open edX отключены; класс body — в index.html (bodyclass).
   <section class="robbo-guest-landing" lang="ru">
     <p class="robbo-guest-skip-target"><a class="robbo-guest-skip-target__link" href="#about">К содержанию страницы</a>
     </p>
@@ -160,6 +159,7 @@ from django.urls import reverse
           РОББО</h2>
         <form id="robbo-guest-register-form" class="robbo-guest-register__form" method="post"
           action="${reverse('create_account') | h}" novalidate>
+          <input type="hidden" name="next" value="/courses" />
           <div class="robbo-guest-register__fields">
             <div class="robbo-guest-register__field">
               <label class="sr-only" for="robbo-reg-name">ФИО</label>
@@ -185,17 +185,29 @@ from django.urls import reverse
                 autocomplete="username" placeholder="Придумайте логин" required />
               <p class="robbo-guest-register__field-error" id="robbo-reg-username-err" hidden role="alert"></p>
             </div>
-            <div class="robbo-guest-register__field">
+            <div class="robbo-guest-register__field robbo-guest-register__field--password">
               <label class="sr-only" for="robbo-reg-password">Придумайте пароль</label>
-              <input class="robbo-guest-register__input" id="robbo-reg-password" name="password" type="password"
-                autocomplete="new-password" placeholder="Придумайте пароль" required />
+              <span id="robbo-reg-password-sr-hint" class="sr-only">Пароль: не менее 8 символов, хотя бы одна латинская
+                буква (A–Z, a–z) и хотя бы одна цифра</span>
+              <div class="robbo-guest-register__password-row">
+                <div class="robbo-guest-register__password-input-wrap">
+                  <input class="robbo-guest-register__input" id="robbo-reg-password" name="password" type="password"
+                    autocomplete="new-password" placeholder="Придумайте пароль" required
+                    aria-describedby="robbo-reg-password-reqs robbo-reg-password-sr-hint" />
+                </div>
+                <ul class="robbo-guest-register__password-reqs" id="robbo-reg-password-reqs" aria-label="Требования к паролю">
+                  <li id="robbo-reg-password-req-letter" class="robbo-guest-register__password-req">1 латинская буква</li>
+                  <li id="robbo-reg-password-req-number" class="robbo-guest-register__password-req">1 цифра</li>
+                  <li id="robbo-reg-password-req-len" class="robbo-guest-register__password-req">8 символов</li>
+                </ul>
+              </div>
               <p class="robbo-guest-register__field-error" id="robbo-reg-password-err" hidden role="alert"></p>
             </div>
           </div>
           <div class="robbo-guest-register__checks">
             <label class="robbo-guest-register__check">
               <input class="robbo-guest-register__checkbox" type="checkbox" name="marketing_emails_opt_in"
-                value="true" />
+                value="true" required />
               <span>Я согласен(а) получать новости и рекламные рассылки</span>
             </label>
             <label class="robbo-guest-register__check">

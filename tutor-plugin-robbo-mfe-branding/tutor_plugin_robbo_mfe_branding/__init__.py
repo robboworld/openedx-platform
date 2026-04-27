@@ -69,6 +69,13 @@ SUPPORT_SITE_LINK = "https://support.robbo.world/"
 ACTIVATION_EMAIL_SUPPORT_LINK = "https://support.robbo.world/"
 """
 
+# Keep unconfirmed-email prompts active across LMS/MFE flows.
+_PATCH_ROBBO_EMAIL_CONFIRMATION = """
+MARKETING_EMAILS_OPT_IN = True
+SHOW_ACCOUNT_ACTIVATION_CTA = True
+FEATURES["SKIP_EMAIL_VALIDATION"] = False
+"""
+
 hooks.Filters.ENV_PATCHES.add_items(
     [
         ("mfe-lms-common-settings", _PARAGON_THEME_URLS),
@@ -78,5 +85,7 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_LMS_SERVER_CATALOG),
         ("openedx-lms-development-settings", _PATCH_ROBBO_SUPPORT),
         ("openedx-lms-production-settings", _PATCH_ROBBO_SUPPORT),
+        ("openedx-lms-development-settings", _PATCH_ROBBO_EMAIL_CONFIRMATION),
+        ("openedx-lms-production-settings", _PATCH_ROBBO_EMAIL_CONFIRMATION),
     ]
 )

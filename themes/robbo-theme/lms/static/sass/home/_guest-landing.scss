@@ -150,6 +150,16 @@ body.robbo-guest-landing-page {
         max-width: none;
     }
 
+    // Тонкая тёмная полоса над hero: остаточный margin/padding каскада (#content, main, section) или UA у <header>.
+    .window-wrap,
+    #content.content-wrapper,
+    #content > main#main,
+    section.robbo-guest-landing,
+    .robbo-guest-hero-stack {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
     .global-header {
         display: none !important;
     }
@@ -170,6 +180,8 @@ body.robbo-guest-landing-page {
 // Первый блок как на Tilda (page133250156): полная высота окна; topbar fixed — не уезжает при скролле, фон сменяется на зелёный (t228).
 .robbo-guest-hero-stack {
     position: relative;
+    margin: 0;
+    padding: 0;
 }
 
 .robbo-guest-topbar {
@@ -432,6 +444,7 @@ a.robbo-guest-topbar__tagline {
 // Cover t182 + #rec2139628941 (page133250156).
 .robbo-guest-hero {
     position: relative;
+    margin: 0;
     box-sizing: border-box;
     overflow: hidden;
     min-height: 100vh;
@@ -800,6 +813,17 @@ a.robbo-guest-btn {
     --robbo-guest-reg-title-size-max: 2.625rem; // 42px при 16px root
     --robbo-guest-reg-fields-w: 560px;
     --robbo-guest-reg-field-min-h: 56px;
+    // Панель требований к паролю (как Authn MFE: tooltip left / top) — фон, текст, тень, отступ от поля.
+    --robbo-guest-reg-password-hint-bg: #fff;
+    --robbo-guest-reg-password-hint-fg: #6b7280; // панель как light tooltip (серый текст)
+    --robbo-guest-reg-password-hint-fg-muted: #9ca3af; // невыполненный пункт
+    --robbo-guest-reg-password-hint-pad: 0.5rem 0.65rem;
+    --robbo-guest-reg-password-hint-radius: 4px;
+    --robbo-guest-reg-password-hint-gutter: 0.5rem; // зазор между панелью и полем (md+)
+    --robbo-guest-reg-password-hint-shadow: 0 4px 14px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
+    // чуть шире: пункт «1 латинская буква» длиннее «1 буква»
+    --robbo-guest-reg-password-hint-w-min: 10.75rem;
+    --robbo-guest-reg-password-hint-w-max: 12rem;
     position: relative;
     min-height: 700px;
     height: 841px;
@@ -880,6 +904,21 @@ a.robbo-guest-btn {
     margin: 0;
 }
 
+// Строка пароля: оверлей с требованиями слева от поля (как MFE placement left) или сверху (узкий экран).
+.robbo-guest-register__field--password {
+    position: relative;
+    z-index: 2; // панель поверх соседних полей при фокусе
+}
+
+.robbo-guest-register__password-row {
+    position: relative;
+    width: 100%;
+}
+
+.robbo-guest-register__password-input-wrap {
+    width: 100%;
+}
+
 .robbo-guest-register__input {
     display: block;
     width: 100%;
@@ -924,6 +963,106 @@ body.robbo-guest-landing-page .robbo-guest-register .robbo-guest-register__input
     background-color: #fff !important;
     box-shadow: 0 0 0 1000px #fff inset !important;
     transition: background-color 99999s ease-out 0s;
+}
+
+// Как Authn MFE PasswordField: подсказка слева от поля (md+) или сверху (как placement top при ширине < 768px);
+// показ при фокусе на поле пароля (focus-within), индикаторы в guest-landing-register.js
+.robbo-guest-register__password-reqs {
+    position: absolute;
+    z-index: 4;
+    box-sizing: border-box;
+    list-style: none;
+    margin: 0;
+    padding: var(--robbo-guest-reg-password-hint-pad);
+    min-width: var(--robbo-guest-reg-password-hint-w-min);
+    max-width: var(--robbo-guest-reg-password-hint-w-max);
+    font-size: 0.75rem; // .x-small в MFE
+    line-height: 1.45;
+    text-align: left;
+    color: var(--robbo-guest-reg-password-hint-fg);
+    background: var(--robbo-guest-reg-password-hint-bg);
+    border-radius: var(--robbo-guest-reg-password-hint-radius);
+    box-shadow: var(--robbo-guest-reg-password-hint-shadow);
+    // скрыто, пока нет фокуса в поле пароля
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(0.25rem);
+    transition:
+        opacity 0.15s ease,
+        transform 0.15s ease,
+        visibility 0.15s;
+
+    .robbo-guest-register__field--password:focus-within & {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    // Узкий экран: как MFE placement top — над полем, на всю ширину колонки
+    @media screen and (max-width: 767.98px) {
+        bottom: 100%;
+        left: 0;
+        right: 0;
+        min-width: 0;
+        max-width: none;
+        width: 100%;
+        margin-bottom: 0.35rem;
+    }
+
+    // md+ : панель слева от поля, по вертикали по центру строки
+    @media screen and (min-width: 768px) {
+        right: 100%;
+        top: 50%;
+        left: auto;
+        bottom: auto;
+        width: max-content;
+        max-width: var(--robbo-guest-reg-password-hint-w-max);
+        margin-right: var(--robbo-guest-reg-password-hint-gutter);
+        transform: translate(0.4rem, -50%);
+
+        .robbo-guest-register__field--password:focus-within & {
+            transform: translate(0, -50%);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        transition: none;
+    }
+}
+
+.robbo-guest-register__password-req {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.15rem 0 0;
+    min-height: 1.2em;
+    color: var(--robbo-guest-reg-password-hint-fg);
+
+    &:first-child {
+        margin-top: 0;
+    }
+
+    &::before {
+        content: '\2013'; // тире, как невыбрано (рядом с Remove в MFE)
+        flex-shrink: 0;
+        width: 0.9em;
+        text-align: center;
+        font-size: 0.85em;
+        color: var(--robbo-guest-reg-password-hint-fg-muted);
+        font-weight: 600;
+    }
+
+    &.robbo-guest-register__password-req--ok {
+        color: var(--robbo-guest-reg-password-hint-fg);
+
+        &::before {
+            content: '\2713'; // ✓
+            color: $robbo-tilda-green;
+            font-size: 0.95em;
+            font-weight: 600;
+        }
+    }
 }
 
 .robbo-guest-register__field-error {
