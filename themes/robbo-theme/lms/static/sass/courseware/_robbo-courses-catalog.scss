@@ -9,9 +9,9 @@
   --robbo-cat-muted: #6b7280;
   --robbo-cat-hero-mb: clamp(1.5rem, 4vw, 2.5rem);
   --robbo-cat-max: 1200px;
-  // CTA: reference — vibrant green, white label (independent of LMS $primary)
-  --robbo-cat-cta-bg: #00c853;
-  --robbo-cat-cta-bg-hover: #00b34a;
+  // CTA: same brand green as `extra/_header.scss` ($robbo-header-green / global header bar)
+  --robbo-cat-cta-bg: #00b140;
+  --robbo-cat-cta-bg-hover: #009e3c;
   --robbo-cat-cta-fg: #fff;
   // Featured primary CTA
   --robbo-cat-cta-min-w: 220px;
@@ -466,7 +466,7 @@ a.robbo-courses-catalog__btn--primary {
   }
   &:focus,
   &:focus-visible {
-    box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.35);
+    box-shadow: 0 0 0 3px rgba(0, 177, 64, 0.35);
     color: #fff !important;
     outline: none;
     text-decoration: none !important;
@@ -485,9 +485,19 @@ button.robbo-courses-catalog__btn--primary {
     transform: translateY(1px);
   }
   &:focus-visible {
-    box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.35);
+    box-shadow: 0 0 0 3px rgba(0, 177, 64, 0.35);
     outline: none;
   }
+}
+
+.robbo-courses-catalog__btn--disabled,
+a.robbo-courses-catalog__btn--disabled {
+  background: #94a3b8;
+  border-color: #94a3b8;
+  color: #fff !important;
+  cursor: not-allowed;
+  opacity: 0.72;
+  pointer-events: none;
 }
 
 // Stub "notify" CTA: soft pill, green accent on interaction (separate from generic .btn--secondary).

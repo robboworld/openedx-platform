@@ -10,9 +10,20 @@
     % endif
     <h2 id="robbo-featured-title" class="robbo-courses-catalog__featured-title">${featured['title']}</h2>
     <p class="robbo-courses-catalog__featured-desc">${featured['description']}</p>
-    <a class="robbo-courses-catalog__btn robbo-courses-catalog__btn--primary" href="${featured['cta_url']}">
-      ${featured['cta_label']}
-    </a>
+    % if account and account.get('mode') == 'inactive':
+      <span
+        class="robbo-courses-catalog__btn robbo-courses-catalog__btn--primary robbo-courses-catalog__btn--disabled"
+        role="button"
+        aria-disabled="true"
+        title="Подтвердите email, чтобы начать обучение"
+      >
+        ${featured['cta_label']}
+      </span>
+    % else:
+      <a class="robbo-courses-catalog__btn robbo-courses-catalog__btn--primary" href="${featured['cta_url']}">
+        ${featured['cta_label']}
+      </a>
+    % endif
   </div>
   <div class="robbo-courses-catalog__featured-media" role="presentation">
     <img

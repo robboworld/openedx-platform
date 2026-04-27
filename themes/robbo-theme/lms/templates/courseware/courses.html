@@ -5,12 +5,16 @@
   from mako.runtime import UNDEFINED
   from django.utils.translation import gettext as _
   from django.conf import settings
+  from django.urls import reverse
+  from urllib.parse import urlencode
   import re
   from html import unescape
   from opaque_keys import InvalidKeyError
   from opaque_keys.edx.keys import CourseKey
   from openedx.features.course_experience import course_home_url
   from openedx.core.djangoapps.models.course_details import CourseDetails
+  from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+  from openedx.core.djangolib.markup import HTML, Text
 
   try:
       from lms.djangoapps.courseware import robbo_catalog as _robbo_py
@@ -20,11 +24,65 @@
       from lms.djangoapps.courseware.robbo_catalog import get_robbo_courses_account_banners as _robbo_account_banners
   except ImportError:
       def _robbo_account_banners(request):
+          user = getattr(request, 'user', None)
+          if user is None or (user.is_authenticated and user.is_active):
+              return {
+                  'mode': 'none',
+                  'top_title': '',
+                  'top_body': None,
+                  'featured_line': '',
+              }
+
+          next_path = request.get_full_path() or '/courses'
+          query = urlencode({'next': next_path})
+          signin_url = f'{reverse("signin_user")}?{query}'
+          register_url = f'{reverse("register_user")}?{query}'
+
+          if not user.is_authenticated:
+              top_body = Text(
+                  'Чтобы получить полный доступ к каталогу, {signin} или {register}.'
+              ).format(
+                  signin=HTML(
+                      '<a class="robbo-courses-catalog__account-banner-link" href="{u}">войдите</a>'
+                  ).format(u=signin_url),
+                  register=HTML(
+                      '<a class="robbo-courses-catalog__account-banner-link" href="{u}">зарегистрируйтесь</a>'
+                  ).format(u=register_url),
+              )
+              return {
+                  'mode': 'anonymous',
+                  'top_title': 'Войдите или зарегистрируйтесь',
+                  'top_body': top_body,
+                  'featured_line': 'Для полного доступа к курсу войдите в учётную запись.',
+              }
+
+          platform_name = configuration_helpers.get_value('platform_name', settings.PLATFORM_NAME)
+          activation_email_support_link = (
+              configuration_helpers.get_value(
+                  'ACTIVATION_EMAIL_SUPPORT_LINK', settings.ACTIVATION_EMAIL_SUPPORT_LINK
+              )
+              or settings.SUPPORT_SITE_LINK
+          )
+          top_body = Text(
+              'Проверьте почту {email_start}{email}{email_end} — мы отправили ссылку для активации '
+              'учётной записи «{platform}». Если письма нет, загляните в «Спам» или '
+              '{link_start}напишите в поддержку{link_end}.'
+          ).format(
+              email_start=HTML('<strong>'),
+              email_end=HTML('</strong>'),
+              email=user.email,
+              platform=platform_name,
+              link_start=HTML(
+                  '<a class="robbo-courses-catalog__account-banner-link" target="_blank" rel="noopener" '
+                  'href="{u}">'
+              ).format(u=activation_email_support_link),
+              link_end=HTML('</a>'),
+          )
           return {
-              'mode': 'none',
-              'top_title': '',
-              'top_body': None,
-              'featured_line': '',
+              'mode': 'inactive',
+              'top_title': 'Активируйте свою учётную запись!',
+              'top_body': top_body,
+              'featured_line': 'Требуется активация для полного доступа',
           }
 
   def _html_snip(html, max_len=500):
