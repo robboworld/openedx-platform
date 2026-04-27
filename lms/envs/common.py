@@ -388,6 +388,17 @@ FEATURES = {
     # .. toggle_warning: The login MFE domain name should be listed in LOGIN_REDIRECT_WHITELIST.
     'SKIP_EMAIL_VALIDATION': False,
 
+    # .. toggle_name: FEATURES['SKIP_INTERMEDIATE_LOGOUT_PAGE']
+    # .. toggle_implementation: DjangoSetting
+    # .. toggle_default: False
+    # .. toggle_description: If True, after clearing the LMS session the browser is redirected immediately to the
+    #   post-logout target (``next`` / ``redirect_url`` or ``/``). Skips ``logout.html`` and IDA logout iframes.
+    #   Not applied when the TPA manual SSO sign-out link would be shown or for enterprise enrollment redirect targets.
+    # .. toggle_use_cases: custom
+    # .. toggle_creation_date: 2026-04-28
+    # .. toggle_warning: OAuth/OIDC sessions in other IDAs may remain active without the iframe logout step.
+    'SKIP_INTERMEDIATE_LOGOUT_PAGE': False,
+
     # .. toggle_name: FEATURES['ENABLE_COSMETIC_DISPLAY_PRICE']
     # .. toggle_implementation: DjangoSetting
     # .. toggle_default: False

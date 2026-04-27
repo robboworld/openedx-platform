@@ -17,6 +17,7 @@ from django.dispatch import Signal
 from django.http import HttpResponse, HttpResponseForbidden
 from django.urls import reverse
 from django.utils.decorators import method_decorator
+from django.utils import timezone
 from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
@@ -92,7 +93,8 @@ from common.djangoapps.util.json_request import JsonResponse
 from edx_django_utils.user import generate_password  # lint-amnesty, pylint: disable=wrong-import-order
 
 log = logging.getLogger("edx.student")
-AUDIT_LOG = logging.getLogger("audit")
+# Dedicated operational logger (same pattern as robbo.course_interest); grep: [robbo.registration]
+REGISTRATION_LOG = logging.getLogger("robbo.registration")
 
 
 # Used as the name of the user attribute for tracking affiliate registrations
@@ -113,21 +115,38 @@ REGISTER_USER = Signal()
 
 REAL_IP_KEY = 'openedx.core.djangoapps.util.ratelimit.real_ip'
 
+# Stable substring for grep/journal filters alongside LMS audit entries.
+REGISTRATION_AUDIT_SEARCH_TAG = "user_authn.registration.robbo_audit"
 
-def _log_registration_company_field(user, params):
+
+def _scalar_post_value(params, key):
+    """Normalize QueryDict/list POST values to a single string."""
+    if not params or key not in params:
+        return ""
+    val = params.get(key)
+    if isinstance(val, (list, tuple)):
+        return val[0] if val else ""
+    return val if val is not None else ""
+
+
+def _log_registration_audit(user, params):
     """
-    Log company from the registration request (e.g. Robbo) for auditing until
-    the value is stored in the DB. Grep LMS logs for: user_authn.registration.company
+    Registration audit line: timestamp, login, company, UI language.
+
+    Filter LMS logs by logger name ``robbo.registration`` or substring
+    ``user_authn.registration.robbo_audit`` (REGISTRATION_AUDIT_SEARCH_TAG).
     """
-    if "company" not in params:
-        return
-    log.info(
-        "user_authn.registration.company: user_id=%s username=%r email=%r company=%r",
-        user.id,
+    company = _scalar_post_value(params, "company")
+    ts = timezone.now().isoformat()
+    lang = get_language() or ""
+    msg = "%s ts=%s login=%r company=%r language=%r" % (
+        REGISTRATION_AUDIT_SEARCH_TAG,
+        ts,
         user.username,
-        user.email,
-        params.get("company", ""),
+        company,
+        lang,
     )
+    REGISTRATION_LOG.info(msg)
 
 
 @transaction.non_atomic_requests
@@ -236,7 +255,7 @@ def create_account_with_params(request, params):  # pylint: disable=too-many-sta
     with outer_atomic():
         # first, create the account
         (user, profile, registration) = do_create_account(form, custom_form)
-        _log_registration_company_field(user, params)
+        _log_registration_audit(user, params)
 
         third_party_provider, running_pipeline = _link_user_to_third_party_provider(
             is_third_party_auth_enabled, third_party_auth_credentials_in_api, user, request, params,
@@ -316,7 +335,6 @@ def create_account_with_params(request, params):  # pylint: disable=too-many-sta
 
 def is_new_user(password, user):
     if user is not None:
-        AUDIT_LOG.info(f"Login success on new account creation - {user.username}")
         check_pwned_password_and_send_track_event.delay(
             user_id=user.id,
             password=password,

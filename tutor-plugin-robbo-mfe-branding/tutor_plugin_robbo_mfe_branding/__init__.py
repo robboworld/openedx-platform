@@ -63,6 +63,8 @@ MFE_CONFIG["PRIVACY_POLICY"] = "https://robbo.ru/wp-content/uploads/policy.pdf"
 # view fills `courses` from MySQL CourseOverview.
 _PATCH_ROBBO_LMS_SERVER_CATALOG = """
 FEATURES["ENABLE_COURSE_DISCOVERY"] = False
+# Immediate redirect to ``next``/home; avoids broken iframe/JS logout interstitial on Robbo stacks.
+FEATURES["SKIP_INTERMEDIATE_LOGOUT_PAGE"] = True
 """
 
 # Robbo support: Authn / activation copy, help links (configuration_helpers in login & emails).

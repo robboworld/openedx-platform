@@ -8,7 +8,7 @@
     document.querySelectorAll('a.register-btn').forEach(function (anchor) {
       var t = (anchor.textContent || '').trim();
       if (t === 'Register for free' || t.indexOf('Register') === 0) {
-        anchor.textContent = 'Регистрацию';
+        anchor.textContent = 'Регистрация';
       }
     });
   }

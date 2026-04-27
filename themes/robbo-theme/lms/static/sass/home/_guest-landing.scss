@@ -1292,3 +1292,129 @@ body.indigo-dark-theme {
         color: #f0fdf4;
     }
 }
+
+// Фиксированный баннер cookie (только гостевая главная; `guest-landing-cookie-consent.js`). Токены — на `.robbo-cookie-consent`.
+body.robbo-guest-landing-page .robbo-cookie-consent {
+    --robbo-guest-font: 'ProximaNova', 'Proxima Nova', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    --robbo-cookie-bg: #eeeeee;
+    --robbo-cookie-radius: 12px;
+    --robbo-cookie-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    --robbo-cookie-padding: clamp(1rem, 3vw, 1.75rem);
+    --robbo-cookie-gap: clamp(1rem, 3vw, 1.5rem);
+    --robbo-cookie-text-color: #1f2937;
+    // CTA: согласовано с акцентами Robbo (см. architecture.mdc)
+    --robbo-cookie-btn-bg: #15803d;
+    --robbo-cookie-btn-color: #fff;
+    --robbo-cookie-btn-hover-bg: #166534;
+    --robbo-cookie-btn-active-bg: #14532d;
+    --robbo-cookie-btn-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(21, 128, 61, 0.28);
+    --robbo-cookie-btn-radius: 999px;
+    --robbo-cookie-btn-padding: 0.625rem 1.375rem;
+    --robbo-cookie-btn-min-height: 2.75rem;
+
+    /* Потомок `body` (footer_extra), не #content — привязка к вьюпорту при любом скролле лендинга */
+    position: fixed !important;
+    z-index: 1080;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding-left: unquote("max(1rem, env(safe-area-inset-left, 0px))");
+    padding-right: unquote("max(1rem, env(safe-area-inset-right, 0px))");
+    padding-bottom: unquote("max(1rem, env(safe-area-inset-bottom, 0px))");
+    box-sizing: border-box;
+    pointer-events: none;
+}
+
+body.robbo-guest-landing-page .robbo-cookie-consent[hidden] {
+    display: none !important;
+}
+
+body.robbo-guest-landing-page .robbo-cookie-consent__inner {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--robbo-cookie-gap);
+    max-width: unquote("min(960px, 100%)");
+    margin-inline: auto;
+    padding: var(--robbo-cookie-padding);
+    background: var(--robbo-cookie-bg);
+    border-radius: var(--robbo-cookie-radius);
+    box-shadow: var(--robbo-cookie-shadow);
+    box-sizing: border-box;
+    pointer-events: auto;
+}
+
+body.robbo-guest-landing-page .robbo-cookie-consent__text {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    color: var(--robbo-cookie-text-color);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    text-align: left;
+}
+
+body.robbo-guest-landing-page .robbo-cookie-consent__accept {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: var(--robbo-cookie-btn-padding);
+    min-height: var(--robbo-cookie-btn-min-height);
+    border: 0;
+    border-radius: var(--robbo-cookie-btn-radius);
+    background: var(--robbo-cookie-btn-bg);
+    color: var(--robbo-cookie-btn-color);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    font-family: var(--robbo-guest-font);
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+    box-shadow: var(--robbo-cookie-btn-shadow);
+    cursor: pointer;
+    transition:
+        background-color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.12s ease;
+}
+
+body.robbo-guest-landing-page .robbo-cookie-consent__accept:hover {
+    background: var(--robbo-cookie-btn-hover-bg);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 4px 14px rgba(21, 128, 61, 0.35);
+}
+
+body.robbo-guest-landing-page .robbo-cookie-consent__accept:active {
+    background: var(--robbo-cookie-btn-active-bg);
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+body.robbo-guest-landing-page .robbo-cookie-consent__accept:focus-visible {
+    outline: 2px solid var(--robbo-cookie-btn-bg);
+    outline-offset: 3px;
+    box-shadow:
+        var(--robbo-cookie-btn-shadow),
+        0 0 0 3px rgba(21, 128, 61, 0.25);
+}
+
+@media (max-width: 575.98px) {
+    body.robbo-guest-landing-page .robbo-cookie-consent__inner {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    body.robbo-guest-landing-page .robbo-cookie-consent__accept {
+        align-self: flex-end;
+    }
+}
+
+// Dark theme: приглушённые токены поверх базового баннера
+body.indigo-dark-theme.robbo-guest-landing-page .robbo-cookie-consent {
+    --robbo-cookie-bg: #e8eaed;
+    --robbo-cookie-text-color: #111827;
+    --robbo-cookie-btn-bg: #15803d;
+    --robbo-cookie-btn-hover-bg: #166534;
+    --robbo-cookie-btn-active-bg: #14532d;
+}

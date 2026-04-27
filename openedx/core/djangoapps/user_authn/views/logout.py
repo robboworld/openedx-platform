@@ -78,22 +78,35 @@ class LogoutView(TemplateView):
 
         logout(request)
 
+        # Redirect to tpa_logout_url if TPA_AUTOMATIC_LOGOUT_ENABLED is set to True and if
+        # tpa_logout_url is configured.
+        #
+        # NOTE: This step skips rendering logout.html, which is used to log the user out from the
+        # different IDAs. To ensure the user is logged out of all of the IDAs be sure to redirect
+        # back to <LMS>/logout after logging out of the TPA.
+        if getattr(settings, 'TPA_AUTOMATIC_LOGOUT_ENABLED', False):
+            if self.tpa_logout_url:
+                response = redirect(self.tpa_logout_url)
+                delete_logged_in_cookies(response)
+                mark_user_change_as_expected(None)
+                return response
+
+        target = self.target
+        referrer = request.META.get('HTTP_REFERER', '').strip('/')
+        if settings.FEATURES.get('SKIP_INTERMEDIATE_LOGOUT_PAGE') and not self._show_tpa_logout_link(
+            target, referrer
+        ) and not self._is_enterprise_target(target):
+            response = redirect(target)
+            delete_logged_in_cookies(response)
+            mark_user_change_as_expected(None)
+            return response
+
         response = super().dispatch(request, *args, **kwargs)
 
         # Clear the cookie used by the edx.org marketing site
         delete_logged_in_cookies(response)
 
         mark_user_change_as_expected(None)
-
-        # Redirect to tpa_logout_url if TPA_AUTOMATIC_LOGOUT_ENABLED is set to True and if
-        # tpa_logout_url is configured.
-        #
-        # NOTE: This step skips rendering logout.html, which is used to log the user out from the
-        # different IDAs. To ensure the user is logged out of all the IDAs be sure to redirect
-        # back to <LMS>/logout after logging out of the TPA.
-        if getattr(settings, 'TPA_AUTOMATIC_LOGOUT_ENABLED', False):
-            if self.tpa_logout_url:
-                return redirect(self.tpa_logout_url)
 
         return response
 
@@ -141,9 +154,11 @@ class LogoutView(TemplateView):
 
         return False
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
+    def _collect_logout_iframe_uris(self):
+        """
+        Build the list of IDA logout endpoints that must be loaded in iframes
+        (same rules as the logout template). Used to decide the fast redirect path.
+        """
         # Create a list of URIs that must be called to log the user out of all of the IDAs.
         uris = []
 
@@ -165,7 +180,15 @@ class LogoutView(TemplateView):
             if not referrer or (referrer and not uri.startswith(referrer)):
                 logout_uris.append(self._build_logout_url(uri))
 
+        return logout_uris
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        logout_uris = self._collect_logout_iframe_uris()
+
         target = self.target
+        referrer = self.request.META.get('HTTP_REFERER', '').strip('/')
         context.update({
             'target': target,
             'logout_uris': logout_uris,

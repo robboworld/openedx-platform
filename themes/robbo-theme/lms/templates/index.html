@@ -62,6 +62,12 @@ robbo-guest-landing-page
 % endif
 </main>
 
+<%block name="footer_extra">
+% if not user.is_authenticated:
+    <%include file="guest_landing_cookie_consent.html" />
+% endif
+</%block>
+
 % if show_homepage_promo_video:
   <section id="video-modal" class="modal home-page-video-modal video-modal">
     <div class="inner-wrapper">

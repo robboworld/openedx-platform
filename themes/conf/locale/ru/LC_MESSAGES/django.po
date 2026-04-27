@@ -15,3 +15,6 @@ msgstr ""
 
 msgid "Explore Courses"
 msgstr "Каталог курсов"
+
+msgid "Register for free"
+msgstr "Регистрация"

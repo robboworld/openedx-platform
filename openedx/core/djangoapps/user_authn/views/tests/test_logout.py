@@ -85,6 +85,59 @@ class LogoutTests(TestCase):
         }
         self.assertDictContainsSubset(expected, response.context_data)
 
+    @override_settings(
+        FEATURES=dict(settings.FEATURES, SKIP_INTERMEDIATE_LOGOUT_PAGE=True),
+        LOGIN_REDIRECT_WHITELIST=['test.edx.org'],
+    )
+    def test_skip_intermediate_logout_redirects_immediately(self):
+        """When SKIP_INTERMEDIATE_LOGOUT_PAGE is True, respond with 302 to home or safe next."""
+        response = self.client.get(reverse('logout'), HTTP_HOST='testserver')
+        assert response.status_code == 302
+        assert response.url == '/'
+
+        next_path = '/courses'
+        response = self.client.get(
+            '{}?next={}'.format(reverse('logout'), urllib.parse.quote(next_path)),
+            HTTP_HOST='test.edx.org',
+        )
+        assert response.status_code == 302
+        assert response.url == next_path
+
+    @override_settings(
+        FEATURES=dict(settings.FEATURES, SKIP_INTERMEDIATE_LOGOUT_PAGE=True),
+        LOGIN_REDIRECT_WHITELIST=['edx.org'],
+    )
+    def test_skip_intermediate_not_applied_for_enterprise_target(self):
+        """Enterprise enrollment flow still uses the interstitial template."""
+        redirect_url = urllib.parse.quote(
+            '/enterprise/c5dad9a7-741c-4841-868f-850aca3ff848/course/Microsoft+DAT206x/enroll/'
+        )
+        url = '{logout_path}?redirect_url={redirect_url}'.format(
+            logout_path=reverse('logout'),
+            redirect_url=redirect_url,
+        )
+        response = self.client.get(url, HTTP_HOST='edx.org')
+        assert response.status_code == 200
+        expected = {
+            'enterprise_target': True,
+        }
+        self.assertDictContainsSubset(expected, response.context_data)
+
+    @override_settings(FEATURES=dict(settings.FEATURES, SKIP_INTERMEDIATE_LOGOUT_PAGE=True))
+    def test_skip_intermediate_not_applied_when_tpa_logout_link_shown(self):
+        """Manual IdP sign-out link must still render when required."""
+        learner_portal_logout_url = f'{settings.LEARNER_PORTAL_URL_ROOT}/logout'
+        idp_logout_url = 'http://mock-idp.com/logout'
+        client = self._create_oauth_client()
+
+        with mock.patch(
+            'openedx.core.djangoapps.user_authn.views.logout.tpa_pipeline.get_idp_logout_url_from_running_pipeline'
+        ) as mock_idp_logout_url:
+            mock_idp_logout_url.return_value = idp_logout_url
+            response = self._assert_session_logged_out(client, HTTP_REFERER=learner_portal_logout_url)
+            assert response.status_code == 200
+            assert response.context_data.get('show_tpa_logout_link') is True
+
     @ddt.data(
         ('https://www.amazon.org', 'edx.org'),
         ('/%09/google.com/', 'edx.org'),
