@@ -93,6 +93,14 @@ class RegistrationFieldsContext(APIView):
         only stores those fields which are available in extended_profile configuration, so we only
         want to send those fields which can be saved.
         """
+        reg_extra = configuration_helpers.get_value('REGISTRATION_EXTRA_FIELDS')
+        if reg_extra is None:
+            reg_extra = copy.deepcopy(getattr(settings, 'REGISTRATION_EXTRA_FIELDS', {}))
+        if (
+            field == 'company'
+            and reg_extra.get('company') in ('required', 'optional', 'optional-exposed')
+        ):
+            return True
         return (field in self.user_profile_fields or field in ["terms_of_service", "honor_code"] or
                 field in configuration_helpers.get_value('extended_profile_fields', []))
 

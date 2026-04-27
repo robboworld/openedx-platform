@@ -1111,7 +1111,7 @@ SOFTWARE_SECURE_RETRY_MAX_ATTEMPTS = 6
 
 RETRY_CALENDAR_SYNC_EMAIL_MAX_ATTEMPTS = 5
 
-MARKETING_EMAILS_OPT_IN = False
+MARKETING_EMAILS_OPT_IN = True
 
 # .. toggle_name: ENABLE_COPPA_COMPLIANCE
 # .. toggle_implementation: DjangoSetting
@@ -3708,17 +3708,11 @@ LOGIN_REDIRECT_WHITELIST = []
 #   When the terms of service are not visible and agreement to the honor code is required (the default), the signup page
 #   includes a paragraph that links to the honor code page (defined my MKTG_URLS["HONOR"]). This page might not be
 #   available for all Open edX platforms. In such cases, the "honor_code" registration field should be "hidden".
+# Robbo: minimal registration extras for guest landing + Authn MFE (company, honor, marketing opt-in).
+# Omitted keys are treated as not visible (same as hidden).
 REGISTRATION_EXTRA_FIELDS = {
-    'confirm_email': 'hidden',
-    'level_of_education': 'optional',
-    'gender': 'optional',
-    'year_of_birth': 'optional',
-    'mailing_address': 'optional',
-    'goals': 'optional',
+    'company': 'required',
     'honor_code': 'required',
-    'terms_of_service': 'hidden',
-    'city': 'hidden',
-    'country': 'hidden',
 }
 
 REGISTRATION_FIELD_ORDER = [
@@ -5113,7 +5107,7 @@ HIBP_LOGIN_BLOCK_PASSWORD_FREQUENCY_THRESHOLD = 5
 # .. toggle_creation_date: 2022-04-21
 # .. toggle_target_removal_date: None
 # .. toggle_tickets: https://openedx.atlassian.net/browse/VAN-838
-ENABLE_DYNAMIC_REGISTRATION_FIELDS = False
+ENABLE_DYNAMIC_REGISTRATION_FIELDS = True
 
 ############## Settings for EmailChangeMiddleware ###############
 

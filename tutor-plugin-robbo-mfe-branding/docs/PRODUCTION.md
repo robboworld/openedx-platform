@@ -111,9 +111,17 @@ END CURSOR PROMPT
 - Кэш браузера — инкогнито или сброс кэша.
 - На `/courses` нет карточек при наличии курсов в БД — проверь `ENABLE_COURSE_DISCOVERY` (должен быть `False` для текущего Robbo-каталога), затем `tutor config save` + перезапуск LMS.
 
+### Регистрация (Authn) и гостевой лендинг (прод)
+
+Сводка шагов для выравнивания полей, чекбоксов и сохранения `company` (LMS
+settings, `extended_profile_fields`, `MFE_CONFIG` / пересборка MFE) — в
+meta-репозитории, файл [`docs/production.md`](../../../../docs/production.md),
+раздел *Registration (Authn MFE) and guest landing*.
+
 ### Ссылки
 
 - [README плагина](../README.md)
+- [Meta-repo: production (регистрация)](../../../../docs/production.md)
 - [Tutor: Plugins](https://docs.tutor.edly.io/plugins/index.html)
 - [tutor-mfe](https://github.com/overhangio/tutor-mfe)
 - [frontend-platform: theming](https://github.com/openedx/frontend-platform/blob/master/docs/how_tos/theming.md)

@@ -192,7 +192,14 @@ def create_account_with_params(request, params):  # pylint: disable=too-many-sta
 
     if is_third_party_auth_enabled:
         set_custom_attribute('register_user_tpa', pipeline.running(request))
-    extended_profile_fields = configuration_helpers.get_value('extended_profile_fields', [])
+    extended_profile_fields = list(configuration_helpers.get_value('extended_profile_fields', []))
+    # When company is part of registration, include it in extended profile so it is stored in UserProfile.meta
+    # (matches Robbo guest landing + Authn without requiring a separate Site configuration entry).
+    if (
+        extra_fields.get('company') in ('required', 'optional', 'optional-exposed')
+        and 'company' not in extended_profile_fields
+    ):
+        extended_profile_fields.append('company')
     # Can't have terms of service for certain SHIB users, like at Stanford
     tos_required = (
         extra_fields.get('terms_of_service') != 'hidden' or
