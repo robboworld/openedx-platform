@@ -8332,6 +8332,10 @@ msgstr ""
 "Попробуйте ещё раз с другим адресом электронной почты."
 
 #: openedx/core/djangoapps/user_api/accounts/__init__.py
+msgid "This email is already associated with an existing account"
+msgstr "Аккаунт с этой почтой уже зарегистрирован"
+
+#: openedx/core/djangoapps/user_api/accounts/__init__.py
 #, python-brace-format
 msgid ""
 "This email is already associated with an existing or previous "
