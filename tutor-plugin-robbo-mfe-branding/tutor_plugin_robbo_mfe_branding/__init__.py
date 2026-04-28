@@ -11,7 +11,13 @@ from tutormfe.hooks import PLUGIN_SLOTS
 
 _PKG = "tutor_plugin_robbo_mfe_branding"
 
-hooks.Filters.ENV_TEMPLATE_ROOTS.add_item(str(resources.files(_PKG) / "templates"))
+
+@hooks.Filters.ENV_TEMPLATE_ROOTS.add(priority=hooks.priorities.LOW)
+def _prepend_robbo_template_root(roots: list[str]) -> list[str]:
+    """Put Robbo templates first so overrides (e.g. MFE Dockerfile) win over tutormfe."""
+    robbo_templates = str(resources.files(_PKG) / "templates")
+    deduped = [r for r in roots if r != robbo_templates]
+    return [robbo_templates] + deduped
 
 _PARAGON_THEME_URLS = """
 MFE_CONFIG["PARAGON_THEME_URLS"] = {
