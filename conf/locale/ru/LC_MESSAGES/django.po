@@ -4938,9 +4938,8 @@ msgstr " (из {total})"
 #: lms/templates/learner_dashboard/programs.html
 #: lms/templates/navigation/bootstrap/navbar-authenticated.html
 #: lms/templates/navigation/navbar-authenticated.html
-#, fuzzy
 msgid "Programs"
-msgstr "Прогресс"
+msgstr "Программы"
 
 #: lms/djangoapps/learner_dashboard/programs.py
 #: lms/templates/learner_dashboard/program_details.html
@@ -6584,12 +6583,10 @@ msgstr "Перейдите на %(platform_name)s Главную страниц�
 #: lms/templates/navigation/bootstrap/navbar-authenticated.html
 #: lms/templates/navigation/navbar-authenticated.html
 #: lms/templates/navigation/navbar-not-authenticated.html
-#, fuzzy
 msgid "Courses"
 msgstr "Курс"
 
 #: openedx/core/djangoapps/ace_common/templates/ace_common/edx_ace/common/base_body.html
-#, fuzzy
 msgid "My Account"
 msgstr "Учётная запись"
 
@@ -6634,7 +6631,6 @@ msgid "Download the Android app on the Google Play Store"
 msgstr "Скачать приложение для Android с Google Play Store"
 
 #: openedx/core/djangoapps/ace_common/templates/ace_common/edx_ace/common/base_body.html
-#, fuzzy
 msgid "Our mailing address is:"
 msgstr "Наш почтовый адрес:"
 
@@ -9712,11 +9708,11 @@ msgstr "Вопрос"
 
 #: xmodule/capa/capa_problem.py xmodule/capa_block.py
 msgid "Incorrect"
-msgstr "Неверных"
+msgstr "Неверно"
 
 #: xmodule/capa/capa_problem.py xmodule/capa_block.py
 msgid "Correct"
-msgstr "Верных"
+msgstr "Верно"
 
 #: xmodule/capa/inputtypes.py
 msgid "correct"
