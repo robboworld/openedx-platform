@@ -1,8 +1,10 @@
 <%namespace name='static' file='static_content.html'/>
 ## Рендерится из `footer_extra` (прямой потомок `body`), чтобы `position: fixed` был от вьюпорта, а не от #content/.window-wrap.
+## Inline layout: без этого баннер остаётся в конце body (длящийся лендинг) и не виден без прокрутки, если из темы не применились правила `position: fixed` (сборка/порядок CSS).
 <div id="robbo-cookie-consent-root" class="robbo-cookie-consent" role="region"
-  aria-label="Уведомление об использовании cookie и метаданных">
-  <div class="robbo-cookie-consent__inner">
+  aria-label="Уведомление об использовании cookie и метаданных"
+  style="position:fixed!important;bottom:0!important;left:0!important;right:0!important;z-index:1080!important;width:100%!important;max-width:100%!important;margin:0!important;box-sizing:border-box!important;pointer-events:none!important;padding-left:max(1rem,env(safe-area-inset-left,0));padding-right:max(1rem,env(safe-area-inset-right,0));padding-bottom:max(1rem,env(safe-area-inset-bottom,0));">
+  <div class="robbo-cookie-consent__inner" style="pointer-events:auto!important;">
     <p class="robbo-cookie-consent__text">
       Данный сайт собирает ваши метаданные (cookie, данные об IP-адресе и местоположении),
       если вы с этим не согласны просим покинуть сайт.
