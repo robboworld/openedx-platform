@@ -230,8 +230,11 @@ def compose_activation_email(
     else:
         dest_addr = user.email
 
-    email_lang = preferences_api.get_user_preference(user, LANGUAGE_KEY) or configuration_helpers.get_value(
-        'LANGUAGE_CODE', settings.LANGUAGE_CODE
+    # Always use ACTIVATION_EMAIL_LANGUAGE so activation mail is fully in one locale for every user
+    # (user LANGUAGE_KEY and site LANGUAGE_CODE are ignored for this transactional email).
+    email_lang = configuration_helpers.get_value(
+        'ACTIVATION_EMAIL_LANGUAGE',
+        getattr(settings, 'ACTIVATION_EMAIL_LANGUAGE', 'ru'),
     )
     msg = AccountActivation().personalize(
         recipient=Recipient(user.id, dest_addr),
