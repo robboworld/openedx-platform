@@ -20,9 +20,20 @@
         ${featured['cta_label']}
       </span>
     % else:
-      <a class="robbo-courses-catalog__btn robbo-courses-catalog__btn--primary" href="${featured['cta_url']}">
-        ${featured['cta_label']}
-      </a>
+      % if featured.get('cta_enroll'):
+        <a
+          class="robbo-courses-catalog__btn robbo-courses-catalog__btn--primary robbo-courses-catalog__featured-cta--enroll"
+          href="${featured['cta_url']}"
+          data-course-id="${featured['course_id']}"
+          data-enroll-url="${featured['change_enrollment_url']}"
+        >
+          ${featured['cta_label']}
+        </a>
+      % else:
+        <a class="robbo-courses-catalog__btn robbo-courses-catalog__btn--primary" href="${featured['cta_url']}">
+          ${featured['cta_label']}
+        </a>
+      % endif
     % endif
   </div>
   <div class="robbo-courses-catalog__featured-media" role="presentation">

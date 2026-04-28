@@ -34,6 +34,8 @@ from openedx.core.djangoapps.models.course_details import CourseDetails
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from openedx.core.djangolib.markup import HTML, Text
 
+from common.djangoapps.student.models import CourseEnrollment
+
 
 def get_robbo_courses_account_banners(request) -> Dict[str, Any]:
     """
@@ -257,7 +259,7 @@ def build_robbo_catalog_featured(
     if request and hasattr(request, 'build_absolute_uri') and cta_url.startswith('/'):
         cta_url = request.build_absolute_uri(cta_url)
 
-    return {
+    featured: Dict[str, Any] = {
         'course_id': str(course.id),
         'title': title,
         'description': short,
@@ -266,6 +268,15 @@ def build_robbo_catalog_featured(
         'image': image_filename,
         'image_alt': title,
     }
+
+    # Enroll-on-click: active users who are not yet enrolled POST to change_enrollment (see catalog JS).
+    user = getattr(request, 'user', None) if request else None
+    if user is not None and user.is_authenticated and user.is_active:
+        if not CourseEnrollment.is_enrolled(user, course.id):
+            featured['cta_enroll'] = True
+            featured['change_enrollment_url'] = reverse('change_enrollment')
+
+    return featured
 
 
 def get_course_excerpt_from_overview(course) -> str:

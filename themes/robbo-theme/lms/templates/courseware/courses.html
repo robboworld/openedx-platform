@@ -15,6 +15,7 @@
   from openedx.core.djangoapps.models.course_details import CourseDetails
   from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
   from openedx.core.djangolib.markup import HTML, Text
+  from common.djangoapps.student.models import CourseEnrollment
 
   try:
       from lms.djangoapps.courseware import robbo_catalog as _robbo_py
@@ -233,7 +234,7 @@
       cta = course_home_url(course.id)
       if request and hasattr(request, 'build_absolute_uri') and cta.startswith('/'):
           cta = request.build_absolute_uri(cta)
-      return {
+      featured_inline = {
           'course_id': str(course.id),
           'title': title,
           'description': short,
@@ -242,6 +243,12 @@
           'image': img,
           'image_alt': title,
       }
+      user = getattr(request, 'user', None) if request else None
+      if user is not None and user.is_authenticated and user.is_active:
+          if not CourseEnrollment.is_enrolled(user, course.id):
+              featured_inline['cta_enroll'] = True
+              featured_inline['change_enrollment_url'] = reverse('change_enrollment')
+      return featured_inline
 
   def _resolve_hero(ctx_hero):
       if ctx_hero is not UNDEFINED:
@@ -293,6 +300,8 @@
   tabindex="-1"
   data-course-interest-url="/api/robbo/course-interest/"
   data-register-url="${reverse('register_user')}"
+  data-login-url="${reverse('signin_user')}"
+  data-dashboard-url="${reverse('dashboard')}"
   data-authenticated="${'true' if request.user.is_authenticated else 'false'}"
 >
   <div class="robbo-courses-catalog__wrap">

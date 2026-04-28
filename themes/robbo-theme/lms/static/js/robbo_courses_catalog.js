@@ -1,5 +1,5 @@
 /**
- * /courses stub interest buttons.
+ * /courses stub interest buttons and featured course enroll-then-redirect.
  */
 (function () {
   'use strict';
@@ -26,6 +26,53 @@
       }
     }
     return cookieValue;
+  }
+
+  function submitFeaturedEnroll(anchor) {
+    var courseId = anchor.getAttribute('data-course-id');
+    var enrollUrl = anchor.getAttribute('data-enroll-url') || '/change_enrollment';
+    var fallback = anchor.getAttribute('href') || '';
+    var dashboardUrl = root.getAttribute('data-dashboard-url') || '/dashboard';
+    var loginUrl = root.getAttribute('data-login-url') || '/login';
+
+    if (!courseId || anchor.getAttribute('data-enroll-state') === 'loading') {
+      return;
+    }
+    anchor.setAttribute('data-enroll-state', 'loading');
+    anchor.classList.add('is-enrolling');
+
+    fetch(enrollUrl, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': getCookie('csrftoken') || ''
+      },
+      body: new URLSearchParams({
+        course_id: courseId,
+        enrollment_action: 'enroll'
+      })
+    }).then(function (response) {
+      return response.text().then(function (text) {
+        var trimmed = (text || '').trim();
+        if (response.status === 200) {
+          if (trimmed === '') {
+            window.location.href = dashboardUrl;
+          } else {
+            window.location.href = trimmed;
+          }
+        } else if (response.status === 403) {
+          window.location.replace(
+            loginUrl + (loginUrl.indexOf('?') === -1 ? '?' : '&') +
+              'next=' + encodeURIComponent(window.location.pathname || '/courses')
+          );
+        } else {
+          window.location.href = fallback;
+        }
+      });
+    }).catch(function () {
+      window.location.href = fallback;
+    });
   }
 
   function getQueryParam(name) {
@@ -161,6 +208,15 @@
   }
 
   document.addEventListener('click', function (e) {
+    var anchor = e.target && e.target.closest && e.target.closest('a.robbo-courses-catalog__featured-cta--enroll');
+    if (anchor) {
+      if (root.getAttribute('data-authenticated') === 'true') {
+        e.preventDefault();
+        submitFeaturedEnroll(anchor);
+      }
+      return;
+    }
+
     var btn = e.target && e.target.closest && e.target.closest('button.robbo-courses-catalog__stub-notify');
     if (btn) {
       submitInterest(btn, false);

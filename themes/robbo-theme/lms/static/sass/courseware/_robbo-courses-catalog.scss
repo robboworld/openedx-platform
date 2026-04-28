@@ -530,6 +530,12 @@ a.robbo-courses-catalog__btn--disabled {
   pointer-events: none;
 }
 
+a.robbo-courses-catalog__featured-cta--enroll.is-enrolling {
+  cursor: wait;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
 // Stub "notify" CTA: soft pill, green accent on interaction (separate from generic .btn--secondary).
 .robbo-courses-catalog__stub .robbo-courses-catalog__stub-notify {
   align-items: center;
