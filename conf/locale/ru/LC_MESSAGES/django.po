@@ -1710,7 +1710,7 @@ msgstr ""
 "учетную запись, пока не активируете ее."
 
 #: common/templates/student/edx_ace/accountactivation/email/body.html
-#, fuzzy
+#
 msgid "Activate your account"
 msgstr "Активируйте свою учётную запись!"
 
@@ -14960,7 +14960,7 @@ msgid "Reset your answer"
 msgstr "Сбросить ответ"
 
 #: lms/templates/problem.html
-#, fuzzy
+#
 msgid "Show answer"
 msgstr "Показать ответ"
 
