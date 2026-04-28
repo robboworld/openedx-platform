@@ -29,9 +29,7 @@
                 <br />
             </p>
 
-            {% filter force_escape %}
-                {% blocktrans asvar course_cta_text %}Activate your account{% endblocktrans %}
-            {% endfilter %}
+            {% trans "Activate your account" as course_cta_text %}
             {% include "ace_common/edx_ace/common/return_to_course_cta.html" with course_cta_text=course_cta_text course_cta_url=confirm_activation_link %}
         </td>
     </tr>
@@ -39,7 +37,7 @@
         <td>
             <p style="color: rgba(0,0,0,.75);">
                 {% filter force_escape %}
-                    {% blocktrans %}Enjoy learning with {{ platform_name }}.{% endblocktrans %}
+                    {% blocktrans with platform_name=platform_name %}Enjoy learning with {{ platform_name }}.{% endblocktrans %}
                 {% endfilter %}
                 <br />
             </p>
