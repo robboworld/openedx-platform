@@ -1945,6 +1945,10 @@ MEDIA_URL = '/media/'
 CELERY_TIMEZONE = 'UTC'
 TIME_ZONE = 'UTC'
 LANGUAGE_CODE = 'en'  # http://www.i18nguy.com/unicode/language-identifiers.html
+
+# edx-ace transactional email default when ``personalize(..., language=None)`` (see ace_common.message).
+# Override via Site configuration key ACE_EMAIL_DEFAULT_LANGUAGE if needed.
+ACE_EMAIL_DEFAULT_LANGUAGE = 'ru'
 # these languages display right to left
 LANGUAGES_BIDI = ("he", "ar", "fa", "ur", "fa-ir", "rtl")
 

@@ -282,7 +282,9 @@ def create_account_with_params(request, params):  # pylint: disable=too-many-sta
 
     # Only add a default user preference if user does not already has one.
     if not preferences_api.has_user_preference(user, LANGUAGE_KEY):
-        preferences_api.set_user_preference(user, LANGUAGE_KEY, get_language())
+        site_lang = configuration_helpers.get_value('LANGUAGE_CODE', settings.LANGUAGE_CODE)
+        pref_lang = get_language() or site_lang
+        preferences_api.set_user_preference(user, LANGUAGE_KEY, pref_lang)
 
     # Check if system is configured to skip activation email for the current user.
     skip_email = _skip_activation_email(
