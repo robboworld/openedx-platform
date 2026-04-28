@@ -1710,15 +1710,14 @@ msgstr ""
 "учетную запись, пока не активируете ее."
 
 #: common/templates/student/edx_ace/accountactivation/email/body.html
-#
 msgid "Activate your account"
-msgstr "Активируйте свою учётную запись!"
+msgstr "Активировать учётную запись"
 
 #: common/templates/student/edx_ace/accountactivation/email/body.html
 #: common/templates/student/edx_ace/accountactivation/email/body.txt
-#, fuzzy, python-format
+#, python-format
 msgid "Enjoy learning with %(platform_name)s."
-msgstr "Продолжай учиться на %(platform_name)s"
+msgstr "Желаем успешного обучения на платформе %(platform_name)s."
 
 #: common/templates/student/edx_ace/accountactivation/email/body.html
 #, python-format, python-brace-format
@@ -1765,9 +1764,9 @@ msgstr ""
 "или отправьте электронное письмо %(support_email)s."
 
 #: common/templates/student/edx_ace/accountactivation/email/subject.txt
-#, fuzzy, python-format
+#, python-format
 msgid "Action Required: Activate your %(platform_name)s account"
-msgstr "Запрос на изменение %(platform_name)s електронной почты аккаунта "
+msgstr "Требуется действие: активируйте учётную запись %(platform_name)s"
 
 #: common/templates/student/edx_ace/accountrecovery/email/body.html
 msgid "Create Password"
@@ -6639,9 +6638,9 @@ msgid "Unsubscribe from these emails."
 msgstr "Отписаться от этих писем."
 
 #: openedx/core/djangoapps/ace_common/templates/ace_common/edx_ace/common/base_head.html
-#, fuzzy, python-format
+#, python-format
 msgid "%(platform_name)s Email"
-msgstr "%(platform_name)s вики"
+msgstr "Электронная почта %(platform_name)s"
 
 #: openedx/core/djangoapps/ace_common/templates/ace_common/edx_ace/common/upsell_cta.html
 #: openedx/core/djangoapps/ace_common/templates/ace_common/edx_ace/common/upsell_cta.txt
