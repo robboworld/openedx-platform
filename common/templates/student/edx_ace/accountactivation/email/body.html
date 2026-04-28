@@ -1,41 +1,4 @@
 {% extends 'ace_common/edx_ace/common/base_body.html' %}
-{% load i18n %}
-{% load ace %}
-{% load acetags %}
-
-{# Шапка только с брендом по центру; без ссылок «Курсы» / «Учётная запись». #}
-{% block header %}
-      <td class="header" style="background-color: #f5f5f5;">
-        <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" bgcolor="#F5F5F5" role="presentation">
-          <tr>
-            <td align="center" valign="middle" style="padding: 24px 28px 22px 28px;">
-              <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center" style="margin: 0 auto;">
-                <tr>
-                  <td align="center" style="text-align: center;">
-                    <a href="{% with_link_tracking 'https://skill.robbo.ru' %}"
-                       target="_blank"
-                       style="display: inline-block; text-align: center; text-decoration: none;">
-                      <img src="{{ logo_url }}"
-                           alt="{% filter force_escape %}{% blocktrans %}Go to {{ platform_name }} Home Page{% endblocktrans %}{% endfilter %}"
-                           width="auto"
-                           height="auto"
-                           style="max-height: 56px; display: block; margin: 0 auto; border: 0; outline: none;"
-                      />
-                    </a>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-{% endblock %}
-
-{% block main_style %}
-      style="
-      padding: 32px 36px 40px 36px;
-      box-shadow: 0 1px 5px rgba(0,0,0,0.2);
-      "
-{% endblock %}
 
 {% block content %}
 <table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse;">
