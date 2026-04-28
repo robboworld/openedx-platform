@@ -86,6 +86,7 @@ _PATCH_ROBBO_THEME_LOCALES = """
 from pathlib import Path as _RobboPath
 
 for _robbo_locale_path in reversed((
+    _RobboPath("/openedx/edx-platform/themes/conf/locale"),
     _RobboPath("/mnt/openedx-platform/themes/conf/locale"),
     REPO_ROOT / "themes/conf/locale",
 )):

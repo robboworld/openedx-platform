@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import logging
+import threading
 from typing import Any, Dict, Iterable, List, Optional
 
 from django.conf import settings
@@ -137,13 +138,13 @@ def _send_interest_email(payload: Dict[str, Any]) -> None:
     recipients = _normalize_recipients(getattr(settings, 'ROBBO_COURSE_INTEREST_RECIPIENTS', []))
     if not recipients:
         log.warning(
-            'course_interest missing recipients: stub_id=%s user_id=%s email=%r',
+            'course_interest missing recipients (email skipped): stub_id=%s user_id=%s email=%r',
             payload['course']['stub_id'],
             payload['learner']['user_id'],
             payload['learner']['email'],
             extra={'course_interest': payload},
         )
-        raise RuntimeError('ROBBO_COURSE_INTEREST_RECIPIENTS is empty')
+        return
 
     send_mail(
         subject=f"Интерес к курсу: {payload['course']['title']}",
@@ -169,18 +170,6 @@ def course_interest(request) -> JsonResponse:
 
     payload = build_course_interest_payload(request, stub)
 
-    try:
-        _send_interest_email(payload)
-    except Exception:  # pylint: disable=broad-except
-        log.exception(
-            'course_interest email failed: stub_id=%s user_id=%s email=%r',
-            payload['course']['stub_id'],
-            payload['learner']['user_id'],
-            payload['learner']['email'],
-            extra={'course_interest': payload},
-        )
-        return _json_error('Не удалось отправить заявку. Попробуйте ещё раз.', status=502)
-
     log.info(
         'course_interest submitted: stub_id=%s course_title=%r user_id=%s email=%r full_name=%r company=%r',
         payload['course']['stub_id'],
@@ -191,6 +180,21 @@ def course_interest(request) -> JsonResponse:
         payload['learner']['company'],
         extra={'course_interest': payload},
     )
+
+    def _send_email_after_log():
+        try:
+            _send_interest_email(payload)
+        except Exception:  # pylint: disable=broad-except
+            log.exception(
+                'course_interest email failed after log record: stub_id=%s user_id=%s email=%r',
+                payload['course']['stub_id'],
+                payload['learner']['user_id'],
+                payload['learner']['email'],
+                extra={'course_interest': payload},
+            )
+
+    threading.Thread(target=_send_email_after_log, daemon=True).start()
+
     return JsonResponse({
         'ok': True,
         'status': 'subscribed',
