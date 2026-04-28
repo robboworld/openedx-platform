@@ -102,7 +102,7 @@ body.robbo-guest-landing-page {
         font-family: var(--robbo-guest-font) !important;
     }
 
-    // Без зазора сверху: глобальные правила dashboard/discover задают #content margin-top: 80px (lg+),
+    // Без зазора сверху: глобальные правила dashboard/discover задают #content margin-top: 75px (lg+),
     // а в _extras.scss — ещё отступ под fixed header; на лендинге шапка своя и скрыта.
     // На гостевой главной не применяются правила dashboard/discover (max-width: 100% там) —
     // иначе снова включается базовый .content-wrapper с max-width контейнера и полями по бокам.
