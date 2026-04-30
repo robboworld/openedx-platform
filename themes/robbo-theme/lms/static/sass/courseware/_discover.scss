@@ -4,7 +4,7 @@ body:not(.robbo-guest-landing-page) .window-wrap #content.content-wrapper {
     margin: 0 !important;
     max-width: 100%;
     @include media-breakpoint-up(lg) {
-        margin-top: 80px !important;
+        margin-top: $header-height !important;
     }
 }
 .course-heading-area {

@@ -82,8 +82,22 @@ header.global-header {
       }
     }
 
+    // Match MFE `.robbo-layout-user-menu__toggle` (frontend-app-learner-dashboard robbo-layout)
     .toggle-user-dropdown {
       color: #fff !important;
+      background: transparent !important;
+      border: 1px solid #fff !important;
+      border-radius: 999px !important;
+      box-sizing: border-box !important;
+      padding: 6px 16px !important;
+      font-size: 1rem !important;
+      font-weight: 700 !important;
+      line-height: 1.35 !important;
+
+      &:hover,
+      &:focus {
+        background: rgba(255, 255, 255, 0.12) !important;
+      }
 
       &::after,
       .fa {
@@ -131,7 +145,8 @@ header.global-header .nav-links .main .nav-tab a.tab-nav-link {
   border-radius: 0 !important;
   padding: 6px 0 !important;
   font-weight: 700 !important;
-  font-size: 15px !important;
+  // Align with MFE `$robbo-mfe-header-nav-fs` (20px)
+  font-size: 20px !important;
   line-height: 1.35 !important;
   letter-spacing: 0.01em;
   background: transparent !important;

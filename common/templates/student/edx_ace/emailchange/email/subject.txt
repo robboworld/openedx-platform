@@ -1,4 +1,1 @@
-{% load i18n %}
-{% autoescape off %}
-{% blocktrans trimmed %}Request to change {{ platform_name }} account e-mail{% endblocktrans %}
-{% endautoescape %}
+{% autoescape off %}Запрос на смену email учётной записи {{ platform_name }}{% endautoescape %}

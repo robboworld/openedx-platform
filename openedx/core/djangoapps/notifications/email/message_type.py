@@ -2,10 +2,11 @@
 Email notifications MessageType
 """
 from django.conf import settings
-from edx_ace.message import MessageType
+
+from openedx.core.djangoapps.ace_common.message import BaseMessageType
 
 
-class EmailNotificationMessageType(MessageType):
+class EmailNotificationMessageType(BaseMessageType):
     """
     Edx-ace MessageType for Email Notifications
     """

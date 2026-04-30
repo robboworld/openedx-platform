@@ -1,69 +1,60 @@
 {% extends 'ace_common/edx_ace/common/base_body.html' %}
 
-{% load django_markup %}
-{% load i18n %}
-{% load static %}
 {% block content %}
-<table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation">
+<table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse;">
 {% if route_enabled %}
     <tr>
-        <td>
-            <p style="color: rgba(0,0,0,.75);">
+        <td style="padding: 0 0 20px 0;">
+            <p style="margin: 0; color: rgba(0,0,0,.78); font-size: 15px; line-height: 1.55;">
                 {% filter force_escape %}
-                    {% blocktrans %}This is a routed Account Activation email for {{ routed_user }} ({{ routed_user_email }}): {{ routed_profile_name }}{% endblocktrans %}
+                Это переадресованное письмо об активации учётной записи для {{ routed_user }} ({{ routed_user_email }}): {{ routed_profile_name }}
                 {% endfilter %}
-                <br />
             </p>
         </td>
     </tr>
 {% endif %}
     <tr>
-        <td>
-            <h1>
-                {% trans "Account activation" as header_msg %}{{ header_msg | force_escape }}
+        <td style="padding: 0 0 8px 0;">
+            <h1 style="margin: 0 0 18px 0; padding: 0; font-size: 22px; font-weight: 700; line-height: 1.3; color: #111111;">
+                Активация учётной записи
             </h1>
-            <p style="color: rgba(0,0,0,.75);">
+            <p style="margin: 0 0 22px 0; color: rgba(0,0,0,.78); font-size: 15px; line-height: 1.6;">
                 {% filter force_escape %}
-                    {% blocktrans %}You're almost there! Use the link below to activate your account to access engaging, high-quality {{ platform_name }} courses. Note that you will not be able to log back into your account until you have activated it.{% endblocktrans %}
+                Вы почти у цели! Перейдите по ссылке ниже, чтобы активировать учётную запись и получить доступ к курсам {{ platform_name }}. Пока вы не активируете учётную запись, повторный вход будет невозможен.
                 {% endfilter %}
-                <br />
             </p>
 
-            {% filter force_escape %}
-                {% blocktrans asvar course_cta_text %}Activate your account{% endblocktrans %}
-            {% endfilter %}
-            {% include "ace_common/edx_ace/common/return_to_course_cta.html" with course_cta_text=course_cta_text course_cta_url=confirm_activation_link %}
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0;">
+              <tr>
+                <td style="padding: 8px 0 26px 0;">
+                  {% include "ace_common/edx_ace/common/return_to_course_cta.html" with course_cta_text="Активировать учётную запись" course_cta_url=confirm_activation_link %}
+                </td>
+              </tr>
+            </table>
         </td>
     </tr>
     <tr>
-        <td>
-            <p style="color: rgba(0,0,0,.75);">
+        <td style="padding: 0 0 18px 0;">
+            <p style="margin: 0; color: rgba(0,0,0,.78); font-size: 15px; line-height: 1.55;">
                 {% filter force_escape %}
-                    {% blocktrans %}Enjoy learning with {{ platform_name }}.{% endblocktrans %}
+                Желаем успешного обучения на платформе {{ platform_name }}.
                 {% endfilter %}
-                <br />
             </p>
         </td>
     </tr>
-        <td>
-            <p style="color: rgba(0,0,0,.75);">
-                {% blocktrans trimmed asvar assist_msg %}
-                If you need help, please use our web form at {start_anchor_web}{{ support_url }}{end_anchor} or email {start_anchor_email}{{ support_email }}{end_anchor}.
-                {% endblocktrans %}
-                {% interpolate_html assist_msg start_anchor_web='<a href="'|add:support_url|add:'">'|safe start_anchor_email='<a href="mailto:'|add:support_email|add:'">'|safe end_anchor='</a>'|safe %}
-                <br />
+    <tr>
+        <td style="padding: 0 0 18px 0;">
+            <p style="margin: 0; color: rgba(0,0,0,.78); font-size: 15px; line-height: 1.55;">
+                Если нужна помощь, воспользуйтесь <a href="{{ support_url|escape }}" style="color: #005686;">веб-формой на сайте</a> или напишите на <a href="mailto:{{ support_email|escape }}" style="color: #005686;">{{ support_email|escape }}</a>.
             </p>
         </td>
-    <tr>
-
     </tr>
     <tr>
-        <td>
-            <p style="color: rgba(0,0,0,.75);">
+        <td style="padding: 0;">
+            <p style="margin: 0; padding-top: 8px; border-top: 1px solid #eae8e5; color: rgba(0,0,0,.62); font-size: 13px; line-height: 1.5;">
                 {% filter force_escape %}
-                    {% blocktrans %}This email message was automatically sent by {{ lms_url }} because someone attempted to create an account on {{ platform_name }} using this email address.{% endblocktrans %}
+                Это письмо автоматически отправлено с сайта {{ lms_url }}, так как кто-то пытался создать учётную запись на {{ platform_name }}, указав этот адрес электронной почты.
                 {% endfilter %}
-                <br />
             </p>
         </td>
     </tr>

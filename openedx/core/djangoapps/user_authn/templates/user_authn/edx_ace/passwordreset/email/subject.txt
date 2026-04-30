@@ -1,4 +1,1 @@
-{% load i18n %}
-{% autoescape off %}
-{% blocktrans trimmed %}Password reset on {{ platform_name }}{% endblocktrans %}
-{% endautoescape %}
+{% autoescape off %}Сброс пароля на {{ platform_name }}{% endautoescape %}

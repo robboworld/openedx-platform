@@ -2,7 +2,7 @@
 
 $content_padding_top: 24px;
 $content-padding-bottom: 10px;
-$header-height: 80px;
+$header-height: $robbo-header-bar-min-h;
 // Гостевая главная: ProximaNova из `_guest-landing.scss` (как Tilda); иначе Inter с !important перебивает наследование.
 body:not(.robbo-guest-landing-page),
 body:not(.robbo-guest-landing-page) h1,
@@ -255,10 +255,23 @@ nav.wrapper-preview-menu {
 /////////////////// Footer (sticky to viewport bottom, fixed flex footprint)
 .wrapper-footer {
   box-shadow: none;
-  padding: 20px clamp(20px, 4vw, 45px);
+  padding: 0 clamp(20px, 4vw, 45px);
   background-color: #fff;
   border-top: 1px solid #e0e0e0;
   flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 80px;
+
+  @include media-breakpoint-up(lg) {
+    height: 80px;
+  }
+
+  @include media-breakpoint-down(md) {
+    height: auto;
+    padding: 12px clamp(20px, 4vw, 45px);
+  }
 }
 .container, .main-container, .find-courses {
   max-width: 1600px;

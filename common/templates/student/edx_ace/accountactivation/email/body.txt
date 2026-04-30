@@ -1,11 +1,11 @@
-{% load i18n %}{% autoescape off %}
-{% blocktrans %}You’re almost there! Use the link below to activate your account to access engaging, high-quality {{ platform_name }} courses. Note that you will not be able to log back into your account until you have activated it.{% endblocktrans %}
+{% autoescape off %}
+Вы почти у цели! Перейдите по ссылке ниже, чтобы активировать учётную запись и получить доступ к курсам {{ platform_name }}. Пока вы не активируете учётную запись, повторный вход будет невозможен.
 
 {{ confirm_activation_link }}
 
-{% blocktrans %}Enjoy learning with {{ platform_name }}.{% endblocktrans %}
+Желаем успешного обучения на платформе {{ platform_name }}.
 
-{% blocktrans %}If you need help, please use our web form at {{ support_url }} or email {{ support_email }}.{% endblocktrans %}
+Если нужна помощь, воспользуйтесь веб-формой: {{ support_url }} или напишите на адрес {{ support_email }}.
 
-{% blocktrans %}This email message was automatically sent by {{ lms_url }} because someone attempted to create an account on {{ platform_name }} using this email address.{% endblocktrans %}
+Это письмо автоматически отправлено с сайта {{ lms_url }}, так как кто-то пытался создать учётную запись на {{ platform_name }}, указав этот адрес электронной почты.
 {% endautoescape %}

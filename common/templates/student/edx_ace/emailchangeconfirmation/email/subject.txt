@@ -1,4 +1,1 @@
-{% load i18n %}
-{% autoescape off %}
-{% blocktrans trimmed %}Email Change Confirmation for {{ platform_name }}{% endblocktrans %}
-{% endautoescape %}
+{% autoescape off %}Подтверждение смены email — {{ platform_name }}{% endautoescape %}

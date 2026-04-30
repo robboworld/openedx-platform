@@ -1,30 +1,22 @@
 {% extends 'ace_common/edx_ace/common/base_body.html' %}
 
-{% load i18n %}
 {% load static %}
 {% block content %}
-<table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation">
+<table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse;">
     <tr>
         <td>
-            <h1>
-                {% trans "Password reset success" as tmsg %}{{ tmsg | force_escape }}
-            </h1>
-            <p style="color: rgba(0,0,0,.75);">
+            <h1>Пароль успешно изменён</h1>
+            <p>
                 {% filter force_escape %}
-                   {% blocktrans %}Hello {{ name }},{% endblocktrans %}
+                Здравствуйте, {{ name }}!
                 {% endfilter %}
             </p>
-            <p style="color: rgba(0,0,0,.75);">
+            <p>
                 {% filter force_escape %}
-                {% blocktrans %}This is to confirm that you have successfully changed your password associated with {{ platform_name }} account. Please sign-in to your account.{% endblocktrans %}
+                Подтверждаем: пароль для учётной записи {{ platform_name }} успешно изменён. Войдите в систему с новым паролем.
                 {% endfilter %}
-                <br />
             </p>
-
-                {% filter force_escape %}
-                {% blocktrans asvar course_cta_text %}Sign in{% endblocktrans %}
-                {% endfilter %}
-                {% include "ace_common/edx_ace/common/return_to_course_cta.html" with course_cta_text=course_cta_text course_cta_url=login_link %}
+            {% include "ace_common/edx_ace/common/return_to_course_cta.html" with course_cta_text="Войти" course_cta_url=login_link %}
         </td>
     </tr>
 </table>

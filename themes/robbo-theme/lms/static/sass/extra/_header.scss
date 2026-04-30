@@ -27,9 +27,8 @@ body {
 
 // Robbo header — brand green bar, white nav (reference layout)
 $robbo-header-green: #00b140;
-// Wordmark (РОББО): 30px; primary tabs («Мои курсы», «Каталог»): 22px; bar fits both
-$robbo-header-bar-min-h: 80px;
-$robbo-header-nav-font: 22px;
+// Wordmark (РОББО): 30px; primary tabs — same as MFE `$robbo-mfe-header-nav-fs` (20px)
+$robbo-header-nav-font: 20px;
 $robbo-header-wordmark: 30px;
 $robbo-header-user-menu-fs: 1.125rem; // Sign in / Register
 $robbo-header-profile-toggle-fs: 1rem; // 16px: −2px vs 18px for .toggle-user-dropdown

@@ -232,9 +232,12 @@ def compose_activation_email(
     else:
         dest_addr = user.email
 
+    # Activation email locale: only Django settings (e.g. Tutor/common.py), not SiteConfiguration,
+    # so transactional copy stays aligned with stack language policy.
+    email_lang = getattr(settings, 'ACTIVATION_EMAIL_LANGUAGE', 'ru')
     msg = AccountActivation().personalize(
         recipient=Recipient(user.id, dest_addr),
-        language=preferences_api.get_user_preference(user, LANGUAGE_KEY),
+        language=email_lang,
         user_context=message_context,
     )
 

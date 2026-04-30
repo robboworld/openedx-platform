@@ -1,4 +1,1 @@
-{% load i18n %}
-{% autoescape off %}
-{% blocktrans trimmed %}Password reset completed on {{ platform_name }}{% endblocktrans %}
-{% endautoescape %}
+{% autoescape off %}Пароль на {{ platform_name }} изменён{% endautoescape %}
