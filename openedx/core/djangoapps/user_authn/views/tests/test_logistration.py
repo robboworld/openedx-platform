@@ -1,4 +1,7 @@
-""" Tests for Logistration views. """
+""" Tests for Logistration views.
+
+Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
+"""
 
 
 from http.cookies import SimpleCookie

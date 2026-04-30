@@ -1,0 +1,21 @@
+Robbo Open edX — platform fork
+==============================
+
+This tree contains Open edX (https://openedx.org) platform source code, licensed
+under the GNU Affero General Public License v3.0-only. See the LICENSE file in
+this directory for the full license text.
+
+Modifications and Robbo-specific additions (including under themes/robbo-theme/,
+lms/djangoapps/courseware/robbo_*.py, tutor-plugin-robbo-mfe-branding/, and
+other files or sections marked in copyright notices) are:
+
+  Copyright (C) 2024-2026 Robbo <https://robbo.ru>
+
+and are contributed under the same AGPL-3.0-only license as the surrounding
+project, except where a file header states otherwise.
+
+Upstream sources and community contributors retain their respective copyrights
+as indicated in file headers and third-party notices throughout this repository.
+
+For corresponding source matching a deployed Robbo learning instance, see the
+offer published with that service (for example https://skill.robbo.ru).

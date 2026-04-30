@@ -1,5 +1,7 @@
 """
 Registration related views.
+
+Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
 """
 
 

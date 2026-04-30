@@ -1,4 +1,9 @@
 /**
+ * Copyright (C) 2024-2026 Robbo <https://robbo.ru>
+ * SPDX-License-Identifier: AGPL-3.0-only
+ *
+ * Part of the Robbo Open edX distribution. See NOTICE at edx-platform repository root.
+ *
  * Гостевой лендинг: topbar fixed; зелёный фон и белый логотип только после того, как блок hero
  * полностью вышел из viewport (пользователь «прокрутил мимо» .robbo-guest-hero).
  */

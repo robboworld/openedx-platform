@@ -1,4 +1,9 @@
 /**
+ * Copyright (C) 2024-2026 Robbo <https://robbo.ru>
+ * SPDX-License-Identifier: AGPL-3.0-only
+ *
+ * Part of the Robbo Open edX distribution. See NOTICE at edx-platform repository root.
+ *
  * Гостевой лендинг: баннер согласия на cookie / метаданные. Один раз на устройство — ключ в localStorage.
  * Тот же ключ, что раньше в Authn MFE, чтобы на одном origin не показывать повторно после принятия там.
  */

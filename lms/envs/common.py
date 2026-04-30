@@ -32,6 +32,8 @@ Conventions
     the same prefix (e.g. `CELERY`) of the setting that is being appended (e.g. `CELERY_IMPORTS`).
 """
 
+# Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
+
 # We intentionally define lots of variables that aren't used
 # pylint: disable=unused-import
 

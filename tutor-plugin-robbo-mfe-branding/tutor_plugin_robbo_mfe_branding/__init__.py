@@ -1,3 +1,8 @@
+# Copyright (C) 2024-2026 Robbo <https://robbo.ru>
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# This file is part of the Robbo Open edX distribution. See NOTICE at repository root.
+
 """
 Tutor plugin: Robbo MFE branding — MFE_CONFIG, Paragon URLs; trims tutor-indigo image
 injects for bind-mounted MFEs (brand, header/footer packages, footer slot, env imports).
