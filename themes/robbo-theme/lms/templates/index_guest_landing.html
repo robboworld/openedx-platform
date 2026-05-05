@@ -15,7 +15,7 @@ from django.urls import reverse
         <div class="robbo-guest-topbar__main">
           <div class="robbo-guest-topbar__gutter" aria-hidden="true"></div>
           <div class="robbo-guest-topbar__left">
-            <a class="robbo-guest-topbar__brand" href="https://online.robbo.ru/" target="_blank"
+            <a class="robbo-guest-topbar__brand" href="https://skill.robbo.ru" target="_blank"
               rel="noopener noreferrer">
               <img class="robbo-guest-topbar__logo" src="${static.url('images/guest-landing/topbar-logo.png')}"
                 width="1680" height="635" alt="Робототехника для мальчиков и девочек от 5 до 15 лет" decoding="async" />
@@ -30,7 +30,7 @@ from django.urls import reverse
               <a class="robbo-guest-topbar__btn robbo-guest-topbar__btn--solid"
                 href="${reverse('signin_user') | h}">Вход</a>
               <a class="robbo-guest-topbar__btn robbo-guest-topbar__btn--outline"
-                href="${reverse('register_user') | h}">Регистрация</a>
+                href="#registration">Регистрация</a>
             </div>
           </div>
           <div class="robbo-guest-topbar__gutter" aria-hidden="true"></div>
@@ -208,7 +208,7 @@ from django.urls import reverse
             <label class="robbo-guest-register__check">
               <input class="robbo-guest-register__checkbox" type="checkbox" name="marketing_emails_opt_in"
                 value="true" required />
-              <span>Я согласен(а) получать новости и рекламные рассылки</span>
+              <span>Я согласен(а) получать новости и рассылки</span>
             </label>
             <label class="robbo-guest-register__check">
               <input class="robbo-guest-register__checkbox" type="checkbox" name="honor_code" value="true" required />

@@ -1302,6 +1302,8 @@ body.robbo-guest-landing-page .robbo-cookie-consent {
     --robbo-cookie-padding: clamp(1rem, 3vw, 1.75rem);
     --robbo-cookie-gap: clamp(1rem, 3vw, 1.5rem);
     --robbo-cookie-text-color: #1f2937;
+    --robbo-cookie-link-color: #15803d;
+    --robbo-cookie-link-hover: #166534;
     // CTA: согласовано с акцентами Robbo (см. architecture.mdc)
     --robbo-cookie-btn-bg: #15803d;
     --robbo-cookie-btn-color: #fff;
@@ -1356,6 +1358,24 @@ body.robbo-guest-landing-page .robbo-cookie-consent__text {
     font-size: 0.9375rem;
     line-height: 1.5;
     text-align: left;
+}
+
+body.robbo-guest-landing-page .robbo-cookie-consent__link {
+    color: var(--robbo-cookie-link-color);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.12em;
+}
+
+body.robbo-guest-landing-page .robbo-cookie-consent__link:hover {
+    color: var(--robbo-cookie-link-hover);
+}
+
+body.robbo-guest-landing-page .robbo-cookie-consent__link:focus-visible {
+    color: var(--robbo-cookie-link-hover);
+    outline: 2px solid var(--robbo-cookie-link-color);
+    outline-offset: 2px;
 }
 
 body.robbo-guest-landing-page .robbo-cookie-consent__accept {
@@ -1414,6 +1434,8 @@ body.robbo-guest-landing-page .robbo-cookie-consent__accept:focus-visible {
 body.indigo-dark-theme.robbo-guest-landing-page .robbo-cookie-consent {
     --robbo-cookie-bg: #e8eaed;
     --robbo-cookie-text-color: #111827;
+    --robbo-cookie-link-color: #15803d;
+    --robbo-cookie-link-hover: #14532d;
     --robbo-cookie-btn-bg: #15803d;
     --robbo-cookie-btn-hover-bg: #166534;
     --robbo-cookie-btn-active-bg: #14532d;
