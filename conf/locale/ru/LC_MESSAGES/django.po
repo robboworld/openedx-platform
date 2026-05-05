@@ -6587,7 +6587,7 @@ msgstr "Курсы"
 
 #: openedx/core/djangoapps/ace_common/templates/ace_common/edx_ace/common/base_body.html
 msgid "My Account"
-msgstr "Учётная запись"
+msgstr "Моя учётная запись"
 
 #: openedx/core/djangoapps/ace_common/templates/ace_common/edx_ace/common/base_body.html
 #: themes/red-theme/lms/templates/ace_common/edx_ace/common/base_body.html
@@ -6631,7 +6631,7 @@ msgstr "Скачать приложение для Android с Google Play Store"
 
 #: openedx/core/djangoapps/ace_common/templates/ace_common/edx_ace/common/base_body.html
 msgid "Our mailing address is:"
-msgstr "Наш почтовый адрес:"
+msgstr "Наш адрес для рассылки:"
 
 #: openedx/core/djangoapps/ace_common/templates/ace_common/edx_ace/common/base_body.html
 msgid "Unsubscribe from these emails."
@@ -8330,10 +8330,6 @@ msgid ""
 msgstr ""
 "Похоже, {email_address} уже привязан к существующей учётной записи. "
 "Попробуйте ещё раз с другим адресом электронной почты."
-
-#: openedx/core/djangoapps/user_api/accounts/__init__.py
-msgid "This email is already associated with an existing account"
-msgstr "Аккаунт с этой почтой уже зарегистрирован"
 
 #: openedx/core/djangoapps/user_api/accounts/__init__.py
 #, python-brace-format
@@ -26882,3 +26878,7 @@ msgstr ""
 #: edx_proctoring_proctortrack/backends/proctortrack_rest.py
 msgid "Click on the \"Start Proctored Exam\" button below to continue."
 msgstr "Нажмите кнопку «Начать экзамен под контролем» ниже, чтобы продолжить."
+
+#: openedx/core/djangoapps/user_api/accounts/__init__.py
+msgid "This email is already associated with an existing account"
+msgstr "Аккаунт с этой почтой уже зарегистрирован"
