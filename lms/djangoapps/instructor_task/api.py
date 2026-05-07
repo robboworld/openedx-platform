@@ -35,6 +35,7 @@ from lms.djangoapps.instructor_task.tasks import (
     calculate_may_enroll_csv,
     calculate_problem_grade_report,
     calculate_problem_responses_csv,
+    calculate_robbo_extended_students_features_csv,
     calculate_students_features_csv,
     cohort_students,
     course_survey_report_csv,
@@ -388,6 +389,20 @@ def submit_calculate_students_features_csv(request, course_key, features, **task
     """
     task_type = InstructorTaskTypes.PROFILE_INFO_CSV
     task_class = calculate_students_features_csv
+    task_input = dict(features=features, **task_kwargs)
+    task_key = ""
+
+    return submit_task(request, task_type, task_class, course_key, task_input, task_key)
+
+
+def submit_calculate_robbo_extended_students_features_csv(request, course_key, features, **task_kwargs):
+    """
+    Submits a task to generate a Robbo extended CSV containing student profile info.
+
+    Raises AlreadyRunningError if said CSV is already being updated.
+    """
+    task_type = InstructorTaskTypes.ROBBO_EXTENDED_PROFILE_INFO_CSV
+    task_class = calculate_robbo_extended_students_features_csv
     task_input = dict(features=features, **task_kwargs)
     task_key = ""
 

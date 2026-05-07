@@ -98,6 +98,7 @@
             this.ddc = new DataDownloadCertificate(this.$section.find('.issued_certificates'));
             this.$list_studs_btn = this.$section.find("input[name='list-profiles']");
             this.$list_studs_csv_btn = this.$section.find("input[name='list-profiles-csv']");
+            this.$list_studs_robbo_csv_btn = this.$section.find("input[name='list-profiles-csv-robbo']");
             this.$proctored_exam_csv_btn = this.$section.find("input[name='proctored-exam-results-report']");
             this.$survey_results_csv_btn = this.$section.find("input[name='survey-results-report']");
             this.$list_may_enroll_csv_btn = this.$section.find("input[name='list-may-enroll-csv']");
@@ -199,6 +200,31 @@
             this.$list_studs_csv_btn.click(function() {
                 var url = dataDownloadObj.$list_studs_csv_btn.data('endpoint') + '/csv';
                 var errorMessage = gettext('Error generating student profile information. Please try again.');
+                dataDownloadObj.clear_display();
+                return $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: url,
+                    error: function(error) {
+                        if (error.responseText) {
+                            errorMessage = JSON.parse(error.responseText);
+                        }
+                        dataDownloadObj.$reports_request_response_error.text(errorMessage);
+                        return dataDownloadObj.$reports_request_response_error.css({
+                            display: 'block'
+                        });
+                    },
+                    success: function(data) {
+                        dataDownloadObj.$reports_request_response.text(data.status);
+                        return $('.msg-confirm').css({
+                            display: 'block'
+                        });
+                    }
+                });
+            });
+            this.$list_studs_robbo_csv_btn.click(function() {
+                var url = dataDownloadObj.$list_studs_robbo_csv_btn.data('endpoint') + '/csv';
+                var errorMessage = gettext('Не удалось поставить в очередь расширенный CSV профиля РОББО. Попробуйте ещё раз.');
                 dataDownloadObj.clear_display();
                 return $.ajax({
                     type: 'POST',

@@ -1556,6 +1556,68 @@ class GetStudentsFeatures(DeveloperErrorViewMixin, APIView):
             return JsonResponse({"status": success_status})
 
 
+def _student_profile_download_features(course):
+    """
+    Match the standard student profile CSV column selection for derived reports.
+    """
+    query_features = list(configuration_helpers.get_value('student_profile_download_fields', []))
+    if not query_features:
+        query_features = [
+            'id', 'username', 'name', 'email', 'language', 'location',
+            'year_of_birth', 'gender', 'level_of_education', 'mailing_address',
+            'goals', 'enrollment_mode', 'last_login', 'date_joined', 'external_user_key'
+        ]
+    keep_field_private(query_features, 'year_of_birth')
+
+    if is_course_cohorted(course.id):
+        query_features.append('cohort')
+
+    if course.teams_enabled:
+        query_features.append('team')
+
+    query_features.append('city')
+    query_features.append('country')
+    return query_features
+
+
+@method_decorator(cache_control(no_cache=True, no_store=True, must_revalidate=True), name='dispatch')
+@method_decorator(transaction.non_atomic_requests, name='dispatch')
+class GetRobboExtendedStudentsFeatures(DeveloperErrorViewMixin, APIView):
+    """
+    Queue a Robbo extended CSV with the standard profile columns plus Robbo columns.
+    """
+    permission_classes = (IsAuthenticated, permissions.InstructorPermission)
+    permission_name = permissions.CAN_RESEARCH
+
+    @method_decorator(ensure_csrf_cookie)
+    @method_decorator(transaction.non_atomic_requests)
+    def post(self, request, course_id, csv=False):  # pylint: disable=redefined-outer-name
+        if not csv:
+            raise MethodNotAllowed('POST')
+
+        course_key = CourseKey.from_string(course_id)
+        course = get_course_by_id(course_key)
+        query_features = _student_profile_download_features(course)
+
+        try:
+            task_api.submit_calculate_robbo_extended_students_features_csv(
+                request,
+                course_key,
+                query_features
+            )
+            success_status = _(
+                'Формируется расширенный CSV профиля РОББО. '
+                'Статус смотрите в разделе «Ожидающие задачи» ниже.'
+            )
+        except Exception as e:
+            raise self.api_error(status.HTTP_400_BAD_REQUEST, str(e), 'Requested task is already running')
+
+        return JsonResponse({"status": success_status})
+
+    def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
+        raise MethodNotAllowed('GET')
+
+
 @method_decorator(cache_control(no_cache=True, no_store=True, must_revalidate=True), name='dispatch')
 @method_decorator(transaction.non_atomic_requests, name='dispatch')
 class GetStudentsWhoMayEnroll(DeveloperErrorViewMixin, APIView):

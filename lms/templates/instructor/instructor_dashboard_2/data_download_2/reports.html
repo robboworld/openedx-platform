@@ -29,6 +29,10 @@ from openedx.core.djangolib.markup import HTML, Text
                             data-endpoint="${ section_data['get_students_features_url'] + '/csv' }"
                             data-csv="true">Profile Information
                     </option>
+                    <option value="robboExtendedProfileInformation"
+                            data-endpoint="${ section_data['get_robbo_extended_students_features_url'] + '/csv' }"
+                            data-csv="true">${_("Расширенный CSV профиля (РОББО)")}
+                    </option>
                     <option value="learnerWhoCanEnroll"
                             data-endpoint="${ section_data['get_students_who_may_enroll_url'] }" data-csv="true">
                         Learner
@@ -91,6 +95,8 @@ from openedx.core.djangolib.markup import HTML, Text
             <p hidden="hidden" class="selectionInfo reports profileInformation">${_("Click to generate a CSV file of \
                 all students enrolled in this course, along with profile information such as email address and \
                 username:")}</p>
+
+            <p hidden="hidden" class="selectionInfo reports robboExtendedProfileInformation">${_("Нажмите, чтобы поставить в очередь расширенный CSV РОББО: стандартные поля профиля слушателя, компания, баллы по тестам и интерес к курсам каталога:")}</p>
 
             <p hidden="hidden" class="selectionInfo reports learnerWhoCanEnroll">${_("Click to generate a CSV file \
                 that lists learners who can enroll in the course but have not yet done so.")}</p>

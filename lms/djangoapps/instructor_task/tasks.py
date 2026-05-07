@@ -41,6 +41,7 @@ from lms.djangoapps.instructor_task.tasks_helper.misc import (
     upload_proctored_exam_results_report,
     generate_anonymous_ids
 )
+from lms.djangoapps.instructor_task.tasks_helper.robbo_pii import upload_robbo_extended_students_csv
 
 from lms.djangoapps.instructor_task.tasks_helper.module_state import (
     delete_problem_module_state,
@@ -225,6 +226,17 @@ def calculate_students_features_csv(entry_id, xblock_instance_args):
     # Translators: This is a past-tense verb that is inserted into task progress messages as {action}.
     action_name = gettext_noop('generated')
     task_fn = partial(upload_students_csv, xblock_instance_args)
+    return run_main_task(entry_id, task_fn, action_name)
+
+
+@shared_task(base=BaseInstructorTask)
+@set_code_owner_attribute
+def calculate_robbo_extended_students_features_csv(entry_id, xblock_instance_args):
+    """
+    Compute Robbo extended student profile information for a course and upload the CSV for download.
+    """
+    action_name = gettext_noop('generated')
+    task_fn = partial(upload_robbo_extended_students_csv, xblock_instance_args)
     return run_main_task(entry_id, task_fn, action_name)
 
 

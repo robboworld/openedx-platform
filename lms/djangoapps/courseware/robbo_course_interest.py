@@ -17,6 +17,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
+from django.db import transaction
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
@@ -24,6 +25,7 @@ from django.views.decorators.http import require_POST
 from lms.djangoapps.courseware.robbo_catalog import get_robbo_catalog_stubs
 
 log = logging.getLogger('robbo.course_interest')
+_INTEREST_META_KEY = 'robbo_course_interest_titles'
 
 
 def _json_error(message: str, status: int) -> JsonResponse:
@@ -64,6 +66,28 @@ def _get_profile_meta(profile) -> Dict[str, Any]:
     if isinstance(meta, dict):
         return meta
     return {}
+
+
+def _persist_interest_title_to_profile(user, course_title: str) -> None:
+    """
+    Store submitted course interest in profile meta so instructor CSV reports can read it later.
+    """
+    profile = _get_profile(user)
+    if profile is None:
+        log.warning('course_interest meta skipped: no profile for user_id=%s', user.id)
+        return
+
+    meta = _get_profile_meta(profile)
+    titles = meta.get(_INTEREST_META_KEY)
+    if not isinstance(titles, list):
+        titles = []
+    if course_title not in titles:
+        titles.append(course_title)
+    meta[_INTEREST_META_KEY] = titles
+
+    profile.meta = json.dumps(meta)
+    with transaction.atomic():
+        profile.save(update_fields=['meta'])
 
 
 def _get_client_ip(request) -> str:
@@ -185,6 +209,17 @@ def course_interest(request) -> JsonResponse:
         payload['learner']['company'],
         extra={'course_interest': payload},
     )
+
+    try:
+        _persist_interest_title_to_profile(request.user, payload['course']['title'])
+    except Exception:  # pylint: disable=broad-except
+        log.exception(
+            'course_interest meta save failed: stub_id=%s user_id=%s email=%r',
+            payload['course']['stub_id'],
+            payload['learner']['user_id'],
+            payload['learner']['email'],
+            extra={'course_interest': payload},
+        )
 
     def _send_email_after_log():
         try:

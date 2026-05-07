@@ -29,6 +29,11 @@ urlpatterns = [
     path('get_problem_responses', api.get_problem_responses, name='get_problem_responses'),
     path('get_issued_certificates/', api.GetIssuedCertificates.as_view(), name='get_issued_certificates'),
     re_path(r'^get_students_features(?P<csv>/csv)?$', api.GetStudentsFeatures.as_view(), name='get_students_features'),
+    re_path(
+        r'^get_robbo_extended_students_features(?P<csv>/csv)?$',
+        api.GetRobboExtendedStudentsFeatures.as_view(),
+        name='get_robbo_extended_students_features'
+    ),
     path('get_grading_config', api.GetGradingConfig.as_view(), name='get_grading_config'),
     path('get_students_who_may_enroll', api.GetStudentsWhoMayEnroll.as_view(), name='get_students_who_may_enroll'),
     path('get_anon_ids', api.GetAnonIds.as_view(), name='get_anon_ids'),

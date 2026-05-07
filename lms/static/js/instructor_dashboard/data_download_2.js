@@ -45,6 +45,9 @@
                 ORADataReport: gettext('Error generating ORA data report. Please try again.'),
                 problemGradeReport: gettext('Error generating problem grade report. Please try again.'),
                 profileInformation: gettext('Error generating student profile information. Please try again.'),
+                robboExtendedProfileInformation: gettext(
+                    'Не удалось поставить в очередь расширенный CSV профиля РОББО. Попробуйте ещё раз.'
+                ),
                 surveyResultReport: gettext('Error generating survey results. Please try again.'),
                 proctoredExamResults: gettext('Error generating proctored exam results. Please try again.'),
                 learnerWhoCanEnroll: gettext('Error generating list of students who may enroll. Please try again.'),
