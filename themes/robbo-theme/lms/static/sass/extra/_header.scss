@@ -471,12 +471,6 @@ header.global-header {
                 @include text-align(left);
                 cursor: pointer;
 
-                &::after {
-                    // как в edx mobile menu: знак » после подписи
-                    content: '\00BB';
-                    padding-left: 4px;
-                }
-
                 &:hover,
                 &:focus,
                 &.active {
