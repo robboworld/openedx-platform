@@ -2,6 +2,8 @@
   This file contains all the necessary styling for a uniform
   navigation bar that can exist on any of the v1, v2 or bootstrap
   pages.
+
+  Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 */
 .global-header {
   box-sizing: border-box;
@@ -373,11 +375,6 @@
         &:focus {
           background-color: $gray-600;
           color: theme-color('inverse');
-        }
-
-        &::after {
-          content: '\00BB';
-          padding-left: 4px;
         }
       }
     }
