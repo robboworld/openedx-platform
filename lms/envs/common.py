@@ -5645,3 +5645,8 @@ ROBBO_CATALOG_FEATURED_COURSE_ID = None
 ROBBO_CATALOG_FEATURED_IMAGE = 'stub-postgres.png'
 # Recipients for learner requests to be notified when a stub course opens.
 ROBBO_COURSE_INTEREST_RECIPIENTS = ['e.sovkov@robbo.ru']
+
+# Yandex Metrika: disabled by default. Tutor ``openedx-lms-development-settings`` forces off;
+# production enables via ``ROBBO_YANDEX_METRIKA_COUNTER_ID`` in ``config.yml`` (plugin).
+ENABLE_YANDEX_METRIKA = False
+YANDEX_METRIKA_COUNTER_ID = None

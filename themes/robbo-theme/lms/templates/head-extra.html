@@ -1,0 +1,37 @@
+## coding=utf-8
+<%page expression_filter="h"/>
+<%!
+# Copyright (C) 2026 Robbo <https://robbo.ru>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Part of the Robbo Open edX distribution. See NOTICE at edx-platform repository root.
+import json
+
+from django.conf import settings
+%>
+% if getattr(settings, 'ENABLE_YANDEX_METRIKA', False) and getattr(settings, 'YANDEX_METRIKA_COUNTER_ID', None):
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=${settings.YANDEX_METRIKA_COUNTER_ID}', 'ym');
+
+    ym(${settings.YANDEX_METRIKA_COUNTER_ID}, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+% endif
+<script type="text/javascript">
+window.__ROBBO_YANDEX_METRIKA__ = ${json.dumps({
+    'enabled': bool(
+        getattr(settings, 'ENABLE_YANDEX_METRIKA', False)
+        and getattr(settings, 'YANDEX_METRIKA_COUNTER_ID', None) is not None
+    ),
+    'counterId': (
+        int(settings.YANDEX_METRIKA_COUNTER_ID)
+        if getattr(settings, 'YANDEX_METRIKA_COUNTER_ID', None) is not None
+        else None
+    ),
+}) | n};
+</script>

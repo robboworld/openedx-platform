@@ -55,6 +55,8 @@ MFE_CONFIG["ENABLE_DYNAMIC_REGISTRATION_FIELDS"] = True
 MFE_CONFIG["MARKETING_EMAILS_OPT_IN"] = True
 MFE_CONFIG["TOS_AND_HONOR_CODE"] = "https://robbo.ru/wp-content/uploads/agree.pdf"
 MFE_CONFIG["PRIVACY_POLICY"] = "https://robbo.ru/wp-content/uploads/policy.pdf"
+MFE_CONFIG["ENABLE_YANDEX_METRIKA"] = False
+MFE_CONFIG["YANDEX_METRIKA_COUNTER_ID"] = None
 """
 
 _PATCH_MFE_PROD = """
@@ -66,6 +68,13 @@ MFE_CONFIG["ENABLE_DYNAMIC_REGISTRATION_FIELDS"] = True
 MFE_CONFIG["MARKETING_EMAILS_OPT_IN"] = True
 MFE_CONFIG["TOS_AND_HONOR_CODE"] = "https://robbo.ru/wp-content/uploads/agree.pdf"
 MFE_CONFIG["PRIVACY_POLICY"] = "https://robbo.ru/wp-content/uploads/policy.pdf"
+{% if ROBBO_YANDEX_METRIKA_COUNTER_ID %}
+MFE_CONFIG["ENABLE_YANDEX_METRIKA"] = True
+MFE_CONFIG["YANDEX_METRIKA_COUNTER_ID"] = {{ ROBBO_YANDEX_METRIKA_COUNTER_ID }}
+{% else %}
+MFE_CONFIG["ENABLE_YANDEX_METRIKA"] = False
+MFE_CONFIG["YANDEX_METRIKA_COUNTER_ID"] = None
+{% endif %}
 """
 
 # Tutor sets FEATURES["ENABLE_COURSE_DISCOVERY"] = True. Stock courseware.views.courses
@@ -103,6 +112,20 @@ for _robbo_locale_path in reversed((
 )):
     if _robbo_locale_path.exists() and _robbo_locale_path not in LOCALE_PATHS:
         LOCALE_PATHS.insert(0, _robbo_locale_path)
+"""
+
+# Never send Yandex Metrika from Tutor dev (`openedx-lms-development-settings`).
+_PATCH_YANDEX_METRIKA_DEV_LMS = """
+ENABLE_YANDEX_METRIKA = False
+YANDEX_METRIKA_COUNTER_ID = None
+"""
+
+# Production: enable only when ``ROBBO_YANDEX_METRIKA_COUNTER_ID`` is set in Tutor ``config.yml``.
+_PATCH_YANDEX_METRIKA_PROD_LMS = """
+{% if ROBBO_YANDEX_METRIKA_COUNTER_ID %}
+ENABLE_YANDEX_METRIKA = True
+YANDEX_METRIKA_COUNTER_ID = {{ ROBBO_YANDEX_METRIKA_COUNTER_ID }}
+{% endif %}
 """
 
 # App IDs that Robbo overrides via Tutor bind-mounts under repos/mfe-overrides/.
@@ -210,6 +233,12 @@ def _drop_indigo_footer_slots_for_robbo_bindmounts(
     ]
 
 
+hooks.Filters.CONFIG_DEFAULTS.add_items(
+    [
+        ("ROBBO_YANDEX_METRIKA_COUNTER_ID", ""),
+    ]
+)
+
 hooks.Filters.ENV_PATCHES.add_items(
     [
         ("mfe-lms-common-settings", _PARAGON_THEME_URLS),
@@ -225,5 +254,7 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_THEME_LOCALES),
         ("openedx-lms-development-settings", _PATCH_ROBBO_BINDMOUNT_MFES_SKIP_RUNTIME_PARAGON),
         ("openedx-lms-production-settings", _PATCH_ROBBO_BINDMOUNT_MFES_SKIP_RUNTIME_PARAGON),
+        ("openedx-lms-development-settings", _PATCH_YANDEX_METRIKA_DEV_LMS),
+        ("openedx-lms-production-settings", _PATCH_YANDEX_METRIKA_PROD_LMS),
     ]
 )

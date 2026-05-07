@@ -113,6 +113,21 @@
     });
   }
 
+  /**
+   * Landing-only conversion (guest index): goal name must match a JS goal in Yandex Metrika.
+   */
+  function reachLandingRegistrationGoal() {
+    var cfg = window.__ROBBO_YANDEX_METRIKA__;
+    if (!cfg || !cfg.enabled || cfg.counterId == null || typeof window.ym !== 'function') {
+      return;
+    }
+    try {
+      window.ym(cfg.counterId, 'reachGoal', 'registration');
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
   function setFormError(message) {
     if (!formError) {
       return;
@@ -346,6 +361,7 @@
         var data = result.data;
         var success = data && (data.success !== false);
         if (result.ok && data && data.redirect_url && success) {
+          reachLandingRegistrationGoal();
           window.location.href = data.redirect_url;
           return;
         }

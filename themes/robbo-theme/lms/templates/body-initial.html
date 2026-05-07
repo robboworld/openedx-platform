@@ -1,0 +1,12 @@
+## coding=utf-8
+<%page expression_filter="h"/>
+<%!
+# Copyright (C) 2026 Robbo <https://robbo.ru>
+# SPDX-License-Identifier: AGPL-3.0-only
+# Part of the Robbo Open edX distribution. See NOTICE at edx-platform repository root.
+from django.conf import settings
+%>
+% if getattr(settings, 'ENABLE_YANDEX_METRIKA', False) and getattr(settings, 'YANDEX_METRIKA_COUNTER_ID', None):
+<!-- Yandex.Metrika counter (noscript) -->
+<noscript><div><img src="https://mc.yandex.ru/watch/${settings.YANDEX_METRIKA_COUNTER_ID}" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+% endif
