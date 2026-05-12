@@ -2,6 +2,8 @@
 Student and course analytics.
 
 Serve miscellaneous course and student data
+
+Modifications Copyright (C) 2026 Robbo <https://robbo.ru>. See NOTICE at repository root.
 """
 
 
@@ -84,6 +86,96 @@ def issued_certificates(course_key, features):
     return generated_certificates
 
 
+def learner_features_dict(user, course_key, features, external_user_key_dict=None):
+    """
+    Build the same per-user feature mapping as rows from ``enrolled_students_features`` for one user.
+
+    Used by the Robbo extended instructor CSV to include platform users who are not enrolled
+    in the course. ``external_user_key_dict`` may be precomputed for a batch (user_id -> key);
+    if ``None`` and ``external_user_key`` is in ``features``, fetches program enrollments for
+    this user only.
+    """
+    include_cohort_column = 'cohort' in features
+    include_team_column = 'team' in features
+    include_city_column = 'city' in features
+    include_enrollment_mode = 'enrollment_mode' in features
+    include_verification_status = 'verification_status' in features
+    include_program_enrollments = 'external_user_key' in features
+
+    ext_map = external_user_key_dict
+    if include_program_enrollments and ext_map is None:
+        ext_map = {}
+        for program_enrollment in fetch_program_enrollments_by_students(users=[user], realized_only=True):
+            ext_map[program_enrollment.user_id] = program_enrollment.external_user_key
+
+    def extract_attr(student, feature):
+        """Evaluate a student attribute that is ready for JSON serialization"""
+        attr = getattr(student, feature)
+        try:
+            DjangoJSONEncoder().default(attr)
+            return attr
+        except TypeError:
+            return str(attr)
+
+    student_features = [x for x in STUDENT_FEATURES if x in features]
+    profile_features = [x for x in PROFILE_FEATURES if x in features]
+
+    meta_features = []
+    for feature in features:
+        if 'meta.' in feature:
+            meta_key = feature.split('.')[1]
+            meta_features.append((feature, meta_key))
+
+    student_dict = {feature: extract_attr(user, feature) for feature in student_features}
+    try:
+        profile = user.profile
+    except ObjectDoesNotExist:
+        profile = None
+
+    if profile is not None:
+        profile_dict = {feature: extract_attr(profile, feature) for feature in profile_features}
+        student_dict.update(profile_dict)
+
+        meta_dict = json.loads(profile.meta) if profile.meta else {}
+        for meta_feature, meta_key in meta_features:
+            student_dict[meta_feature] = meta_dict.get(meta_key)
+
+        meta_city = meta_dict.get('city')
+        if include_city_column and meta_city:
+            student_dict['city'] = meta_city
+
+    if include_cohort_column:
+        student_dict['cohort'] = next(
+            (cohort.name for cohort in user.course_groups.all() if cohort.course_id == course_key),
+            "[unassigned]"
+        )
+
+    if include_team_column:
+        student_dict['team'] = next(
+            (team.name for team in user.teams.all() if team.course_id == course_key),
+            UNAVAILABLE
+        )
+
+    if include_enrollment_mode or include_verification_status:
+        enrollment_mode = CourseEnrollment.enrollment_mode_for_user(user, course_key)[0]
+        if include_verification_status:
+            student_dict['verification_status'] = IDVerificationService.verification_status_for_user(
+                user,
+                enrollment_mode
+            )
+        if include_enrollment_mode:
+            student_dict['enrollment_mode'] = enrollment_mode
+
+    if include_program_enrollments:
+        student_dict['external_user_key'] = ext_map.get(user.id, '')
+
+    for feature in features:
+        if feature not in student_dict:
+            student_dict[feature] = ''
+
+    return student_dict
+
+
 def enrolled_students_features(course_key, features):
     """
     Return list of student features as dictionaries.
@@ -97,9 +189,6 @@ def enrolled_students_features(course_key, features):
     """
     include_cohort_column = 'cohort' in features
     include_team_column = 'team' in features
-    include_city_column = 'city' in features
-    include_enrollment_mode = 'enrollment_mode' in features
-    include_verification_status = 'verification_status' in features
     include_program_enrollments = 'external_user_key' in features
     external_user_key_dict = {}
 
@@ -119,79 +208,10 @@ def enrolled_students_features(course_key, features):
         for program_enrollment in program_enrollments:
             external_user_key_dict[program_enrollment.user_id] = program_enrollment.external_user_key
 
-    def extract_attr(student, feature):
-        """Evaluate a student attribute that is ready for JSON serialization"""
-        attr = getattr(student, feature)
-        try:
-            DjangoJSONEncoder().default(attr)
-            return attr
-        except TypeError:
-            return str(attr)
-
-    def extract_student(student, features):
-        """ convert student to dictionary """
-        student_features = [x for x in STUDENT_FEATURES if x in features]
-        profile_features = [x for x in PROFILE_FEATURES if x in features]
-
-        # For data extractions on the 'meta' field
-        # the feature name should be in the format of 'meta.foo' where
-        # 'foo' is the keyname in the meta dictionary
-        meta_features = []
-        for feature in features:
-            if 'meta.' in feature:
-                meta_key = feature.split('.')[1]
-                meta_features.append((feature, meta_key))
-
-        student_dict = {feature: extract_attr(student, feature) for feature in student_features}
-        profile = student.profile
-        if profile is not None:
-            profile_dict = {feature: extract_attr(profile, feature) for feature in profile_features}
-            student_dict.update(profile_dict)
-
-            # now fetch the requested meta fields
-            meta_dict = json.loads(profile.meta) if profile.meta else {}
-            for meta_feature, meta_key in meta_features:
-                student_dict[meta_feature] = meta_dict.get(meta_key)
-
-            # There are two separate places where the city value can be stored,
-            # one used by account settings and the other used by the registration form.
-            # If the account settings value (meta.city) is set, it takes precedence.
-            meta_city = meta_dict.get('city')
-            if include_city_column and meta_city:
-                student_dict['city'] = meta_city
-
-        if include_cohort_column:
-            # Note that we use student.course_groups.all() here instead of
-            # student.course_groups.filter(). The latter creates a fresh query,
-            # therefore negating the performance gain from prefetch_related().
-            student_dict['cohort'] = next(
-                (cohort.name for cohort in student.course_groups.all() if cohort.course_id == course_key),
-                "[unassigned]"
-            )
-
-        if include_team_column:
-            student_dict['team'] = next(
-                (team.name for team in student.teams.all() if team.course_id == course_key),
-                UNAVAILABLE
-            )
-
-        if include_enrollment_mode or include_verification_status:
-            enrollment_mode = CourseEnrollment.enrollment_mode_for_user(student, course_key)[0]
-            if include_verification_status:
-                student_dict['verification_status'] = IDVerificationService.verification_status_for_user(
-                    student,
-                    enrollment_mode
-                )
-            if include_enrollment_mode:
-                student_dict['enrollment_mode'] = enrollment_mode
-
-        if include_program_enrollments:
-            # extra external_user_key
-            student_dict['external_user_key'] = external_user_key_dict.get(student.id, '')
-
-        return student_dict
-
-    return [extract_student(student, features) for student in students]
+    return [
+        learner_features_dict(student, course_key, features, external_user_key_dict)
+        for student in students
+    ]
 
 
 def list_may_enroll(course_key, features):

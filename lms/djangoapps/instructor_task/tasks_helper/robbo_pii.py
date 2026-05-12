@@ -14,8 +14,10 @@ import os
 import re
 from datetime import datetime
 from time import time
-from typing import Dict, FrozenSet, Iterable, List, Set
+from typing import Dict, FrozenSet, List, Set
 
+from django.contrib.auth.models import User  # lint-amnesty, pylint: disable=imported-auth-user
+from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from pytz import UTC
 from xmodule.modulestore.django import modulestore
@@ -23,7 +25,8 @@ from xmodule.modulestore.django import modulestore
 from common.djangoapps.student.models import CourseEnrollment
 from lms.djangoapps.courseware.robbo_catalog import get_robbo_catalog_stubs
 from lms.djangoapps.grades.course_grade_factory import CourseGradeFactory
-from lms.djangoapps.instructor_analytics.basic import enrolled_students_features
+from lms.djangoapps.instructor_analytics.basic import learner_features_dict
+from lms.djangoapps.program_enrollments.api import fetch_program_enrollments_by_students
 from openedx.core.lib.courses import get_course_by_id
 
 from .runner import TaskProgress
@@ -129,51 +132,129 @@ def _split_profile_feature_order(query_features: List[str]) -> tuple[List[str], 
     return leading, tail
 
 
+# ``city`` and ``external_user_key`` are rendered at the far right (after tail columns).
+# ``enrolled_in_report_course`` is inserted immediately after ``date_joined`` in the prefix.
+_DEFERRED_TO_END_FEATURES: FrozenSet[str] = frozenset({'external_user_key', 'city'})
+
+
+def _leading_without_trailer_columns(leading_features: List[str]) -> List[str]:
+    return [f for f in leading_features if f not in _DEFERRED_TO_END_FEATURES]
+
+
+def _prefix_column_names(leading_features: List[str]) -> List[str]:
+    """Leading columns (no city/external at end); ``enrolled_in_report_course`` right after ``date_joined``."""
+    names: List[str] = []
+    inserted = False
+    for feature in _leading_without_trailer_columns(leading_features):
+        names.append(feature)
+        if feature == 'date_joined':
+            names.append('enrolled_in_report_course')
+            inserted = True
+    if not inserted:
+        names.append('enrolled_in_report_course')
+    return names
+
+
+def _prefix_row_values(
+    leading_features: List[str],
+    base_row: Dict[str, object],
+    user,
+    course_id,
+) -> List[object]:
+    enrolled = 'yes' if CourseEnrollment.is_enrolled(user, course_id) else 'no'
+    cells: List[object] = []
+    inserted = False
+    for feature in _leading_without_trailer_columns(leading_features):
+        cells.append(base_row.get(feature, ''))
+        if feature == 'date_joined':
+            cells.append(enrolled)
+            inserted = True
+    if not inserted:
+        cells.append(enrolled)
+    return cells
+
+
+def _trailer_column_names(leading_features: List[str]) -> List[str]:
+    names = ['report_course_id']
+    if 'external_user_key' in leading_features:
+        names.append('external_user_key')
+    if 'city' in leading_features:
+        names.append('city')
+    return names
+
+
+def _trailer_row_values(
+    leading_features: List[str],
+    base_row: Dict[str, object],
+    _user,
+    course_id,
+) -> List[object]:
+    cells: List[object] = [str(course_id)]
+    if 'external_user_key' in leading_features:
+        cells.append(base_row.get('external_user_key', ''))
+    if 'city' in leading_features:
+        cells.append(base_row.get('city', ''))
+    return cells
+
+
 def _middle_headers() -> List[str]:
     interest_headers = [
         f'interest_{_slugify_interest_column(stub["id"])}'
         for stub in get_robbo_catalog_stubs()
     ]
     return [
-        'report_course_id',
         'company',
         *[f'test_{i}' for i in range(1, _MAX_GRADED_TESTS + 1)],
         *interest_headers,
     ]
 
 
-def _users_enrolled_in_course(course_id):
-    return (
-        CourseEnrollment.objects.users_enrolled_in(course_id)
-        .order_by('username')
-        .select_related('profile')
-    )
+def _all_users_for_robbo_csv(query_features: List[str]):
+    """All platform users (Robbo extended CSV includes learners not enrolled in the report course)."""
+    queryset = User.objects.all().order_by('username').select_related('profile')
+    if 'cohort' in query_features:
+        queryset = queryset.prefetch_related('course_groups')
+    if 'team' in query_features:
+        queryset = queryset.prefetch_related('teams')
+    return list(queryset)
 
 
-def _base_rows_by_username(course_id, query_features: Iterable[str]) -> Dict[str, Dict[str, object]]:
-    return {
-        row.get('username'): row
-        for row in enrolled_students_features(course_id, query_features)
-        if row.get('username')
-    }
+def _batch_external_user_key_map(users: List[User]) -> Dict[int, object]:
+    mapping: Dict[int, object] = {}
+    if not users:
+        return mapping
+    for program_enrollment in fetch_program_enrollments_by_students(users=users, realized_only=True):
+        mapping[program_enrollment.user_id] = program_enrollment.external_user_key
+    return mapping
 
 
 def upload_robbo_extended_students_csv(_xblock_instance_args, _entry_id, course_id, task_input, action_name):
     """
     Generate Robbo extended learner profile CSV and store it using the standard ReportStore.
+
+    Includes all platform users; ``enrolled_in_report_course`` marks active enrollment in the
+    course this report was generated from (grades and tests still use that course context).
     """
     start_time = time()
     start_date = datetime.now(UTC)
-    users = list(_users_enrolled_in_course(course_id))
+
+    query_features = list(task_input.get('features') or [])
+    users = _all_users_for_robbo_csv(query_features)
     task_progress = TaskProgress(action_name, len(users), start_time)
 
     current_step = {'step': 'Calculating Robbo extended profile info'}
     task_progress.update_task_state(extra_meta=current_step)
 
-    query_features = list(task_input.get('features') or [])
     leading_features, tail_features = _split_profile_feature_order(query_features)
-    header = [*leading_features, *_middle_headers(), *tail_features]
-    base_rows = _base_rows_by_username(course_id, query_features)
+    header = [
+        *_prefix_column_names(leading_features),
+        *_middle_headers(),
+        *tail_features,
+        *_trailer_column_names(leading_features),
+    ]
+    external_map: Dict[int, object] = {}
+    if 'external_user_key' in query_features and users:
+        external_map = _batch_external_user_key_map(users)
     interest_from_logs = _interest_titles_from_logs()
     stubs = get_robbo_catalog_stubs()
     course = get_course_by_id(course_id, depth=0)
@@ -181,22 +262,26 @@ def upload_robbo_extended_students_csv(_xblock_instance_args, _entry_id, course_
     rows = [header]
     with modulestore().bulk_operations(course_id):
         for user, course_grade, error in CourseGradeFactory().iter(users, course=course, course_key=course_id):
-            profile = getattr(user, 'profile', None)
+            try:
+                profile = user.profile
+            except ObjectDoesNotExist:
+                profile = None
             if not course_grade:
-                TASK_LOG.warning('Robbo CSV: grade read failed for user_id=%s: %s', user.id, error)
+                if CourseEnrollment.is_enrolled(user, course_id):
+                    TASK_LOG.warning('Robbo CSV: grade read failed for user_id=%s: %s', user.id, error)
                 percents = [0.0] * _MAX_GRADED_TESTS
             else:
                 percents = _released_graded_test_percents(course_grade)
 
             interests = _interest_titles_from_profile(profile) | interest_from_logs.get(user.id, set())
-            base_row = base_rows.get(user.username, {})
+            base_row = learner_features_dict(user, course_id, query_features, external_map)
             rows.append([
-                *[base_row.get(feature, '') for feature in leading_features],
-                str(course_id),
+                *_prefix_row_values(leading_features, base_row, user, course_id),
                 _company_from_profile(profile),
                 *percents,
                 *['yes' if stub['title'] in interests else 'no' for stub in stubs],
                 *[base_row.get(feature, '') for feature in tail_features],
+                *_trailer_row_values(leading_features, base_row, user, course_id),
             ])
 
     task_progress.attempted = task_progress.succeeded = len(rows) - 1
