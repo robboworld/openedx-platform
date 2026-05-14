@@ -3,6 +3,10 @@
 $primary: #15803d;
 $primary-light: #f0fdf4;
 
+// Before `lms/theme/variables-v1` runs, lock UXPL hover/focus to brand green. Otherwise v1 sets
+// `$uxpl-blue-hover-active` to legacy edX blue and `.btn-primary` / `.btn-brand` focus diverges from `:active`.
+$uxpl-blue-hover-active: darken($primary, 7%);
+
 // Theme fonts
 $font-family-title: 'Inter', sans-serif;
 $serif: Crimson;

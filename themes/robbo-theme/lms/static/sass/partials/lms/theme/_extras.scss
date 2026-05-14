@@ -65,6 +65,15 @@ section.wiki .btn.btn-primary {
     outline-width: 2px;
 }
 
+// Brand-aligned keyboard focus ring on LMS; guest landing uses its own outline/box-shadow tokens.
+body:not(.robbo-guest-landing-page) :focus-visible {
+    outline-color: $primary;
+}
+
+body.indigo-dark-theme:not(.robbo-guest-landing-page) :focus-visible {
+    outline-color: $primary-d;
+}
+
 %btn-pl-default-base {
   border-radius: 0;
 }
