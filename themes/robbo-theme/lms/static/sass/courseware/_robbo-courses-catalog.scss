@@ -20,11 +20,15 @@
   --robbo-cat-cta-min-h: 60px;
   --robbo-cat-cta-pill: 30px;
   --robbo-cat-cta-font: clamp(0.95rem, 1.1vw, 1.0625rem);
-  // Stub card illustrations: height −20% vs 220px; blend; anchored bottom-right in card (see .stub-media)
+  // Stub card illustrations: min card height on lg+; blend; right lane, vertically centered on desktop (see .stub-media / .stub-img)
   --robbo-cat-stub-img-h: 176px;
-  // Narrow viewports: illustration floated right (~50% linear scale vs desktop corner art ~158×173)
-  --robbo-cat-stub-float-img-max-w: 5.5rem;
+  // Narrow viewports: max width cap for stub bitmaps (float shrink-wraps to rendered img width)
+  --robbo-cat-stub-float-img-max-w: clamp(6.25rem, 30vw, 11rem);
   --robbo-cat-stub-float-gap: 0.65rem;
+  // lg+: width of the reserved illustration column (must match .stub padding-right lane)
+  --robbo-cat-stub-art-lane-w: clamp(10.5rem, 23vw, 14rem);
+  --robbo-cat-stub-abs-img-h: 158px;
+  --robbo-cat-stub-abs-img-inset: 10px;
   --robbo-cat-stub-img-blend: multiply;
   // Stub "notify" button (secondary)
   --robbo-cat-stub-notify-fg: #0f172a;
@@ -330,10 +334,10 @@
   position: relative;
 
   @include media-breakpoint-up(lg) {
-    // Reserve a dedicated art lane and pin the bitmap to the card's bottom-right corner.
+    // Reserve a dedicated art lane; illustration sits in a fixed-size box (same column as MCU).
     display: block;
     min-height: calc(var(--robbo-cat-stub-img-h) + (2 * var(--robbo-cat-pad)));
-    padding-right: calc(var(--robbo-cat-pad) + clamp(10.5rem, 23vw, 14rem));
+    padding-right: calc(var(--robbo-cat-pad) + var(--robbo-cat-stub-art-lane-w));
   }
 }
 
@@ -442,23 +446,32 @@
   min-width: 0;
 
   @media (max-width: 991.98px) {
+    // Shrink-wrap to each image so text wraps tightly (no fixed 552×320 frame wider than art).
     float: right;
     margin: 0 0 var(--robbo-cat-stub-float-gap) var(--robbo-cat-stub-float-gap);
-    max-width: var(--robbo-cat-stub-float-img-max-w);
-    width: 38%;
+    max-width: 44%;
+    min-width: 0;
+    shape-outside: margin-box;
+    width: fit-content;
   }
 
   @include media-breakpoint-up(lg) {
+    align-items: stretch;
     bottom: 0;
-    height: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     margin: 0;
     max-width: none;
     min-height: 0;
     min-width: 0;
+    padding-right: var(--robbo-cat-stub-abs-img-inset);
     pointer-events: none;
     position: absolute;
     right: 0;
-    width: 0;
+    top: 0;
+    width: var(--robbo-cat-stub-art-lane-w);
   }
 }
 
@@ -471,37 +484,34 @@
 
   @media (max-width: 991.98px) {
     bottom: auto;
+    box-sizing: border-box;
+    display: block;
     height: auto;
     margin: 0;
-    max-width: 100%;
+    max-height: none;
+    max-width: var(--robbo-cat-stub-float-img-max-w);
+    object-fit: contain;
+    object-position: right top;
     padding: 0;
     position: static;
     right: auto;
     top: auto;
-    width: 100%;
-  }
-
-  @include media-breakpoint-up(lg) {
-    bottom: 10px;
-    height: 158px;
-    left: auto;
-    margin: 0 7px 10px 0;
-    // `.stub-media` is 0×0 here so `%` max-width would resolve to 0 and hide the bitmap.
-    max-width: clamp(8rem, 22vw, 14rem);
-    padding-left: 8px;
-    padding-right: 8px;
-    position: absolute;
-    right: 0;
-    top: auto;
     width: auto;
   }
-}
 
-// MCU advanced card: bitmap reads better flush to the card’s right edge.
-.robbo-courses-catalog__stub[data-stub-id="mcu-advanced"] .robbo-courses-catalog__stub-img {
   @include media-breakpoint-up(lg) {
-    margin-right: 0;
-    padding-right: 0;
+    box-sizing: border-box;
+    display: block;
+    flex-shrink: 0;
+    height: var(--robbo-cat-stub-abs-img-h);
+    margin: 0;
+    max-height: var(--robbo-cat-stub-abs-img-h);
+    max-width: 100%;
+    object-fit: contain;
+    object-position: right center;
+    padding: 0;
+    position: static;
+    width: 100%;
   }
 }
 
