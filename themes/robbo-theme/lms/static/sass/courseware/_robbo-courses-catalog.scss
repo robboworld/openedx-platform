@@ -387,12 +387,20 @@
   margin: 0;
 }
 
+// Groups notify CTA + live status so stub-body flex `gap` does not insert a band between them when status is empty.
+.robbo-courses-catalog__stub-footer {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+  width: 100%;
+}
+
 .robbo-courses-catalog__stub-actions {
   align-items: center;
   clear: both;
   display: flex;
   justify-content: center;
-  margin-top: auto;
   padding-top: 0.15rem;
   width: 100%;
 }
@@ -407,9 +415,15 @@
   color: var(--robbo-cat-muted);
   font-size: 0.8125rem;
   line-height: 1.4;
-  margin: 0.65rem 0 0;
-  min-height: 1.15rem;
+  margin: 0;
+  min-height: 0;
   transition: color 0.18s ease, opacity 0.18s ease;
+}
+
+// No reserved strip under the notify button until JS fills the live region.
+.robbo-courses-catalog__stub-status:not(:empty) {
+  margin-top: 0.65rem;
+  min-height: 1.15rem;
 }
 
 .robbo-courses-catalog__stub.is-interest-success .robbo-courses-catalog__stub-status {
@@ -472,7 +486,8 @@
     height: 158px;
     left: auto;
     margin: 0 7px 10px 0;
-    max-width: 100%;
+    // `.stub-media` is 0×0 here so `%` max-width would resolve to 0 and hide the bitmap.
+    max-width: clamp(8rem, 22vw, 14rem);
     padding-left: 8px;
     padding-right: 8px;
     position: absolute;
