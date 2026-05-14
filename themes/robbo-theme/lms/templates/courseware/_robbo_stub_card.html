@@ -3,28 +3,32 @@
 <article class="robbo-courses-catalog__stub" data-stub-id="${stub['id']}" aria-labelledby="stub-title-${stub['id']}">
   <div class="robbo-courses-catalog__stub-body">
     <h3 id="stub-title-${stub['id']}" class="robbo-courses-catalog__stub-title">${stub['title']}</h3>
-    <p class="robbo-courses-catalog__stub-desc">${stub['description']}</p>
-    <div class="robbo-courses-catalog__stub-actions">
-      <button
-        type="button"
-        class="robbo-courses-catalog__btn robbo-courses-catalog__btn--secondary robbo-courses-catalog__stub-notify"
-        data-stub-id="${stub['id']}"
-        data-default-label="${stub['notify_label']}"
-        aria-describedby="stub-status-${stub['id']}"
-      >
-        <span class="robbo-courses-catalog__stub-notify-label">${stub['notify_label']}</span>
-      </button>
+    <div class="robbo-courses-catalog__stub-copy">
+      <div class="robbo-courses-catalog__stub-media" role="presentation">
+        <img
+          class="robbo-courses-catalog__stub-img"
+          src="${static.url('images/catalog/' + stub['image'])}"
+          alt="${stub['title']}"
+          width="552"
+          height="320"
+          loading="lazy"
+        />
+      </div>
+      <p class="robbo-courses-catalog__stub-desc">${stub['description']}</p>
     </div>
-    <p id="stub-status-${stub['id']}" class="robbo-courses-catalog__stub-status" aria-live="polite"></p>
-  </div>
-  <div class="robbo-courses-catalog__stub-media" role="presentation">
-    <img
-      class="robbo-courses-catalog__stub-img"
-      src="${static.url('images/catalog/' + stub['image'])}"
-      alt="${stub['title']}"
-      width="552"
-      height="320"
-      loading="lazy"
-    />
+    <div class="robbo-courses-catalog__stub-footer">
+      <div class="robbo-courses-catalog__stub-actions">
+        <button
+          type="button"
+          class="robbo-courses-catalog__btn robbo-courses-catalog__btn--secondary robbo-courses-catalog__stub-notify"
+          data-stub-id="${stub['id']}"
+          data-default-label="${stub['notify_label']}"
+          aria-describedby="stub-status-${stub['id']}"
+        >
+          <span class="robbo-courses-catalog__stub-notify-label">${stub['notify_label']}</span>
+        </button>
+      </div>
+      <p id="stub-status-${stub['id']}" class="robbo-courses-catalog__stub-status" aria-live="polite"></p>
+    </div>
   </div>
 </article>

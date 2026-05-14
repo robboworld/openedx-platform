@@ -3,13 +3,22 @@
 $robbo-footer-logo-bg: #00b050;
 $robbo-footer-text: #777;
 $robbo-footer-hover: #111827;
+// Spacing between footer legal document links (align LMS `extra/_footer.scss` / MFE RobboFooter).
+$robbo-footer-doc-links-stack-gap: clamp(2px, 0.35vw, 4px);
+$robbo-footer-doc-links-flex-gap: 2px 6px;
+$robbo-footer-stack-gap-sm: 14px;
+$robbo-footer-font-family: $font-family-title, "Helvetica Neue", Arial, sans-serif;
 
 .wrapper-footer.wrapper.robbo-studio-footer-wrap,
 .wrapper-footer.robbo-studio-footer-wrap {
     background: #fff;
     border-top: 1px solid #e0e0e0;
-    padding: 20px clamp(20px, 4vw, 45px);
+    padding: 0;
     box-shadow: none;
+
+    @media (max-width: 991.98px) {
+        padding: 12px 0;
+    }
 }
 
 .robbo-site-footer {
@@ -27,11 +36,17 @@ $robbo-footer-hover: #111827;
     width: 100%;
     max-width: 1162px;
     margin: 0 auto;
-    padding: 0;
+    padding: 0 20px;
     box-sizing: border-box;
 
-    @media (max-width: 767px) {
+    @media (min-width: 992px) {
+        min-height: 80px;
+        padding: 0 28px;
+    }
+
+    @media (max-width: 991.98px) {
         grid-template-columns: 1fr;
+        row-gap: $robbo-footer-stack-gap-sm;
     }
 }
 
@@ -44,7 +59,7 @@ $robbo-footer-hover: #111827;
     text-align: center;
     min-width: 0;
     width: 100%;
-    padding: 0 clamp(4px, 1vw, 12px);
+    padding: 0;
 }
 
 .robbo-footer__left {
@@ -58,7 +73,7 @@ $robbo-footer-hover: #111827;
     width: 100%;
     max-width: 241px;
 
-    @media (max-width: 767px) {
+    @media (max-width: 991.98px) {
         justify-self: center;
         align-items: center;
         max-width: 100%;
@@ -75,7 +90,7 @@ $robbo-footer-hover: #111827;
     min-width: 0;
     width: 100%;
 
-    @media (max-width: 767px) {
+    @media (max-width: 991.98px) {
         justify-self: center;
     }
 }
@@ -97,7 +112,7 @@ $robbo-footer-hover: #111827;
     line-height: 1.15;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    font-family: $font-family-sans-serif;
+    font-family: $robbo-footer-font-family;
     text-align: center;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
 }
@@ -117,7 +132,7 @@ $robbo-footer-hover: #111827;
     font-size: clamp(11px, 1.1vw, 12px);
     line-height: 1.45;
     color: $robbo-footer-text;
-    font-family: $font-family-sans-serif;
+    font-family: $robbo-footer-font-family;
 }
 
 .robbo-footer__nav {
@@ -136,18 +151,46 @@ $robbo-footer-hover: #111827;
     text-align: center;
 
     li {
-        margin: 0 0 clamp(6px, 1vw, 10px);
+        margin: 0 0 $robbo-footer-doc-links-stack-gap;
 
         &:last-child {
             margin-bottom: 0;
         }
+
+        @media (min-width: 992px) {
+            margin: 0;
+        }
+    }
+
+    @media (max-width: 991.98px) {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: $robbo-footer-doc-links-stack-gap;
+
+        li {
+            margin: 0;
+        }
+
+        a {
+            line-height: 1.25;
+        }
+    }
+
+    @media (min-width: 992px) {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: $robbo-footer-doc-links-flex-gap;
     }
 
     a {
         color: $robbo-footer-text;
         font-size: clamp(11px, 1.1vw, 12px);
         line-height: 1.45;
-        font-family: $font-family-sans-serif;
+        font-family: $robbo-footer-font-family;
         text-decoration: underline;
         word-break: break-word;
 
@@ -165,7 +208,7 @@ $robbo-footer-hover: #111827;
     font-size: clamp(11px, 1.1vw, 12px);
     line-height: 1.45;
     color: $robbo-footer-text;
-    font-family: $font-family-sans-serif;
+    font-family: $robbo-footer-font-family;
     word-break: break-word;
 }
 
@@ -175,6 +218,9 @@ $robbo-footer-hover: #111827;
 
 .robbo-footer__contacts-line a {
     color: $robbo-footer-text;
+    font-size: clamp(11px, 1.1vw, 12px);
+    line-height: 1.45;
+    font-family: $robbo-footer-font-family;
     text-decoration: underline;
 
     &:hover,

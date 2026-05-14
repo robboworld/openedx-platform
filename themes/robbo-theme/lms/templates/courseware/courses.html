@@ -113,7 +113,7 @@
                   'систем автоматизации на их основе. Мастерство разработки устройств с учётом '
                   'специфики локальных компонентов.'
               ),
-              'image': 'stub-mcu-advanced.png',
+              'image': 'mcu.png',
               'notify_label': 'Сообщить об открытии',
           },
           {
@@ -230,7 +230,7 @@
               'Практический курс по российским микроконтроллерам: архитектура, локализация и '
               'портирование сценариев с открытой и проприетарной периферией.'
           )
-      img = getattr(settings, 'ROBBO_CATALOG_FEATURED_IMAGE', 'stub-postgres.png')
+      img = getattr(settings, 'ROBBO_CATALOG_FEATURED_IMAGE', 'mcu.png')
       cta = course_home_url(course.id)
       if request and hasattr(request, 'build_absolute_uri') and cta.startswith('/'):
           cta = request.build_absolute_uri(cta)

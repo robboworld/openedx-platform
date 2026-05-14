@@ -16,9 +16,10 @@ Image files live in the comprehensive theme at:
 Referenced in templates via staticfiles path ``images/catalog/...``.
 
 Slug → source assets (replace files under ``images/catalog/`` when refreshing art):
-  stub-postgres.png     ← Photoroom export (591×320; default featured course image)
+  mcu.png               ← MCU illustration (featured + «микроконтроллеры» stub)
+  stub-postgres.png     ← Photoroom export (591×320; legacy featured fallback)
   featured-mcu.png      ← carve.photos no-bg preview 552×320 (PostgreSQL stub card)
-  stub-mcu-advanced.png ← carve.photos no-bg preview 552×320
+  stub-mcu-advanced.png ← legacy filename (replaced by mcu.png in data)
   stub-freecad.png      ← carve.photos no-bg preview 552×320
   stub-linux.png        ← carve.photos no-bg preview 552×320
   stub-manipulators.png ← carve.photos no-bg preview 552×320
@@ -132,7 +133,7 @@ def get_robbo_catalog_stubs() -> List[Dict[str, Any]]:
                 'автоматизации на их основе. Мастерство разработки устройств с учётом специфики '
                 'локальных компонентов.'
             ),
-            'image': 'stub-mcu-advanced.png',
+            'image': 'mcu.png',
             'notify_label': 'Сообщить об открытии',
         },
         {
@@ -249,7 +250,7 @@ def build_robbo_catalog_featured(
     if not course:
         return None
 
-    image_filename = getattr(settings, 'ROBBO_CATALOG_FEATURED_IMAGE', 'stub-postgres.png')
+    image_filename = getattr(settings, 'ROBBO_CATALOG_FEATURED_IMAGE', 'mcu.png')
     title = course.display_name_with_default
     short = (getattr(course, 'short_description', None) or '').strip()
     if not short:

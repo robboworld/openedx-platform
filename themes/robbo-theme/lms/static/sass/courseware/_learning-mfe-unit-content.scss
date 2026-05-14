@@ -1,0 +1,48 @@
+// Copyright (C) 2026 Robbo <https://robbo.ru>
+// SPDX-License-Identifier: AGPL-3.0-only
+// Part of the Robbo Open edX distribution (robbo-theme). See NOTICE at repository root.
+//
+// Unit HTML inside the Learning MFE iframe (`body.view-in-mfe`). Wide tables scroll horizontally;
+// do not put overflow-x on `#course-content` — it breaks images and other full-width media.
+
+body.view-in-mfe.view-courseware .course-wrapper.chromeless {
+  min-width: 0;
+
+  // Do not set overflow-x on #course-content (affects all unit media).
+
+  // Authoring often leaves a single table or a wrapper whose only child is a table.
+  .xmodule_display.xmodule_HtmlBlock .xblock-student_view-html:has(> table:only-child) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  .xmodule_display.xmodule_HtmlBlock .xblock-student_view-html > div:has(> table:only-child),
+  .xmodule_display.xmodule_HtmlBlock .xblock-student_view-html > section:has(> table:only-child) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  .xmodule_display.xmodule_HtmlBlock .xblock-student_view-html figure:has(table) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  // Direct child <table> with sibling content: scroll on the table element only (only child handled above).
+  .xmodule_display.xmodule_HtmlBlock .xblock-student_view-html > table:not(:only-child) {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    border-collapse: collapse;
+    table-layout: auto;
+  }
+
+  // Nested / other tables: keep readable column layout.
+  .xmodule_display.xmodule_HtmlBlock .xblock-student_view-html table {
+    table-layout: auto;
+  }
+}

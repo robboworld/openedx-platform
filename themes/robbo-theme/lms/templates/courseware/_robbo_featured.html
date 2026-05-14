@@ -10,6 +10,18 @@
     % endif
     <h2 id="robbo-featured-title" class="robbo-courses-catalog__featured-title">${featured['title']}</h2>
     <p class="robbo-courses-catalog__featured-desc">${featured['description']}</p>
+  </div>
+  <div class="robbo-courses-catalog__featured-media" role="presentation">
+    <img
+      class="robbo-courses-catalog__featured-img"
+      src="${static.url('images/catalog/' + featured['image'])}"
+      alt="${featured['image_alt']}"
+      width="552"
+      height="320"
+      loading="lazy"
+    />
+  </div>
+  <div class="robbo-courses-catalog__featured-actions">
     % if account and account.get('mode') == 'inactive':
       <span
         class="robbo-courses-catalog__btn robbo-courses-catalog__btn--primary robbo-courses-catalog__btn--disabled"
@@ -35,15 +47,5 @@
         </a>
       % endif
     % endif
-  </div>
-  <div class="robbo-courses-catalog__featured-media" role="presentation">
-    <img
-      class="robbo-courses-catalog__featured-img"
-      src="${static.url('images/catalog/' + featured['image'])}"
-      alt="${featured['image_alt']}"
-      width="552"
-      height="320"
-      loading="lazy"
-    />
   </div>
 </article>

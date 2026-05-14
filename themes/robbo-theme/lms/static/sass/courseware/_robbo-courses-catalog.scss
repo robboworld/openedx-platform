@@ -20,8 +20,15 @@
   --robbo-cat-cta-min-h: 60px;
   --robbo-cat-cta-pill: 30px;
   --robbo-cat-cta-font: clamp(0.95rem, 1.1vw, 1.0625rem);
-  // Stub card illustrations: height −20% vs 220px; blend; anchored bottom-right in card (see .stub-media)
+  // Stub card illustrations: min card height on lg+; blend; right lane, vertically centered on desktop (see .stub-media / .stub-img)
   --robbo-cat-stub-img-h: 176px;
+  // Narrow viewports: max width cap for stub bitmaps (float shrink-wraps to rendered img width)
+  --robbo-cat-stub-float-img-max-w: clamp(6.25rem, 30vw, 11rem);
+  --robbo-cat-stub-float-gap: 0.65rem;
+  // lg+: width of the reserved illustration column (must match .stub padding-right lane)
+  --robbo-cat-stub-art-lane-w: clamp(10.5rem, 23vw, 14rem);
+  --robbo-cat-stub-abs-img-h: 158px;
+  --robbo-cat-stub-abs-img-inset: 10px;
   --robbo-cat-stub-img-blend: multiply;
   // Stub "notify" button (secondary)
   --robbo-cat-stub-notify-fg: #0f172a;
@@ -178,16 +185,23 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
   display: grid;
   gap: var(--robbo-cat-gap);
+  grid-template-areas:
+    "feat-body"
+    "feat-media"
+    "feat-actions";
+  grid-template-columns: minmax(0, 1fr);
   margin-bottom: var(--robbo-cat-hero-mb);
   overflow: hidden;
   padding: var(--robbo-feat-pad);
 
   @include media-breakpoint-up(lg) {
-    // Text column keeps natural (content) height; only the media column stretches (see below).
-    align-items: start;
+    align-items: stretch;
     gap: 0;
-    // Image column bleeds to top/right/bottom card edges; text keeps inset.
+    grid-template-areas:
+      "feat-body feat-media"
+      "feat-actions feat-media";
     grid-template-columns: minmax(0, 1.1fr) minmax(220px, 40%);
+    grid-template-rows: auto 1fr;
     padding: 0 0 0 var(--robbo-feat-pad);
   }
 }
@@ -195,12 +209,28 @@
 .robbo-courses-catalog__featured-body {
   display: flex;
   flex-direction: column;
+  grid-area: feat-body;
   min-height: 0;
   min-width: 0;
-  order: 0;
 
   @include media-breakpoint-up(lg) {
-    padding: var(--robbo-feat-pad) var(--robbo-feat-pad) var(--robbo-feat-pad) 0;
+    align-self: start;
+    padding: var(--robbo-feat-pad) var(--robbo-feat-pad) 0.65rem 0;
+  }
+}
+
+.robbo-courses-catalog__featured-actions {
+  display: flex;
+  flex-direction: column;
+  grid-area: feat-actions;
+
+  @media (max-width: 991.98px) {
+    align-items: center;
+  }
+
+  @include media-breakpoint-up(lg) {
+    align-self: start;
+    padding: 0 var(--robbo-feat-pad) var(--robbo-feat-pad) 0;
   }
 }
 
@@ -220,19 +250,19 @@
 }
 
 .robbo-courses-catalog__featured-media {
+  // Letterboxing behind `object-fit: contain` on the featured bitmap (mixed aspect ratios).
+  background: #f8f8f8;
   box-sizing: border-box;
+  grid-area: feat-media;
   min-height: 0;
   min-width: 0;
-  order: 1;
   overflow: hidden;
   width: 100%;
 
-  // Match exclusive of `media-breakpoint-up(lg)` (992px): theme `down(lg)` maps to xl in some builds and would overlap.
   @media (max-width: 991.98px) {
-    // Full-bleed strip under text within the same card (padding lives on article).
-    margin-left: calc(-1 * var(--robbo-feat-pad));
-    margin-right: calc(-1 * var(--robbo-feat-pad));
-    width: calc(100% + 2 * var(--robbo-feat-pad));
+    justify-self: center;
+    max-width: 26rem;
+    width: 100%;
   }
 
   @include media-breakpoint-up(lg) {
@@ -243,16 +273,21 @@
   }
 }
 
-// Desktop: absolute fill avoids % height quirks on replaced elements; cover fills the cell edge-to-edge.
+// Desktop: absolute fill avoids % height quirks on replaced elements; contain keeps art uncropped.
 .robbo-courses-catalog__featured-img {
   aspect-ratio: 552 / 320;
   display: block;
   height: auto;
   max-height: none;
   max-width: 100%;
-  object-fit: cover;
-  object-position: right center;
+  object-fit: contain;
+  object-position: center;
   width: 100%;
+
+  @media (max-width: 991.98px) {
+    margin-inline: auto;
+    width: 100%;
+  }
 
   @include media-breakpoint-up(lg) {
     aspect-ratio: auto;
@@ -263,8 +298,8 @@
     max-width: none;
     min-height: 0;
     min-width: 0;
-    object-fit: cover;
-    object-position: right center;
+    object-fit: contain;
+    object-position: center;
     position: absolute;
     width: 100%;
   }
@@ -299,28 +334,45 @@
   position: relative;
 
   @include media-breakpoint-up(lg) {
-    // Reserve a dedicated art lane and pin the bitmap to the card's bottom-right corner.
+    // Reserve a dedicated art lane; illustration sits in a fixed-size box (same column as MCU).
     display: block;
     min-height: calc(var(--robbo-cat-stub-img-h) + (2 * var(--robbo-cat-pad)));
-    padding-right: calc(var(--robbo-cat-pad) + clamp(10.5rem, 23vw, 14rem));
+    padding-right: calc(var(--robbo-cat-pad) + var(--robbo-cat-stub-art-lane-w));
   }
 }
 
 .robbo-courses-catalog__stub-body {
-  align-items: flex-start;
+  align-items: stretch;
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
   min-width: 0;
-  order: 0;
 
   @media (max-width: 991.98px) {
     flex: 1 1 auto;
+    min-height: 0;
   }
 
   @include media-breakpoint-up(lg) {
-    position: relative;
-    z-index: 1;
+    position: static;
+    z-index: auto;
+  }
+}
+
+// Float + wrap needs a block formatting context (not a flex item boundary between media and description).
+.robbo-courses-catalog__stub-copy {
+  min-width: 0;
+
+  @media (max-width: 991.98px) {
+    display: flow-root;
+  }
+
+  @include media-breakpoint-up(lg) {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 0;
+    min-height: 0;
   }
 }
 
@@ -339,11 +391,20 @@
   margin: 0;
 }
 
-.robbo-courses-catalog__stub-actions {
+// Groups notify CTA + live status so stub-body flex `gap` does not insert a band between them when status is empty.
+.robbo-courses-catalog__stub-footer {
   align-items: center;
   display: flex;
-  justify-content: flex-start;
+  flex-direction: column;
   margin-top: auto;
+  width: 100%;
+}
+
+.robbo-courses-catalog__stub-actions {
+  align-items: center;
+  clear: both;
+  display: flex;
+  justify-content: center;
   padding-top: 0.15rem;
   width: 100%;
 }
@@ -358,9 +419,15 @@
   color: var(--robbo-cat-muted);
   font-size: 0.8125rem;
   line-height: 1.4;
-  margin: 0.65rem 0 0;
-  min-height: 1.15rem;
+  margin: 0;
+  min-height: 0;
   transition: color 0.18s ease, opacity 0.18s ease;
+}
+
+// No reserved strip under the notify button until JS fills the live region.
+.robbo-courses-catalog__stub-status:not(:empty) {
+  margin-top: 0.65rem;
+  min-height: 1.15rem;
 }
 
 .robbo-courses-catalog__stub.is-interest-success .robbo-courses-catalog__stub-status {
@@ -374,49 +441,77 @@
 .robbo-courses-catalog__stub-media {
   background: transparent;
   box-sizing: border-box;
+  flex-shrink: 0;
   min-height: 0;
   min-width: 0;
-  order: 1;
 
   @media (max-width: 991.98px) {
-    margin-top: auto;
-    min-height: var(--robbo-cat-stub-img-h);
-    position: relative;
-    width: 100%;
+    // Shrink-wrap to each image so text wraps tightly (no fixed 552×320 frame wider than art).
+    float: right;
+    margin: 0 0 var(--robbo-cat-stub-float-gap) var(--robbo-cat-stub-float-gap);
+    max-width: 44%;
+    min-width: 0;
+    shape-outside: margin-box;
+    width: fit-content;
   }
 
   @include media-breakpoint-up(lg) {
-    height: 0;
+    align-items: stretch;
+    bottom: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0;
+    max-width: none;
     min-height: 0;
     min-width: 0;
+    padding-right: var(--robbo-cat-stub-abs-img-inset);
     pointer-events: none;
-    position: static;
-    width: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: var(--robbo-cat-stub-art-lane-w);
   }
 }
 
 .robbo-courses-catalog__stub-img {
   background: transparent;
-  bottom: 10px;
   display: block;
-  height: 158px;
-  left: auto;
-  margin: 0 7px 10px 0;
-  max-width: 100%;
   mix-blend-mode: var(--robbo-cat-stub-img-blend);
   object-fit: contain;
   object-position: right bottom;
-  padding-left: 8px;
-  padding-right: 8px;
-  position: absolute;
-  right: 0;
-  top: auto;
-  width: auto;
+
+  @media (max-width: 991.98px) {
+    bottom: auto;
+    box-sizing: border-box;
+    display: block;
+    height: auto;
+    margin: 0;
+    max-height: none;
+    max-width: var(--robbo-cat-stub-float-img-max-w);
+    object-fit: contain;
+    object-position: right top;
+    padding: 0;
+    position: static;
+    right: auto;
+    top: auto;
+    width: auto;
+  }
 
   @include media-breakpoint-up(lg) {
-    // Anchor to the actual card corner, not the inner media wrapper.
-    right: 0;
-    bottom: 0;
+    box-sizing: border-box;
+    display: block;
+    flex-shrink: 0;
+    height: var(--robbo-cat-stub-abs-img-h);
+    margin: 0;
+    max-height: var(--robbo-cat-stub-abs-img-h);
+    max-width: 100%;
+    object-fit: contain;
+    object-position: right center;
+    padding: 0;
+    position: static;
+    width: 100%;
   }
 }
 
@@ -431,17 +526,14 @@
   padding: 0.6rem 1.1rem;
   text-align: center;
   text-decoration: none;
+  // LMS / legacy `.btn` mixins often add a faux-emboss shadow; catalog CTAs are flat.
+  text-shadow: none;
   transition:
     background 0.15s ease,
     border-color 0.15s ease,
     box-shadow 0.15s ease,
     color 0.15s ease,
     transform 0.12s ease;
-}
-
-// Primary CTA follows text flow (text column is not stretched to match image height).
-.robbo-courses-catalog__featured .robbo-courses-catalog__btn--primary {
-  align-self: flex-start;
 }
 
 // `a` here is subject to global LMS/Bootstrap `a` / `:visited` (blue) — same idea as .robbo-guest CTA.

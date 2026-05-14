@@ -65,6 +65,15 @@ section.wiki .btn.btn-primary {
     outline-width: 2px;
 }
 
+// Brand-aligned keyboard focus ring on LMS; guest landing uses its own outline/box-shadow tokens.
+body:not(.robbo-guest-landing-page) :focus-visible {
+    outline-color: $primary;
+}
+
+body.indigo-dark-theme:not(.robbo-guest-landing-page) :focus-visible {
+    outline-color: $primary-d;
+}
+
 %btn-pl-default-base {
   border-radius: 0;
 }
@@ -255,7 +264,7 @@ nav.wrapper-preview-menu {
 /////////////////// Footer (sticky to viewport bottom, fixed flex footprint)
 .wrapper-footer {
   box-shadow: none;
-  padding: 0 clamp(20px, 4vw, 45px);
+  padding: 0;
   background-color: #fff;
   border-top: 1px solid #e0e0e0;
   flex: 0 0 auto;
@@ -270,7 +279,7 @@ nav.wrapper-preview-menu {
 
   @include media-breakpoint-down(md) {
     height: auto;
-    padding: 12px clamp(20px, 4vw, 45px);
+    padding: 12px 0;
   }
 }
 .container, .main-container, .find-courses {
@@ -1745,6 +1754,7 @@ body.indigo-dark-theme {
 @import '../../../courseware/robbo-courses-catalog';
 @import '../../../courseware/about';
 @import '../../../courseware/bookmarks';
+@import '../../../courseware/learning-mfe-unit-content';
 @import '../../../home/home';
 @import '../../../home/guest-landing';
 @import '../../../programs/programs';
