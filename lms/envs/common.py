@@ -5642,7 +5642,7 @@ USE_EXTRACTED_VIDEO_BLOCK = False
 # `course_id` for the featured card, e.g. 'course-v1:ORG+NUM+RUN'. If None, the first course from the same sorted list as /courses (get_courses) is used.
 ROBBO_CATALOG_FEATURED_COURSE_ID = None
 # File name under the theme’s `lms/static/images/catalog/` (staticfiles path `images/catalog/...`).
-ROBBO_CATALOG_FEATURED_IMAGE = 'stub-postgres.png'
+ROBBO_CATALOG_FEATURED_IMAGE = 'mcu.png'
 # Recipients for learner requests to be notified when a stub course opens.
 ROBBO_COURSE_INTEREST_RECIPIENTS = ['e.sovkov@robbo.ru']
 # Optional LMS log files used as a fallback for historic course-interest submissions.

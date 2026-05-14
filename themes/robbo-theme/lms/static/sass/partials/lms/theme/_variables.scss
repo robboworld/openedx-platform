@@ -18,8 +18,12 @@ $dark: #111827;
 $light-dark: #374151;
 $big-screen: 1200px;
 
-// LMS `header.global-header` bar height — same as MFE `$robbo-mfe-header-bar-min-h`.
+// LMS `header.global-header` bar height — same as MFE `$robbo-mfe-header-bar-min-h` (desktop); narrow: `$robbo-header-bar-min-h-mobile`.
 $robbo-header-bar-min-h: 75px;
+$robbo-header-bar-min-h-mobile: 55px;
+
+// Robbo footer typography — same stack as primary UI (`_extras.scss` body) and MFE RobboFooter.
+$robbo-footer-font-family: $font-family-title, "Helvetica Neue", Arial, sans-serif;
 
 
 // Introducing dark-theme variables (green-tinted)

@@ -126,7 +126,7 @@ html:has(body.robbo-guest-landing-page) {
     }
 
     .robbo-guest-footer.robbo-site-footer .robbo-footer__links li {
-        margin: 0 0 0.1875rem; // ~3px: плотный столбец ссылок на узкой ширине
+        margin: 0 0 2px; // match main footer doc link stack gap
 
         &:last-child {
             margin-bottom: 0;

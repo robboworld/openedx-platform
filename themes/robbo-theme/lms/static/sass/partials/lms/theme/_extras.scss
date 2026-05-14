@@ -255,7 +255,7 @@ nav.wrapper-preview-menu {
 /////////////////// Footer (sticky to viewport bottom, fixed flex footprint)
 .wrapper-footer {
   box-shadow: none;
-  padding: 0 clamp(20px, 4vw, 45px);
+  padding: 0;
   background-color: #fff;
   border-top: 1px solid #e0e0e0;
   flex: 0 0 auto;
@@ -270,7 +270,7 @@ nav.wrapper-preview-menu {
 
   @include media-breakpoint-down(md) {
     height: auto;
-    padding: 12px clamp(20px, 4vw, 45px);
+    padding: 12px 0;
   }
 }
 .container, .main-container, .find-courses {

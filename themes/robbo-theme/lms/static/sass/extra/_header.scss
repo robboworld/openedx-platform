@@ -1,28 +1,28 @@
 // Include custom header
 body {
-  .nav-skip {
+    .nav-skip {
 
-    &:focus {
-      left: 50%;
-      position: absolute;
-      top: 5px;
-      height: auto;
-      background-color: $black;
-      margin: 0;
-      opacity: 0.8;
-      color: white;
-      text-decoration: none;
-      outline: none;
-      text-align: center;
-      width: auto;
-      font-size: 1rem;
-      line-height: 1.45;
-      padding: 0 5px;
-      transform: translateX(-50%);
-      z-index: 9999;
-      clip: auto;
+        &:focus {
+            left: 50%;
+            position: absolute;
+            top: 5px;
+            height: auto;
+            background-color: $black;
+            margin: 0;
+            opacity: 0.8;
+            color: white;
+            text-decoration: none;
+            outline: none;
+            text-align: center;
+            width: auto;
+            font-size: 1rem;
+            line-height: 1.45;
+            padding: 0 5px;
+            transform: translateX(-50%);
+            z-index: 9999;
+            clip: auto;
+        }
     }
-  }
 }
 
 // Robbo header — brand green bar, white nav (reference layout)
@@ -32,6 +32,14 @@ $robbo-header-nav-font: 20px;
 $robbo-header-wordmark: 30px;
 $robbo-header-user-menu-fs: 1.125rem; // Sign in / Register
 $robbo-header-profile-toggle-fs: 1rem; // 16px: −2px vs 18px for .toggle-user-dropdown
+
+// Mobile hamburger (match MFE `robbo-layout-user-menu__hamburger*`).
+$robbo-header-hamburger-line-width: #{unquote("clamp(24px, 7.2vw, 30px)")};
+$robbo-header-hamburger-line-height: 2px;
+$robbo-header-hamburger-box-height: 17px;
+$robbo-header-hamburger-touch: 44px;
+$robbo-header-hamburger-y-middle: ($robbo-header-hamburger-box-height - $robbo-header-hamburger-line-height) * 0.5;
+$robbo-header-hamburger-icon-offset: ($robbo-header-hamburger-touch - $robbo-header-hamburger-box-height) * 0.5;
 
 header.global-header {
     background: $robbo-header-green;
@@ -62,6 +70,10 @@ header.global-header {
         padding: 6px 0;
         position: relative;
         min-width: 0;
+
+        @include media-breakpoint-down(md) {
+            min-height: $robbo-header-bar-min-h-mobile;
+        }
 
         @include media-breakpoint-up(lg) {
             column-gap: 24px;
@@ -224,8 +236,8 @@ header.global-header {
         }
 
         // Marketing / guest links without .nav-tab (same type scale)
-        .main .nav-item:not(.nav-tab) > a,
-        nav.main .nav-item:not(.nav-tab) > a {
+        .main .nav-item:not(.nav-tab)>a,
+        nav.main .nav-item:not(.nav-tab)>a {
             color: #fff !important;
             font-size: $robbo-header-nav-font;
             font-weight: 600;
@@ -351,34 +363,84 @@ header.global-header {
         }
     }
 
+    // Mobile only (matches edx `.global-header .hamburger-menu` — hidden ≥ md).
     .hamburger-menu {
-        height: 21px;
-        width: 24px;
-        left: auto;
-        top: auto;
-        background: none;
-        border: 0;
-        padding: 0;
-        box-shadow: none;
-        flex: 0 0 auto;
+        display: none;
 
-        .line {
-            height: 2px;
-            background: #fff !important;
+        @include media-breakpoint-down(md) {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            width: $robbo-header-hamburger-touch;
+            height: $robbo-header-hamburger-touch;
+            left: auto;
+            top: auto;
+            padding: 0;
+            background: none;
+            border: 0;
+            box-shadow: none;
+            flex: 0 0 auto;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
 
-            &:nth-child(2),
-            &:nth-child(3) {
-                top: 6px;
+            .line {
+                display: block;
+                position: absolute;
+                left: 50%;
+                height: $robbo-header-hamburger-line-height;
+                width: $robbo-header-hamburger-line-width;
+                margin: 0;
+                padding: 0;
+                background: #fff !important;
+                border-radius: 999px;
+                opacity: 1;
+                transform: translateX(-50%);
+                transform-origin: center;
+                -webkit-transition: transform 0.25s ease-in-out, width 0.25s ease-in-out, left 0.25s ease-in-out,
+                    top 0.25s ease-in-out, opacity 0.2s ease-in-out;
+                transition: transform 0.25s ease-in-out, width 0.25s ease-in-out, left 0.25s ease-in-out, top 0.25s ease-in-out,
+                    opacity 0.2s ease-in-out;
+
+                &:nth-child(1) {
+                    top: $robbo-header-hamburger-icon-offset;
+                }
+
+                &:nth-child(2),
+                &:nth-child(3) {
+                    top: $robbo-header-hamburger-icon-offset + $robbo-header-hamburger-y-middle;
+                }
+
+                &:nth-child(4) {
+                    top: $robbo-header-hamburger-icon-offset + $robbo-header-hamburger-box-height - $robbo-header-hamburger-line-height;
+                }
             }
 
-            &:nth-child(4) {
-                top: 12px;
+            &.open .line {
+
+                &:nth-child(1),
+                &:nth-child(4) {
+                    top: $robbo-header-hamburger-icon-offset + $robbo-header-hamburger-y-middle;
+                    left: 50%;
+                    width: 0;
+                    opacity: 0;
+                }
+
+                &:nth-child(2) {
+                    transform: translateX(-50%) rotate(45deg);
+                }
+
+                &:nth-child(3) {
+                    transform: translateX(-50%) rotate(-45deg);
+                }
             }
         }
     }
 
     // Indigo hides discover/catalog; Robbo shows it again on desktop only (`hidden-mobile` must win below `md`).
     @include media-breakpoint-up(md) {
+
         a.discover-new-link,
         .nav-links .main .nav-tab a[href="/courses"],
         .nav-links nav.main .nav-tab a[href="/courses"] {
@@ -432,7 +494,7 @@ header.global-header {
 .mobile-menu {
     @include media-breakpoint-down(md) {
         position: absolute;
-        top: calc(#{$robbo-header-bar-min-h} + 8px);
+        top: calc(#{$robbo-header-bar-min-h-mobile} + 8px);
         right: clamp(12px, 4vw, 20px);
         left: auto;
         width: auto;
@@ -485,6 +547,7 @@ header.global-header {
         display: none !important;
     }
 }
+
 .header-container {
     margin: 0 auto;
     padding: 0 20px;
@@ -494,6 +557,7 @@ header.global-header {
     @include media-breakpoint-up(lg) {
         padding: 0 28px;
     }
+
     &:after {
         display: block;
         clear: both;
@@ -501,7 +565,7 @@ header.global-header {
     }
 }
 
-.theme-toggle-button{
+.theme-toggle-button {
     position: relative;
     display: flex;
     align-items: center;
@@ -511,10 +575,12 @@ header.global-header {
         margin-right: 1.5rem !important;
     }
 
-    .light-theme-icon, .dark-theme-icon{
+    .light-theme-icon,
+    .dark-theme-icon {
         width: 18px;
         height: 1.5rem;
         color: $primary;
+
         & svg {
             width: inherit;
             height: inherit;
@@ -529,7 +595,7 @@ header.global-header {
             margin: 0;
         }
 
-/* The switch - the box around the slider */
+        /* The switch - the box around the slider */
         .switch {
             position: relative;
             display: inline-block;
@@ -542,12 +608,12 @@ header.global-header {
                 width: 0;
                 height: 0;
 
-              &:focus {
-                ~ .slider {
-                  outline: 2px solid $primary;
-                  outline-offset: 1px;
+                &:focus {
+                    ~.slider {
+                        outline: 2px solid $primary;
+                        outline-offset: 1px;
+                    }
                 }
-              }
             }
 
             /* The slider */
@@ -561,7 +627,7 @@ header.global-header {
                 background-color: $light-theme-switch-bg-color;
                 transition: .4s;
 
-                &::before{
+                &::before {
                     position: absolute;
                     content: "";
                     height: 20px;
@@ -572,9 +638,10 @@ header.global-header {
                     transition: .4s;
                 }
 
-                &.round{
+                &.round {
                     border-radius: 34px;
-                    &::before{
+
+                    &::before {
                         border-radius: 50%;
                     }
                 }
@@ -588,9 +655,11 @@ header.global-header {
 body.indigo-dark-theme {
     background: $body-bg-d !important;
     color: $text-color-d !important;
+
     .window-wrap {
         background: $body-bg-d;
     }
+
     header.global-header {
         background: $robbo-header-green;
         box-shadow: none;
@@ -598,6 +667,7 @@ body.indigo-dark-theme {
         overflow: visible !important;
 
         @include media-breakpoint-up(md) {
+
             a.discover-new-link,
             .nav-links .main .nav-tab a[href="/courses"],
             .nav-links nav.main .nav-tab a[href="/courses"] {
@@ -611,6 +681,7 @@ body.indigo-dark-theme {
         }
 
         .nav-links {
+
             .main,
             nav.main {
                 .nav-tab {
@@ -670,6 +741,7 @@ body.indigo-dark-theme {
         }
 
         .header-logo {
+
             .header-logo-link,
             .header-logo-wordmark {
                 color: #fff;
@@ -683,24 +755,29 @@ body.indigo-dark-theme {
         }
     }
 
-// theme toggle switch
-  .theme-toggle-button{
-        .light-theme-icon, .dark-theme-icon{
+    // theme toggle switch
+    .theme-toggle-button {
+
+        .light-theme-icon,
+        .dark-theme-icon {
             color: $text-color-primary;
         }
+
         #toggle-switch {
             .switch {
                 input {
-                  &:focus {
-                    ~ .slider {
-                      outline-color: $primary-d;
+                    &:focus {
+                        ~.slider {
+                            outline-color: $primary-d;
+                        }
                     }
-                  }
                 }
+
                 /* The slider */
                 .slider {
                     background-color: $dark-theme-switch-bg-color;
-                    &::before{
+
+                    &::before {
                         transform: translateX(19px);
                         box-shadow: 0 0 1px $primary-d;
                     }

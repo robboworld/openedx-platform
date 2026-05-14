@@ -5,6 +5,10 @@ $robbo-footer-logo-bg: #00b050;
 $robbo-footer-text: #777;
 // Единый масштаб зелёного бейджа «РОББО» в футере (подправить при смене макета).
 $robbo-footer-logo-scale: 0.9;
+// Spacing between footer legal document links (align MFE `robbo-layout` RobboFooter).
+$robbo-footer-doc-links-stack-gap: clamp(2px, 0.35vw, 4px);
+$robbo-footer-doc-links-flex-gap: 2px 6px;
+$robbo-footer-stack-gap-sm: 14px;
 
 .robbo-site-footer {
     background: #fff;
@@ -28,15 +32,17 @@ $robbo-footer-logo-scale: 0.9;
     width: 100%;
     max-width: 1162px;
     margin: 0 auto;
-    padding: 0;
+    padding: 0 20px;
     box-sizing: border-box;
 
     @include media-breakpoint-up(lg) {
         min-height: $robbo-footer-bar-height;
+        padding: 0 28px;
     }
 
-    @include media-breakpoint-down(md) {
+    @include media-breakpoint-down(lg) {
         grid-template-columns: 1fr;
+        row-gap: $robbo-footer-stack-gap-sm;
     }
 }
 
@@ -49,7 +55,7 @@ $robbo-footer-logo-scale: 0.9;
     text-align: center;
     min-width: 0;
     width: 100%;
-    padding: 0 clamp(4px, 1vw, 12px);
+    padding: 0;
 }
 
 .robbo-footer__left {
@@ -63,7 +69,7 @@ $robbo-footer-logo-scale: 0.9;
     width: 100%;
     max-width: 241px;
 
-    @include media-breakpoint-down(md) {
+    @include media-breakpoint-down(lg) {
         justify-self: center;
         align-items: center;
         max-width: 100%;
@@ -80,7 +86,7 @@ $robbo-footer-logo-scale: 0.9;
     min-width: 0;
     width: 100%;
 
-    @include media-breakpoint-down(md) {
+    @include media-breakpoint-down(lg) {
         justify-self: center;
     }
 }
@@ -110,9 +116,7 @@ $robbo-footer-logo-scale: 0.9;
     line-height: 1.15;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    font-family: $font-family-sans-serif;
-    text-align: center;
-    box-shadow: 0 (2px * $robbo-footer-logo-scale) (10px * $robbo-footer-logo-scale) rgba(0, 0, 0, 0.12);
+    font-family: $robbo-footer-font-family;
 }
 
 .robbo-footer__reg {
@@ -130,7 +134,7 @@ $robbo-footer-logo-scale: 0.9;
     font-size: clamp(11px, 1.1vw, 12px);
     line-height: 1.45;
     color: $robbo-footer-text;
-    font-family: $font-family-sans-serif;
+    font-family: $robbo-footer-font-family;
 }
 
 .robbo-footer__nav {
@@ -149,7 +153,7 @@ $robbo-footer-logo-scale: 0.9;
     text-align: center;
 
     li {
-        margin: 0 0 clamp(6px, 1vw, 10px);
+        margin: 0 0 $robbo-footer-doc-links-stack-gap;
 
         &:last-child {
             margin-bottom: 0;
@@ -160,20 +164,35 @@ $robbo-footer-logo-scale: 0.9;
         }
     }
 
+    @include media-breakpoint-down(lg) {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: $robbo-footer-doc-links-stack-gap;
+
+        li {
+            margin: 0;
+        }
+
+        a {
+            line-height: 1.25;
+        }
+    }
+
     @include media-breakpoint-up(lg) {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
         align-items: center;
-        gap: 6px 14px;
+        gap: $robbo-footer-doc-links-flex-gap;
     }
 
     a {
         color: $robbo-footer-text;
         font-size: clamp(11px, 1.1vw, 12px);
         line-height: 1.45;
-        font-family: $font-family-sans-serif;
+        font-family: $robbo-footer-font-family;
         text-decoration: underline;
         word-break: break-word;
 
@@ -196,7 +215,7 @@ $robbo-footer-logo-scale: 0.9;
     font-size: clamp(11px, 1.1vw, 12px);
     line-height: 1.45;
     color: $robbo-footer-text;
-    font-family: $font-family-sans-serif;
+    font-family: $robbo-footer-font-family;
     word-break: break-word;
 }
 
@@ -206,6 +225,9 @@ $robbo-footer-logo-scale: 0.9;
 
 .robbo-footer__contacts-line a {
     color: $robbo-footer-text;
+    font-size: clamp(11px, 1.1vw, 12px);
+    line-height: 1.45;
+    font-family: $robbo-footer-font-family;
     text-decoration: underline;
 
     &:hover,
