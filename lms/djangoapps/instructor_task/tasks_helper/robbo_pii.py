@@ -19,8 +19,12 @@ from typing import Dict, FrozenSet, List, Set
 from django.contrib.auth.models import User  # lint-amnesty, pylint: disable=imported-auth-user
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
+from completion.exceptions import UnavailableCompletionData
+from completion.utilities import get_key_to_last_completed_block
 from pytz import UTC
 from xmodule.modulestore.django import modulestore
+from xmodule.modulestore.exceptions import ItemNotFoundError, NoPathToItem
+from xmodule.modulestore.search import path_to_location
 
 from common.djangoapps.student.models import CourseEnrollment
 from lms.djangoapps.courseware.robbo_catalog import get_robbo_catalog_stubs
@@ -36,6 +40,23 @@ TASK_LOG = logging.getLogger('edx.celery.task')
 
 _INTEREST_META_KEY = 'robbo_course_interest_titles'
 _MAX_GRADED_TESTS = 5
+# Russian labels for leaf XBlock category in CSV ``theory_path`` (x.y.z) third segment.
+_THEORY_BLOCK_TYPE_RU = {
+    'html': 'текст',
+    'video': 'видео',
+    'problem': 'тестирование',
+    'openassessment': 'оценивание',
+    'library_content': 'библиотека',
+    'poll': 'опрос',
+    'survey': 'опрос',
+    'word_cloud': 'облако_слов',
+    'lti': 'lti',
+    'drag-and-drop-v2': 'перетаскивание',
+    'chapter': 'раздел',
+    'sequential': 'подраздел',
+    'vertical': 'блок',
+    'course': 'курс',
+}
 # Profile columns moved to the far right of the Robbo CSV (after interest_*).
 _TAIL_PROFILE_FEATURES: FrozenSet[str] = frozenset({
     'language',
@@ -197,6 +218,62 @@ def _trailer_row_values(
     return cells
 
 
+def _visible_child_index(parent_block, child_location) -> int:
+    """1-based index of ``child_location`` among non-staff-only children of ``parent_block``; 0 if not found."""
+    idx = 0
+    for child in parent_block.get_children():
+        if getattr(child, 'visible_to_staff_only', False):
+            continue
+        idx += 1
+        if child.location == child_location:
+            return idx
+    return 0
+
+
+def _theory_path_xyz(user, course_id) -> str:
+    """
+    Last completed block in the report course: ``section_index.subsection_index.type_ru`` (e.g. ``1.2.текст``).
+
+    Uses the same completion source as resume / mobile "last visited" (last *completed* block).
+    """
+    try:
+        block_key = get_key_to_last_completed_block(user, course_id)
+    except UnavailableCompletionData:
+        return ''
+
+    store = modulestore()
+    try:
+        with store.bulk_operations(course_id):
+            path = path_to_location(store, block_key, request=None, full_path=True)
+    except (ItemNotFoundError, NoPathToItem) as exc:
+        TASK_LOG.debug('Robbo CSV: theory_path path_to_location failed user_id=%s: %s', user.id, exc)
+        return ''
+
+    if not path or len(path) < 2:
+        return ''
+
+    try:
+        course_block = store.get_item(path[0])
+        chapter_block = store.get_item(path[1])
+    except ItemNotFoundError:
+        return ''
+
+    x = _visible_child_index(course_block, path[1])
+    y = 0
+    if len(path) > 2:
+        y = _visible_child_index(chapter_block, path[2])
+
+    leaf = path[-1]
+    block_type = getattr(leaf, 'block_type', '') or ''
+    z = _THEORY_BLOCK_TYPE_RU.get(block_type, block_type or 'прочее')
+
+    if x <= 0:
+        return ''
+    if y <= 0:
+        return f'{x}.0.{z}'
+    return f'{x}.{y}.{z}'
+
+
 def _middle_headers() -> List[str]:
     interest_headers = [
         f'interest_{_slugify_interest_column(stub["id"])}'
@@ -204,6 +281,7 @@ def _middle_headers() -> List[str]:
     ]
     return [
         'company',
+        'theory_path',
         *[f'test_{i}' for i in range(1, _MAX_GRADED_TESTS + 1)],
         *interest_headers,
     ]
@@ -234,6 +312,9 @@ def upload_robbo_extended_students_csv(_xblock_instance_args, _entry_id, course_
 
     Includes all platform users; ``enrolled_in_report_course`` marks active enrollment in the
     course this report was generated from (grades and tests still use that course context).
+
+    Middle columns include ``theory_path`` (``section.subsection.type_ru`` from last completed block)
+    immediately before ``test_1``..``test_5``.
     """
     start_time = time()
     start_date = datetime.now(UTC)
@@ -275,9 +356,11 @@ def upload_robbo_extended_students_csv(_xblock_instance_args, _entry_id, course_
 
             interests = _interest_titles_from_profile(profile) | interest_from_logs.get(user.id, set())
             base_row = learner_features_dict(user, course_id, query_features, external_map)
+            theory_path = _theory_path_xyz(user, course_id)
             rows.append([
                 *_prefix_row_values(leading_features, base_row, user, course_id),
                 _company_from_profile(profile),
+                theory_path,
                 *percents,
                 *['yes' if stub['title'] in interests else 'no' for stub in stubs],
                 *[base_row.get(feature, '') for feature in tail_features],
