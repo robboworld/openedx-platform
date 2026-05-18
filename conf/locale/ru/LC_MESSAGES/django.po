@@ -9085,6 +9085,14 @@ msgid "You are missing one or more required fields"
 msgstr "Вы не заполнили одно или несколько обязательных полей"
 
 #: openedx/core/djangoapps/user_authn/views/registration_form.py
+msgid "Incorrect company entry."
+msgstr "Некорректное название компании"
+
+#: openedx/core/djangoapps/user_authn/views/registration_form.py
+msgid "Full name must contain three words separated by spaces."
+msgstr "ФИО должно состоять из трёх слов, разделённых пробелом"
+
+#: openedx/core/djangoapps/user_authn/views/registration_form.py
 msgid "Unauthorized email address."
 msgstr "Недопустимый адрес электронной почты."
 

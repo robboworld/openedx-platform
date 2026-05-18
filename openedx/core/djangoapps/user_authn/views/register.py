@@ -131,6 +131,45 @@ def _scalar_post_value(params, key):
     return val if val is not None else ""
 
 
+def _parse_registration_duration_seconds(params):
+    """Client-reported seconds on the registration form (Authn MFE / guest landing)."""
+    raw = _scalar_post_value(params, "total_registration_time") or _scalar_post_value(
+        params, "totalRegistrationTime"
+    )
+    if raw == "":
+        return None
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        return None
+
+
+def _reject_fast_registration_if_needed(request, params):
+    """
+    Reject registrations that complete too quickly (likely bots).
+
+    Returns an HTTP response to return to the client, or None to continue.
+    """
+    min_seconds = getattr(settings, "REGISTRATION_MIN_COMPLETION_SECONDS", 5)
+    if not min_seconds or min_seconds <= 0:
+        return None
+    if third_party_auth.is_enabled() and pipeline.running(request):
+        return None
+
+    duration = _parse_registration_duration_seconds(params)
+    if duration is None or duration < min_seconds:
+        REGISTRATION_LOG.warning(
+            "%s ts=%s reason=registration_too_fast duration=%r min_seconds=%s ip=%r",
+            REGISTRATION_AUDIT_SEARCH_TAG,
+            timezone.now().isoformat(),
+            duration,
+            min_seconds,
+            request.META.get("REMOTE_ADDR"),
+        )
+        return JsonResponse({"error_code": "forbidden-request"}, status=403)
+    return None
+
+
 def _log_registration_audit(user, params):
     """
     Registration audit line: timestamp, login, company, UI language.
@@ -634,6 +673,10 @@ class RegistrationView(APIView):
 
         data = request.POST.copy()
         self._handle_terms_of_service(data)
+
+        fast_registration_response = _reject_fast_registration_if_needed(request, data)
+        if fast_registration_response:
+            return fast_registration_response
 
         if is_auto_generated_username_enabled() and 'username' not in data:
             data['username'] = get_auto_generated_username(data)

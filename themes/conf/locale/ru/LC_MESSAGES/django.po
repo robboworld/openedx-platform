@@ -18,3 +18,11 @@ msgstr "Каталог курсов"
 
 msgid "Register for free"
 msgstr "Регистрация"
+
+#: openedx/core/djangoapps/user_authn/views/registration_form.py
+msgid "Incorrect company entry."
+msgstr "Некорректное название компании"
+
+#: openedx/core/djangoapps/user_authn/views/registration_form.py
+msgid "Full name must contain three words separated by spaces."
+msgstr "ФИО должно состоять из трёх слов, разделённых пробелом"

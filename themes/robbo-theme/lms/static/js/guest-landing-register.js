@@ -14,12 +14,14 @@
   var M = {
     emptyName: 'Введите ФИО',
     nameInvalid: 'Введите корректное ФИО',
+    nameThreeWords: 'ФИО должно состоять из трёх слов, разделённых пробелом',
     emptyEmail: 'Введите email',
     emailFormat: 'Введите корректный email',
     usernameLen: 'Логин: от 2 до 30 символов',
     usernameFormat: 'Допустимы буквы (A–Z, a–z), цифры (0–9), подчёркивание (_) и дефис (-). Пробелы недопустимы.',
     password: 'Пароль не соответствует требованиям',
     company: 'Укажите название компании',
+    companyInvalid: 'Некорректная запись компании',
     /** Согласие с рассылками; формулировка в духе registration.opt.in / MFE */
     marketing: 'Необходимо согласие на получение новостей и рассылок',
     honor: 'Необходимо согласие на обработку персональных данных',
@@ -141,9 +143,20 @@
     }
   }
 
+  function nameHasThreeWords(value) {
+    var trimmed = String(value || '').trim();
+    if (!trimmed) {
+      return false;
+    }
+    return trimmed.split(/\s+/).length === 3;
+  }
+
   function validateNameValue(value) {
     if (!value || !String(value).trim()) {
       return M.emptyName;
+    }
+    if (!nameHasThreeWords(value)) {
+      return M.nameThreeWords;
     }
     var v = String(value);
     if (URL_REGEX.test(v) || HTML_REGEX.test(v)) {
@@ -229,10 +242,26 @@
   }
 
   function validateCompanyValue(value) {
-    if (!value || !String(value).trim()) {
+    var trimmed = String(value || '').trim();
+    if (!trimmed) {
       return M.company;
     }
+    if (LETTER_REGEX.test(trimmed)) {
+      return M.companyInvalid;
+    }
     return '';
+  }
+
+  function stripLatinFromCompanyInput() {
+    var el = getInput('company');
+    if (!el) {
+      return;
+    }
+    var v = el.value;
+    var stripped = v.replace(/[a-zA-Z]/g, '');
+    if (stripped !== v) {
+      el.value = stripped;
+    }
   }
 
   /**
@@ -287,6 +316,30 @@
     return hasError;
   }
 
+  var companyInvalidServerMessages = {
+    'Incorrect company entry.': true,
+    'Incorrect company entry': true,
+  };
+
+  var nameThreeWordsServerMessages = {
+    'Full name must contain three words separated by spaces.': true,
+    'Full name must contain three words separated by spaces': true,
+  };
+
+  function localizeNameServerMessage(message) {
+    if (nameThreeWordsServerMessages[String(message || '').trim()]) {
+      return M.nameThreeWords;
+    }
+    return message;
+  }
+
+  function localizeCompanyServerMessage(message) {
+    if (companyInvalidServerMessages[String(message || '').trim()]) {
+      return M.companyInvalid;
+    }
+    return message;
+  }
+
   function showFieldErrors(payload) {
     if (!payload || typeof payload !== 'object') {
       return;
@@ -296,7 +349,13 @@
       if (!row || !row.length || !row[0].user_message) {
         return;
       }
-      showFieldError(key, row[0].user_message);
+      var msg = row[0].user_message;
+      if (key === 'name') {
+        msg = localizeNameServerMessage(msg);
+      } else if (key === 'company') {
+        msg = localizeCompanyServerMessage(msg);
+      }
+      showFieldError(key, msg);
     });
     if (payload.error_message && payload.error_message.length) {
       var first = payload.error_message[0];
@@ -393,5 +452,13 @@
     passwordInput.addEventListener('input', updatePasswordRequirementHints);
     passwordInput.addEventListener('change', updatePasswordRequirementHints);
     updatePasswordRequirementHints();
+  }
+
+  var companyInput = getInput('company');
+  if (companyInput) {
+    companyInput.addEventListener('input', stripLatinFromCompanyInput);
+    companyInput.addEventListener('paste', function () {
+      setTimeout(stripLatinFromCompanyInput, 0);
+    });
   }
 }());

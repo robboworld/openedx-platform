@@ -101,6 +101,12 @@ FEATURES["SKIP_EMAIL_VALIDATION"] = False
 FEATURES["AUTOMATIC_AUTH_FOR_TESTING"] = False
 """
 
+# Anti-spam: per-IP registration cap and minimum time on the form before submit.
+_PATCH_ROBBO_REGISTRATION_ANTI_SPAM = """
+REGISTRATION_RATELIMIT = '20/d'
+REGISTRATION_MIN_COMPLETION_SECONDS = 5
+"""
+
 # Robbo theme translations override stock LMS labels while keeping stock gettext keys.
 _PATCH_ROBBO_THEME_LOCALES = """
 from pathlib import Path as _RobboPath
@@ -250,6 +256,8 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_SUPPORT),
         ("openedx-lms-development-settings", _PATCH_ROBBO_EMAIL_CONFIRMATION),
         ("openedx-lms-production-settings", _PATCH_ROBBO_EMAIL_CONFIRMATION),
+        ("openedx-lms-development-settings", _PATCH_ROBBO_REGISTRATION_ANTI_SPAM),
+        ("openedx-lms-production-settings", _PATCH_ROBBO_REGISTRATION_ANTI_SPAM),
         ("openedx-lms-development-settings", _PATCH_ROBBO_THEME_LOCALES),
         ("openedx-lms-production-settings", _PATCH_ROBBO_THEME_LOCALES),
         ("openedx-lms-development-settings", _PATCH_ROBBO_BINDMOUNT_MFES_SKIP_RUNTIME_PARAGON),

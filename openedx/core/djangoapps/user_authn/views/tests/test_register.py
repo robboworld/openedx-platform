@@ -88,7 +88,7 @@ class RegistrationViewValidationErrorTest(
     USERNAME = "bob"
     EMAIL = "bob@example.com"
     PASSWORD = "password"
-    NAME = "Bob Smith"
+    NAME = "Bob John Smith"
     EDUCATION = "m"
     YEAR_OF_BIRTH = "1998"
     ADDRESS = "123 Fake Street"
@@ -284,7 +284,7 @@ class RegistrationViewValidationErrorTest(
         """
         response = self.client.post(self.url, {
             "email": "bob@example.com",
-            "name": "Bob Smith http://test.com",
+            "name": "Bob John Smith http://test.com",
             "username": "bob",
             "password": "password",
             "honor_code": "true",
@@ -299,7 +299,7 @@ class RegistrationViewValidationErrorTest(
             }
         )
 
-        # testing for http/https
+        # testing for http/https (too few words)
         response = self.client.post(self.url, {
             "email": "bob@example.com",
             "name": "http://",
@@ -312,7 +312,7 @@ class RegistrationViewValidationErrorTest(
         self.assertDictEqual(
             response_json,
             {
-                "name": [{"user_message": 'Enter a valid name'}],
+                "name": [{"user_message": 'Full name must contain three words separated by spaces.'}],
                 "error_code": "validation-error"
             }
         )
@@ -347,7 +347,7 @@ class RegistrationViewValidationErrorTest(
         """
         response = self.client.post(self.url, {
             "email": "bob@example.com",
-            "name": "<Bob Smith>",
+            "name": "Bob <John> Smith",
             "username": "bob",
             "password": "password",
             "honor_code": "true",
@@ -508,7 +508,7 @@ class RegistrationViewTestV1(
     USERNAME = "bob"
     EMAIL = "bob@example.com"
     PASSWORD = "password"
-    NAME = "Bob Smith"
+    NAME = "Bob John Smith"
     EDUCATION = "m"
     YEAR_OF_BIRTH = "1998"
     ADDRESS = "123 Fake Street"

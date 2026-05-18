@@ -14,7 +14,7 @@ import os
 import re
 from datetime import datetime
 from time import time
-from typing import Dict, FrozenSet, List, Set
+from typing import Dict, FrozenSet, List, Optional, Set
 
 from django.contrib.auth.models import User  # lint-amnesty, pylint: disable=imported-auth-user
 from django.core.exceptions import ObjectDoesNotExist
@@ -40,23 +40,6 @@ TASK_LOG = logging.getLogger('edx.celery.task')
 
 _INTEREST_META_KEY = 'robbo_course_interest_titles'
 _MAX_GRADED_TESTS = 5
-# Russian labels for leaf XBlock category in CSV ``theory_path`` (x.y.z) third segment.
-_THEORY_BLOCK_TYPE_RU = {
-    'html': 'текст',
-    'video': 'видео',
-    'problem': 'тестирование',
-    'openassessment': 'оценивание',
-    'library_content': 'библиотека',
-    'poll': 'опрос',
-    'survey': 'опрос',
-    'word_cloud': 'облако_слов',
-    'lti': 'lti',
-    'drag-and-drop-v2': 'перетаскивание',
-    'chapter': 'раздел',
-    'sequential': 'подраздел',
-    'vertical': 'блок',
-    'course': 'курс',
-}
 # Profile columns moved to the far right of the Robbo CSV (after interest_*).
 _TAIL_PROFILE_FEATURES: FrozenSet[str] = frozenset({
     'language',
@@ -230,11 +213,63 @@ def _visible_child_index(parent_block, child_location) -> int:
     return 0
 
 
+def _is_introduction_named(block) -> bool:
+    """True when display name looks like a subsection/chapter introduction (введение, intro, …)."""
+    name = (getattr(block, 'display_name', None) or '').strip().lower()
+    if not name:
+        return False
+    if any(marker in name for marker in ('введение', 'introduction', 'вводной', 'вводный')):
+        return True
+    return bool(re.match(r'^intro\b', name))
+
+
+def _theory_section_index(course_block, chapter_location) -> Optional[int]:
+    """
+    x for ``theory_path``: first visible course section is ``0``, next is ``1`` (модуль 1), etc.
+    """
+    section_idx = _visible_child_index(course_block, chapter_location)
+    if section_idx <= 0:
+        return None
+    return section_idx - 1
+
+
+def _theory_subsection_index(chapter_block, sequential_block, sequential_location) -> Optional[int]:
+    """
+    y for ``theory_path``: named introduction subsections are ``0``; others ``1``, ``2``, … in order.
+
+    Module 1 typically has no intro subsection — only blocks named like «введение» become ``0``.
+    """
+    if _is_introduction_named(sequential_block):
+        return 0
+
+    subsection_idx = 0
+    for child in chapter_block.get_children():
+        if getattr(child, 'visible_to_staff_only', False):
+            continue
+        if _is_introduction_named(child):
+            if child.location == sequential_location:
+                return 0
+            continue
+        subsection_idx += 1
+        if child.location == sequential_location:
+            return subsection_idx
+    return None
+
+
+def _format_theory_path(section_x: int, subsection_y: int, block_z: int) -> str:
+    """Trailing dot avoids Excel treating values like ``2.1.2`` as dates."""
+    return f'{section_x}.{subsection_y}.{block_z}.'
+
+
 def _theory_path_xyz(user, course_id) -> str:
     """
-    Last completed block in the report course: ``section_index.subsection_index.type_ru`` (e.g. ``1.2.текст``).
+    Last completed block: ``section.subsection.block.`` (e.g. ``0.1.2.``, ``2.0.0.``, ``3.1.2.``).
 
-    Uses the same completion source as resume / mobile "last visited" (last *completed* block).
+    x = порядковый раздел курса (первый = 0, затем модуль 1 = 1, модуль 2 = 2, …);
+    y = 0 для подраздела-введения внутри модуля, иначе 1, 2, …;
+    z = номер блока (юнита) в подразделе, 0 если только введение подраздела.
+
+    Uses the same completion source as resume / mobile (last *completed* block).
     """
     try:
         block_key = get_key_to_last_completed_block(user, course_id)
@@ -255,23 +290,25 @@ def _theory_path_xyz(user, course_id) -> str:
     try:
         course_block = store.get_item(path[0])
         chapter_block = store.get_item(path[1])
+        sequential_block = store.get_item(path[2]) if len(path) > 2 else None
     except ItemNotFoundError:
         return ''
 
-    x = _visible_child_index(course_block, path[1])
-    y = 0
-    if len(path) > 2:
-        y = _visible_child_index(chapter_block, path[2])
-
-    leaf = path[-1]
-    block_type = getattr(leaf, 'block_type', '') or ''
-    z = _THEORY_BLOCK_TYPE_RU.get(block_type, block_type or 'прочее')
-
-    if x <= 0:
+    x = _theory_section_index(course_block, path[1])
+    if x is None:
         return ''
-    if y <= 0:
-        return f'{x}.0.{z}'
-    return f'{x}.{y}.{z}'
+
+    y = 0
+    z = 0
+    if len(path) > 2:
+        y = _theory_subsection_index(chapter_block, sequential_block, path[2])
+        if y is None:
+            return ''
+        if y != 0 and sequential_block is not None and len(path) > 3:
+            # First child of the subsection: unit (vertical) or a block placed directly on the sequential.
+            z = _visible_child_index(sequential_block, path[3])
+
+    return _format_theory_path(x, y, z)
 
 
 def _middle_headers() -> List[str]:
@@ -313,7 +350,7 @@ def upload_robbo_extended_students_csv(_xblock_instance_args, _entry_id, course_
     Includes all platform users; ``enrolled_in_report_course`` marks active enrollment in the
     course this report was generated from (grades and tests still use that course context).
 
-    Middle columns include ``theory_path`` (``section.subsection.type_ru`` from last completed block)
+    Middle columns include ``theory_path`` (``section.subsection.block`` from last completed block)
     immediately before ``test_1``..``test_5``.
     """
     start_time = time()

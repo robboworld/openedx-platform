@@ -3466,12 +3466,17 @@ REST_FRAMEWORK = {
 REGISTRATION_VALIDATION_RATELIMIT = '30/7d'
 
 # .. setting_name: REGISTRATION_RATELIMIT
-# .. setting_default: 60/7d
+# .. setting_default: 20/d
 # .. setting_description: New users are registered on edx via RegistrationView.
-#    It's POST end-point is rate-limited up to 60 requests per IP Address in a week by default.
-#    Purpose of this setting is to restrict an attacker from registering numerous fake accounts.
+#    POST is rate-limited per IP (Robbo default: 20 registrations per day).
 # .. setting_tickets: https://github.com/openedx/edx-platform/pull/27060
-REGISTRATION_RATELIMIT = '60/7d'
+REGISTRATION_RATELIMIT = '20/d'
+
+# .. setting_name: REGISTRATION_MIN_COMPLETION_SECONDS
+# .. setting_default: 5
+# .. setting_description: Reject registration when total_registration_time from the client
+#    is missing or below this threshold (bot/automation filter). Set to 0 to disable.
+REGISTRATION_MIN_COMPLETION_SECONDS = 5
 
 SWAGGER_SETTINGS = {
     'DEFAULT_INFO': 'openedx.core.apidocs.api_info',

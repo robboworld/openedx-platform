@@ -36,7 +36,11 @@ from openedx.core.djangoapps.user_api.errors import (
 )
 from openedx.core.djangoapps.user_api.preferences.api import update_user_preferences
 from openedx.core.djangoapps.user_authn.utils import check_pwned_password
-from openedx.core.djangoapps.user_authn.views.registration_form import validate_name, validate_username
+from openedx.core.djangoapps.user_authn.views.registration_form import (
+    name_has_three_words,
+    validate_name,
+    validate_username,
+)
 from openedx.core.lib.api.view_utils import add_serializer_errors
 from openedx.features.enterprise_support.utils import get_enterprise_readonly_account_fields
 from openedx.features.name_affirmation_api.utils import is_name_affirmation_installed
@@ -434,6 +438,9 @@ def get_name_validation_error(name):
         # Validation for the name length
         if len(name) > 255:
             return _("Full name can't be longer than 255 symbols")
+
+        if not name_has_three_words(name):
+            return _('Full name must contain three words separated by spaces.')
 
         return _('Enter a valid name') if (contains_html(name) or contains_url(name)) else ''
     else:
