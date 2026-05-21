@@ -234,6 +234,17 @@ class BaseStudentModuleHistory(models.Model):
 
         return history_entries
 
+    def __repr__(self):
+        return '{}<{!r}>'.format(
+            self.__class__.__name__,
+            {
+                'id': self.id,
+                'student_module_id': self.student_module_id,
+                'created': self.created,
+                'grade': self.grade,
+            },
+        )
+
     @staticmethod
     def save_history_entry(student_module, history_model_cls, request_cache_key):
         """
