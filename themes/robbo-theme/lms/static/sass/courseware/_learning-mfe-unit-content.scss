@@ -4,6 +4,15 @@
 //
 // Unit HTML inside the Learning MFE iframe (`body.view-in-mfe`). Wide tables scroll horizontally;
 // do not put overflow-x on `#course-content` — it breaks images and other full-width media.
+//
+// Authoring: wrap tables in `<div class="course-table-scroll">` (see robbo-openedx-stack/docs/course-tables.md).
+
+.xmodule_display.xmodule_HtmlBlock .course-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  overscroll-behavior-x: contain;
+}
 
 body.view-in-mfe.view-courseware .course-wrapper.chromeless {
   min-width: 0;
