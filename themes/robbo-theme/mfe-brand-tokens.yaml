@@ -1,17 +1,31 @@
 # Справочник бренда Robbo для согласования LMS (Sass) и MFE (Paragon / design tokens).
-# Источник переменных LMS: lms/static/sass/partials/lms/theme/_variables.scss
+# Официальная палитра (Graphic Guidelines v0.1): docs/design/robbo-brand-guidelines.md
+# SCSS: lms/static/sass/partials/lms/theme/_robbo-brand-tokens.scss
+# Источник UI-переменных LMS: lms/static/sass/partials/lms/theme/_variables.scss
 
-primary: "#15803d"
-primary_light: "#f0fdf4"
+# Official brand (logo, slogan, accent per guidelines)
+brand:
+  green: "#00af41"
+  coal: "#383838"
+  grey: "#989898"
+  white: "#ffffff"
+
+# Platform UI accent (aligned with brand.green)
+primary: "#00af41"
+primary_light: "#e8f8ef"
+primary_dark: "#007a2e"
 dark_surface: "#111827"
 text_dark_theme: "#F8F8F8"
 
 fonts:
-  title: "Inter, sans-serif"
+  title: "ProximaNova, 'Proxima Nova', Helvetica, Arial, sans-serif"
   body: "Crimson, 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif"
 
-# Google Fonts для заголовков (как в _variables.scss)
-google_fonts_url: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+# Proxima Nova: lms/static/fonts/*.woff → /static/robbo-theme/fonts/
+font_files:
+  proxima_regular: "/static/robbo-theme/fonts/ProximaNova-Regular.woff"
+  proxima_extrabold: "/static/robbo-theme/fonts/ProximaNova-Extrabold.woff"
+google_fonts_url: ""
 
 # Статика темы для MFE (пути от корня LMS после collectstatic / dev):
 mfe_logo_paths:

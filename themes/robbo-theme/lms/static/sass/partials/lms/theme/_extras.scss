@@ -3,7 +3,7 @@
 $content_padding_top: 24px;
 $content-padding-bottom: 10px;
 $header-height: $robbo-header-bar-min-h;
-// Гостевая главная: ProximaNova из `_guest-landing.scss` (как Tilda); иначе Inter с !important перебивает наследование.
+// Гостевая главная: свой stack в `_guest-landing.scss`; остальной LMS — ProximaNova из `_robbo-proxima-fonts.scss`.
 body:not(.robbo-guest-landing-page),
 body:not(.robbo-guest-landing-page) h1,
 body:not(.robbo-guest-landing-page) h2,

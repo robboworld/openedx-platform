@@ -1,12 +1,12 @@
 /**
  * Robbo MFE shell — выравнивает Indigo header/footer с LMS robbo-theme
- * (зелёная шапка #00b140, светлый футер как на robbo-site-footer).
+ * (зелёная шапка #00af41, светлый футер как на robbo-site-footer).
  * Подключается в сборке MFE через Dockerfile (см. плагин).
  */
 
 /* ---- Header (Indigo @edly-io/frontend-component-header) ---- */
 .site-header-desktop {
-  background: #00b140 !important;
+  background: #00af41 !important;
   box-shadow: none !important;
 }
 
@@ -33,11 +33,11 @@
 }
 
 .site-header-desktop .main-nav .menu .menu-content {
-  border-top-color: #15803d !important;
+  border-top-color: #00af41 !important;
 }
 
 .site-header-mobile {
-  background: #00b140 !important;
+  background: #00af41 !important;
 }
 
 .site-header-mobile .nav-link {

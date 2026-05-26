@@ -1,0 +1,36 @@
+// Copyright (C) 2026 Robbo <https://robbo.ru>
+// SPDX-License-Identifier: AGPL-3.0-only
+// Part of the Robbo Open edX distribution. Official palette: docs/design/robbo-brand-guidelines.md (ROBBO GRAPHIC GUIDELINES v0.1).
+
+// --- Official brand (graphic guidelines) ---
+$robbo-brand-green: #00af41 !default;
+$robbo-brand-coal: #383838 !default;
+$robbo-brand-grey: #989898 !default;
+$robbo-brand-white: #ffffff !default;
+
+$robbo-font-body: 'Proxima Nova', 'ProximaNova', Helvetica, Arial, sans-serif !default;
+$robbo-font-headline: $robbo-font-body !default;
+$robbo-font-slogan: 'Plakkaat', $robbo-font-headline !default;
+
+// Logo clearspace unit: width of lowercase "o" in logotype (1X horizontal, 0.6X vertical per guidelines).
+$robbo-logo-clearspace-x: 1em !default;
+$robbo-logo-clearspace-y: 0.6em !default;
+$robbo-logo-min-width: 50px !default;
+
+// --- Platform UI (aligned with official brand green) ---
+$robbo-ui-primary: $robbo-brand-green !default;
+$robbo-ui-primary-light: mix(#ffffff, $robbo-brand-green, 93%) !default;
+$robbo-ui-primary-dark: mix(#000000, $robbo-brand-green, 28%) !default;
+
+// CSS custom properties for components that prefer var() (e.g. guest landing extensions).
+:root {
+  --robbo-green: #{$robbo-brand-green};
+  --robbo-coal: #{$robbo-brand-coal};
+  --robbo-grey: #{$robbo-brand-grey};
+  --robbo-white: #{$robbo-brand-white};
+  --robbo-ui-primary: #{$robbo-ui-primary};
+  --robbo-ui-primary-light: #{$robbo-ui-primary-light};
+  --robbo-ui-primary-dark: #{$robbo-ui-primary-dark};
+  --robbo-font-body: #{$robbo-font-body};
+  --robbo-font-headline: #{$robbo-font-headline};
+}
