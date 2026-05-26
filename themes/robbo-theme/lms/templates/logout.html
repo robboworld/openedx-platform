@@ -1,0 +1,85 @@
+{# Copyright (C) 2026 Robbo <https://robbo.ru> #}
+{# SPDX-License-Identifier: AGPL-3.0-only #}
+{# Part of the Robbo Open edX distribution (robbo-theme). See NOTICE at repository root. #}
+{% extends "main_django.html" %}
+{% load static %}
+
+{% block title %}Выход выполнен | {{ block.super }}{% endblock %}
+
+{% block body %}
+    {% if show_tpa_logout_link %}
+        <h1>Вы вышли из системы.</h1>
+
+        <p style="text-align: center; margin-bottom: 20px;">
+            <a href="{{ tpa_logout_url }}">Нажмите здесь</a>, чтобы завершить сеанс единого входа (SSO).
+        </p>
+
+    {% else %}
+        {% if enterprise_target %}
+            <h1>Выполняется вход в систему</h1>
+
+            <p style="text-align: center; margin-bottom: 20px;">
+                Это может занять минуту. Если перенаправление не сработало,
+                <a href="{{ target|default:'/' }}">перейдите на главную страницу</a>.
+            </p>
+        {% else %}
+            <h1>Вы вышли из системы.</h1>
+
+            <p style="text-align: center; margin-bottom: 20px;">
+                Если перенаправление не произойдёт в течение 5 секунд,
+                <a href="{{ target|default:'/' }}">нажмите здесь, чтобы перейти на главную страницу</a>.
+            </p>
+        {% endif %}
+    {% endif %}
+
+    <div id="iframeContainer" style="visibility: hidden" data-redirect-url="{{ target|default:'/' }}">
+        {% for uri in logout_uris %}
+            <iframe src="{{ uri }}"></iframe>
+        {% endfor %}
+    </div>
+
+    {% if not show_tpa_logout_link %}
+        <script type="text/javascript" src="{% static 'js/logout.js' %}"></script>
+        <script>
+        (function () {
+            var container = document.getElementById('iframeContainer');
+            if (!container) {
+                window.location.assign('/');
+                return;
+            }
+            var redirectUrl = container.getAttribute('data-redirect-url') || '/';
+            var iframes = container.querySelectorAll('iframe');
+            var maxWaitMs = 5000;
+            var didRedirect = false;
+
+            function go() {
+                if (didRedirect) {
+                    return;
+                }
+                didRedirect = true;
+                window.location.assign(redirectUrl);
+            }
+
+            if (iframes.length === 0) {
+                go();
+                return;
+            }
+
+            var waiting = iframes.length;
+            function onIframeDone() {
+                waiting -= 1;
+                if (waiting <= 0) {
+                    go();
+                }
+            }
+
+            for (var i = 0; i < iframes.length; i += 1) {
+                iframes[i].addEventListener('load', onIframeDone);
+            }
+
+            setTimeout(go, maxWaitMs);
+        }());
+        </script>
+    {% endif %}
+
+{% endblock body %}

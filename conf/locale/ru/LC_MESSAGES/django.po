@@ -3138,14 +3138,12 @@ msgid "Enrollment Date"
 msgstr "Дата записи на курс"
 
 #: lms/djangoapps/courseware/date_summary.py
-#, fuzzy
 msgid "Course starts"
-msgstr "Файлы курса"
+msgstr "Начало курса"
 
 #: lms/djangoapps/courseware/date_summary.py
-#, fuzzy
 msgid "Course ends"
-msgstr "Идентификатор курса"
+msgstr "Окончание курса"
 
 #: lms/djangoapps/courseware/date_summary.py
 #, fuzzy
@@ -3158,13 +3156,12 @@ msgstr ""
 "курса."
 
 #: lms/djangoapps/courseware/date_summary.py
-#, fuzzy
 msgid ""
 "After the course ends, the course content will be archived and no longer "
 "active."
 msgstr ""
-"Курс завершён и находится в архиве, но у вас останется доступ к материалам "
-"курса."
+"После окончания курса материалы будут перенесены в архив и перестанут быть "
+"активными."
 
 #: lms/djangoapps/courseware/date_summary.py
 msgid ""
@@ -5888,17 +5885,18 @@ msgstr ""
 
 #: lms/templates/logout.html
 msgid "We are signing you in."
-msgstr "Мы подписываем вас."
+msgstr "Выполняется вход в систему"
 
 #: lms/templates/logout.html
-#, fuzzy
 msgid ""
 "\n"
 "                  This may take a minute. If you are not redirected, go to the home page.\n"
 "                "
 msgstr ""
 "\n"
-"Вы зарегистрированы на курс %(course_name)s"
+"                  Это может занять минуту. Если перенаправление не сработало, "
+"перейдите на главную страницу.\n"
+"                "
 
 #: lms/templates/logout.html
 #, python-format, python-brace-format
@@ -20969,11 +20967,12 @@ msgstr ""
 "адрес. Вы получите их в ближайшее время."
 
 #: lms/templates/static_templates/404.html
-#, fuzzy
 msgid ""
 "The page that you were looking for was not found. Go back to the "
 "{link_start}homepage{link_end} ."
-msgstr "Страница, которую вы искали, не найдена."
+msgstr ""
+"Страница, которую вы искали, не найдена. Вернитесь на "
+"{link_start}главную страницу{link_end}."
 
 #: lms/templates/static_templates/429.html
 msgid "Too Many Requests"

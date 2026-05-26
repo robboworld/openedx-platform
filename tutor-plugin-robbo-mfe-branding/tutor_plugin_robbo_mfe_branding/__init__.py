@@ -83,8 +83,8 @@ MFE_CONFIG["YANDEX_METRIKA_COUNTER_ID"] = None
 # view fills `courses` from MySQL CourseOverview.
 _PATCH_ROBBO_LMS_SERVER_CATALOG = """
 FEATURES["ENABLE_COURSE_DISCOVERY"] = False
-# Immediate redirect to ``next``/home; avoids broken iframe/JS logout interstitial on Robbo stacks.
-FEATURES["SKIP_INTERMEDIATE_LOGOUT_PAGE"] = True
+# Show Robbo ``logout.html`` (Russian) then redirect via inline script; fast path still uses ``?next=/``.
+FEATURES["SKIP_INTERMEDIATE_LOGOUT_PAGE"] = False
 """
 
 # Robbo support: Authn / activation copy, help links (configuration_helpers in login & emails).

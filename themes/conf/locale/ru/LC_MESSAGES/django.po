@@ -17,7 +17,7 @@ msgid "Explore Courses"
 msgstr "Каталог курсов"
 
 msgid "Register for free"
-msgstr "Регистрация"
+msgstr "Зарегистрироваться бесплатно"
 
 #: openedx/core/djangoapps/user_authn/views/registration_form.py
 msgid "Incorrect company entry."

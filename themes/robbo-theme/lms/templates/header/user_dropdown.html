@@ -34,6 +34,6 @@ displayname = get_enterprise_learner_generic_name(request) or username
         % if settings.ACCOUNT_MICROFRONTEND_URL:
         <div class="mobile-nav-item dropdown-item dropdown-nav-item"><a href="${settings.ACCOUNT_MICROFRONTEND_URL}" role="menuitem">${_("Account")}</a></div>
         % endif
-        <div class="mobile-nav-item dropdown-item dropdown-nav-item"><a href="${reverse('logout')}" role="menuitem">${_("Sign Out")}</a></div>
+        <div class="mobile-nav-item dropdown-item dropdown-nav-item"><a href="${reverse('logout')}?next=/" role="menuitem">${_("Sign Out")}</a></div>
     </div>
 </div>
