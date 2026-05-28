@@ -223,8 +223,14 @@
                 });
             });
             this.$list_studs_robbo_csv_btn.click(function() {
-                var url = dataDownloadObj.$list_studs_robbo_csv_btn.data('endpoint') + '/csv';
+                var url = dataDownloadObj.$list_studs_robbo_csv_btn.attr('data-endpoint');
                 var errorMessage = gettext('Не удалось поставить в очередь расширенный CSV профиля РОББО. Попробуйте ещё раз.');
+                if (!url) {
+                    dataDownloadObj.$reports_request_response_error.text(errorMessage);
+                    dataDownloadObj.$reports_request_response_error.css({display: 'block'});
+                    return;
+                }
+                url = url + '/csv';
                 dataDownloadObj.clear_display();
                 return $.ajax({
                     type: 'POST',
@@ -232,7 +238,11 @@
                     url: url,
                     error: function(error) {
                         if (error.responseText) {
-                            errorMessage = JSON.parse(error.responseText);
+                            try {
+                                errorMessage = JSON.parse(error.responseText);
+                            } catch (e) {
+                                errorMessage = error.responseText;
+                            }
                         }
                         dataDownloadObj.$reports_request_response_error.text(errorMessage);
                         return dataDownloadObj.$reports_request_response_error.css({
@@ -241,9 +251,9 @@
                     },
                     success: function(data) {
                         dataDownloadObj.$reports_request_response.text(data.status);
-                        return $('.msg-confirm').css({
-                            display: 'block'
-                        });
+                        $('.msg-confirm').css({display: 'block'});
+                        dataDownloadObj.instructor_tasks.task_poller.start();
+                        return dataDownloadObj.report_downloads.downloads_poller.start();
                     }
                 });
             });
