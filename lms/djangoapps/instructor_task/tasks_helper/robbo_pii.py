@@ -137,7 +137,7 @@ def _split_profile_feature_order(query_features: List[str]) -> tuple[List[str], 
 
 
 # ``city`` and ``external_user_key`` are rendered at the far right (after tail columns).
-# ``enrolled_in_report_course`` is inserted immediately after ``date_joined`` in the prefix.
+# ``user_is_active`` is inserted immediately after ``username``; ``enrolled_in_report_course`` after ``date_joined``.
 _DEFERRED_TO_END_FEATURES: FrozenSet[str] = frozenset({'external_user_key', 'city'})
 
 
@@ -146,15 +146,17 @@ def _leading_without_trailer_columns(leading_features: List[str]) -> List[str]:
 
 
 def _prefix_column_names(leading_features: List[str]) -> List[str]:
-    """Leading columns (no city/external at end); ``enrolled_in_report_course`` right after ``date_joined``."""
+    """Leading columns; ``user_is_active`` after ``username``; ``enrolled_in_report_course`` after ``date_joined``."""
     names: List[str] = []
-    inserted = False
+    enrolled_inserted = False
     for feature in _leading_without_trailer_columns(leading_features):
         names.append(feature)
+        if feature == 'username':
+            names.append('user_is_active')
         if feature == 'date_joined':
             names.append('enrolled_in_report_course')
-            inserted = True
-    if not inserted:
+            enrolled_inserted = True
+    if not enrolled_inserted:
         names.append('enrolled_in_report_course')
     return names
 
@@ -166,14 +168,17 @@ def _prefix_row_values(
     course_id,
 ) -> List[object]:
     enrolled = 'yes' if CourseEnrollment.is_enrolled(user, course_id) else 'no'
+    active = 'yes' if user.is_active else 'no'
     cells: List[object] = []
-    inserted = False
+    enrolled_inserted = False
     for feature in _leading_without_trailer_columns(leading_features):
         cells.append(base_row.get(feature, ''))
+        if feature == 'username':
+            cells.append(active)
         if feature == 'date_joined':
             cells.append(enrolled)
-            inserted = True
-    if not inserted:
+            enrolled_inserted = True
+    if not enrolled_inserted:
         cells.append(enrolled)
     return cells
 
