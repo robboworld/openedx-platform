@@ -1,78 +1,350 @@
-// Include custom cirtificate
+// Robbo certificate — scoped to .robbo-cert (preview page keeps edx chrome).
+@import '../partials/lms/theme/robbo-brand-tokens';
 
-body.certificate {
-    .wrapper-header {
-        padding: 0;
-    }
-    .accomplishment-metadata {
-        .recipient-img {
-            display: none;
-        }
-        .recipient-name, .recipient-username {
-            margin: 0;
-        }
-    }
-    .layout-accomplishment {
-        .wrapper-introduction {
-            padding: 0;
-        }
-    }
-    .wrapper-about {
-        padding: 20px 0 0 !important;
-    }
-    .header-app, .banner-user, .introduction, .wrapper-accomplishment-metadata, .wrapper-accomplishment-rendering, .introduction, aside.about {
-        display: block;
-        max-width: 1600px !important;
-        margin: 0 auto;
-        padding: 0 15px !important;
-        box-sizing: border-box;
-        .header-app-title {
-            text-align: left;
-            a {
-                display: inline-block;
-                vertical-align: top;
-                width: 45px;
-                margin: 10px 0;
-            }
-        }
-    }
-    &.indigo-dark-theme {
-        background: $body-bg-d;
-        color: $text-color-d;
-        .banner-user .message-actions .action {
-            background: none !important;
-            text-shadow: none;
-            color: $text-color-d !important;
-        }
-        .wrapper-header {
-            background: $body-bg-d;
-            border-bottom: 1px solid $border-color;
-        }
-        &.layout-accomplishment.certificate-honor .accomplishment-main {
-            background: $primary-light-d;
-        }
-        .depth-card, .accomplishment-brief, .accomplishment-rendering {
-            background: $body-bg-d;
-        }
-        .accomplishment-rendering .accomplishment-type-label,
-        .accomplishment-metadata .metadata .value {
-            color: $text-color-d;
-        }
-    }
+.layout-accomplishment .wrapper-view .wrapper-banner-user {
+  margin-top: 0 !important;
+  padding-top: 24px;
+  background: $robbo-brand-green;
+  box-shadow: none;
 }
+
+.layout-accomplishment .wrapper-view .banner-user .message-title,
+.layout-accomplishment .wrapper-view .banner-user .message-copy {
+  color: $robbo-brand-white;
+}
+
+.layout-accomplishment .wrapper-view .banner-user .message-actions .action {
+  border-color: $robbo-brand-white;
+  color: $robbo-brand-white;
+  background: transparent;
+}
+
+.layout-accomplishment .wrapper-view .banner-user .message-actions .action:hover,
+.layout-accomplishment .wrapper-view .banner-user .message-actions .action:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: $robbo-brand-white;
+  color: $robbo-brand-white;
+}
+
+.layout-accomplishment .wrapper-view .wrapper-introduction {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.layout-accomplishment .wrapper-view .wrapper-introduction .introduction {
+  margin-bottom: 0;
+}
+
+.layout-accomplishment .wrapper-view .wrapper-footer .footer-app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.layout-accomplishment .wrapper-view .wrapper-footer .footer-app-copyright,
+.layout-accomplishment .wrapper-view .wrapper-footer .footer-app-nav {
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  text-align: center;
+}
+
+.layout-accomplishment .wrapper-view .wrapper-footer .footer-app-nav .list-legal {
+  text-align: center !important;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.layout-accomplishment .wrapper-view .wrapper-footer .footer-app-nav .list-legal .nav-item {
+  display: block !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+  text-align: center;
+}
+
+.layout-accomplishment .wrapper-accomplishment-rendering .accomplishment-rendering,
+.layout-accomplishment .wrapper-accomplishment-rendering .robbo-cert {
+  top: 0;
+}
+
+@media screen {
+  .layout-accomplishment .wrapper-accomplishment-rendering {
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+
+  .wrapper-accomplishment-rendering .robbo-cert {
+    width: 297mm;
+    height: 210mm;
+    min-width: 297mm;
+    min-height: 210mm;
+    max-width: none;
+    flex-shrink: 0;
+    margin: 0 auto;
+  }
+
+  .robbo-cert__sheet {
+    width: 297mm;
+    height: 210mm;
+    min-width: 297mm;
+    min-height: 210mm;
+    max-width: 297mm;
+    max-height: 210mm;
+  }
+}
+
+.robbo-cert__sheet {
+  position: relative;
+  width: 297mm;
+  height: 210mm;
+  overflow: hidden;
+  background-color: #fff;
+  background-image: url("../images/certificates/cert_bg.jpg");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  aspect-ratio: auto;
+  min-height: 0;
+}
+
+.robbo-cert__body {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  min-height: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: center;
+  padding: 5%;
+}
+
+.robbo-cert__header {
+  margin: 0 auto 3%;
+  width: 55%;
+  max-width: 55%;
+  text-align: center;
+}
+
+.robbo-cert__logo {
+  width: 395px;
+  max-width: none;
+  height: auto;
+  margin: 0 auto 2%;
+  display: block;
+}
+
+.robbo-cert__title {
+  margin: 0 0 4%;
+  font-size: 27px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #000;
+}
+
+.robbo-cert__statement {
+  width: 55%;
+  max-width: 55%;
+  margin: 0 auto;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.robbo-cert__lead {
+  margin: 0 0 1%;
+  font-size: 16px;
+  line-height: 1.35;
+  width: 100%;
+  max-width: 100%;
+  text-align: center;
+  align-self: center;
+}
+
+.robbo-cert__recipient {
+  margin: 0 0 2%;
+  padding-bottom: 0.4%;
+  border-bottom: 2px dotted #888;
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 700;
+  width: 100%;
+  max-width: 100%;
+  text-align: center;
+}
+
+.robbo-cert__course-line {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.45;
+  max-width: 100%;
+  width: 100%;
+  text-align: center;
+}
+
+.robbo-cert__course-name {
+  font-weight: 700;
+}
+
+.robbo-cert__footer {
+  width: 68%;
+  max-width: 68%;
+  margin-top: auto;
+  margin-right: 4%;
+  margin-left: auto;
+  padding-top: 7%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  align-self: flex-end;
+  text-align: right;
+}
+
+.robbo-cert__signatory {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  text-align: left;
+}
+
+.robbo-cert__signature-container {
+  flex-shrink: 0;
+}
+
+.robbo-cert__signature {
+  width: 140px;
+  height: auto;
+  margin: 0;
+  display: block;
+}
+
+.robbo-cert__signatory-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left !important;
+  width: 200px;
+  max-width: 200px;
+  flex-shrink: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.robbo-cert__signatory-role {
+  max-width: 200px;
+  width: 100%;
+}
+
+.robbo-cert__signatory-role,
+.robbo-cert__signatory-name,
+.robbo-cert__issued {
+  margin: 0;
+  padding: 0;
+  text-indent: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #000;
+  text-align: left !important;
+  align-self: stretch;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.robbo-cert__signatory-name {
+  margin-top: 5px;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.robbo-cert__issued {
+  margin-top: 10px;
+  white-space: nowrap;
+}
+
 @media print {
-    body.indigo-dark-theme.certificate {
-        background: white;
-        color: black;
-        &.layout-accomplishment.certificate-honor .accomplishment-main {
-            background: white;
-        }
-        .depth-card, .accomplishment-brief, .accomplishment-rendering {
-            background: white;
-        }
-        .accomplishment-rendering .accomplishment-type-label,
-        .accomplishment-metadata .metadata .value {
-            color: black;
-        }
-    }
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  html,
+  body.layout-accomplishment {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 297mm;
+    height: 210mm;
+    overflow: hidden !important;
+    background: #fff !important;
+  }
+
+  body.layout-accomplishment .wrapper-view,
+  body.layout-accomplishment .accomplishment-main,
+  body.layout-accomplishment .wrapper-accomplishment-rendering {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 297mm !important;
+    height: 210mm !important;
+    overflow: hidden !important;
+    page-break-inside: avoid;
+    page-break-after: avoid;
+    break-inside: avoid;
+  }
+
+  .layout-accomplishment .wrapper-banner-user,
+  .layout-accomplishment .wrapper-about,
+  .layout-accomplishment .wrapper-footer,
+  .layout-accomplishment .wrapper-introduction,
+  .layout-accomplishment .wrapper-header,
+  .layout-accomplishment hr.divider {
+    display: none !important;
+  }
+
+  .wrapper-accomplishment-rendering .robbo-cert {
+    width: 297mm !important;
+    height: 210mm !important;
+    max-width: none !important;
+    margin: 0 !important;
+    page-break-inside: avoid;
+    page-break-after: avoid;
+    break-inside: avoid;
+  }
+
+  .robbo-cert__sheet {
+    width: 297mm !important;
+    height: 210mm !important;
+    max-width: 297mm !important;
+    max-height: 210mm !important;
+    min-height: 0 !important;
+    aspect-ratio: auto !important;
+    overflow: hidden !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    page-break-before: avoid;
+    page-break-after: avoid;
+    break-inside: avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .robbo-cert__body {
+    height: 100% !important;
+    min-height: 0 !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
 }

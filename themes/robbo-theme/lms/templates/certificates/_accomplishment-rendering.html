@@ -1,0 +1,69 @@
+<%page expression_filter="h"/>
+<%namespace name='static' file='/static_content.html'/>
+<%!
+from django.utils.translation import gettext as _
+import re
+
+def robbo_cert_date_display(date_str):
+    """Swap month/day: 'мая 29, 2026' -> '29 мая 2026'."""
+    if not date_str:
+        return date_str
+    match = re.match(r'^(\S+)\s+(\d{1,2}),\s+(\d{4})\s*$', date_str.strip())
+    if match:
+        month, day, year = match.groups()
+        return f"{day} {month} {year}"
+    return date_str
+%>
+
+<%
+signatories = certificate_data.get('signatories', []) if certificate_data else []
+primary_signatory = signatories[0] if signatories else None
+recipient_name = accomplishment_copy_name or accomplishment_copy_username or 'Иван Иванов'
+certificate_date_display = robbo_cert_date_display(certificate_date_issued)
+%>
+
+<main class="accomplishment accomplishment-main" role="main" aria-label="${_('Course completion certificate')}">
+    <div class="wrapper-accomplishment-rendering">
+        <div class="robbo-cert">
+    <div class="robbo-cert__sheet">
+        <div class="robbo-cert__body">
+            <header class="robbo-cert__header">
+                <img class="robbo-cert__logo" src="${static.url('robbo-theme/images/certificates/robbo-cert-logo.svg')}" alt="РОББО" />
+                <h1 class="robbo-cert__title">СЕРТИФИКАТ О ПРОХОЖДЕНИИ КУРСА</h1>
+            </header>
+
+            <div class="robbo-cert__statement">
+                <p class="robbo-cert__lead">Выдан в подтверждение того, что</p>
+                <p class="robbo-cert__recipient">${recipient_name}</p>
+                <p class="robbo-cert__course-line">
+                    успешно прошёл(‑ла) курс
+                    <span class="robbo-cert__course-name">«${accomplishment_copy_course_name}»</span>
+                </p>
+            </div>
+
+            <footer class="robbo-cert__footer">
+                <div class="robbo-cert__signatory">
+                    <div class="robbo-cert__signature-container">
+                        % if primary_signatory and primary_signatory.get('signature_image_path'):
+                            <img class="robbo-cert__signature" src="${static.url(primary_signatory['signature_image_path'])}" alt="" />
+                        % else:
+                            <img class="robbo-cert__signature" src="${static.url('robbo-theme/images/certificates/signature_PF.png')}" alt="" />
+                        % endif
+                    </div>
+                    <div class="robbo-cert__signatory-info">
+                        % if primary_signatory:
+                            <p class="robbo-cert__signatory-role">${primary_signatory.get('title') or 'Генеральный директор ООО «РОББО ТЕХНОЛОГИИ»'}</p>
+                            <p class="robbo-cert__signatory-name">${primary_signatory.get('name') or 'Павел Фролов'}</p>
+                        % else:
+                            <p class="robbo-cert__signatory-role">Генеральный директор ООО «РОББО ТЕХНОЛОГИИ»</p>
+                            <p class="robbo-cert__signatory-name">Павел Фролов</p>
+                        % endif
+                        <p class="robbo-cert__issued">Выдан: ${certificate_date_display} года</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+        </div>
+    </div>
+</main>

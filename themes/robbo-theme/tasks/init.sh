@@ -5,7 +5,7 @@ from django.contrib.sites.models import Site
 def assign_theme(domain):
     site, _ = Site.objects.get_or_create(domain=domain)
     if not site.themes.exists():
-        site.themes.create(theme_dir_name='indigo')
+        site.themes.create(theme_dir_name='robbo-theme')
 
 assign_theme('local.openedx.io')
 assign_theme('local.openedx.io')
