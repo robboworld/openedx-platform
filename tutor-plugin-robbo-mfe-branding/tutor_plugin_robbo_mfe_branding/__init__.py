@@ -108,6 +108,11 @@ REGISTRATION_MIN_COMPLETION_SECONDS = 5
 """
 
 # Robbo theme translations override stock LMS labels while keeping stock gettext keys.
+# tutor-indigo init assigns SiteTheme "indigo" for LMS_HOST; force default comprehensive theme.
+_PATCH_ROBBO_DEFAULT_SITE_THEME = """
+DEFAULT_SITE_THEME = "robbo-theme"
+"""
+
 _PATCH_ROBBO_THEME_LOCALES = """
 from pathlib import Path as _RobboPath
 
@@ -258,6 +263,10 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_EMAIL_CONFIRMATION),
         ("openedx-lms-development-settings", _PATCH_ROBBO_REGISTRATION_ANTI_SPAM),
         ("openedx-lms-production-settings", _PATCH_ROBBO_REGISTRATION_ANTI_SPAM),
+        ("openedx-lms-development-settings", _PATCH_ROBBO_DEFAULT_SITE_THEME),
+        ("openedx-lms-production-settings", _PATCH_ROBBO_DEFAULT_SITE_THEME),
+        ("openedx-cms-development-settings", _PATCH_ROBBO_DEFAULT_SITE_THEME),
+        ("openedx-cms-production-settings", _PATCH_ROBBO_DEFAULT_SITE_THEME),
         ("openedx-lms-development-settings", _PATCH_ROBBO_THEME_LOCALES),
         ("openedx-lms-production-settings", _PATCH_ROBBO_THEME_LOCALES),
         ("openedx-lms-development-settings", _PATCH_ROBBO_BINDMOUNT_MFES_SKIP_RUNTIME_PARAGON),
