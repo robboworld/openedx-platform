@@ -113,6 +113,25 @@ _PATCH_ROBBO_DEFAULT_SITE_THEME = """
 DEFAULT_SITE_THEME = "robbo-theme"
 """
 
+# Bake Robbo xblocks from $TUTOR_ROOT/env/build/openedx/requirements/private.txt (Koa parity).
+_PATCH_OPENEDX_ROBBO_XBLOCKS = """
+COPY requirements /openedx/requirements
+RUN --mount=type=cache,target=/openedx/.cache/pip,sharing=shared \\
+    pip install -r /openedx/requirements/private.txt
+"""
+
+# Robbo Scratch (separate containers scratch-srv-new / scratch-gui-new).
+# Survives `tutor config save` (manual Caddyfile edits do not).
+_PATCH_CADDYFILE_SCRATCH = """
+scratch-srv.robbo.world{$default_site_port} {
+    import proxy "scratch-srv-new:5000"
+}
+
+scratch-gui.robbo.world{$default_site_port} {
+    import proxy "scratch-gui-new:5001"
+}
+"""
+
 _PATCH_ROBBO_THEME_LOCALES = """
 from pathlib import Path as _RobboPath
 
@@ -273,5 +292,7 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_BINDMOUNT_MFES_SKIP_RUNTIME_PARAGON),
         ("openedx-lms-development-settings", _PATCH_YANDEX_METRIKA_DEV_LMS),
         ("openedx-lms-production-settings", _PATCH_YANDEX_METRIKA_PROD_LMS),
+        ("openedx-dockerfile-post-python-requirements", _PATCH_OPENEDX_ROBBO_XBLOCKS),
+        ("caddyfile", _PATCH_CADDYFILE_SCRATCH),
     ]
 )
