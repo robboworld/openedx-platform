@@ -13,20 +13,20 @@ from mako.runtime import UNDEFINED
 
     <div class="robbo-guest-hero-stack">
       <header class="robbo-guest-topbar" role="banner">
-        ## Вёрстка как Tilda t228 (page133250156): gutter 40px | лого | центр (меню) | кнопки | gutter.
+        ## Сетка как `.header-container` + `.robbo-main-header` на /courses: leading | center | trailing.
         <div class="robbo-guest-topbar__main">
-          <div class="robbo-guest-topbar__gutter" aria-hidden="true"></div>
-          <div class="robbo-guest-topbar__left">
+          <div class="robbo-guest-topbar__leading">
             <a class="robbo-guest-topbar__brand" href="https://skill.robbo.ru" target="_blank"
               rel="noopener noreferrer">
-              <img class="robbo-guest-topbar__logo" src="${static.url('images/guest-landing/topbar-logo.png')}"
-                width="1680" height="635" alt="Робототехника для мальчиков и девочек от 5 до 15 лет" decoding="async" />
+              <span class="robbo-guest-topbar__wordmark" aria-hidden="true">РОББО<sup
+                  class="robbo-guest-topbar__wordmark-reg">®</sup></span>
+              <span class="sr-only">Робототехника для мальчиков и девочек от 5 до 15 лет</span>
             </a>
           </div>
           <div class="robbo-guest-topbar__center">
             <a class="robbo-guest-topbar__tagline" href="${reverse('about') | h}">О компании</a>
           </div>
-          <div class="robbo-guest-topbar__right">
+          <div class="robbo-guest-topbar__trailing">
             <div class="robbo-guest-topbar__actions">
               <a class="robbo-guest-topbar__btn robbo-guest-topbar__btn--solid"
                 href="${reverse('signin_user') | h}">Вход</a>
@@ -34,29 +34,45 @@ from mako.runtime import UNDEFINED
                 href="${reverse('register_user') | h}">Регистрация</a>
             </div>
           </div>
-          <div class="robbo-guest-topbar__gutter" aria-hidden="true"></div>
         </div>
       </header>
     </div>
     <script src="${static.url('js/guest-landing-topbar.js')}"></script>
 
     <div class="robbo-guest-main">
-      <section id="courses" class="home robbo-guest-home style-logout" aria-labelledby="robbo-guest-home-title">
+      <section class="robbo-guest-hero" aria-labelledby="robbo-guest-hero-title">
+        <div class="robbo-guest-hero__inner">
+          <div class="robbo-guest-hero__copy">
+            % if homepage_overlay_html:
+              <div class="robbo-guest-hero__title-wrap">
+                ${homepage_overlay_html | n, decode.utf8}
+              </div>
+            % else:
+              <h1 id="robbo-guest-hero-title" class="robbo-guest-hero__title">
+                Образовательная платформа — онлайн-курсы и программы обучения
+              </h1>
+            % endif
+            <p class="robbo-guest-hero__lede">
+              Робототехника, программирование и инженерные технологии на базе открытого кода — для детей, педагогов и
+              специалистов.
+            </p>
+            <div class="robbo-guest-hero__actions">
+              <a class="robbo-guest-hero__btn robbo-guest-hero__btn--primary" href="#courses">Смотреть курсы</a>
+              <a class="robbo-guest-hero__btn robbo-guest-hero__btn--secondary"
+                href="${reverse('register_user') | h}">Регистрация</a>
+            </div>
+          </div>
+          <div class="robbo-guest-hero__visual" aria-hidden="true">
+            <img class="robbo-guest-hero__logo" src="${static.url('images/guest-landing/topbar-logo.png')}"
+              width="1680" height="635" alt="" decoding="async" />
+          </div>
+        </div>
+      </section>
+
+      <section id="courses" class="home robbo-guest-home style-logout" aria-labelledby="robbo-guest-courses-title">
         <header>
           <div class="outer-wrapper">
             <div class="title">
-              <div class="heading-group">
-                % if homepage_overlay_html:
-                  ${homepage_overlay_html | n, decode.utf8}
-                % else:
-                  <%include file="index_overlay.html" />
-                % endif
-              </div>
-              % if robbo_about is not UNDEFINED:
-                <div class="robbo-guest-about">
-                  <%include file="courseware/_robbo_about_company.html" args="about=robbo_about" />
-                </div>
-              % endif
               % if settings.FEATURES.get('ENABLE_COURSE_DISCOVERY'):
                 <div class="course-search">
                   <form method="get" action="/courses">
@@ -84,6 +100,14 @@ from mako.runtime import UNDEFINED
           </div>
           <div class="robbo-guest-home__sentinel" aria-hidden="true"></div>
         </header>
+
+        % if robbo_about is not UNDEFINED:
+          <div class="robbo-guest-about">
+            <%include file="courseware/_robbo_about_company.html" args="about=robbo_about" />
+          </div>
+        % endif
+
+        <h2 id="robbo-guest-courses-title" class="robbo-guest-courses__title">Наши курсы</h2>
 
         <%include file="${courses_list}" />
       </section>

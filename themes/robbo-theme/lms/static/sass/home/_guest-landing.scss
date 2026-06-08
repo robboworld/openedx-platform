@@ -23,27 +23,31 @@ $robbo-guest-topbar-logo-intrinsic-h: 635;
     --robbo-guest-font: 'ProximaNova', 'Proxima Nova', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
     font-family: var(--robbo-guest-font);
     -webkit-font-smoothing: antialiased;
-    // Tilda t228: полупрозрачный #383838; после прокрутки — зелёный #00af41.
-    --robbo-guest-topbar-bg: #{rgba($robbo-guest-topbar-coal, $robbo-guest-topbar-bg-alpha)};
+    // Tilda t228: зелёный #00af41 (постоянно); при прокрутке — усиленная тень.
+    --robbo-guest-topbar-bg: #{$robbo-tilda-green};
     --robbo-guest-topbar-bg-scrolled: #{$robbo-tilda-green};
-    --robbo-guest-topbar-gutter: 40px;
-    // Reserved for descendants; anchors use `scroll-padding-top` set on `html` (inherits down).
-    --robbo-guest-topbar-scroll-pad: 90px;
-    // Visual baseline (desktop / wide). Narrow screens override specifics below.
-    --robbo-guest-topbar-height: 90px;
-    --robbo-guest-topbar-btn-radius: 20px;
-    --robbo-guest-topbar-btn-height: 45px;
-    --robbo-guest-topbar-btn-pad-x: 30px;
+    // Высота как у `header.global-header` на /courses (`$robbo-header-bar-min-h`).
+    --robbo-guest-topbar-scroll-pad: #{$robbo-header-bar-min-h};
+    --robbo-guest-topbar-height: #{$robbo-header-bar-min-h};
+    --robbo-guest-topbar-btn-radius: 18px;
+    --robbo-guest-topbar-btn-height: 36px;
+    --robbo-guest-topbar-btn-pad-x: 22px;
     --robbo-guest-topbar-btn-fs: 14px;
     --robbo-guest-topbar-actions-gap: 10px;
-    --robbo-guest-topbar-logo-w: 110px;
     --robbo-guest-topbar-tagline-fs: 20px;
     --robbo-guest-topbar-tagline-pad-x: 15px;
-    // Расстояние между колонками topbar в desktop grid (до flex-режима ≤980).
-    --robbo-guest-topbar-main-col-gap: 12px;
-    // Footer vertical padding (desktop / wide). Narrow screens override below.
-    --robbo-guest-footer-pad-y: #{unquote('clamp(1.25rem, 3vw, 2rem)')};
-    --robbo-guest-footer-row-gap: 0;
+    // Section rhythm (hero, catalog, about)
+    --robbo-guest-section-gap: clamp(2rem, 5vw, 3.5rem);
+    --robbo-guest-section-pad-x: #{$robbo-guest-pad};
+    --robbo-guest-content-max: #{$robbo-guest-max-width};
+    --robbo-guest-body-muted: #515661;
+    // Course cards on guest home
+    --robbo-guest-card-radius: 10px;
+    --robbo-guest-card-gap: clamp(1rem, 2.5vw, 1.5rem);
+    --robbo-guest-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.05);
+    --robbo-guest-card-shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.1);
+    --robbo-guest-card-image-ratio: 16 / 9;
+    --robbo-guest-transition: 0.2s ease;
     margin: 0 auto;
 }
 
@@ -80,24 +84,14 @@ html:has(body.robbo-guest-landing-page) {
     scroll-behavior: smooth;
 
     @media screen and (min-width: $robbo-guest-topbar-desktop-min) {
-        --robbo-guest-topbar-scroll-pad: 90px;
+        --robbo-guest-topbar-scroll-pad: #{$robbo-header-bar-min-h};
     }
 
     @media screen and (max-width: $robbo-guest-topbar-mobile-max) {
-        // Одна строка topbar (лого + кнопки; слоган скрыт) — меньше отступ под fixed bar.
-        --robbo-guest-topbar-scroll-pad: #{unquote('clamp(72px, 22vw, 96px)')};
+        --robbo-guest-topbar-scroll-pad: #{$robbo-header-bar-min-h-mobile};
     }
 
-    // Medium only: промежуток между общим узким и телефоном.
-    @media screen and (max-width: $robbo-guest-topbar-mobile-max) and (min-width: 576px) {
-        --robbo-guest-topbar-scroll-pad: #{unquote('clamp(76px, 20vw, 100px)')};
-    }
-
-    @media screen and (max-width: 575.98px) {
-        --robbo-guest-topbar-scroll-pad: #{unquote('clamp(68px, 24vw, 92px)')};
-    }
-
-    scroll-padding-top: var(--robbo-guest-topbar-scroll-pad, 90px);
+    scroll-padding-top: var(--robbo-guest-topbar-scroll-pad, #{$robbo-header-bar-min-h});
 
     background: #fff;
 
@@ -109,7 +103,7 @@ html:has(body.robbo-guest-landing-page) {
 // Компактнее topbar/footer на планшетах и телефонах (≤980px): topbar — одна строка (слоган скрыт).
 @media screen and (max-width: $robbo-guest-topbar-mobile-max) {
     .robbo-guest-footer.robbo-site-footer .robbo-site-footer__inner {
-        row-gap: var(--robbo-guest-footer-row-gap);
+        row-gap: $robbo-footer-stack-gap-sm;
     }
 
     .robbo-guest-footer.robbo-site-footer .robbo-footer__links li {
@@ -126,37 +120,27 @@ html:has(body.robbo-guest-landing-page) {
 
 }
 
-// Medium (Bootstrap sm+ до Tilda-bar): кнопки по высоте = лого (`topbar-logo.png` 1680×635).
+// Medium (Bootstrap sm+ до Tilda-bar): та же высота лого, что на /courses.
 @media screen and (max-width: $robbo-guest-topbar-mobile-max) and (min-width: 576px) {
     .robbo-guest-landing {
-        --robbo-guest-topbar-logo-w: #{unquote('clamp(96px, 18vw, 108px)')};
-        --robbo-guest-topbar-logo-h: calc(
-            var(--robbo-guest-topbar-logo-w) * #{$robbo-guest-topbar-logo-intrinsic-h} / #{$robbo-guest-topbar-logo-intrinsic-w}
-        );
-        --robbo-guest-topbar-btn-height: var(--robbo-guest-topbar-logo-h);
-        --robbo-guest-topbar-btn-pad-x: 22px;
+        --robbo-guest-topbar-height: #{$robbo-header-bar-min-h-mobile};
+        --robbo-guest-topbar-btn-height: 32px;
+        --robbo-guest-topbar-btn-pad-x: 18px;
         --robbo-guest-topbar-btn-fs: #{unquote('clamp(11.5px, 1.55vw, 13px)')};
-        --robbo-guest-topbar-btn-radius: #{unquote('min(18px, calc(var(--robbo-guest-topbar-logo-h) * 0.5))')};
+        --robbo-guest-topbar-btn-radius: 16px;
         --robbo-guest-topbar-actions-gap: 9px;
-        --robbo-guest-footer-pad-y: #{unquote('clamp(1.05rem, 3vw, 1.5rem)')};
-        --robbo-guest-footer-row-gap: 0.75rem;
     }
 }
 
-// Small phones: кнопки по высоте лого, компактные отступы.
+// Small phones: та же высота лого, компактные кнопки.
 @media screen and (max-width: 575.98px) {
     .robbo-guest-landing {
-        --robbo-guest-topbar-logo-w: 92px;
-        --robbo-guest-topbar-logo-h: calc(
-            var(--robbo-guest-topbar-logo-w) * #{$robbo-guest-topbar-logo-intrinsic-h} / #{$robbo-guest-topbar-logo-intrinsic-w}
-        );
-        --robbo-guest-topbar-btn-height: var(--robbo-guest-topbar-logo-h);
+        --robbo-guest-topbar-height: #{$robbo-header-bar-min-h-mobile};
+        --robbo-guest-topbar-btn-height: 30px;
         --robbo-guest-topbar-btn-pad-x: 14px;
         --robbo-guest-topbar-btn-fs: #{unquote('clamp(11px, 3vw, 12.5px)')};
-        --robbo-guest-topbar-btn-radius: #{unquote('min(16px, calc(var(--robbo-guest-topbar-logo-h) * 0.5))')};
+        --robbo-guest-topbar-btn-radius: 14px;
         --robbo-guest-topbar-actions-gap: 8px;
-        --robbo-guest-footer-pad-y: 1rem;
-        --robbo-guest-footer-row-gap: 0.75rem;
     }
 }
 
@@ -326,11 +310,6 @@ body.robbo-guest-landing-page {
     &.robbo-guest-topbar--scrolled {
         background: var(--robbo-guest-topbar-bg-scrolled);
         box-shadow: 0 2px 14px rgba(0, 0, 0, 0.14);
-
-        // Логотип на зелёном: монохром → белый (отдельный PNG в теме не требуется).
-        .robbo-guest-topbar__logo {
-            filter: brightness(0) invert(1);
-        }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -338,22 +317,34 @@ body.robbo-guest-landing-page {
     }
 }
 
-// Wide: gutter | лого (auto) | слоган minmax — сжимается и переносится без наезда на кнопки | кнопки (auto) | gutter.
+// Как `.header-container` + `.main-header.robbo-main-header` на /courses.
 .robbo-guest-topbar__main {
     position: relative;
     z-index: 1;
-    display: grid;
-    grid-template-columns: var(--robbo-guest-topbar-gutter) auto minmax(0, 1fr) auto var(--robbo-guest-topbar-gutter);
-    align-items: center;
-    column-gap: var(--robbo-guest-topbar-main-col-gap);
-    width: 100%;
-    min-height: var(--robbo-guest-topbar-height);
     box-sizing: border-box;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    column-gap: 16px;
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    min-height: var(--robbo-guest-topbar-height);
+    min-width: 0;
+    padding: 6px 20px;
+
+    @include media-breakpoint-up(lg) {
+        column-gap: 24px;
+        padding: 6px 28px;
+    }
+
+    @include media-breakpoint-down(md) {
+        min-height: $robbo-header-bar-min-h-mobile;
+    }
 
     @media screen and (min-width: $robbo-guest-topbar-desktop-min) {
         .robbo-guest-topbar__actions {
             flex-wrap: nowrap;
-            margin-left: 0;
         }
     }
 
@@ -365,47 +356,52 @@ body.robbo-guest-landing-page {
         align-items: center;
         align-content: center;
         gap: 0.35rem 0.75rem;
-        min-height: 0;
-        box-sizing: border-box;
-        padding-top: #{unquote('max(0.5rem, env(safe-area-inset-top, 0px))')};
-        padding-bottom: 0.5rem;
+        min-height: var(--robbo-guest-topbar-height);
+        padding-top: calc(6px + #{unquote('env(safe-area-inset-top, 0px)')});
+        padding-bottom: 6px;
     }
 }
 
-// .t228__padding40px
-.robbo-guest-topbar__gutter {
-    flex: 0 0 var(--robbo-guest-topbar-gutter);
-    width: var(--robbo-guest-topbar-gutter);
-    max-width: var(--robbo-guest-topbar-gutter);
-    @media screen and (max-width: $robbo-guest-topbar-mobile-max) {
-        display: none;
-    }
-}
-
-.robbo-guest-topbar__left {
+.robbo-guest-topbar__leading {
+    position: relative;
+    grid-column: 1;
     justify-self: start;
     display: flex;
+    flex-direction: row;
     align-items: center;
+    gap: 12px;
+    min-width: 0;
+    z-index: 2;
+
     @media screen and (max-width: $robbo-guest-topbar-mobile-max) {
         flex: 1 1 auto;
         justify-content: flex-start;
         justify-self: unset;
         order: 1;
-        min-width: 0;
         align-self: center;
-        padding: 0 0 0 1rem;
     }
 }
 
 .robbo-guest-topbar__brand {
-    display: inline-block;
-    line-height: 0;
+    align-items: center;
+    display: inline-flex;
+    line-height: 1;
     text-decoration: none;
+
+    &:link,
+    &:visited,
+    &:hover,
+    &:focus,
+    &:active {
+        color: #fff;
+        text-decoration: none;
+    }
+
     &:hover,
     &:focus {
-        text-decoration: none;
         opacity: 0.92;
     }
+
     &:focus-visible {
         outline: 2px solid #fff;
         outline-offset: 3px;
@@ -413,33 +409,41 @@ body.robbo-guest-landing-page {
     }
 }
 
-// .t228__imglogo inline style + отступ справа от соседней колонки.
-.robbo-guest-topbar__logo {
-    display: block;
-    width: var(--robbo-guest-topbar-logo-w);
-    min-width: var(--robbo-guest-topbar-logo-w);
-    max-width: var(--robbo-guest-topbar-logo-w);
-    height: auto;
-    margin-right: 30px;
-    transition: filter 0.35s ease;
-    @media (prefers-reduced-motion: reduce) {
-        transition: none;
-    }
-    @media screen and (max-width: $robbo-guest-topbar-mobile-max) {
-        margin-right: 0;
-        padding: 0;
-    }
+// Типографика как `.header-logo-wordmark` на /courses.
+.robbo-guest-topbar__wordmark {
+    color: #fff;
+    font-family: var(--robbo-guest-font);
+    font-size: $robbo-header-wordmark;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    text-transform: uppercase;
 }
 
-// Центральная колонка — в середине экрана между симметричными 1fr (лого / кнопки).
+.robbo-guest-topbar__wordmark-reg {
+    font-size: 0.45em;
+    font-weight: 700;
+    margin-left: 0.06em;
+    vertical-align: super;
+}
+
+// По центру всей шапки (не только между лого и кнопками).
 .robbo-guest-topbar__center {
-    justify-self: center;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     min-width: 0;
-    width: 100%;
+    padding: 0 20px;
+    pointer-events: none;
+
+    @include media-breakpoint-up(lg) {
+        padding: 0 28px;
+    }
+
     @media screen and (max-width: $robbo-guest-topbar-mobile-max) {
         // Слоган — только desktop; на мобилках одна строка (лого + CTA).
         display: none;
@@ -451,6 +455,7 @@ a.robbo-guest-topbar__tagline {
     margin: 0;
     max-width: 100%;
     padding: 0 var(--robbo-guest-topbar-tagline-pad-x);
+    pointer-events: auto;
     font-size: var(--robbo-guest-topbar-tagline-fs);
     font-weight: 600;
     text-transform: uppercase;
@@ -499,33 +504,34 @@ a.robbo-guest-topbar__tagline {
     }
 }
 
-.robbo-guest-topbar__right {
+.robbo-guest-topbar__trailing {
+    position: relative;
+    grid-column: 2;
     justify-self: end;
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    min-width: 0;
+    z-index: 2;
+
     @media screen and (max-width: $robbo-guest-topbar-mobile-max) {
         flex: 0 1 auto;
         justify-content: flex-end;
         justify-self: unset;
         order: 2;
-        min-width: 0;
         align-self: center;
-        padding: 0 1rem 0 0;
     }
 }
 
-// .t228__rightcontainer: margin-left 25px; .t228__right_buttons_wrap: gap 10px
 .robbo-guest-topbar__actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     gap: var(--robbo-guest-topbar-actions-gap);
-    margin-left: 25px;
+    margin: 0;
+
     @media screen and (max-width: $robbo-guest-topbar-mobile-max) {
-        margin-left: 0;
-        padding: 0;
         flex-wrap: nowrap;
     }
 }
@@ -602,6 +608,181 @@ a.robbo-guest-topbar__tagline {
     background: #fff;
 }
 
+// Hero: первый экран — заголовок, lede, CTA; светлый зелёный фон.
+.robbo-guest-hero {
+    background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 45%, #fff 100%);
+    box-sizing: border-box;
+    padding: clamp(1.5rem, 4vw, 2.75rem) var(--robbo-guest-section-pad-x);
+    width: 100%;
+}
+
+.robbo-guest-hero__inner {
+    align-items: center;
+    box-sizing: border-box;
+    display: grid;
+    gap: clamp(1.25rem, 3vw, 2rem);
+    grid-template-columns: minmax(0, 1fr);
+    margin: 0 auto;
+    max-width: var(--robbo-guest-content-max);
+    width: 100%;
+
+    @include media-breakpoint-up(lg) {
+        gap: clamp(2rem, 4vw, 3rem);
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    }
+}
+
+.robbo-guest-hero__copy {
+    min-width: 0;
+}
+
+.robbo-guest-hero__title,
+.robbo-guest-hero__title-wrap h1,
+#robbo-guest-hero-title,
+#robbo-guest-home-title {
+    color: $robbo-tilda-green;
+    font-family: var(--robbo-guest-font);
+    font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0 0 clamp(0.75rem, 2vw, 1rem);
+    max-width: 22ch;
+    text-align: left;
+
+    @include media-breakpoint-up(md) {
+        max-width: 28ch;
+    }
+}
+
+.robbo-guest-hero__lede {
+    color: var(--robbo-guest-body-muted);
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    line-height: 1.5;
+    margin: 0 0 clamp(1.25rem, 3vw, 1.75rem);
+    max-width: 48ch;
+}
+
+.robbo-guest-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(0.65rem, 2vw, 1rem);
+}
+
+.robbo-guest-hero__btn {
+    align-items: center;
+    border-radius: var(--robbo-guest-topbar-btn-radius, 20px);
+    box-sizing: border-box;
+    display: inline-flex;
+    font-family: var(--robbo-guest-font);
+    font-size: clamp(0.875rem, 1.2vw, 1rem);
+    font-weight: 600;
+    justify-content: center;
+    line-height: 1.25;
+    min-height: 44px;
+    padding: 0.65rem 1.5rem;
+    text-decoration: none;
+    transition: background-color var(--robbo-guest-transition),
+        border-color var(--robbo-guest-transition),
+        color var(--robbo-guest-transition),
+        opacity var(--robbo-guest-transition),
+        transform var(--robbo-guest-transition);
+
+    &,
+    &:link,
+    &:visited,
+    &:hover,
+    &:focus,
+    &:active {
+        text-decoration: none !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        transition: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $robbo-tilda-green;
+        outline-offset: 2px;
+    }
+}
+
+.robbo-guest-hero__btn--primary {
+    background: $robbo-tilda-green;
+    border: 2px solid $robbo-tilda-green;
+
+    &,
+    &:link,
+    &:visited {
+        color: #fff !important;
+        -webkit-text-fill-color: #fff;
+    }
+
+    &:hover,
+    &:focus {
+        background: darken($robbo-tilda-green, 6%);
+        border-color: darken($robbo-tilda-green, 6%);
+        color: #fff !important;
+        -webkit-text-fill-color: #fff;
+        opacity: 1;
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+.robbo-guest-hero__btn--secondary {
+    background: #fff;
+    border: 2px solid $robbo-tilda-green;
+
+    &,
+    &:link,
+    &:visited {
+        color: $robbo-tilda-green !important;
+        -webkit-text-fill-color: #{$robbo-tilda-green};
+    }
+
+    &:hover,
+    &:focus {
+        background: #f0fdf4;
+        color: darken($robbo-tilda-green, 6%) !important;
+        -webkit-text-fill-color: #{darken($robbo-tilda-green, 6%)};
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+.robbo-guest-hero__visual {
+    display: none;
+    justify-content: center;
+    min-width: 0;
+
+    @include media-breakpoint-up(lg) {
+        display: flex;
+    }
+}
+
+.robbo-guest-hero__logo {
+    display: block;
+    height: auto;
+    max-width: 320px;
+    opacity: 0.92;
+    width: 100%;
+}
+
+.robbo-guest-courses__title {
+    color: $robbo-tilda-green;
+    font-family: var(--robbo-guest-font);
+    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0 0 clamp(1rem, 2.5vw, 1.5rem);
+    padding: 0;
+    text-align: center;
+}
+
 .robbo-guest-home__sentinel {
     height: 1px;
     width: 100%;
@@ -624,7 +805,7 @@ body.robbo-guest-landing-page {
     #main .robbo-guest-home.home {
         max-width: 1600px;
         margin: 0 auto;
-        padding: 0 15px;
+        padding: 0 15px var(--robbo-guest-section-gap);
         box-sizing: border-box;
         background: #fff !important;
         background-color: #fff !important;
@@ -643,7 +824,7 @@ body.robbo-guest-landing-page {
         border: none !important;
         overflow: visible;
         margin: 0 -15px;
-        padding: clamp(1rem, 3vw, 1.5rem) 15px 0;
+        padding: clamp(0.75rem, 2vw, 1rem) 15px 0;
     }
 
     #main section#courses.home.robbo-guest-home,
@@ -667,55 +848,24 @@ body.robbo-guest-landing-page {
         width: 100%;
         float: none;
         margin: 0;
-        padding: clamp(1rem, 3vw, 1.5rem) 0 0;
+        padding: 0;
         min-height: 0;
-
-        .heading-group {
-            margin: 0 0 clamp(0.75rem, 2vw, 1rem);
-            padding: 0;
-            text-align: left !important;
-            width: 100%;
-
-            @include media-breakpoint-up(sm) {
-                margin: 0 0 clamp(1rem, 2.5vw, 1.25rem);
-            }
-
-            h1,
-            #robbo-guest-home-title {
-                color: #{$robbo-tilda-green} !important;
-                -webkit-text-fill-color: #{$robbo-tilda-green};
-                font-size: 20px;
-                font-weight: 700;
-                line-height: 30px;
-                margin: 0 0 8px;
-                text-align: left !important;
-                font-family: var(--robbo-guest-font) !important;
-
-                @include media-breakpoint-up(md) {
-                    font-size: 24px;
-                    margin: 0 0 12px;
-                }
-            }
-
-            p {
-                font-size: 16px;
-                line-height: 20px;
-                color: #515661;
-                font-style: normal;
-                margin: 0;
-                text-align: left !important;
-            }
-        }
     }
 
-    // «О компании» (перенесено с /courses): токены каталога на белом фоне главной.
+    #main .robbo-guest-home .robbo-guest-courses__title {
+        color: #{$robbo-tilda-green};
+        margin-top: clamp(1.25rem, 3vw, 1.75rem);
+        text-align: center;
+    }
+
+    // «О компании»: выше каталога курсов.
     .robbo-guest-about {
         --robbo-cat-cta-bg: #{$robbo-tilda-green};
         --robbo-cat-border: 1px solid #e5e7eb;
         --robbo-cat-gap: clamp(1rem, 2.5vw, 1.75rem);
         --robbo-cat-hero-mb: 0;
         box-sizing: border-box;
-        margin: 0 0 clamp(1.25rem, 3vw, 2rem);
+        margin: clamp(1rem, 3vw, 1.5rem) 0 clamp(1.25rem, 3vw, 2rem);
         width: 100%;
 
         .robbo-courses-catalog__featured--about {
@@ -754,12 +904,191 @@ body.robbo-guest-landing-page {
     }
 
     #main .robbo-guest-home .courses-container {
-        padding-top: clamp(1rem, 3vw, 1.5rem);
+        margin-left: auto;
+        margin-right: auto;
+        max-width: var(--robbo-guest-content-max);
+        padding-top: 0;
         padding-bottom: 0;
+        width: 100%;
     }
 
     #main .robbo-guest-home .courses-container .highlighted-courses .courses {
         padding-top: 0;
+    }
+
+    // Каталог: центрированная сетка; карточки с hover-lift.
+    #main .robbo-guest-home .courses-container .courses .courses-listing {
+        display: grid;
+        gap: var(--robbo-guest-card-gap);
+        grid-template-columns: minmax(0, 1fr);
+        justify-content: center;
+        justify-items: center;
+        letter-spacing: normal;
+        margin: 0;
+        padding: 0;
+
+        @include media-breakpoint-up(sm) {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 360px));
+        }
+
+        .courses-listing-item {
+            display: block !important;
+            float: none !important;
+            letter-spacing: normal;
+            margin: 0 !important;
+            max-height: none !important;
+            max-width: 360px;
+            vertical-align: top;
+            width: 100% !important;
+        }
+
+        article.course {
+            background: #fff !important;
+            background-color: #fff !important;
+            border: 1px solid #e5e7eb;
+            border-radius: var(--robbo-guest-card-radius);
+            box-shadow: var(--robbo-guest-card-shadow);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            transition: box-shadow var(--robbo-guest-transition),
+                transform var(--robbo-guest-transition);
+
+            @media (prefers-reduced-motion: reduce) {
+                transition: none;
+
+                &:hover {
+                    transform: none;
+                }
+            }
+
+            &:hover {
+                box-shadow: var(--robbo-guest-card-shadow-hover);
+                transform: translateY(-4px);
+            }
+
+            .course-image .cover-image {
+                aspect-ratio: var(--robbo-guest-card-image-ratio);
+                height: auto;
+                overflow: hidden;
+
+                &::before {
+                    display: none;
+                }
+
+                img {
+                    display: block;
+                    height: 100%;
+                    object-fit: cover;
+                    object-position: top center;
+                    width: 100%;
+                }
+            }
+
+            .course-info {
+                display: flex;
+                flex: 1 1 auto;
+                flex-direction: column;
+                font-family: var(--robbo-guest-font);
+                height: auto;
+                min-height: 0;
+                padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 2.5vw, 1.25rem) 0;
+
+                h2.course-name {
+                    height: auto;
+                    margin: 0 0 0.35rem;
+                }
+
+                .course-code {
+                    display: none;
+                }
+
+                .course-title {
+                    -webkit-box-orient: vertical;
+                    color: #111827;
+                    display: -webkit-box;
+                    font-size: clamp(0.9375rem, 1.2vw, 1rem);
+                    font-weight: 700;
+                    height: auto;
+                    -webkit-line-clamp: 2;
+                    line-clamp: 2;
+                    line-height: 1.35;
+                    margin: 0 0 0.35rem;
+                    overflow: hidden;
+                    padding: 0;
+                    white-space: normal;
+                }
+
+                .course-organization {
+                    color: var(--robbo-guest-body-muted);
+                    display: block;
+                    font-size: 0.875rem;
+                    height: auto;
+                    line-height: 1.4;
+                    margin: 0 0 0.75rem;
+                    overflow: hidden;
+                    padding: 0;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
+                .learn-more {
+                    background: $robbo-tilda-green;
+                    border-radius: 6px;
+                    display: block;
+                    font-size: 0.875rem;
+                    font-weight: 600;
+                    line-height: 1.25;
+                    margin: 0 0 clamp(0.75rem, 2vw, 1rem);
+                    padding: 0.6rem 1rem;
+                    text-align: center;
+                    transition: background-color var(--robbo-guest-transition),
+                        opacity var(--robbo-guest-transition);
+
+                    &,
+                    &:link,
+                    &:visited,
+                    &:hover,
+                    &:focus,
+                    &:active {
+                        color: #fff !important;
+                        -webkit-text-fill-color: #fff;
+                        text-decoration: none !important;
+                    }
+
+                    &:hover {
+                        background: darken($robbo-tilda-green, 6%);
+                        opacity: 1;
+                    }
+
+                    &:focus-visible {
+                        outline: 2px solid $robbo-tilda-green;
+                        outline-offset: 2px;
+                    }
+                }
+
+                .course-date {
+                    border-top: 1px solid #ecf0f4;
+                    color: var(--robbo-guest-body-muted);
+                    font-size: 0.875rem;
+                    line-height: 1.4;
+                    margin-top: auto;
+                    margin-left: calc(-1 * clamp(1rem, 2.5vw, 1.25rem));
+                    margin-right: calc(-1 * clamp(1rem, 2.5vw, 1.25rem));
+                    margin-bottom: 0;
+                    padding: 0.65rem clamp(1rem, 2.5vw, 1.25rem);
+
+                    svg {
+                        display: inline-block;
+                        margin: -2px 0.5rem 0 0;
+                        vertical-align: middle;
+                    }
+                }
+            }
+        }
     }
 
     // Legacy Open edX: карточки на главной наследуют $body-bg (#f5f5f5).
@@ -810,6 +1139,11 @@ body.robbo-guest-landing-page {
                     background: $robbo-tilda-green;
                     opacity: 0.8;
                 }
+
+                &:focus-visible {
+                    outline: 2px solid $robbo-tilda-green;
+                    outline-offset: 2px;
+                }
             }
 
             .input-holder {
@@ -850,16 +1184,27 @@ body.robbo-guest-landing-page {
 }
 
 
-// Футер как в `footer.html` темы; только фон — зелёный Tilda, контраст текста/ссылок под заливку.
+// Футер: те же размеры, что `footer.html` на /courses (`$robbo-footer-bar-height`); фон — зелёный Tilda.
 .robbo-guest-footer.robbo-site-footer {
+    align-items: center;
     background: $robbo-tilda-green;
-    padding: var(--robbo-guest-footer-pad-y) $robbo-guest-pad;
     box-sizing: border-box;
+    display: flex;
+    padding: 0;
+    width: 100%;
+
+    @include media-breakpoint-up(lg) {
+        min-height: $robbo-footer-bar-height;
+    }
 }
 
 .robbo-guest-footer.robbo-site-footer .robbo-site-footer__inner {
-    padding: 0;
-    max-width: 1162px;
+    padding: 0 20px;
+
+    @include media-breakpoint-up(lg) {
+        min-height: $robbo-footer-bar-height;
+        padding: 0 28px;
+    }
 }
 
 // До ширины Tilda-bar: сверху по центру лого (+ ©), ниже по центру блок ссылок и контакты подряд.
@@ -868,7 +1213,7 @@ body.robbo-guest-landing-page {
         display: flex;
         flex-direction: column;
         align-items: center;
-        row-gap: var(--robbo-guest-footer-row-gap, 0.75rem);
+        row-gap: $robbo-footer-stack-gap-sm;
     }
 
     .robbo-guest-footer.robbo-site-footer .robbo-footer__left {
@@ -945,10 +1290,6 @@ body.robbo-guest-landing-page {
 .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-link:hover,
 .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-link:focus {
     color: #f0fdf4;
-}
-
-.robbo-guest-footer.robbo-site-footer .robbo-footer__logo {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 // Логотип Фонда на зелёном фоне: белая подложка для контраста.
