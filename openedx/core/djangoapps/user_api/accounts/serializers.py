@@ -39,7 +39,14 @@ from . import (
     VISIBILITY_PREFIX
 )
 from .image_helpers import get_profile_image_urls_for_user
-from .utils import format_social_link, validate_social_link
+from django.utils.translation import gettext as _
+
+from .utils import (
+    format_social_link,
+    is_valid_robbo_phone_number,
+    normalize_robbo_phone_number,
+    validate_social_link,
+)
 
 PROFILE_IMAGE_KEY_PREFIX = 'image_url'
 LOGGER = logging.getLogger(__name__)
@@ -64,7 +71,13 @@ class PhoneNumberSerializer(serializers.BaseSerializer):  # lint-amnesty, pylint
             str or None: The cleaned phone number string containing only digits,
                 with an optional '+' at the beginning.
         """
-        return re.sub(r'(?!^)\+|[^0-9+]', "", data) or None
+        cleaned = re.sub(r'(?!^)\+|[^0-9+]', "", data) or None
+        if not cleaned:
+            return None
+        normalized = normalize_robbo_phone_number(cleaned)
+        if not is_valid_robbo_phone_number(normalized):
+            raise serializers.ValidationError(_("Enter a valid phone number."))
+        return normalized
 
 
 class LanguageProficiencySerializer(serializers.ModelSerializer):

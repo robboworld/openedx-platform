@@ -3741,6 +3741,7 @@ LOGIN_REDIRECT_WHITELIST = []
 REGISTRATION_EXTRA_FIELDS = {
     'company': 'required',
     'honor_code': 'required',
+    'phone_number': 'optional',
 }
 
 REGISTRATION_FIELD_ORDER = [

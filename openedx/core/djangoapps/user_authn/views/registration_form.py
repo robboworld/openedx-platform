@@ -27,6 +27,10 @@ from common.djangoapps.util.password_policy_validators import (
 )
 from openedx.core.djangoapps.embargo.models import GlobalRestrictedCountry
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+from openedx.core.djangoapps.user_api.accounts.utils import (
+    is_valid_robbo_phone_number,
+    normalize_robbo_phone_number,
+)
 from openedx.core.djangoapps.user_api import accounts
 from openedx.core.djangoapps.user_api.helpers import FormDescription
 from openedx.core.djangoapps.user_authn.utils import check_pwned_password
@@ -332,6 +336,20 @@ class AccountCreationForm(forms.Form):
             raise ValidationError(_("Incorrect company entry."))
         return company
 
+    def clean_phone_number(self):
+        """
+        Optional phone number; when provided, must match UserProfile.phone_number format.
+        """
+        phone_number = self.cleaned_data.get("phone_number")
+        if phone_number is None:
+            return phone_number
+        normalized = normalize_robbo_phone_number(phone_number)
+        if not normalized:
+            return ""
+        if not is_valid_robbo_phone_number(normalized):
+            raise ValidationError(_("Enter a valid phone number."))
+        return normalized
+
 
 def get_registration_extension_form(*args, **kwargs):
     """
@@ -378,6 +396,7 @@ class RegistrationFormFactory:
             "year_of_birth",
             "level_of_education",
             "company",
+            "phone_number",
             "job_title",
             "title",
             "mailing_address",
@@ -905,6 +924,23 @@ class RegistrationFormFactory:
         form_desc.add_field(
             "company",
             label=company_label,
+            required=required
+        )
+
+    def _add_phone_number_field(self, form_desc, required=False):
+        """Add a Phone number field to a form description.
+        Arguments:
+            form_desc: A form description
+        Keyword Arguments:
+            required (bool): Whether this field is required; defaults to False
+        """
+        # Translators: This label appears above a field on the registration form
+        # which allows the user to input their phone number.
+        phone_number_label = _("Phone number")
+
+        form_desc.add_field(
+            "phone_number",
+            label=phone_number_label,
             required=required
         )
 

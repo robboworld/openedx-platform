@@ -26,6 +26,49 @@ from ..models import UserRetirementStatus
 ENABLE_SECONDARY_EMAIL_FEATURE_SWITCH = 'enable_secondary_email_feature'
 LOGGER = logging.getLogger(__name__)
 
+# Russia: +7 and exactly 10 national digits (e.g. +79991234567).
+ROBBO_RU_PHONE_PATTERN = re.compile(r"^\+7\d{10}$")
+# Other countries: E.164, 8–15 digits after '+', not starting with +7.
+ROBBO_INTL_PHONE_PATTERN = re.compile(r"^\+(?!7)[1-9]\d{7,14}$")
+
+
+def normalize_robbo_phone_number(phone_number):
+    """
+    Normalize common Russian input (8…, 7…, 10 digits) to +7XXXXXXXXXX.
+    Strips non-digits except a single leading '+'.
+    """
+    if phone_number is None:
+        return ""
+    value = str(phone_number).strip()
+    if not value:
+        return ""
+    has_plus = value.startswith("+")
+    digits = re.sub(r"\D", "", value)
+    if not digits:
+        return ""
+    if has_plus:
+        return f"+{digits}"
+    if len(digits) == 11 and digits.startswith("8"):
+        return f"+7{digits[1:]}"
+    if len(digits) == 11 and digits.startswith("7"):
+        return f"+{digits}"
+    if len(digits) == 10:
+        return f"+7{digits}"
+    return f"+{digits}"
+
+
+def is_valid_robbo_phone_number(phone_number):
+    """
+    Return True when phone_number is empty/None or matches Robbo phone rules.
+    """
+    normalized = normalize_robbo_phone_number(phone_number)
+    if not normalized:
+        return True
+    return bool(
+        ROBBO_RU_PHONE_PATTERN.match(normalized)
+        or ROBBO_INTL_PHONE_PATTERN.match(normalized)
+    )
+
 
 def validate_social_link(platform_name, new_social_link):
     """
