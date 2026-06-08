@@ -1,0 +1,183 @@
+// Copyright (C) 2024-2026 Robbo <https://robbo.ru>
+// SPDX-License-Identifier: AGPL-3.0-only
+// Part of the Robbo Open edX distribution. See NOTICE at repository root.
+//
+// Static page /about: company info and project history timeline.
+
+// Single document scroll: `.window-wrap` flex + `min-height: 0` on `#content` nests a second
+// scrollbar when the timeline is long; same class of fix as guest landing (`_guest-landing.scss`).
+// `:has()` — works without relying on `bodyclass` (static /about is cached for anonymous users).
+body:has(.robbo-about-page):not(.robbo-guest-landing-page),
+body.robbo-about:not(.robbo-guest-landing-page) {
+    .window-wrap {
+        overflow-x: visible;
+        overflow-y: visible;
+    }
+
+    // Win over dashboard/discover `#content { margin: 0 !important }` (about is not dashboard).
+    .window-wrap > #content.content-wrapper {
+        flex: 1 1 auto;
+        margin: 0 !important;
+        min-height: auto;
+        overflow: visible;
+        padding-bottom: 0 !important;
+
+        @include media-breakpoint-up(lg) {
+            margin-top: $robbo-header-bar-min-h !important;
+            padding-top: $content_padding_top !important;
+        }
+    }
+
+    #main {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        overflow: visible;
+        width: 100%;
+    }
+}
+
+.robbo-about-page {
+    --robbo-about-max: 48rem;
+    --robbo-about-pad-x: clamp(1rem, 4vw, 2.5rem);
+    // Top pad stacks with `#content` header offset on lg+; primary mobile spacing.
+    --robbo-about-pad-top: clamp(1.5rem, 3vw, 2rem);
+    --robbo-about-pad-bottom: clamp(2rem, 5vw, 3.5rem);
+    --robbo-about-section-gap: clamp(2rem, 4vw, 3rem);
+    --robbo-about-section-fs: clamp(1.25rem, 2.2vw, 1.5rem);
+    --robbo-about-body-fs: clamp(1rem, 1.1vw, 1.0625rem);
+    --robbo-about-line-height: 1.65;
+    --robbo-about-text: #111827;
+    --robbo-about-muted: #4b5563;
+    --robbo-about-accent: var(--robbo-green, #00af41);
+    --robbo-about-timeline-year-w: 5.5rem;
+    --robbo-about-timeline-gap: clamp(0.75rem, 2vw, 1.25rem);
+    --robbo-about-timeline-divider: #e5e7eb;
+
+    align-items: center;
+    box-sizing: border-box;
+    color: var(--robbo-about-text);
+    display: flex;
+    flex-direction: column;
+    font-family: var(--robbo-font-body, 'ProximaNova', 'Proxima Nova', Helvetica, Arial, sans-serif);
+    margin-left: auto;
+    margin-right: auto;
+    max-width: calc(var(--robbo-about-max) + 2 * var(--robbo-about-pad-x));
+    width: 100%;
+}
+
+.robbo-about-page__section {
+    margin: 0 auto var(--robbo-about-section-gap);
+    max-width: var(--robbo-about-max);
+    width: 100%;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.robbo-about-page__prose {
+    font-size: var(--robbo-about-body-fs);
+    line-height: var(--robbo-about-line-height);
+    width: 100%;
+
+    p {
+        margin: 0 0 1rem;
+        overflow-wrap: anywhere;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.robbo-about-page__history-lede {
+    color: var(--robbo-about-muted);
+    font-size: var(--robbo-about-body-fs);
+    line-height: var(--robbo-about-line-height);
+    margin: 0 0 clamp(1.25rem, 2.5vw, 1.75rem);
+    overflow-wrap: anywhere;
+    width: 100%;
+}
+
+.robbo-about-page__timeline {
+    display: flex;
+    flex-direction: column;
+    gap: var(--robbo-about-timeline-gap);
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.robbo-about-page__timeline-item {
+    border-bottom: 1px solid var(--robbo-about-timeline-divider);
+    display: grid;
+    gap: 0.35rem 1rem;
+    grid-template-columns: var(--robbo-about-timeline-year-w) minmax(0, 1fr);
+    margin: 0;
+    padding: 0 0 var(--robbo-about-timeline-gap);
+
+    &:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    @media screen and (max-width: 575.98px) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.robbo-about-page__timeline-year {
+    color: var(--robbo-about-accent);
+    font-size: var(--robbo-about-body-fs);
+    font-weight: 700;
+    line-height: var(--robbo-about-line-height);
+    margin: 0;
+    min-width: 0;
+}
+
+.robbo-about-page__timeline-text {
+    color: var(--robbo-about-text);
+    font-size: var(--robbo-about-body-fs);
+    line-height: var(--robbo-about-line-height);
+    margin: 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+// Legacy `.container.about` in `_extras.scss` adds extra padding — reset for Robbo page.
+// Section titles (h2) keep `.robbo-about-page__section-title` tokens — do not override with `inherit`.
+// Beat global `.container { padding-left/right: 15px !important }` — keep symmetric gutters.
+.container.about.robbo-about-page {
+    color: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    max-width: calc(var(--robbo-about-max) + 2 * var(--robbo-about-pad-x)) !important;
+    padding-bottom: var(--robbo-about-pad-bottom) !important;
+    padding-left: var(--robbo-about-pad-x) !important;
+    padding-right: var(--robbo-about-pad-x) !important;
+    padding-top: var(--robbo-about-pad-top) !important;
+
+    .graphic-img {
+        display: none;
+    }
+}
+
+.robbo-about-page .robbo-about-page__section-title {
+    color: var(--robbo-about-text);
+    font-size: var(--robbo-about-section-fs);
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0 0 clamp(1rem, 2vw, 1.25rem);
+}
+
+body.indigo-dark-theme {
+    .robbo-about-page {
+        --robbo-about-text: #{$text-color-d};
+        --robbo-about-muted: #{$text-color-primary};
+        --robbo-about-accent: #{$primary-d};
+        --robbo-about-timeline-divider: #{$border-color-d};
+    }
+}

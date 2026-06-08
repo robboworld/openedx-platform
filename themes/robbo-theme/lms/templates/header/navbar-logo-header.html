@@ -13,6 +13,8 @@ from openedx.features.enterprise_support.utils import get_enterprise_learner_gen
 
 <%
 enterprise_customer_link = get_enterprise_learner_portal(request)
+about_path = reverse('about').rstrip('/')
+logo_href = reverse('root') if request.path.rstrip('/') == about_path else reverse('courses')
 %>
 
 <div class="header-logo">
@@ -24,8 +26,8 @@ enterprise_customer_link = get_enterprise_learner_portal(request)
         % endif
     </a>
   % else:
-    ## Logo → каталог курсов (не дашборд: branding_api.get_home_url — это dashboard).
-    <a class="header-logo-link" href="${reverse('courses')}" title="${_("{platform_name} Learner Home Page").format(platform_name=static.get_platform_name())}">
+    ## Logo: на /about → гостевая главная (/); иначе → каталог курсов.
+    <a class="header-logo-link" href="${logo_href | h}" title="${_("{platform_name} Home Page").format(platform_name=static.get_platform_name())}">
       <%block name="navigation_logo">
         <span class="header-logo-wordmark" aria-hidden="true">РОББО<sup class="header-logo-reg">®</sup></span>
         <span class="sr-only">${_("{platform_name} Home Page").format(platform_name=static.get_platform_name())}</span>

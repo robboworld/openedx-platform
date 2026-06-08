@@ -1,22 +1,182 @@
+<%!
+# Copyright (C) 2024-2026 Robbo <https://robbo.ru>
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# Part of the Robbo Open edX distribution. See NOTICE at repository root.
+# Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
+%>
 <%namespace name='static' file='../static_content.html'/>
 <%page expression_filter="h"/>
-<%! from django.utils.translation import gettext as _ %>
 <%inherit file="../main.html" />
 
-<%block name="pagetitle">${_("About")}</%block>
+<%block name="bodyclass">robbo-about</%block>
+
+<%block name="pagetitle">О компании</%block>
 
 <main id="main" aria-label="Content" tabindex="-1">
-    <section class="container about">
-        <h1>
-            <%block name="pageheader">${page_header or _("About")}</%block>
-        </h1>
-        <p>
-            <%block name="pagecontent">${page_content or _("This page left intentionally blank. Feel free to add your own content.")}</%block>
-        </p>
-        <!-- NEW IN INDIGO: add graphic image -->
-        <div class="graphic-img">
-            <img src="${static.url('images/about.svg')}" alt="Runs on Tutor" />
-            <img class="dark" src="${static.url('images/about-dark.svg')}" alt="Runs on Tutor" />
-        </div>
+    <h1 class="sr-only">О компании</h1>
+    <section class="container about robbo-about-page">
+        <section class="robbo-about-page__section robbo-about-page__section--intro" aria-labelledby="robbo-about-company-heading">
+            <h2 id="robbo-about-company-heading" class="robbo-about-page__section-title">О компании</h2>
+            <div class="robbo-about-page__prose">
+                <p>
+                    Компания РОББО — разработчик и производитель робототехнических EdTech наборов, Санкт-Петербург.
+                    Производственные площадки расположены в Санкт-Петербурге и Финляндии, офисы компании открыты
+                    при поддержке правительств в Финляндии и Японии.
+                </p>
+                <p>
+                    Продукция: «РОББО Класс» — это решение для образовательных учреждений, включающее в себя набор
+                    оборудования, программного обеспечения и методических материалов для подготовки юных
+                    инженеров-инноваторов будущего по специальностям: креативное программирование, схемотехника и
+                    микроэлектроника, мобильная робототехника, интернет-вещей (IoT) и умный дом, 3D-прототипирование
+                    и 3D-печать.
+                </p>
+                <p>
+                    С помощью РОББО обучается 100&nbsp;000+ детей в школах и кружках 28 стран мира: Россия, Финляндия,
+                    Таиланд, Великобритания, США, Испания, Вьетнам, Китай, Казахстан, Беларусь, Украина, Грузия,
+                    Таджикистан, Израиль, Германия, Италия, Япония, Латвия, Румыния, Нигерия, ЮАР, Туркменистан,
+                    Бангладеш, Словакия, Норвегия, Австрия, Болгария, Танзания.
+                </p>
+                <p>
+                    На 2022 год продано 150+ франшиз «РОББО Клуб», 470+ инновационных инженерных РОББО Классов.
+                    Победитель инвестиционных конкурсов Google RISE Award (Roots in Science and Engineering),
+                    FinLanding от финского правительства, технологических проектов Правительства Японии «Fukuoka Startup».
+                </p>
+            </div>
+        </section>
+
+        <section class="robbo-about-page__section" aria-labelledby="robbo-about-history-heading">
+            <h2 id="robbo-about-history-heading" class="robbo-about-page__section-title">История проекта «РОББО»</h2>
+            <p class="robbo-about-page__history-lede">
+                Члены команды РОББО работают в сфере открытого программного и аппаратного обеспечения для образования
+                с 2000 года.
+            </p>
+            <dl class="robbo-about-page__timeline">
+                <div class="robbo-about-page__timeline-item">
+                    <dt class="robbo-about-page__timeline-year">2006</dt>
+                    <dd class="robbo-about-page__timeline-text">
+                        Языки Scratch и Arduino были впервые использованы в образовательном проекте (семинары для
+                        учеников и учителей).
+                    </dd>
+                </div>
+                <div class="robbo-about-page__timeline-item">
+                    <dt class="robbo-about-page__timeline-year">2008</dt>
+                    <dd class="robbo-about-page__timeline-text">
+                        Совместная промо-кампания языка Scratch с Intel, получены отзывы учителей. Кроме того, команда
+                        РОББО приняла участие в переводе руководства и интерфейса языка программирования на русский язык.
+                    </dd>
+                </div>
+                <div class="robbo-about-page__timeline-item">
+                    <dt class="robbo-about-page__timeline-year">2009</dt>
+                    <dd class="robbo-about-page__timeline-text">
+                        Команда РОББО работает над проектами по внедрению свободного ПО в школы России. Компания
+                        заключает контракт с издательством «БИНОМ», который способствует использованию свободного ПО в
+                        школьной программе.
+                    </dd>
+                </div>
+                <div class="robbo-about-page__timeline-item">
+                    <dt class="robbo-about-page__timeline-year">2010</dt>
+                    <dd class="robbo-about-page__timeline-text">
+                        Предлагается идея РОББО в виде двух устройств (Лаборатории и Платформы), которые призваны
+                        помочь детям в изучении робототехники и программирования. Проект проходит апробацию в школах
+                        Москвы; получены средства от Фонда содействия развитию малых предприятий в научно-технической
+                        сфере.
+                    </dd>
+                </div>
+                <div class="robbo-about-page__timeline-item">
+                    <dt class="robbo-about-page__timeline-year">2013</dt>
+                    <dd class="robbo-about-page__timeline-text">
+                        Методики и аппаратное обеспечение РОББО апробированы для школ Казани. На международной олимпиаде
+                        «IT планета» РОББО открывает конкурс свободной робототехники «Робофабрика», в котором участвуют
+                        более 900 учеников.
+                    </dd>
+                </div>
+                <div class="robbo-about-page__timeline-item">
+                    <dt class="robbo-about-page__timeline-year">2013–2014</dt>
+                    <dd class="robbo-about-page__timeline-text">
+                        Проект получает два гранта компании Google в рамках проекта Google Rise Awards.
+                    </dd>
+                </div>
+                <div class="robbo-about-page__timeline-item">
+                    <dt class="robbo-about-page__timeline-year">2014</dt>
+                    <dd class="robbo-about-page__timeline-text">
+                        Компания побеждает в конкурсе «FinLanding» правительства Финляндии, что открывает финский рынок
+                        для РОББО. В том же году РОББО получает премию правительства Санкт-Петербурга за лучший
+                        инновационный продукт. Разработана версия 2.0 ПО для устройств Android, которая позволяет
+                        обучать детей начиная с 5 лет. Методики и аппаратное обеспечение РОББО апробированы для школ
+                        Санкт-Петербурга. Лаппеенрантский технологический университет (Финляндия) закупил СкретчДуино.
+                    </dd>
+                </div>
+                <div class="robbo-about-page__timeline-item">
+                    <dt class="robbo-about-page__timeline-year">2015</dt>
+                    <dd class="robbo-about-page__timeline-text">
+                        Проект получил статус резидента Фонда «Сколково» и Технопарка «Санкт-Петербург». Разработали и
+                        начали выпускать 3D-принтер ROBBO Mini, который предназначен специально для использования детьми.
+                    </dd>
+                </div>
+                <div class="robbo-about-page__timeline-item">
+                    <dt class="robbo-about-page__timeline-year">2016</dt>
+                    <dd class="robbo-about-page__timeline-text">
+                        Начало продаж франшизы школ робототехники «РОББО Клуб». 40 школ Финляндии закупили «РОББО Классы».
+                    </dd>
+                </div>
+                <div class="robbo-about-page__timeline-item">
+                    <dt class="robbo-about-page__timeline-year">2017</dt>
+                    <dd class="robbo-about-page__timeline-text">
+                        «РОББО» становится участником Кружкового движения Национальной технологической инициативы.
+                        Проведена первая Международная Scratch-Олимпиада по креативному программированию.
+                    </dd>
+                </div>
+                <div class="robbo-about-page__timeline-item">
+                    <dt class="robbo-about-page__timeline-year">2019</dt>
+                    <dd class="robbo-about-page__timeline-text">
+                        Открыт первый заграничный кружок ROBBO Club в Финляндии. Май 2019 — победа в конкурсе
+                        технологических проектов Правительства Японии «Fukuoka Startup». Образцы продукции успешно
+                        протестированы в школах Японии. Компания получила приглашение открыть филиал в Японии.
+                        Октябрь 2019 — участие в выставке передовых технологий CEATEC-2019 (Япония), где компания
+                        заключила предварительные договоры о сотрудничестве на 500 тыс. евро.
+                    </dd>
+                </div>
+                <div class="robbo-about-page__timeline-item">
+                    <dt class="robbo-about-page__timeline-year">2020</dt>
+                    <dd class="robbo-about-page__timeline-text">
+                        Совместный образовательный проект «РОББО», СПбПУ, LUT University и мэрии города Лаппеенранта
+                        (Финляндия) стал победителем конкурса в рамках программы трансграничного сотрудничества
+                        «Россия — Юго-Восточная Финляндия». На реализацию проекта выделено 530 тыс. евро. Открыт первый
+                        кружок ROBBO Club в Таиланде. Март 2020 — занятия во всех кружках сети «РОББО Клуб» в России и
+                        за границей переведены в онлайн. Апрель 2020 — Международная сеть кружков ROBBOClub.Ru запускает
+                        франшизу онлайн-школ программирования, робототехники и 3D-печати. Апрель 2020 — открыты два
+                        первых кружка ROBBO Club в Японии (Токио и Фукуока). Май 2020 — Министерство экономики, торговли
+                        и промышленности Японии включило ROBBO Japan в государственную программу субсидирования
+                        образовательных услуг «EdTech». Июнь 2020 — инновационный инженерный класс «РОББО» для
+                        организации уроков технологии в школах стал одним из победителей конкурса «Лучшее отечественное
+                        оборудование, средства обучения и воспитания, включая цифровые» и включён в каталог
+                        «Рекомендовано для обучения». Сентябрь 2020 — открытие первых образовательных центров ROBBO
+                        Academy Future Skills (РОББО Академия) в Москве и Петербурге.
+                    </dd>
+                </div>
+                <div class="robbo-about-page__timeline-item">
+                    <dt class="robbo-about-page__timeline-year">2021</dt>
+                    <dd class="robbo-about-page__timeline-text">
+                        Компания «РОББО» победила в китайском конкурсе Russia-China Competition 2021 в Нанкине. РОББО в
+                        каталоге «Комплексное оснащение школ 2021–2024» от Агентства стратегических инициатив (АСИ) и
+                        Ассоциации участников рынка артиндустрии (АУРА). 2-е место в конкурсе на лучшее отечественное
+                        учебное оборудование от АСИ и АУРА. РОББО занял 3-е место среди всех детских и 1-е среди
+                        робототехнических франшиз по данным независимого исследования портала TopFranchise.ru. РОББО
+                        включён в Реестр надёжных франшиз Торгово-промышленной палаты РФ.
+                    </dd>
+                </div>
+                <div class="robbo-about-page__timeline-item">
+                    <dt class="robbo-about-page__timeline-year">2022</dt>
+                    <dd class="robbo-about-page__timeline-text">
+                        Компания РОББО — лауреат конкурса «Экспортер года». Основатель РОББО Павел Фролов получил
+                        медаль от Министерства науки и высшего образования Российской Федерации за вклад в реализацию
+                        государственной политики в области образования. РОББО — резидент инновационного
+                        научно-технологического центра (ИНТЦ) «Сириус». РОББО — член Национального союза поставщиков
+                        образовательных организаций.
+                    </dd>
+                </div>
+            </dl>
+        </section>
     </section>
 </main>

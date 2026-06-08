@@ -6,10 +6,6 @@ from django.utils.translation import gettext as _
 from django.urls import reverse
 from mako.runtime import UNDEFINED
 %>
-<%
-guest_landing_host = request.get_host().split(':')[0]
-guest_landing_tagline = f'{guest_landing_host} - образовательная платформа'
-%>
   ## Гостевая главная: кастомный topbar/footer; контент — классическая главная Open edX (каталог курсов).
   <section class="robbo-guest-landing" lang="ru">
     <p class="robbo-guest-skip-target"><a class="robbo-guest-skip-target__link" href="#courses">К содержанию страницы</a>
@@ -28,8 +24,7 @@ guest_landing_tagline = f'{guest_landing_host} - образовательная 
             </a>
           </div>
           <div class="robbo-guest-topbar__center">
-            <a class="robbo-guest-topbar__tagline" href="#courses"
-              aria-label="Перейти к каталогу курсов">${guest_landing_tagline}</a>
+            <a class="robbo-guest-topbar__tagline" href="${reverse('about') | h}">О компании</a>
           </div>
           <div class="robbo-guest-topbar__right">
             <div class="robbo-guest-topbar__actions">
