@@ -4,26 +4,24 @@
  *
  * Part of the Robbo Open edX distribution. See NOTICE at edx-platform repository root.
  *
- * Гостевой лендинг: topbar fixed; зелёный фон и белый логотип только после того, как блок hero
- * полностью вышел из viewport (пользователь «прокрутил мимо» .robbo-guest-hero).
+ * Гостевой лендинг: topbar sticky; зелёный фон и белый логотип после прокрутки мимо intro-блока.
  */
 (function () {
   'use strict';
 
   var topbar = document.querySelector('.robbo-guest-topbar');
-  var hero = document.querySelector('.robbo-guest-hero');
-  if (!topbar || !hero) {
+  var sentinel = document.querySelector('.robbo-guest-home__sentinel');
+  if (!topbar || !sentinel) {
     return;
   }
 
-  function setScrolled(pastHero) {
-    topbar.classList.toggle('robbo-guest-topbar--scrolled', pastHero);
+  function setScrolled(pastIntro) {
+    topbar.classList.toggle('robbo-guest-topbar--scrolled', pastIntro);
   }
 
   if (typeof IntersectionObserver === 'undefined') {
-    // Крайний случай: ориентир по нижней границе hero.
     function fallbackUpdate() {
-      setScrolled(hero.getBoundingClientRect().bottom <= 0);
+      setScrolled(sentinel.getBoundingClientRect().bottom <= 0);
     }
     fallbackUpdate();
     window.addEventListener('scroll', fallbackUpdate, { passive: true });
@@ -34,7 +32,6 @@
   var observer = new IntersectionObserver(
     function (entries) {
       entries.forEach(function (entry) {
-        // Пока hero пересекается с viewport — «ещё на первом экране»; иначе — уже ниже hero.
         setScrolled(!entry.isIntersecting);
       });
     },
@@ -44,5 +41,5 @@
     }
   );
 
-  observer.observe(hero);
+  observer.observe(sentinel);
 })();

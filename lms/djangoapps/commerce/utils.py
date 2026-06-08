@@ -123,9 +123,14 @@ class EcommerceService:
         """
         program_uuid = kwargs.get('program_uuid')
         enterprise_catalog_uuid = kwargs.get('catalog')
+        course_run_keys = kwargs.get('course_run_keys')
         query_params = {'sku': skus}
         if enterprise_catalog_uuid:
             query_params.update({'catalog': enterprise_catalog_uuid})
+        # Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
+        if course_run_keys and getattr(settings, 'ROBBO_PAYMENTS_ENABLED', False):
+            if len(course_run_keys) == 1:
+                query_params['course_run_key'] = str(course_run_keys[0])
 
         url = '{checkout_page_path}?{query_params}'.format(
             checkout_page_path=self.get_absolute_ecommerce_url(self.config.basket_checkout_page),

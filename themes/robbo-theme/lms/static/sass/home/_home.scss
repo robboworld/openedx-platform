@@ -29,7 +29,7 @@ section.home {
         }
     }
 }
-#main .home.style-logout  {
+#main .home.style-logout:not(.robbo-guest-home)  {
     header {
         background: none;
         overflow: visible;
@@ -166,7 +166,7 @@ body.indigo-dark-theme {
             }
         }
     }
-    #main .home.style-logout  {
+    #main .home.style-logout:not(.robbo-guest-home)  {
         header {
             background: none;
             .outer-wrapper {

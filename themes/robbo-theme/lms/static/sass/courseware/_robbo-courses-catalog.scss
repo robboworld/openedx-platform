@@ -48,6 +48,12 @@
   // Warning badge (alerts: guest / activation)
   --robbo-cat-warn: #e8b006;
   --robbo-cat-warn-on: #fff;
+  // Course card description: 1rem–1.1rem by text length (JS); no shrink below min.
+  --robbo-cat-desc-size-min: 1rem;
+  --robbo-cat-desc-size-max: 1.1rem;
+  --robbo-cat-desc-chars-short: 55;
+  --robbo-cat-desc-chars-long: 165;
+  --robbo-cat-desc-max-lines: 4;
 
   background: #f9fafb;
   box-sizing: border-box;
@@ -157,13 +163,18 @@
   min-width: 0;
 }
 
-// Hero: single centered intro (lede only).
+// Hero: optional intro (empty by default on Robbo /courses).
 .robbo-courses-catalog__hero {
   display: grid;
   gap: var(--robbo-cat-gap);
   justify-items: center;
   margin-bottom: var(--robbo-cat-hero-mb);
   text-align: center;
+
+  &:empty {
+    display: none;
+    margin-bottom: 0;
+  }
 }
 
 .robbo-courses-catalog__lede {
@@ -305,6 +316,92 @@
   }
 }
 
+// «О компании»: two-column block (logo + tagline | copy), reuses featured shell spacing.
+.robbo-courses-catalog__featured--about {
+  --robbo-about-accent: var(--robbo-cat-cta-bg);
+  --robbo-about-brand-size: clamp(2rem, 4vw, 3.25rem);
+  --robbo-about-tagline-size: clamp(1.125rem, 2vw, 1.5rem);
+  --robbo-about-body-size: clamp(1rem, 1.35vw, 1.375rem);
+
+  align-items: start;
+  grid-template-areas:
+    "about-lead"
+    "about-body";
+  grid-template-columns: minmax(0, 1fr);
+  padding: clamp(1.5rem, 3.5vw, 2.75rem);
+
+  @include media-breakpoint-up(lg) {
+    align-items: center;
+    gap: clamp(2rem, 4vw, 3rem);
+    grid-template-areas: "about-lead about-body";
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    grid-template-rows: auto;
+    padding: clamp(2rem, 3.5vw, 2.75rem) clamp(2rem, 4vw, 3rem);
+  }
+}
+
+.robbo-courses-catalog__about-lead {
+  color: var(--robbo-about-accent);
+  grid-area: about-lead;
+  min-width: 0;
+}
+
+.robbo-courses-catalog__about-body {
+  color: #333;
+  font-size: var(--robbo-about-body-size);
+  grid-area: about-body;
+  line-height: 1.55;
+  min-width: 0;
+}
+
+.robbo-courses-catalog__about-brand {
+  color: inherit;
+  font-size: var(--robbo-about-brand-size);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+}
+
+.robbo-courses-catalog__about-reg {
+  font-size: 0.45em;
+  font-weight: 700;
+  margin-left: 0.06em;
+  vertical-align: super;
+}
+
+.robbo-courses-catalog__about-tagline {
+  color: inherit;
+  font-size: var(--robbo-about-tagline-size);
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 0;
+  max-width: 16ch;
+}
+
+.robbo-courses-catalog__about-intro {
+  color: inherit;
+  margin: 0 0 1rem;
+  max-width: 62ch;
+}
+
+.robbo-courses-catalog__about-list {
+  color: inherit;
+  margin: 0;
+  max-width: 62ch;
+  padding-left: 1.2rem;
+
+  li + li {
+    margin-top: 0.75rem;
+  }
+}
+
+.robbo-courses-catalog__about-accent {
+  color: var(--robbo-about-accent);
+  font-weight: 700;
+}
+
 // Stub grid: 1 col mobile, 2 from md. Cards in a row share height; inner flex pins media to the bottom.
 .robbo-courses-catalog__stubs {
   align-items: stretch;
@@ -389,6 +486,20 @@
   font-size: 0.875rem;
   line-height: 1.45;
   margin: 0;
+}
+
+.robbo-courses-catalog__stub--course .robbo-courses-catalog__stub-desc {
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  font-size: var(--robbo-cat-desc-size-max);
+  -webkit-line-clamp: var(--robbo-cat-desc-max-lines);
+  line-clamp: var(--robbo-cat-desc-max-lines);
+  line-height: 1.45;
+  margin: 0;
+  overflow: hidden;
+  overflow-wrap: normal;
+  text-overflow: ellipsis;
+  word-break: normal;
 }
 
 // Groups notify CTA + live status so stub-body flex `gap` does not insert a band between them when status is empty.
@@ -512,6 +623,59 @@
     padding: 0;
     position: static;
     width: 100%;
+  }
+}
+
+// Real course cards: must come after base `.stub` (lg sets `display: block` and breaks bottom CTA alignment).
+.robbo-courses-catalog__stub.robbo-courses-catalog__stub--course {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+
+  @include media-breakpoint-up(lg) {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(
+      var(--robbo-cat-stub-img-h) + (2 * var(--robbo-cat-pad)) + var(--robbo-cat-cta-min-h) + 1.5rem
+    );
+    padding-right: calc(var(--robbo-cat-pad) + var(--robbo-cat-stub-art-lane-w));
+  }
+
+  > .robbo-courses-catalog__stub-body {
+    display: grid;
+    flex: 1 1 auto;
+    gap: 0.85rem;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    min-height: 0;
+    width: 100%;
+
+    @include media-breakpoint-up(lg) {
+      min-height: 100%;
+    }
+  }
+
+  .robbo-courses-catalog__stub-copy {
+    align-self: stretch;
+    min-height: 0;
+
+    @include media-breakpoint-up(lg) {
+      min-height: calc(var(--robbo-cat-stub-abs-img-h) + var(--robbo-cat-stub-abs-img-inset));
+    }
+  }
+
+  .robbo-courses-catalog__stub-footer {
+    align-self: start;
+    margin-top: 0;
+    padding-top: clamp(0.75rem, 2vw, 1rem);
+    width: 100%;
+  }
+
+  .robbo-courses-catalog__stub-actions {
+    justify-content: flex-start;
+    padding-top: 0;
+    width: auto;
   }
 }
 

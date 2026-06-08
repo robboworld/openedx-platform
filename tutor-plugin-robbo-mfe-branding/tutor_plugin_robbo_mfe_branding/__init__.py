@@ -114,10 +114,13 @@ DEFAULT_SITE_THEME = "robbo-theme"
 """
 
 # Bake Robbo xblocks from $TUTOR_ROOT/env/build/openedx/requirements/private.txt (Koa parity).
+# pip 24 resolves "-e ./pkg" relative to CWD, not private.txt — must cd into requirements/ first.
 _PATCH_OPENEDX_ROBBO_XBLOCKS = """
 COPY requirements /openedx/requirements
 RUN --mount=type=cache,target=/openedx/.cache/pip,sharing=shared \\
-    pip install -r /openedx/requirements/private.txt
+    bash -lc 'set -euo pipefail; cd /openedx/requirements; \\
+    if [[ ! -f private.txt ]]; then exit 0; fi; \\
+    pip install -r private.txt'
 """
 
 # Robbo Scratch (separate containers scratch-srv-new / scratch-gui-new).

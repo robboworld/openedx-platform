@@ -22,6 +22,7 @@
 
 # i18n_tool is needed at build time for pulling translations
 edx-i18n-tools>=0.4.6               # Commands for developers and translators to extract, compile and validate translations
+yookassa>=3.0.0                       # Robbo YooKassa checkout (lms.djangoapps.robbo_payments)
 
 ## Third party integrations
 django-ses                          # Django email backend for Amazon’s Simple Email Service

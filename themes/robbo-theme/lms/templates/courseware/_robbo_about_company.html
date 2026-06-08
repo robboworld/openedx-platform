@@ -1,0 +1,28 @@
+<%page args="about" expression_filter="h"/>
+<article
+  class="robbo-courses-catalog__featured robbo-courses-catalog__featured--about"
+  aria-labelledby="robbo-about-title"
+>
+  <div class="robbo-courses-catalog__about-lead">
+    <h2 id="robbo-about-title" class="robbo-courses-catalog__about-title sr-only">${about['title']}</h2>
+    <p class="robbo-courses-catalog__about-brand">
+      ${about['brand']}<sup class="robbo-courses-catalog__about-reg">®</sup>
+    </p>
+    <p class="robbo-courses-catalog__about-tagline">${about['tagline']}</p>
+  </div>
+  <div class="robbo-courses-catalog__about-body">
+    <p class="robbo-courses-catalog__about-intro">
+      Уже 19 лет мы внедряем технологии на базе открытого кода (Open Source), развиваем робототехнику и
+      занимаемся системной интеграцией сложных инженерных систем. Наши продукты и методики востребованы в
+      <span class="robbo-courses-catalog__about-accent">44 странах мира</span>.
+    </p>
+    <ul class="robbo-courses-catalog__about-list">
+      % for item in about.get('highlights', []):
+        <li>
+          <span class="robbo-courses-catalog__about-accent">${item['label']}</span>
+          ${item['text']}
+        </li>
+      % endfor
+    </ul>
+  </div>
+</article>

@@ -105,6 +105,10 @@ def can_show_verified_upgrade(user, enrollment, course=None):
     upgrade_deadline = enrollment.upgrade_deadline
 
     if upgrade_deadline is None:
+        # Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
+        # Robbo YooKassa: verified modes without expiration_datetime still allow audit→verified upgrade.
+        if getattr(settings, 'ROBBO_PAYMENTS_ENABLED', False):
+            return CourseMode.verified_mode_for_course(enrollment.course_id) is not None
         return False
 
     if datetime.datetime.now(utc).date() > upgrade_deadline.date():

@@ -3240,6 +3240,7 @@ INSTALLED_APPS = [
     'openedx.core.djangoapps.cors_csrf',
 
     'lms.djangoapps.commerce.apps.CommerceConfig',
+    'lms.djangoapps.robbo_payments.apps.RobboPaymentsConfig',
 
     # Credit courses
     'openedx.core.djangoapps.credit.apps.CreditConfig',
@@ -4337,6 +4338,19 @@ ECOMMERCE_API_TIMEOUT = 5
 ECOMMERCE_ORDERS_API_CACHE_TIMEOUT = 3600
 ECOMMERCE_SERVICE_WORKER_USERNAME = 'ecommerce_worker'
 ECOMMERCE_API_SIGNING_KEY = 'SET-ME-PLEASE'
+
+##### Robbo Payments (YooKassa-only commerce v1) #####
+ROBBO_PAYMENTS_ENABLED = False
+YOOKASSA_SHOP_ID = ''
+YOOKASSA_SECRET_KEY = ''
+ROBBO_PAYMENTS_DEFAULT_CURRENCY = 'RUB'
+# 54-FZ receipt defaults (override in Tutor config for production tax treatment).
+ROBBO_PAYMENTS_SEND_RECEIPT = True
+ROBBO_PAYMENTS_RECEIPT_VAT_CODE = 1
+ROBBO_PAYMENTS_RECEIPT_PAYMENT_SUBJECT = 'service'
+ROBBO_PAYMENTS_RECEIPT_PAYMENT_MODE = 'full_payment'
+# v1: do not route paid verified upgrades through legacy ID verification.
+ROBBO_PAYMENTS_SKIP_ID_VERIFICATION = True
 
 # Exam Service
 EXAMS_SERVICE_URL = 'http://localhost:18740/api/v1'

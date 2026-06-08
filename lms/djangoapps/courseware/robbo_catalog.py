@@ -113,12 +113,34 @@ def get_robbo_courses_account_banners(request) -> Dict[str, Any]:
 
 
 def get_robbo_catalog_hero() -> dict:
+    """Empty hero shell on /courses (intro copy lives in the about block below)."""
     return {
-        'heading': 'Описание курсов',
-        'lede': (
-            'Каталог направлений: микроконтроллеры, СУБД, САПР, Linux, робототехника, ИИ, Python '
-            'и промышленная автоматика.'
+        'heading': '',
+        'lede': '',
+    }
+
+
+def get_robbo_catalog_about() -> Dict[str, Any]:
+    """«О компании» block on guest homepage (under platform title)."""
+    return {
+        'title': 'О компании',
+        'brand': 'РОББО',
+        'tagline': 'Открытые технологии будущего',
+        'intro': (
+            'Уже 19 лет мы внедряем технологии на базе открытого кода (Open Source), развиваем '
+            'робототехнику и занимаемся системной интеграцией сложных инженерных систем. Наши '
+            'продукты и методики востребованы в 44 странах мира.'
         ),
+        'highlights': [
+            {
+                'label': 'Институты развития:',
+                'text': 'лидерский проект АСИ, Лидер НТИ, резидент «Сколково» и кластера «Ломоносов».',
+            },
+            {
+                'label': 'При поддержке:',
+                'text': 'Минпромторг, Минцифры, Минобрнауки, Минэкономразвития.',
+            },
+        ],
     }
 
 
@@ -235,6 +257,70 @@ def _pick_featured_course(courses_list: list) -> Optional[Any]:
                     return course
             # Wrong id in settings: fall back to first available course in list.
     return courses_list[0]
+
+
+def _absolute_url(request, path: str) -> str:
+    if request and hasattr(request, 'build_absolute_uri') and path.startswith('/'):
+        return request.build_absolute_uri(path)
+    return path
+
+
+def _catalog_course_image_url(course) -> str:
+    """Thumbnail for catalog cards; ``get_courses`` returns ``CourseOverview`` instances."""
+    image_urls = getattr(course, 'image_urls', None)
+    if image_urls:
+        return (
+            image_urls.get('small')
+            or image_urls.get('large')
+            or image_urls.get('raw')
+            or ''
+        )
+    return getattr(course, 'course_image_url', '') or (
+        settings.STATIC_URL + settings.DEFAULT_COURSE_ABOUT_IMAGE_URL
+    )
+
+
+def build_robbo_catalog_course_cards(
+    request,
+    courses_list: list,
+) -> List[Dict[str, Any]]:
+    """
+    Catalog grid cards for courses visible on /courses (same list as ``get_courses`` in the view).
+    """
+    from openedx.features.course_experience import course_home_url  # pylint: disable=import-outside-toplevel
+
+    cards: List[Dict[str, Any]] = []
+    user = getattr(request, 'user', None) if request else None
+
+    for course in courses_list:
+        title = course.display_name_with_default
+        short = (getattr(course, 'short_description', None) or '').strip()
+        if not short:
+            short = get_course_excerpt_from_overview(course)
+
+        cta_url = _absolute_url(request, course_home_url(course.id))
+        image_url = _absolute_url(request, _catalog_course_image_url(course))
+
+        card: Dict[str, Any] = {
+            'course_id': str(course.id),
+            'title': title,
+            'description': short,
+            'image_url': image_url,
+            'image_alt': title,
+            'cta_url': cta_url,
+            'cta_label': 'Начать обучение',
+        }
+
+        if user is not None and user.is_authenticated and user.is_active:
+            if CourseEnrollment.is_enrolled(user, course.id):
+                card['cta_label'] = 'Продолжить обучение'
+            else:
+                card['cta_enroll'] = True
+                card['change_enrollment_url'] = reverse('change_enrollment')
+
+        cards.append(card)
+
+    return cards
 
 
 def build_robbo_catalog_featured(

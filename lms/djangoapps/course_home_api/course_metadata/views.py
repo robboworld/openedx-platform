@@ -24,8 +24,10 @@ from lms.djangoapps.course_home_api.course_metadata.serializers import CourseHom
 from lms.djangoapps.courseware.access import has_access, has_cms_access
 from lms.djangoapps.courseware.context_processor import user_timezone_locale_prefs
 from lms.djangoapps.courseware.courses import check_course_access
+from lms.djangoapps.courseware.courseware_access_exception import CoursewareAccessException
 from lms.djangoapps.courseware.masquerade import setup_masquerade
 from lms.djangoapps.courseware.tabs import get_course_tab_list
+from openedx.core.djangoapps.content.course_overviews.api import get_course_overview_or_404
 
 
 @method_decorator(transaction.non_atomic_requests, name='dispatch')
@@ -83,7 +85,17 @@ class CourseHomeMetadataView(RetrieveAPIView):
         original_user_is_global_staff = self.request.user.is_staff
         original_user_is_staff = has_access(request.user, 'staff', course_key).has_access
 
-        course = course_detail(request, request.user.username, course_key)
+        # Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
+        # Enrolled learners must load course home even when the course about page is hidden
+        # (catalog_visibility=none, archived runs, etc.).
+        try:
+            course = course_detail(request, request.user.username, course_key)
+        except CoursewareAccessException:
+            enrollment = CourseEnrollment.get_enrollment(request.user, course_key_string)
+            if enrollment and enrollment.is_active:
+                course = get_course_overview_or_404(course_key)
+            else:
+                raise
 
         # We must compute course load access *before* setting up masquerading,
         # else course staff (who are not enrolled) will not be able view

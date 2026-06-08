@@ -1,14 +1,14 @@
-// Guest homepage — adapted from Tilda export (page133250156), tokens aligned with source (#00af41, #ff6600).
+// Guest homepage: custom topbar/footer + classic Open edX course catalog (Robbo green #00af41).
 
 @import '../partials/lms/theme/robbo-proxima-fonts';
 
 $robbo-tilda-green: #00af41;
+$robbo-guest-topbar-coal: #383838;
+$robbo-guest-topbar-bg-alpha: 0.25;
 $robbo-tilda-orange-hero: #ff6600;
 $robbo-tilda-orange-cta: #e84c15;
 $robbo-guest-max-width: 1200px;
 $robbo-guest-pad: clamp(1rem, 4vw, 2.5rem);
-// Иконки блока «Как будет проходить обучение» (шаблон: width/height на img).
-$robbo-guest-how-icon-size: 96px;
 // Как в экспорте Tilda page133250156 (@media screen and (max-width:980px) для t228).
 $robbo-guest-topbar-mobile-max: 980px;
 $robbo-guest-topbar-desktop-min: 981px;
@@ -23,8 +23,9 @@ $robbo-guest-topbar-logo-intrinsic-h: 635;
     --robbo-guest-font: 'ProximaNova', 'Proxima Nova', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
     font-family: var(--robbo-guest-font);
     -webkit-font-smoothing: antialiased;
-    // Tilda t228 (page133250156), см. tilda-blocks-page133250156.min.css + inline #rec2139628901.
-    --robbo-guest-topbar-bg: rgba(56, 56, 56, 0.4);
+    // Tilda t228: полупрозрачный #383838; после прокрутки — зелёный #00af41.
+    --robbo-guest-topbar-bg: #{rgba($robbo-guest-topbar-coal, $robbo-guest-topbar-bg-alpha)};
+    --robbo-guest-topbar-bg-scrolled: #{$robbo-tilda-green};
     --robbo-guest-topbar-gutter: 40px;
     // Reserved for descendants; anchors use `scroll-padding-top` set on `html` (inherits down).
     --robbo-guest-topbar-scroll-pad: 90px;
@@ -98,6 +99,8 @@ html:has(body.robbo-guest-landing-page) {
 
     scroll-padding-top: var(--robbo-guest-topbar-scroll-pad, 90px);
 
+    background: #fff;
+
     @media (prefers-reduced-motion: reduce) {
         scroll-behavior: auto;
     }
@@ -121,11 +124,6 @@ html:has(body.robbo-guest-landing-page) {
         line-height: 1.3;
     }
 
-    .robbo-guest-hero {
-        padding-top: #{unquote(
-            'max(clamp(5rem, 14vw, 7rem), calc(var(--robbo-guest-topbar-scroll-pad, 88px) + 0.75rem + env(safe-area-inset-top, 0px)))'
-        )};
-    }
 }
 
 // Medium (Bootstrap sm+ до Tilda-bar): кнопки по высоте = лого (`topbar-logo.png` 1680×635).
@@ -166,20 +164,23 @@ html:has(body.robbo-guest-landing-page) {
 // Для анонимов header/footer ещё отключаются в student index (disable_*), но правила ниже —
 // подстраховка и сброс отступов #content.
 body.robbo-guest-landing-page {
-    // Тема задаёт Inter с !important для `p`, `h*` и т.д. (`_extras.scss`) — фиксируем ProximaNova как на Tilda.
-    .robbo-guest-landing,
-    .robbo-guest-landing p,
-    .robbo-guest-landing h1,
-    .robbo-guest-landing h2,
-    .robbo-guest-landing h3,
-    .robbo-guest-landing h4,
-    .robbo-guest-landing li,
-    .robbo-guest-landing label,
-    .robbo-guest-landing button,
-    .robbo-guest-landing input,
-    .robbo-guest-landing textarea,
-    .robbo-guest-landing a {
+    background: #fff !important;
+
+    // Тема задаёт Inter с !important для `p`, `h*` (`_extras.scss`); без перечисления h1/h2 отдельно —
+    // иначе libsass @extend из typography ломает селекторы в CSS.
+    .robbo-guest-landing {
         font-family: var(--robbo-guest-font) !important;
+
+        p,
+        li,
+        label,
+        button,
+        input,
+        textarea,
+        a,
+        :is(h1, h2, h3, h4) {
+            font-family: inherit !important;
+        }
     }
 
     // Без зазора сверху: глобальные правила dashboard/discover задают #content margin-top: 75px (lg+),
@@ -193,14 +194,27 @@ body.robbo-guest-landing-page {
         width: 100% !important;
         max-width: none !important;
         box-sizing: border-box !important;
-        background: transparent !important;
+        background: #fff !important;
+        background-color: #fff !important;
     }
 
     // Плашка под любой зазор сверху (фон body по умолчанию белый).
     // overflow-x: hidden на .window-wrap мешает полноширинному лендингу — ослабляем.
     .window-wrap {
-        background-color: #333;
+        display: flex;
+        flex-direction: column;
+        background-color: #fff !important;
         overflow-x: visible;
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+
+    .window-wrap > #content.content-wrapper {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
     }
 
     // Mako может оставить пробелы внутри — :empty не сработает; хедер лендинга не использует блок marketing_hero.
@@ -225,9 +239,42 @@ body.robbo-guest-landing-page {
     }
 
     #main {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        width: 100%;
         margin: 0;
         padding: 0;
         max-width: none;
+        background: #fff !important;
+    }
+
+    // Grid: topbar | контент (1fr) | footer — footer у нижнего края viewport.
+    section.robbo-guest-landing {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        grid-template-columns: 100%;
+        width: 100%;
+        min-height: 100vh;
+        min-height: 100dvh;
+        background: #fff !important;
+    }
+
+    .robbo-guest-hero-stack {
+        grid-row: 1;
+        position: relative;
+        z-index: 1000;
+    }
+
+    .robbo-guest-main {
+        grid-row: 2;
+        min-height: 0;
+    }
+
+    .robbo-guest-footer.robbo-site-footer {
+        grid-row: 3;
+        align-self: end;
+        width: 100%;
     }
 
     // Тонкая тёмная полоса над hero: остаточный margin/padding каскада (#content, main, section) или UA у <header>.
@@ -257,7 +304,7 @@ body.robbo-guest-landing-page {
     }
 }
 
-// Первый блок как на Tilda (page133250156): полная высота окна; topbar fixed — не уезжает при скролле, фон сменяется на зелёный (t228).
+// Topbar sticky; зелёный фон после прокрутки intro (guest-landing-topbar.js).
 .robbo-guest-hero-stack {
     position: relative;
     margin: 0;
@@ -265,10 +312,11 @@ body.robbo-guest-landing-page {
 }
 
 .robbo-guest-topbar {
-    position: fixed;
+    position: sticky;
     top: 0;
     left: 0;
     right: 0;
+    width: 100%;
     z-index: 1000;
     background: var(--robbo-guest-topbar-bg);
     border: none;
@@ -276,8 +324,7 @@ body.robbo-guest-landing-page {
     transition: background-color 0.35s ease, box-shadow 0.35s ease;
 
     &.robbo-guest-topbar--scrolled {
-        --robbo-guest-topbar-bg: var(--robbo-tilda-green);
-        background: var(--robbo-tilda-green);
+        background: var(--robbo-guest-topbar-bg-scrolled);
         box-shadow: 0 2px 14px rgba(0, 0, 0, 0.14);
 
         // Логотип на зелёном: монохром → белый (отдельный PNG в теме не требуется).
@@ -549,825 +596,257 @@ a.robbo-guest-topbar__tagline {
     }
 }
 
-// Cover t182 + #rec2139628941 (page133250156).
-.robbo-guest-hero {
-    position: relative;
-    margin: 0;
-    box-sizing: border-box;
-    overflow: hidden;
-    min-height: 100vh;
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: $robbo-guest-pad;
-    padding-top: clamp(5rem, 12vw, 6.5rem);
-    background-color: #333;
-    background-image:
-        linear-gradient(to bottom, rgba(51, 51, 51, 0.5), rgba(51, 51, 51, 0.4)),
-        var(--robbo-guest-hero-image);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    text-align: center;
-}
-
-.robbo-guest-hero__inner {
-    position: relative;
-    z-index: 1;
-    max-width: unquote('min(100%, 1096px)');
-    margin: 0 auto;
-}
-
-// #rec2139628941 .t182__title
-.robbo-guest-hero__title {
-    margin: 0;
-    padding: 24px 0;
-    font-weight: 700;
-    line-height: 1.17;
-    letter-spacing: 1px;
-    color: #fff;
-    @media screen and (min-width: 900px) {
-        font-size: 60px;
-    }
-    @media screen and (min-width: 480px) and (max-width: 899px) {
-        font-size: 26px;
-    }
-    @media screen and (max-width: 479px) {
-        font-size: 26px;
-    }
-}
-
-// #rec2139628941 .t182__descr
-.robbo-guest-hero__descr {
-    margin: 0;
-    padding: 15px 0 30px;
-    font-size: 24px;
-    line-height: 1.55;
-    color: #fff;
-    @media screen and (max-width: 480px), (orientation: landscape) and (max-height: 480px) {
-        font-size: 18px;
-    }
-    p {
-        margin: 0 0 1rem;
-        &:last-child {
-            margin-bottom: 0;
-        }
-    }
-}
-
-.robbo-guest-hero__accent {
-    color: $robbo-tilda-green;
-    font-weight: 700;
-}
-
-// .t182__buttons
-.robbo-guest-hero__cta {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-top: 45px;
-}
-
-// CTA-ссылка: semibold (явно для a.robbo-guest-btn — перекрывает наследование 400 от глобальных стилей LMS)
-a.robbo-guest-btn {
-    font-weight: 600;
-}
-
-// #rec2139628941 .t-btnflex.t-btnflex_type_button + .t-btnflex_md
-.robbo-guest-btn--hero {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    min-height: 60px;
-    padding: 0 60px;
-    font-size: 20px;
-    font-weight: 600;
-    text-transform: uppercase;
-    text-decoration: none;
-    text-align: center;
-    white-space: normal;
-    max-width: 100%;
-    color: #fff !important;
-    background-color: $robbo-tilda-orange-hero;
-    border: none;
-    border-radius: 5px;
-    box-shadow: none !important;
-    transition-duration: 0.2s;
-    transition-property: background-color, color, border-color, box-shadow, opacity, transform, gap;
-    transition-timing-function: ease-in-out;
-    &:hover,
-    &:focus {
-        opacity: 0.92;
-        color: #fff !important;
-        text-decoration: none;
-    }
-    &:focus-visible {
-        outline: 3px solid #fff;
-        outline-offset: 3px;
-    }
-}
-
-.robbo-guest-hero__scroll {
-    position: absolute;
-    bottom: 1.25rem;
-    left: 50%;
-    z-index: 1;
-    transform: translateX(-50%);
-    color: #fff;
-    opacity: 0.95;
-    text-decoration: none !important;
-
-    &:link,
-    &:visited,
-    &:active,
-    &:hover,
-    &:focus {
-        color: #fff !important;
-    }
-
-    &:hover {
-        opacity: 1;
-    }
-
-    &:focus-visible {
-        outline: 2px solid #fff;
-        outline-offset: 4px;
-        border-radius: 2px;
-    }
-
-    svg {
-        display: block;
-        color: inherit;
-    }
-
-    svg path {
-        fill: currentColor;
-    }
-
-    @media (prefers-reduced-motion: no-preference) {
-        svg {
-            animation: robbo-guest-hero-scroll-bob 3s ease-in-out infinite;
-        }
-    }
-}
-
-@keyframes robbo-guest-hero-scroll-bob {
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(12px);
-    }
-}
-
-// Поднавигация по якорям скрыта (разметка в шаблоне сохранена).
-.robbo-guest-subnav {
-    display: none !important;
-}
-
-.robbo-guest-fragment-anchor {
-    height: 0;
-    overflow: hidden;
-    pointer-events: none;
-}
-
-// T489 #rec2193691751: pt/pb 180px, колонки ~5+6.
-.robbo-guest-about {
-    padding: 180px $robbo-guest-pad;
+// Контент: классическая главная Open edX (каталог курсов) между topbar и footer.
+.robbo-guest-main {
+    min-height: 0;
     background: #fff;
-    @media screen and (max-width: 900px) {
-        padding: clamp(3rem, 10vw, 6rem) $robbo-guest-pad;
-    }
 }
 
-.robbo-guest-about__grid {
-    max-width: $robbo-guest-max-width;
-    margin: 0 auto;
-    display: grid;
-    gap: 2rem 2.5rem;
-    @include media-breakpoint-up(lg) {
-        grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-        align-items: start;
-    }
-}
-
-// .t489__title.t-title_md
-.robbo-guest-about__brand {
-    margin: 0 0 0.35rem;
-    font-size: 52px;
-    line-height: 1.23;
-    font-weight: 700;
-    color: $robbo-tilda-green;
-    @media screen and (max-width: 600px) {
-        font-size: clamp(2rem, 8vw, 52px);
-    }
-}
-
-// #rec2193691751 .t489__subtitle
-.robbo-guest-about__tagline {
+.robbo-guest-home__sentinel {
+    height: 1px;
+    width: 100%;
     margin: 0;
-    font-size: 24px;
-    line-height: 1.35;
-    font-weight: 600;
-    color: $robbo-tilda-green;
-    @media screen and (max-width: 600px) {
-        font-size: clamp(1.125rem, 4vw, 24px);
-    }
-}
-
-.robbo-guest-about__body {
-    font-size: 22px;
-    line-height: 1.55;
-    color: #333;
-    p {
-        margin: 0 0 1rem;
-    }
-}
-
-.robbo-guest-text-accent {
-    color: $robbo-tilda-green;
-}
-
-.robbo-guest-about__list {
-    margin: 1rem 0 0;
-    padding-left: 1.2rem;
-    color: #333;
-    li + li {
-        margin-top: 0.65rem;
-    }
-}
-
-.robbo-guest-band--green {
-    background: $robbo-tilda-green;
-    color: #fff;
-}
-
-.robbo-guest-band__inner {
-    max-width: $robbo-guest-max-width;
-    margin: 0 auto;
-    padding: clamp(2.5rem, 6vw, 4.5rem) $robbo-guest-pad;
-    &--center {
-        text-align: center;
-    }
-    // T225 #rec2139629081 / #rec2139628991: pt 90 pb 45.
-    &--t225 {
-        padding: 90px $robbo-guest-pad 45px;
-        @media screen and (max-width: 600px) {
-            padding: 60px $robbo-guest-pad 32px;
-        }
-    }
-    &--t225-heading {
-        padding: 90px $robbo-guest-pad 45px;
-        @media screen and (max-width: 600px) {
-            padding: 60px $robbo-guest-pad 32px;
-        }
-    }
-}
-
-.robbo-guest-band--cards {
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
-// #rec2139629081 .t225__title / .t225__descr
-#program.robbo-guest-band .robbo-guest-band__title {
-    margin: 0 0 1rem;
-    font-weight: 700;
-    text-align: center;
-    color: #fff;
-    @media screen and (min-width: 900px) {
-        font-size: 42px;
-        line-height: 1.2;
-    }
-    @media screen and (min-width: 480px) and (max-width: 899px) {
-        font-size: 26px;
-    }
-    @media screen and (max-width: 479px) {
-        font-size: 26px;
-    }
-}
-
-#program.robbo-guest-band .robbo-guest-band__text {
-    font-size: 22px;
-    line-height: 1.45;
-    color: #fff;
-    text-align: left;
-    @media screen and (max-width: 480px), (orientation: landscape) and (max-height: 480px) {
-        font-size: 18px;
-    }
-    p {
-        margin: 0 0 1.5rem;
-        &:last-child {
-            margin-bottom: 0;
-        }
-    }
-}
-
-// #rec2139628991 заголовок секции «как проходит»
-#aboutus.robbo-guest-band .robbo-guest-band__title {
-    margin: 0;
-    font-weight: 700;
-    text-align: center;
-    color: #fff;
-    @media screen and (min-width: 900px) {
-        font-size: 42px;
-    }
-    @media screen and (min-width: 480px) and (max-width: 899px) {
-        font-size: 26px;
-    }
-    @media screen and (max-width: 479px) {
-        font-size: 26px;
-    }
-}
-
-.robbo-guest-band__title {
-    margin: 0 0 1.25rem;
-    font-weight: 700;
-    text-align: center;
-    color: inherit;
-    &--caps {
-        letter-spacing: 0.02em;
-    }
-}
-
-.robbo-guest-band__text {
-    line-height: 1.55;
-    p {
-        margin: 0 0 1rem;
-        &:last-child {
-            margin-bottom: 0;
-        }
-    }
-}
-
-// T490 #rec2139629001: pt 15 pb 90 (на узких экранах сохраняем сетку как в макете).
-.robbo-guest-how__grid {
-    max-width: $robbo-guest-max-width;
-    margin: 0 auto;
-    padding: 15px $robbo-guest-pad 90px;
-    display: grid;
-    gap: 1.75rem;
-    @include media-breakpoint-up(md) {
-        grid-template-columns: repeat(3, 1fr);
-    }
-    @media screen and (max-width: 600px) {
-        padding-bottom: 60px;
-    }
-}
-
-.robbo-guest-how__item {
-    text-align: center;
-}
-
-.robbo-guest-how__icon {
-    display: block;
-    margin: 0 auto 1rem;
-    max-width: $robbo-guest-how-icon-size;
-    height: auto;
-}
-
-// #rec2139629001 .t-card__descr
-.robbo-guest-how__text {
-    font-size: 22px;
-    line-height: 1.55;
-    color: #fff;
-    p {
-        margin: 0 0 1rem;
-        &:last-child {
-            margin-bottom: 0;
-        }
-    }
-}
-
-// Блок регистрации: фон-иллюстрация, белый текст у чекбоксов, оранжевый CTA (токен --robbo-guest-reg-orange).
-.robbo-guest-register {
-    // Поля формы, отступы чекбоксов — один контракт для блока регистрации.
-    --robbo-guest-reg-orange: #e84e1b; // ближе к макету (оранжевый CTA)
-    --robbo-guest-reg-field-radius: 12px;
-    --robbo-guest-reg-field-gap: 1rem; // между полями
-    --robbo-guest-reg-stack-gap: 1rem; // между группой полей, согласиями и кнопкой
-    --robbo-guest-reg-input-pad-y: 0.75rem;
-    --robbo-guest-reg-input-pad-x: 0.9rem;
-    --robbo-guest-reg-check-gap: 0.75rem;
-    // Лейаут колонки регистрации (ширина заголовка, полей, строки поля) — настраиваемый контракт блока.
-    --robbo-guest-reg-inner-max: 720px;
-    // Заголовок: до 42px на широком экране.
-    --robbo-guest-reg-title-size-max: 2.625rem; // 42px при 16px root
-    --robbo-guest-reg-fields-w: 560px;
-    --robbo-guest-reg-field-min-h: 56px;
-    // Панель требований к паролю (как Authn MFE: tooltip left / top) — фон, текст, тень, отступ от поля.
-    --robbo-guest-reg-password-hint-bg: #fff;
-    --robbo-guest-reg-password-hint-fg: #6b7280; // панель как light tooltip (серый текст)
-    --robbo-guest-reg-password-hint-fg-muted: #9ca3af; // невыполненный пункт
-    --robbo-guest-reg-password-hint-pad: 0.5rem 0.65rem;
-    --robbo-guest-reg-password-hint-radius: 4px;
-    --robbo-guest-reg-password-hint-gutter: 0.5rem; // зазор между панелью и полем (md+)
-    --robbo-guest-reg-password-hint-shadow: 0 4px 14px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
-    // чуть шире: пункт «1 латинская буква» длиннее «1 буква»
-    --robbo-guest-reg-password-hint-w-min: 10.75rem;
-    --robbo-guest-reg-password-hint-w-max: 12rem;
-    position: relative;
-    min-height: 700px;
-    height: 841px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: clamp(2rem, 5vw, 3.5rem) $robbo-guest-pad;
-    box-sizing: border-box;
-    color: #fff;
-    // Как в Tilda: узорчатый cover без зелёной плёнки поверх — весь рисунок из registration-cover.png.
-    background-color: #1a1a1a;
-    background-image: var(--robbo-guest-register-image);
-    background-size: cover;
-    background-position: center;
-    @media screen and (max-width: 600px) {
-        min-height: unquote('min(700px, 100dvh)');
-        height: auto;
-    }
-}
-
-.robbo-guest-register__overlay {
-    position: absolute;
-    inset: 0;
-    background: transparent;
+    padding: 0;
+    border: 0;
     pointer-events: none;
-}
-
-.robbo-guest-register__inner {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: unquote('min(100%, var(--robbo-guest-reg-inner-max))');
-    margin: 0 auto;
-    text-align: center;
-}
-
-// Заголовок: одна строка (при нехватке ширины — естественные переносы), clamp по вьюпорту.
-.robbo-guest-register__title {
-    box-sizing: border-box;
-    width: unquote('min(100%, var(--robbo-guest-reg-inner-max))');
-    margin: 0 0 1.75rem;
-    font-weight: 700;
-    color: #fff;
-    line-height: 1.2;
-    font-size: clamp(1.25rem, 2.2vw, var(--robbo-guest-reg-title-size-max));
-    @media screen and (max-width: 480px), (orientation: landscape) and (max-height: 480px) {
-        font-size: 1.25rem;
-        margin-bottom: 1.25rem;
-    }
-}
-
-.robbo-guest-register__form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--robbo-guest-reg-stack-gap);
-    margin: 0;
-    text-align: center;
-
-    // Одна ширина колонки: поля, согласия, ошибка формы, кнопка — по левому краю как в макете.
-    & > * {
-        width: unquote('min(100%, var(--robbo-guest-reg-fields-w))');
-        box-sizing: border-box;
-    }
-}
-
-.robbo-guest-register__fields {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    gap: var(--robbo-guest-reg-field-gap);
-    text-align: left;
-    margin: 0;
-}
-
-.robbo-guest-register__field {
-    // Высоту даёт .robbo-guest-register__input; обёртка — под ошибку валидации под полем.
-    margin: 0;
-}
-
-// Строка пароля: оверлей с требованиями слева от поля (как MFE placement left) или сверху (узкий экран).
-.robbo-guest-register__field--password {
-    position: relative;
-    z-index: 2; // панель поверх соседних полей при фокусе
-}
-
-.robbo-guest-register__password-row {
-    position: relative;
-    width: 100%;
-}
-
-.robbo-guest-register__password-input-wrap {
-    width: 100%;
-}
-
-.robbo-guest-register__input {
-    display: block;
-    width: 100%;
-    box-sizing: border-box;
-    margin: 0;
-    min-height: var(--robbo-guest-reg-field-min-h);
-    height: auto;
-    padding: var(--robbo-guest-reg-input-pad-y) var(--robbo-guest-reg-input-pad-x);
-    font-family: inherit;
-    font-style: normal !important;
-    font-weight: 400;
-    font-size: 1rem;
-    line-height: 1.25;
-    color: #222;
-    background: #fff;
-    border: none;
-    border-radius: var(--robbo-guest-reg-field-radius) !important;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
-    vertical-align: middle;
-    -webkit-font-smoothing: antialiased;
-    &::placeholder {
-        color: #9ca3af;
-        font-style: normal;
-    }
-    &:focus {
-        outline: 2px solid rgba(255, 255, 255, 0.95);
-        outline-offset: 2px;
-        box-shadow: none !important;
-        border-color: transparent !important;
-    }
-
-}
-
-// Отдельно от вложенного блока: выше специфичность, чем `body.indigo-dark-theme input:-webkit-autofill`.
-body.robbo-guest-landing-page .robbo-guest-register .robbo-guest-register__input:-webkit-autofill,
-body.robbo-guest-landing-page .robbo-guest-register .robbo-guest-register__input:-webkit-autofill:hover,
-body.robbo-guest-landing-page .robbo-guest-register .robbo-guest-register__input:-webkit-autofill:focus,
-body.robbo-guest-landing-page .robbo-guest-register .robbo-guest-register__input:-webkit-autofill:active {
-    -webkit-text-fill-color: #222;
-    caret-color: #222;
-    -webkit-background-clip: padding-box;
-    background-color: #fff !important;
-    box-shadow: 0 0 0 1000px #fff inset !important;
-    transition: background-color 99999s ease-out 0s;
-}
-
-// Как Authn MFE PasswordField: подсказка слева от поля (md+) или сверху (как placement top при ширине < 768px);
-// показ при фокусе на поле пароля (focus-within), индикаторы в guest-landing-register.js
-.robbo-guest-register__password-reqs {
-    position: absolute;
-    z-index: 4;
-    box-sizing: border-box;
-    list-style: none;
-    margin: 0;
-    padding: var(--robbo-guest-reg-password-hint-pad);
-    min-width: var(--robbo-guest-reg-password-hint-w-min);
-    max-width: var(--robbo-guest-reg-password-hint-w-max);
-    font-size: 0.75rem; // .x-small в MFE
-    line-height: 1.45;
-    text-align: left;
-    color: var(--robbo-guest-reg-password-hint-fg);
-    background: var(--robbo-guest-reg-password-hint-bg);
-    border-radius: var(--robbo-guest-reg-password-hint-radius);
-    box-shadow: var(--robbo-guest-reg-password-hint-shadow);
-    // скрыто, пока нет фокуса в поле пароля
-    opacity: 0;
     visibility: hidden;
-    pointer-events: none;
-    transform: translateY(0.25rem);
-    transition:
-        opacity 0.15s ease,
-        transform 0.15s ease,
-        visibility 0.15s;
-
-    .robbo-guest-register__field--password:focus-within & {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-    }
-
-    // Узкий экран: как MFE placement top — над полем, на всю ширину колонки
-    @media screen and (max-width: 767.98px) {
-        bottom: 100%;
-        left: 0;
-        right: 0;
-        min-width: 0;
-        max-width: none;
-        width: 100%;
-        margin-bottom: 0.35rem;
-    }
-
-    // md+ : панель слева от поля, по вертикали по центру строки
-    @media screen and (min-width: 768px) {
-        right: 100%;
-        top: 50%;
-        left: auto;
-        bottom: auto;
-        width: max-content;
-        max-width: var(--robbo-guest-reg-password-hint-w-max);
-        margin-right: var(--robbo-guest-reg-password-hint-gutter);
-        transform: translate(0.4rem, -50%);
-
-        .robbo-guest-register__field--password:focus-within & {
-            transform: translate(0, -50%);
-        }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        transition: none;
-    }
 }
 
-.robbo-guest-register__password-req {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin: 0.15rem 0 0;
-    min-height: 1.2em;
-    color: var(--robbo-guest-reg-password-hint-fg);
-
-    &:first-child {
-        margin-top: 0;
+body.robbo-guest-landing-page {
+    .robbo-guest-landing,
+    .robbo-guest-main,
+    #main {
+        background: #fff !important;
+        background-color: #fff !important;
     }
 
-    &::before {
-        content: '\2013'; // тире, как невыбрано (рядом с Remove в MFE)
-        flex-shrink: 0;
-        width: 0.9em;
-        text-align: center;
-        font-size: 0.85em;
-        color: var(--robbo-guest-reg-password-hint-fg-muted);
-        font-weight: 600;
-    }
-
-    &.robbo-guest-register__password-req--ok {
-        color: var(--robbo-guest-reg-password-hint-fg);
-
-        &::before {
-            content: '\2713'; // ✓
-            color: $robbo-tilda-green;
-            font-size: 0.95em;
-            font-weight: 600;
-        }
-    }
-}
-
-.robbo-guest-register__field-error {
-    margin: 0.35rem 0 0;
-    font-size: 0.8125rem;
-    line-height: 1.35;
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-}
-
-.robbo-guest-register__checks {
-    display: flex;
-    flex-direction: column;
-    gap: var(--robbo-guest-reg-check-gap);
-    margin: 0;
-    text-align: left;
-}
-
-// Подписи чекбоксов — белые; LMS/тема задают label/a иначе (визуально «тёмно-зелёный» мелкий текст).
-.robbo-guest-register__check {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.45rem;
-    margin: 0;
-    font-size: 1rem;
-    line-height: 1.45;
-    font-weight: 400;
-    color: #fff;
-    cursor: pointer;
-    span {
-        color: #fff;
-    }
-    a {
-        color: #fff;
-        text-decoration: underline;
-        text-underline-offset: 2px;
-        &:hover,
-        &:focus {
-            color: #fff;
-            opacity: 0.92;
-        }
-        &:focus-visible {
-            outline: 2px solid #fff;
-            outline-offset: 2px;
-        }
-    }
-}
-
-body.robbo-guest-landing-page .robbo-guest-register label.robbo-guest-register__check,
-body.robbo-guest-landing-page .robbo-guest-register label.robbo-guest-register__check span {
-    color: #fff;
-}
-
-// Ссылки в тексте согласия: глобальные правила LMS (#main a) иначе окрашивают их в «фирменный» зелёный.
-body.robbo-guest-landing-page .robbo-guest-register label.robbo-guest-register__check a {
-    color: #fff !important;
-    &:hover,
-    &:focus {
-        color: #fff !important;
-    }
-}
-
-.robbo-guest-register__checkbox {
-    flex: 0 0 auto;
-    width: 1.05rem;
-    height: 1.05rem;
-    margin-top: 0.2rem;
-    accent-color: var(--robbo-guest-reg-orange);
-}
-
-.robbo-guest-register__form-error {
-    margin: 0;
-    text-align: left;
-    font-size: 0.9375rem;
-    line-height: 1.4;
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-}
-
-
-.robbo-guest-btn--submit {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 48px;
-    padding: 0.65rem 1.75rem;
-    font-size: 20px;
-    font-weight: 600;
-    text-decoration: none;
-    color: #fff !important;
-    background: $robbo-tilda-orange-cta;
-    border-radius: 7px;
-    border: none;
-    box-shadow: none !important;
-    transition: opacity 0.2s ease;
-    &:hover {
-        opacity: 0.92;
-        color: #fff !important;
-        text-decoration: none;
-    }
-    &:focus-visible {
-        outline: 3px solid #fff;
-        outline-offset: 2px;
-    }
-}
-
-// Кнопка «Отправить»: та же ширина/высота и скругление, что у полей.
-// Важно: не задавать width: 100% без max-width — каскад перебивает .robbo-guest-register__form > * и тянет кнопку на ширину формы (inner 720px).
-.robbo-guest-register .robbo-guest-register__submit.robbo-guest-btn--submit {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    width: 100%;
-    max-width: var(--robbo-guest-reg-fields-w);
-    align-self: center;
-    min-height: var(--robbo-guest-reg-field-min-h);
-    padding: 0 1rem;
-    font-size: 20px;
-    font-weight: 700;
-    color: #fff !important;
-    // Градиент и рамка из %forms (button { @include button(...) }) — иначе визуально «другая» кнопка
-    background: var(--robbo-guest-reg-orange) !important;
-    background-image: none !important;
-    text-shadow: none;
-    border: none;
-    box-shadow: none;
-    // Ровно тот же радиус, что у input (без «таблетки» от ширины 100% вне 560px)
-    border-radius: var(--robbo-guest-reg-field-radius) !important;
-    margin: 0;
-    &:hover {
-        opacity: 1;
-        filter: brightness(0.98);
-        color: #fff !important;
+    #main section#courses.robbo-guest-home.home,
+    #main .robbo-guest-home.home {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 0 15px;
+        box-sizing: border-box;
+        background: #fff !important;
+        background-color: #fff !important;
         background-image: none !important;
     }
-}
 
-.robbo-guest-btn--ghost {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.55rem 1.25rem;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    text-decoration: none;
-    color: #fff !important;
-    background: rgba(255, 255, 255, 0.12);
-    border: 2px solid rgba(255, 255, 255, 0.85);
-    border-radius: 7px;
-    &:hover {
-        background: rgba(255, 255, 255, 0.22);
-        color: #fff !important;
-        text-decoration: none;
+    // Белая классическая главная: сброс legacy `.home > header` (#9c9c9c в lms-main-v1.css).
+    .home.robbo-guest-home > header,
+    #main section#courses.home.robbo-guest-home > header,
+    #main .robbo-guest-home.style-logout > header {
+        background: #fff !important;
+        background-color: #fff !important;
+        background-image: none !important;
+        -webkit-linear-gradient: none !important;
+        box-shadow: none !important;
+        border: none !important;
+        overflow: visible;
+        margin: 0 -15px;
+        padding: clamp(1rem, 3vw, 1.5rem) 15px 0;
+    }
+
+    #main section#courses.home.robbo-guest-home,
+    #main .home.robbo-guest-home {
+        background: #fff !important;
+        background-color: #fff !important;
+    }
+
+    #main .robbo-guest-home > header .outer-wrapper {
+        max-width: 100%;
+        padding: 0;
+        animation: none;
+    }
+
+    #main .robbo-guest-home > header .title {
+        background: none !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-top: none !important;
+        border-image: none !important;
+        width: 100%;
+        float: none;
+        margin: 0;
+        padding: clamp(1rem, 3vw, 1.5rem) 0 0;
+        min-height: 0;
+
+        .heading-group {
+            margin: 0 0 clamp(0.75rem, 2vw, 1rem);
+            padding: 0;
+            text-align: left !important;
+            width: 100%;
+
+            @include media-breakpoint-up(sm) {
+                margin: 0 0 clamp(1rem, 2.5vw, 1.25rem);
+            }
+
+            h1,
+            #robbo-guest-home-title {
+                color: #{$robbo-tilda-green} !important;
+                -webkit-text-fill-color: #{$robbo-tilda-green};
+                font-size: 20px;
+                font-weight: 700;
+                line-height: 30px;
+                margin: 0 0 8px;
+                text-align: left !important;
+                font-family: var(--robbo-guest-font) !important;
+
+                @include media-breakpoint-up(md) {
+                    font-size: 24px;
+                    margin: 0 0 12px;
+                }
+            }
+
+            p {
+                font-size: 16px;
+                line-height: 20px;
+                color: #515661;
+                font-style: normal;
+                margin: 0;
+                text-align: left !important;
+            }
+        }
+    }
+
+    // «О компании» (перенесено с /courses): токены каталога на белом фоне главной.
+    .robbo-guest-about {
+        --robbo-cat-cta-bg: #{$robbo-tilda-green};
+        --robbo-cat-border: 1px solid #e5e7eb;
+        --robbo-cat-gap: clamp(1rem, 2.5vw, 1.75rem);
+        --robbo-cat-hero-mb: 0;
+        box-sizing: border-box;
+        margin: 0 0 clamp(1.25rem, 3vw, 2rem);
+        width: 100%;
+
+        .robbo-courses-catalog__featured--about {
+            --robbo-about-accent: #{$robbo-tilda-green};
+            margin-bottom: 0;
+        }
+
+        .robbo-courses-catalog__about-lead,
+        .robbo-courses-catalog__about-body,
+        .robbo-courses-catalog__about-brand,
+        .robbo-courses-catalog__about-tagline,
+        .robbo-courses-catalog__about-intro,
+        .robbo-courses-catalog__about-list,
+        .robbo-courses-catalog__about-list li,
+        .robbo-courses-catalog__about-accent,
+        .robbo-courses-catalog__about-reg {
+            color: #{$robbo-tilda-green} !important;
+            -webkit-text-fill-color: #{$robbo-tilda-green};
+        }
+
+        .robbo-courses-catalog__about-brand,
+        .robbo-courses-catalog__about-tagline,
+        .robbo-courses-catalog__about-accent {
+            font-weight: 400;
+        }
+    }
+
+    #main .robbo-guest-home .courses-container,
+    #main .robbo-guest-home .highlighted-courses,
+    #main .robbo-guest-home .courses {
+        background: #fff !important;
+        background-color: #fff !important;
+        background-image: none !important;
+    }
+
+    #main .robbo-guest-home .courses-container {
+        padding-top: clamp(1rem, 3vw, 1.5rem);
+        padding-bottom: 0;
+    }
+
+    #main .robbo-guest-home .courses-container .highlighted-courses .courses {
+        padding-top: 0;
+    }
+
+    // Legacy Open edX: карточки на главной наследуют $body-bg (#f5f5f5).
+    #main .robbo-guest-home .courses-container .courses .course,
+    #main .robbo-guest-home .courses-listing .course {
+        background: #fff !important;
+        background-color: #fff !important;
+    }
+
+    // Превью курса: discover.scss задаёт object-position: center — режет верх; якорь сверху.
+    #main .robbo-guest-home .course-image .cover-image {
+        img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+        }
+    }
+
+    // Поиск курсов — как на style-logout главной (_home.scss), без серого legacy-поля.
+    #main .robbo-guest-home > header .title .course-search {
+        padding: 0;
+
+        .search-field-wrapper {
+            display: flex;
+
+            .button-holder button {
+                position: static;
+                margin: 0 0 0 16px;
+                min-width: 90px;
+                color: #fff;
+                font-size: 16px;
+                font-weight: 500;
+                line-height: 26px;
+                text-align: center;
+                padding: 6px;
+                height: 38px;
+                border-radius: 6px;
+                background: $robbo-tilda-green;
+                border: none;
+
+                @include media-breakpoint-up(sm) {
+                    min-width: 100px;
+                }
+
+                &:hover {
+                    background: $robbo-tilda-green;
+                    opacity: 0.8;
+                }
+            }
+
+            .input-holder {
+                flex-grow: 1;
+                border-radius: 6px;
+                background: mix(#ffffff, $robbo-tilda-green, 93%);
+                padding: 0 0 0 33px;
+                position: relative;
+                display: block;
+
+                svg {
+                    position: absolute;
+                    left: 12px;
+                    font-size: 20px;
+                    top: 10px;
+                }
+
+                input {
+                    border: none;
+                    box-shadow: none;
+                    height: 38px;
+                    width: 100%;
+                    background: none;
+                    outline: none;
+                    font-size: 14px;
+                    line-height: 20px;
+                    padding: 9px 10px;
+
+                    &:focus,
+                    &:focus-visible {
+                        outline: revert;
+                        outline-width: 2px;
+                    }
+                }
+            }
+        }
     }
 }
+
 
 // Футер как в `footer.html` темы; только фон — зелёный Tilda, контраст текста/ссылок под заливку.
 .robbo-guest-footer.robbo-site-footer {
@@ -1462,27 +941,23 @@ body.robbo-guest-landing-page .robbo-guest-register label.robbo-guest-register__
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
+body.indigo-dark-theme.robbo-guest-landing-page {
+    background: #fff !important;
+
+    .window-wrap,
+    #content.content-wrapper,
+    #main,
+    section.robbo-guest-landing,
+    .robbo-guest-main,
+    section#courses.home,
+    .home > header {
+        background: #fff !important;
+        background-color: #fff !important;
+        background-image: none !important;
+    }
+}
+
 body.indigo-dark-theme {
-    .robbo-guest-about {
-        background: $primary-light-d;
-    }
-    .robbo-guest-about__body {
-        color: $text-color-primary;
-    }
-
-    .robbo-guest-register label.robbo-guest-register__check,
-    .robbo-guest-register label.robbo-guest-register__check span {
-        color: #fff;
-    }
-
-    .robbo-guest-register label.robbo-guest-register__check a {
-        color: #fff !important;
-        &:hover,
-        &:focus {
-            color: #fff !important;
-        }
-    }
-
     // Не даём общему правилу `.robbo-site-footer { background: #fff }` перебить зелёный гостевой футер.
     .robbo-guest-footer.robbo-site-footer {
         background: $robbo-tilda-green;

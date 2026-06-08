@@ -3,6 +3,7 @@
 <%!
 from django.utils.translation import gettext as _
 from django.urls import reverse
+from urllib.parse import urlencode
 %>
 <%page args="course" expression_filter="h"/>
 <article class="course" id="${course.id}" role="region" aria-label="${course.display_name_with_default}">
@@ -19,7 +20,14 @@ from django.urls import reverse
         <span class="course-organization">${course.display_org_with_default}</span>
       </h2>
       <!-- NEW IN INDIGO Learn more button is displayed under the course image instead of the hover functionality. -->
-      <a  href="${reverse('about_course', args=[str(course.id)])}" class="learn-more" aria-hidden="true">${_("Learn More")}</a>
+      <%
+      about_url = reverse('about_course', args=[str(course.id)])
+      if not user.is_authenticated:
+          learn_more_url = f'{reverse("signin_user")}?{urlencode({"next": about_url})}'
+      else:
+          learn_more_url = about_url
+      %>
+      <a href="${learn_more_url | h}" class="learn-more" aria-hidden="true">${_("Learn More")}</a>
       <%
       if course.start is not None:
           course_date_string = course.start.strftime('%Y-%m-%dT%H:%M:%S%z')

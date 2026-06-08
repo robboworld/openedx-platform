@@ -140,9 +140,12 @@ header.global-header .nav-links .secondary .dropdown-user-menu {
 }
 
 /////////////////// Home page
-.home header {
-  box-shadow: none;
-  background-color: #fff;
+// Legacy multicourse `_home.scss`: `.home > header { background-color: #9c9c9c }` — белая главная Robbo.
+.home > header {
+  background: #fff !important;
+  background-color: #fff !important;
+  background-image: none !important;
+  box-shadow: none !important;
 }
 
 .home > header .title {
@@ -155,11 +158,12 @@ header.global-header .nav-links .secondary .dropdown-user-menu {
   padding: 0;
 }
 
-.home > header .title > .heading-group {
+.home:not(.robbo-guest-home) > header .title > .heading-group {
   width: 100%;
   text-align: center;
 }
-.home > header .title > .heading-group h1 {
+
+.home:not(.robbo-guest-home) > header .title > .heading-group h1 {
   text-align: center;
 }
 
@@ -1763,3 +1767,133 @@ body.indigo-dark-theme {
 @import '../../../views/teams';
 @import '../../../views/wiki';
 @import '../../../courseware/responsive-nav';
+
+// Robbo YooKassa checkout / receipt pages (lms.djangoapps.robbo_payments)
+// Note: use classic SCSS (no CSS min()/clamp() with mixed units) — libsass in compile_sass.py rejects them.
+.robbo-payments-page {
+  max-width: 720px;
+  width: 100%;
+  margin: 1.5rem auto;
+  padding: 0 1rem;
+
+  @media (min-width: 768px) {
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+  }
+}
+
+.robbo-payments-card {
+  background: $body-bg;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+  padding: 1.25rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
+}
+
+.robbo-payments-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.35rem;
+  font-weight: 600;
+
+  @media (min-width: 768px) {
+    font-size: 1.75rem;
+  }
+}
+
+.robbo-payments-page {
+  .robbo-payments-course-name {
+    margin: 0 0 1.25rem;
+    color: #000;
+    overflow-wrap: anywhere;
+  }
+
+  .robbo-payments-form {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 1rem 0 0;
+  }
+
+  .robbo-payments-submit {
+    min-height: 44px;
+    max-width: 320px;
+    width: 100%;
+    margin-inline: auto;
+    flex: 0 1 320px;
+  }
+
+  .robbo-payments-status {
+    margin: 0 0 1.25rem;
+    color: #000;
+    max-width: 52ch;
+  }
+
+  .robbo-payments-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .robbo-payments-receipt-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 44px;
+    height: auto;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0.625rem 1.25rem;
+    line-height: 1.25;
+    text-align: center;
+    text-transform: none;
+    white-space: nowrap;
+    flex: none;
+  }
+
+  .robbo-payments-secondary-link {
+    color: $robbo-brand-coal;
+    text-decoration: underline;
+  }
+}
+
+.robbo-payments-summary {
+  margin: 0 0 1.5rem;
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid $border-color;
+
+    dt,
+    dd {
+      margin: 0;
+    }
+
+    &--total {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+  }
+}
+
+.robbo-payments-note {
+  margin: 0.75rem 0 0;
+  color: $text-color-primary;
+  max-width: 52ch;
+}
+
+.robbo-payments-error-inline {
+  color: $danger;
+  margin: 0 0 1rem;
+}

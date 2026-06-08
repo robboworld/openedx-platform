@@ -207,12 +207,53 @@
     return null;
   }
 
+  /**
+   * Course card copy: longer text → slightly smaller within [min, max] rem (no shrink-to-fit).
+   */
+  function fitCourseDescFontSizes() {
+    var styles = window.getComputedStyle(root);
+    var minRem = parseFloat(styles.getPropertyValue('--robbo-cat-desc-size-min')) || 1;
+    var maxRem = parseFloat(styles.getPropertyValue('--robbo-cat-desc-size-max')) || 1.1;
+    var shortAt = parseInt(styles.getPropertyValue('--robbo-cat-desc-chars-short'), 10) || 55;
+    var longAt = parseInt(styles.getPropertyValue('--robbo-cat-desc-chars-long'), 10) || 165;
+    var nodes = root.querySelectorAll(
+      '.robbo-courses-catalog__stub--course .robbo-courses-catalog__stub-desc'
+    );
+    var i;
+    var el;
+    var len;
+    var ratio;
+    var sizeRem;
+
+    if (longAt <= shortAt) {
+      longAt = shortAt + 1;
+    }
+
+    for (i = 0; i < nodes.length; i += 1) {
+      el = nodes[i];
+      len = (el.textContent || '').replace(/\s+/g, ' ').trim().length;
+      if (len <= shortAt) {
+        sizeRem = maxRem;
+      } else if (len >= longAt) {
+        sizeRem = minRem;
+      } else {
+        ratio = (len - shortAt) / (longAt - shortAt);
+        sizeRem = maxRem - ratio * (maxRem - minRem);
+      }
+      el.style.fontSize = sizeRem + 'rem';
+    }
+  }
+
+  fitCourseDescFontSizes();
+
   document.addEventListener('click', function (e) {
-    var anchor = e.target && e.target.closest && e.target.closest('a.robbo-courses-catalog__featured-cta--enroll');
-    if (anchor) {
+    var enrollAnchor = e.target && e.target.closest && e.target.closest(
+      'a.robbo-courses-catalog__featured-cta--enroll, a.robbo-courses-catalog__course-cta--enroll'
+    );
+    if (enrollAnchor) {
       if (root.getAttribute('data-authenticated') === 'true') {
         e.preventDefault();
-        submitFeaturedEnroll(anchor);
+        submitFeaturedEnroll(enrollAnchor);
       }
       return;
     }

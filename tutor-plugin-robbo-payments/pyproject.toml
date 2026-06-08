@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tutor-plugin-robbo-payments"
+version = "0.1.0"
+description = "Robbo YooKassa payments: LMS settings and yookassa pip install for Tutor"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = ["tutor>=16.0"]
+
+[project.entry-points."tutor.plugin.v1"]
+robbo-payments = "tutor_plugin_robbo_payments"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["tutor_plugin_robbo_payments*"]

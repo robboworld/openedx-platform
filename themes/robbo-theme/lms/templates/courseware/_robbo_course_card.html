@@ -1,0 +1,53 @@
+<%page args="course_card, account, card_index" expression_filter="h"/>
+<article
+  class="robbo-courses-catalog__stub robbo-courses-catalog__stub--course"
+  data-course-id="${course_card['course_id']}"
+  aria-labelledby="robbo-course-title-${card_index}"
+>
+  <div class="robbo-courses-catalog__stub-body">
+    <h3 id="robbo-course-title-${card_index}" class="robbo-courses-catalog__stub-title">${course_card['title']}</h3>
+    <div class="robbo-courses-catalog__stub-copy">
+      <div class="robbo-courses-catalog__stub-media" role="presentation">
+        <img
+          class="robbo-courses-catalog__stub-img"
+          src="${course_card['image_url']}"
+          alt="${course_card['image_alt']}"
+          width="552"
+          height="320"
+          loading="lazy"
+          onerror="this.onerror=null;this.src='/theming/asset/images/no_course_image.png';"
+        />
+      </div>
+      % if course_card.get('description'):
+        <p class="robbo-courses-catalog__stub-desc">${course_card['description']}</p>
+      % endif
+    </div>
+    <div class="robbo-courses-catalog__stub-footer">
+      <div class="robbo-courses-catalog__stub-actions">
+        % if account and account.get('mode') == 'inactive':
+          <span
+            class="robbo-courses-catalog__btn robbo-courses-catalog__btn--primary robbo-courses-catalog__btn--disabled"
+            role="button"
+            aria-disabled="true"
+            title="Подтвердите email, чтобы начать обучение"
+          >
+            ${course_card['cta_label']}
+          </span>
+        % elif course_card.get('cta_enroll'):
+          <a
+            class="robbo-courses-catalog__btn robbo-courses-catalog__btn--primary robbo-courses-catalog__course-cta--enroll"
+            href="${course_card['cta_url']}"
+            data-course-id="${course_card['course_id']}"
+            data-enroll-url="${course_card['change_enrollment_url']}"
+          >
+            ${course_card['cta_label']}
+          </a>
+        % else:
+          <a class="robbo-courses-catalog__btn robbo-courses-catalog__btn--primary" href="${course_card['cta_url']}">
+            ${course_card['cta_label']}
+          </a>
+        % endif
+      </div>
+    </div>
+  </div>
+</article>

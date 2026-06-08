@@ -14,6 +14,115 @@ robbo-guest-landing-page
 % endif
 </%block>
 
+<%block name="headextra">
+% if not user.is_authenticated:
+  ## Белый фон каталога: legacy Open edX `.home > header { #9c9c9c }` в lms-main-v1.css.
+  ## Inline — подстраховка, если браузер/CDN отдаёт старый bundle без robbo-theme overrides.
+<style>
+  body.robbo-guest-landing-page,
+  body.indigo-dark-theme.robbo-guest-landing-page,
+  body.robbo-guest-landing-page .window-wrap,
+  body.indigo-dark-theme.robbo-guest-landing-page .window-wrap,
+  body.robbo-guest-landing-page #content.content-wrapper,
+  body.robbo-guest-landing-page #main,
+  body.robbo-guest-landing-page .robbo-guest-landing,
+  body.robbo-guest-landing-page .robbo-guest-main,
+  body.robbo-guest-landing-page section#courses.home,
+  body.robbo-guest-landing-page .home.robbo-guest-home,
+  body.robbo-guest-landing-page .home > header,
+  body.robbo-guest-landing-page section#courses.home > header {
+    background: #fff !important;
+    background-color: #fff !important;
+    background-image: none !important;
+  }
+  body.robbo-guest-landing-page .home > header .title {
+    background: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-top: none !important;
+  }
+  /* Topbar: sticky (не fixed) — контент не уезжает под шапку. Footer: grid на всю высоту экрана. */
+  body.robbo-guest-landing-page .window-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100dvh !important;
+  }
+  body.robbo-guest-landing-page #content.content-wrapper,
+  body.robbo-guest-landing-page #main {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+  }
+  body.robbo-guest-landing-page section.robbo-guest-landing {
+    display: grid !important;
+    grid-template-rows: auto 1fr auto !important;
+    grid-template-columns: 100% !important;
+    min-height: 100dvh !important;
+    width: 100% !important;
+  }
+  body.robbo-guest-landing-page .robbo-guest-topbar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+    background: rgba(56, 56, 56, 0.25) !important;
+    background-color: rgba(56, 56, 56, 0.25) !important;
+  }
+  body.robbo-guest-landing-page .robbo-guest-topbar.robbo-guest-topbar--scrolled {
+    background: #00af41 !important;
+    background-color: #00af41 !important;
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.14) !important;
+  }
+  body.robbo-guest-landing-page .robbo-guest-home > header,
+  body.robbo-guest-landing-page section#courses.home > header {
+    background: #fff !important;
+    background-color: #fff !important;
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+  body.robbo-guest-landing-page #main .robbo-guest-home > header .title .heading-group h1,
+  body.robbo-guest-landing-page #robbo-guest-home-title {
+    color: #00af41 !important;
+    -webkit-text-fill-color: #00af41 !important;
+    text-align: left !important;
+  }
+  body.robbo-guest-landing-page #robbo-guest-home-title {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    line-height: 30px !important;
+    margin: 0 0 8px !important;
+  }
+  @media (min-width: 768px) {
+    body.robbo-guest-landing-page #robbo-guest-home-title {
+      font-size: 24px !important;
+      margin: 0 0 12px !important;
+    }
+  }
+  body.robbo-guest-landing-page .robbo-guest-about,
+  body.robbo-guest-landing-page .robbo-guest-about p,
+  body.robbo-guest-landing-page .robbo-guest-about li,
+  body.robbo-guest-landing-page .robbo-guest-about span {
+    color: #00af41 !important;
+    -webkit-text-fill-color: #00af41 !important;
+  }
+  body.robbo-guest-landing-page .robbo-guest-home .course-image .cover-image img {
+    object-fit: cover !important;
+    object-position: top center !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+  }
+  body.robbo-guest-landing-page .robbo-guest-main {
+    min-height: 0 !important;
+  }
+  body.robbo-guest-landing-page #footer-guest {
+    align-self: end !important;
+    width: 100% !important;
+  }
+</style>
+% endif
+</%block>
+
 <main id="main" aria-label="Content" tabindex="-1">
 % if not user.is_authenticated:
     <%include file="index_guest_landing.html" />

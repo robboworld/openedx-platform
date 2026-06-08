@@ -60,3 +60,8 @@ class CourseHomeMetadataSerializer(VerifiedModeSerializer):
     course_modes = CourseModeSerrializer(many=True)
     is_new_discussion_sidebar_view_enabled = serializers.BooleanField()
     has_course_author_access = serializers.BooleanField()
+    enrollment_mode = serializers.SerializerMethodField()
+
+    def get_enrollment_mode(self, _):
+        enrollment = self.context.get('enrollment')
+        return getattr(enrollment, 'mode', None)

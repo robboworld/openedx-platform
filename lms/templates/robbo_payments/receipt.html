@@ -1,0 +1,35 @@
+<%page expression_filter="h"/>
+<%inherit file="../main.html" />
+<%namespace name='static' file='../static_content.html'/>
+<%!
+from django.utils.translation import gettext as _
+%>
+<%block name="pagetitle">${_("Квитанция об оплате")}</%block>
+
+<%block name="bodyextra">
+<section class="robbo-payments-page container">
+  <div class="robbo-payments-card">
+    <h1 class="robbo-payments-title">${_("Квитанция об оплате")}</h1>
+    <p class="robbo-payments-status">${status_message | h}</p>
+
+    <dl class="robbo-payments-summary">
+      <div class="robbo-payments-summary__row">
+        <dt>${_("Номер заказа")}</dt>
+        <dd>${order.order_number | h}</dd>
+      </div>
+      <div class="robbo-payments-summary__row">
+        <dt>${_("Сумма")}</dt>
+        <dd>${order.amount} ${order.currency | h}</dd>
+      </div>
+    </dl>
+
+    % if is_paid:
+    <div class="robbo-payments-actions">
+      <a class="btn btn-primary robbo-payments-receipt-btn" href="${course_outline_url | h}">
+        ${_("Перейти в содержание курса")}
+      </a>
+    </div>
+    % endif
+  </div>
+</section>
+</%block>

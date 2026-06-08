@@ -153,9 +153,9 @@ from openedx.features.course_experience.waffle import ENABLE_COURSE_ABOUT_SIDEBA
 from openedx.features.enterprise_support.api import data_sharing_consent_required
 
 from ..robbo_catalog import (
-    build_robbo_catalog_featured,
+    build_robbo_catalog_course_cards,
+    get_robbo_catalog_about,
     get_robbo_catalog_hero,
-    get_robbo_catalog_stubs,
     get_robbo_courses_account_banners,
 )
 from ..block_render import get_block, get_block_by_usage_id, get_block_for_descriptor
@@ -324,8 +324,8 @@ def courses(request):
             'set_default_filter': set_default_filter,
             'programs_list': programs_list,
             'robbo_catalog_hero': get_robbo_catalog_hero(),
-            'robbo_catalog_stubs': get_robbo_catalog_stubs(),
-            'robbo_catalog_featured': build_robbo_catalog_featured(request, courses_list),
+            'robbo_catalog_about': get_robbo_catalog_about(),
+            'robbo_catalog_courses': build_robbo_catalog_course_cards(request, courses_list),
             'robbo_courses_account': get_robbo_courses_account_banners(request),
             # Match learner dashboard header: primary nav tabs are hidden when unset (Mako treats as falsy).
             'show_dashboard_tabs': True,
