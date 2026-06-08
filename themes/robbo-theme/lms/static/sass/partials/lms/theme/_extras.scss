@@ -274,7 +274,7 @@ nav.wrapper-preview-menu {
   min-height: 80px;
 
   @include media-breakpoint-up(lg) {
-    height: 80px;
+    min-height: 80px;
   }
 
   @include media-breakpoint-down(md) {
@@ -1763,7 +1763,9 @@ body.indigo-dark-theme {
 @import '../../../xblock/xblock';
 @import '../../../views/teams';
 @import '../../../views/wiki';
-@import '../../../courseware/responsive-nav';.robbo-payments-page {
+@import '../../../courseware/responsive-nav';
+
+.robbo-payments-page {
   max-width: 720px;
   width: 100%;
   margin: 1.5rem auto;
@@ -1879,13 +1881,3 @@ body.indigo-dark-theme {
     }
   }
 }
-
-.robbo-payments-note {
-  margin: 0.75rem 0 0;
-  color: $text-color-primary;
-  max-width: 52ch;
-}
-
-.robbo-payments-error-inline {
-  color: $danger;
-  margin: 0 0 1rem;

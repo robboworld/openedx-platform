@@ -9,6 +9,7 @@ $robbo-footer-logo-scale: 0.9;
 $robbo-footer-doc-links-stack-gap: clamp(2px, 0.35vw, 4px);
 $robbo-footer-doc-links-flex-gap: 2px 6px;
 $robbo-footer-stack-gap-sm: 14px;
+$robbo-footer-contacts-label-w: 5.5rem;
 
 .robbo-site-footer {
     background: #fff;
@@ -24,7 +25,7 @@ $robbo-footer-stack-gap-sm: 14px;
 
 .robbo-site-footer__inner {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1fr) auto;
     align-items: center;
     justify-items: center;
     column-gap: clamp(16px, 3vw, 40px);
@@ -77,18 +78,55 @@ $robbo-footer-stack-gap-sm: 14px;
 }
 
 .robbo-footer__contacts {
+    --robbo-footer-contacts-label-w: #{$robbo-footer-contacts-label-w};
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    justify-self: end;
-    text-align: center;
+    align-items: flex-start;
+    justify-self: center;
+    text-align: left;
     min-width: 0;
-    width: 100%;
+    width: max-content;
+    max-width: 100%;
 
     @include media-breakpoint-down(lg) {
         justify-self: center;
+        align-items: center;
+        text-align: center;
+        width: 100%;
     }
+}
+
+// Логотип партнёра «Фонд содействия инновациям»: компактная колонка справа.
+.robbo-footer__partner {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    justify-self: end;
+    min-width: 0;
+
+    @include media-breakpoint-down(lg) {
+        justify-self: center;
+        justify-content: center;
+    }
+}
+
+.robbo-footer__partner-link {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 4px;
+
+    &:focus-visible {
+        outline: 2px solid $robbo-footer-logo-bg;
+        outline-offset: 3px;
+    }
+}
+
+.robbo-footer__partner-logo {
+    display: block;
+    width: auto;
+    height: clamp(40px, 4.5vw, 52px);
+    object-fit: contain;
 }
 
 .robbo-footer__brand {
@@ -209,26 +247,59 @@ $robbo-footer-stack-gap-sm: 14px;
 }
 
 
-.robbo-footer__contacts-title,
-.robbo-footer__contacts-line {
+.robbo-footer__contacts-list {
     margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+
+    @include media-breakpoint-down(lg) {
+        margin-inline: auto;
+    }
+}
+
+.robbo-footer__contacts-item {
+    display: grid;
+    grid-template-columns: var(--robbo-footer-contacts-label-w) minmax(0, 1fr);
+    column-gap: 0.4em;
+    align-items: baseline;
+    margin: 0;
+}
+
+.robbo-footer__contacts-title,
+.robbo-footer__contacts-label,
+.robbo-footer__contacts-link {
     font-size: clamp(11px, 1.1vw, 12px);
-    line-height: 1.45;
-    color: $robbo-footer-text;
+    line-height: 1.2;
     font-family: $robbo-footer-font-family;
-    word-break: break-word;
+}
+
+.robbo-footer__contacts-title,
+.robbo-footer__contacts-label {
+    margin: 0;
+    color: $robbo-footer-text;
 }
 
 .robbo-footer__contacts-title {
-    margin-bottom: clamp(4px, 0.8vw, 8px);
+    align-self: center;
+    width: 100%;
+    text-align: center;
+    margin-bottom: clamp(2px, 0.35vw, 4px);
 }
 
-.robbo-footer__contacts-line a {
+.robbo-footer__contacts-label {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.robbo-footer__contacts-link {
+    min-width: 0;
     color: $robbo-footer-text;
-    font-size: clamp(11px, 1.1vw, 12px);
-    line-height: 1.45;
-    font-family: $robbo-footer-font-family;
     text-decoration: underline;
+    overflow-wrap: anywhere;
 
     &:hover,
     &:focus {
@@ -244,15 +315,15 @@ body.indigo-dark-theme {
     .robbo-footer__copyright,
     .robbo-footer__links a,
     .robbo-footer__contacts-title,
-    .robbo-footer__contacts-line,
-    .robbo-footer__contacts-line a {
+    .robbo-footer__contacts-label,
+    .robbo-footer__contacts-link {
         color: $robbo-footer-text;
     }
 
     .robbo-footer__links a:hover,
     .robbo-footer__links a:focus,
-    .robbo-footer__contacts-line a:hover,
-    .robbo-footer__contacts-line a:focus {
+    .robbo-footer__contacts-link:hover,
+    .robbo-footer__contacts-link:focus {
         color: $dark;
     }
 }

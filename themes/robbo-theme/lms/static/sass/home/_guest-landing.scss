@@ -724,22 +724,24 @@ body.robbo-guest-landing-page {
         }
 
         .robbo-courses-catalog__about-lead,
-        .robbo-courses-catalog__about-body,
         .robbo-courses-catalog__about-brand,
         .robbo-courses-catalog__about-tagline,
-        .robbo-courses-catalog__about-intro,
-        .robbo-courses-catalog__about-list,
-        .robbo-courses-catalog__about-list li,
-        .robbo-courses-catalog__about-accent,
         .robbo-courses-catalog__about-reg {
-            color: #{$robbo-tilda-green} !important;
+            color: #{$robbo-tilda-green};
             -webkit-text-fill-color: #{$robbo-tilda-green};
         }
 
-        .robbo-courses-catalog__about-brand,
-        .robbo-courses-catalog__about-tagline,
+        .robbo-courses-catalog__about-body,
+        .robbo-courses-catalog__about-intro,
+        .robbo-courses-catalog__about-list,
+        .robbo-courses-catalog__about-list li {
+            color: #515661;
+        }
+
         .robbo-courses-catalog__about-accent {
-            font-weight: 400;
+            color: #{$robbo-tilda-green};
+            -webkit-text-fill-color: #{$robbo-tilda-green};
+            font-weight: 700;
         }
     }
 
@@ -913,32 +915,48 @@ body.robbo-guest-landing-page {
     }
 
     .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-title {
+        align-self: center;
+        width: 100%;
+        text-align: center;
         margin-bottom: 0;
     }
 
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-line {
-        margin: 0;
-        text-align: center;
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-list {
+        margin-inline: auto;
+    }
+
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__partner {
+        order: 4;
+        align-self: center;
+        justify-content: center;
     }
 }
 
 .robbo-guest-footer.robbo-site-footer .robbo-footer__copyright,
 .robbo-guest-footer.robbo-site-footer .robbo-footer__links a,
 .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-title,
-.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-line,
-.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-line a {
+.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-label,
+.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-link {
     color: #fff;
 }
 
 .robbo-guest-footer.robbo-site-footer .robbo-footer__links a:hover,
 .robbo-guest-footer.robbo-site-footer .robbo-footer__links a:focus,
-.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-line a:hover,
-.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-line a:focus {
+.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-link:hover,
+.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-link:focus {
     color: #f0fdf4;
 }
 
 .robbo-guest-footer.robbo-site-footer .robbo-footer__logo {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+// Логотип Фонда на зелёном фоне: белая подложка для контраста.
+.robbo-guest-footer.robbo-site-footer .robbo-footer__partner-link {
+    background: #fff;
+    padding: clamp(4px, 0.8vw, 6px) clamp(6px, 1.2vw, 10px);
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
 }
 
 body.indigo-dark-theme.robbo-guest-landing-page {
@@ -966,15 +984,15 @@ body.indigo-dark-theme {
     .robbo-guest-footer.robbo-site-footer .robbo-footer__copyright,
     .robbo-guest-footer.robbo-site-footer .robbo-footer__links a,
     .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-title,
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-line,
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-line a {
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-label,
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-link {
         color: #fff;
     }
 
     .robbo-guest-footer.robbo-site-footer .robbo-footer__links a:hover,
     .robbo-guest-footer.robbo-site-footer .robbo-footer__links a:focus,
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-line a:hover,
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-line a:focus {
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-link:hover,
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-link:focus {
         color: #f0fdf4;
     }
 }

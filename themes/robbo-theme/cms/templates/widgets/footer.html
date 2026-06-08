@@ -1,5 +1,6 @@
 ## mako
 <%page expression_filter="h"/>
+<%namespace name='static' file='../static_content.html'/>
 <%!
   from datetime import datetime
 %>
@@ -29,7 +30,25 @@
       </div>
       <div class="robbo-footer__contacts">
         <p class="robbo-footer__contacts-title">Контактные данные:</p>
-        <p class="robbo-footer__contacts-line">Почта <a href="mailto:skill@robbo.ru">skill@robbo.ru</a></p>
+        <ul class="robbo-footer__contacts-list">
+          <li class="robbo-footer__contacts-item">
+            <span class="robbo-footer__contacts-label">Почта</span>
+            <a class="robbo-footer__contacts-link" href="mailto:skill@robbo.ru">skill@robbo.ru</a>
+          </li>
+          <li class="robbo-footer__contacts-item">
+            <span class="robbo-footer__contacts-label">Наш сайт</span>
+            <a class="robbo-footer__contacts-link" href="https://robbo.ru" target="_blank" rel="noopener noreferrer">robbo.ru</a>
+          </li>
+          <li class="robbo-footer__contacts-item">
+            <span class="robbo-footer__contacts-label">Поддержка</span>
+            <a class="robbo-footer__contacts-link" href="https://support.robbo.world/" target="_blank" rel="noopener noreferrer">support.robbo.world</a>
+          </li>
+        </ul>
+      </div>
+      <div class="robbo-footer__partner">
+        <a class="robbo-footer__partner-link" href="https://fasie.ru" target="_blank" rel="noopener noreferrer">
+          <img class="robbo-footer__partner-logo" src="${static.url('robbo-theme/images/partners/fasie.png')}" alt="Фонд содействия инновациям" />
+        </a>
       </div>
     </div>
   </footer>
