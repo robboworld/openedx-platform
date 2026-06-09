@@ -3736,10 +3736,11 @@ LOGIN_REDIRECT_WHITELIST = []
 #   When the terms of service are not visible and agreement to the honor code is required (the default), the signup page
 #   includes a paragraph that links to the honor code page (defined my MKTG_URLS["HONOR"]). This page might not be
 #   available for all Open edX platforms. In such cases, the "honor_code" registration field should be "hidden".
-# Robbo: minimal registration extras for guest landing + Authn MFE (company, honor, marketing opt-in).
+# Robbo: minimal registration extras for guest landing + Authn MFE (honor, marketing opt-in).
+# company is kept in the dict but hidden; set to 'required' to re-enable registration field.
 # Omitted keys are treated as not visible (same as hidden).
 REGISTRATION_EXTRA_FIELDS = {
-    'company': 'required',
+    'company': 'hidden',
     'honor_code': 'required',
     'phone_number': 'optional',
 }
