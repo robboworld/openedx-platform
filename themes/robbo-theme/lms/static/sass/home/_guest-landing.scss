@@ -1297,120 +1297,46 @@ body.robbo-guest-landing-page {
 }
 
 
-// Футер: те же размеры, что `footer.html` на /courses (`$robbo-footer-bar-height`); фон — зелёный Tilda.
+// Гостевой футер: та же разметка и стили, что `footer.html` / MFE (белый фон).
 .robbo-guest-footer.robbo-site-footer {
-    align-items: center;
-    background: $robbo-tilda-green;
+    background: $robbo-brand-white;
+    border-top: 3px solid $robbo-brand-green;
     box-sizing: border-box;
-    display: flex;
-    padding: 0;
+    padding: clamp(28px, 4vw, 36px) 0;
     width: 100%;
 
-    @include media-breakpoint-up(lg) {
-        min-height: $robbo-footer-bar-height;
+    @media screen and (max-width: $robbo-guest-topbar-mobile-max) {
+        padding: 24px 0;
     }
 }
 
-.robbo-guest-footer.robbo-site-footer .robbo-site-footer__inner {
-    padding: 0 20px;
-
-    @include media-breakpoint-up(lg) {
-        min-height: $robbo-footer-bar-height;
-        padding: 0 28px;
-    }
-}
-
-// До ширины Tilda-bar: сверху по центру лого (+ ©), ниже по центру блок ссылок и контакты подряд.
+// До ширины Tilda-bar: колонки футера стеком по центру.
 @media screen and (max-width: $robbo-guest-topbar-mobile-max) {
-    .robbo-guest-footer.robbo-site-footer .robbo-site-footer__inner {
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__main {
         display: flex;
         flex-direction: column;
         align-items: center;
         row-gap: $robbo-footer-stack-gap-sm;
     }
 
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__left {
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__brand-col {
         order: 1;
-        align-self: center;
-        width: 100%;
-        max-width: none;
-        min-width: 0;
-        flex-direction: column;
-        flex-wrap: nowrap;
         align-items: center;
-        justify-content: center;
         text-align: center;
     }
 
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__brand {
-        flex-shrink: 0;
-    }
-
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__copyright {
-        margin: 0.35rem 0 0;
-        max-width: 22em;
-        text-align: center;
-    }
-
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__center {
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__partner-col {
         order: 2;
-        width: 100%;
-        min-width: 0;
+        justify-content: center;
     }
 
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts {
+    .robbo-guest-footer.robbo-site-footer nav.robbo-footer__col {
         order: 3;
-        align-self: center;
-        width: 100%;
-        max-width: 36rem;
-        min-width: 0;
-        flex-direction: column;
-        flex-wrap: nowrap;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        row-gap: 0.1875rem;
     }
 
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-title {
-        align-self: center;
-        width: 100%;
-        text-align: center;
-        margin-bottom: 0;
-    }
-
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-list {
-        margin-inline: auto;
-    }
-
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__partner {
+    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-col {
         order: 4;
-        align-self: center;
-        justify-content: center;
     }
-}
-
-.robbo-guest-footer.robbo-site-footer .robbo-footer__copyright,
-.robbo-guest-footer.robbo-site-footer .robbo-footer__links a,
-.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-title,
-.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-label,
-.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-link {
-    color: #fff;
-}
-
-.robbo-guest-footer.robbo-site-footer .robbo-footer__links a:hover,
-.robbo-guest-footer.robbo-site-footer .robbo-footer__links a:focus,
-.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-link:hover,
-.robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-link:focus {
-    color: #f0fdf4;
-}
-
-// Логотип Фонда на зелёном фоне: белая подложка для контраста.
-.robbo-guest-footer.robbo-site-footer .robbo-footer__partner-link {
-    background: #fff;
-    padding: clamp(4px, 0.8vw, 6px) clamp(6px, 1.2vw, 10px);
-    border-radius: 4px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
 }
 
 body.indigo-dark-theme.robbo-guest-landing-page {
@@ -1426,28 +1352,6 @@ body.indigo-dark-theme.robbo-guest-landing-page {
         background: #fff !important;
         background-color: #fff !important;
         background-image: none !important;
-    }
-}
-
-body.indigo-dark-theme {
-    // Не даём общему правилу `.robbo-site-footer { background: #fff }` перебить зелёный гостевой футер.
-    .robbo-guest-footer.robbo-site-footer {
-        background: $robbo-tilda-green;
-    }
-
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__copyright,
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__links a,
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-title,
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-label,
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-link {
-        color: #fff;
-    }
-
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__links a:hover,
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__links a:focus,
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-link:hover,
-    .robbo-guest-footer.robbo-site-footer .robbo-footer__contacts-link:focus {
-        color: #f0fdf4;
     }
 }
 

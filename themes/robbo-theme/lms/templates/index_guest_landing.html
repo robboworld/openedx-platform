@@ -110,53 +110,7 @@ from mako.runtime import UNDEFINED
 
     <footer id="footer-guest" class="robbo-site-footer robbo-guest-footer" lang="ru">
       <div class="robbo-site-footer__inner">
-        <div class="robbo-footer__left">
-          <div class="robbo-footer__brand">
-            <span class="robbo-footer__logo" aria-label="РОББО">РОББО<sup class="robbo-footer__reg"
-                aria-hidden="true">®</sup></span>
-          </div>
-          <p class="robbo-footer__copyright">© ООО «РОББО ТЕХНОЛОГИИ», ${datetime.now().year}</p>
-        </div>
-        <div class="robbo-footer__center">
-          <nav class="robbo-footer__nav" aria-label="Документы">
-            <ul class="robbo-footer__links">
-              <li>
-                <a href="https://edurobbo.ru/skill" target="_blank" rel="noopener noreferrer">Сведения об образовательной
-                  организации</a>
-              </li>
-              <li>
-                <a href="https://robbo.ru/wp-content/uploads/policy.pdf" target="_blank"
-                  rel="noopener noreferrer">Политика обработки персональных данных</a>
-              </li>
-              <li>
-                <a href="https://robbo.ru/wp-content/uploads/agree.pdf" target="_blank"
-                  rel="noopener noreferrer">Согласие на обработку персональных данных</a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <div class="robbo-footer__contacts">
-          <p class="robbo-footer__contacts-title">Контактные данные:</p>
-          <ul class="robbo-footer__contacts-list">
-            <li class="robbo-footer__contacts-item">
-              <span class="robbo-footer__contacts-label">Почта</span>
-              <a class="robbo-footer__contacts-link" href="mailto:skill@robbo.ru">skill@robbo.ru</a>
-            </li>
-            <li class="robbo-footer__contacts-item">
-              <span class="robbo-footer__contacts-label">Наш сайт</span>
-              <a class="robbo-footer__contacts-link" href="https://robbo.ru" target="_blank" rel="noopener noreferrer">robbo.ru</a>
-            </li>
-            <li class="robbo-footer__contacts-item">
-              <span class="robbo-footer__contacts-label">Поддержка</span>
-              <a class="robbo-footer__contacts-link" href="https://support.robbo.world/" target="_blank" rel="noopener noreferrer">support.robbo.world</a>
-            </li>
-          </ul>
-        </div>
-        <div class="robbo-footer__partner">
-          <a class="robbo-footer__partner-link" href="https://fasie.ru" target="_blank" rel="noopener noreferrer">
-            <img class="robbo-footer__partner-logo" src="${static.url('robbo-theme/images/partners/fasie.png')}" alt="Фонд содействия инновациям" />
-          </a>
-        </div>
+        <%include file="robbo_footer_inner.html" />
       </div>
     </footer>
   </section>

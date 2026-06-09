@@ -1,118 +1,124 @@
-// Robbo footer in Studio (mirrors LMS `.robbo-site-footer`; self-contained for CMS Sass)
+// Robbo footer in Studio (mirrors LMS `.robbo-site-footer` / MFE RobboFooter)
 
-$robbo-footer-logo-bg: #00b050;
-$robbo-footer-text: #777;
-$robbo-footer-hover: #111827;
-// Spacing between footer legal document links (align LMS `extra/_footer.scss` / MFE RobboFooter).
-$robbo-footer-doc-links-stack-gap: clamp(2px, 0.35vw, 4px);
-$robbo-footer-doc-links-flex-gap: 2px 6px;
+$robbo-brand-green: #00af41;
+$robbo-brand-coal: #383838;
+$robbo-brand-grey: #989898;
+$robbo-brand-white: #ffffff;
+$robbo-footer-doc-links-gap: 8px;
+$robbo-footer-contacts-gap: 10px;
 $robbo-footer-stack-gap-sm: 14px;
-$robbo-footer-contacts-label-w: 5.5rem;
 $robbo-footer-font-family: $font-family-title, "Helvetica Neue", Arial, sans-serif;
 
 .wrapper-footer.wrapper.robbo-studio-footer-wrap,
 .wrapper-footer.robbo-studio-footer-wrap {
-    background: #fff;
-    border-top: 1px solid #e0e0e0;
-    padding: 0;
+    background: $robbo-brand-white;
+    border-top: 3px solid $robbo-brand-green;
+    padding: clamp(28px, 4vw, 36px) 0;
     box-shadow: none;
 
     @media (max-width: 991.98px) {
-        padding: 12px 0;
+        padding: 24px 0;
     }
 }
 
 .robbo-site-footer {
-    background: #fff;
+    background: $robbo-brand-white;
     box-sizing: border-box;
+    width: 100%;
 }
 
 .robbo-site-footer__inner {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1fr) auto;
-    align-items: center;
-    justify-items: center;
-    column-gap: clamp(16px, 3vw, 40px);
-    row-gap: 0;
     width: 100%;
-    max-width: 1162px;
+    max-width: 1600px;
     margin: 0 auto;
     padding: 0 20px;
     box-sizing: border-box;
 
     @media (min-width: 992px) {
-        min-height: 80px;
         padding: 0 28px;
     }
+}
+
+.robbo-footer__main {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: clamp(20px, 4vw, 48px);
+    align-items: start;
+    width: 100%;
 
     @media (max-width: 991.98px) {
         grid-template-columns: 1fr;
         row-gap: $robbo-footer-stack-gap-sm;
+        justify-items: center;
+        text-align: center;
     }
 }
 
-.robbo-footer__center {
+.robbo-footer__brand-col {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    justify-self: center;
-    text-align: center;
-    min-width: 0;
-    width: 100%;
-    padding: 0;
-}
-
-.robbo-footer__left {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: flex-start;
-    justify-self: start;
-    text-align: center;
+    gap: 10px;
     min-width: 0;
-    width: 100%;
-    max-width: 241px;
 
     @media (max-width: 991.98px) {
-        justify-self: center;
         align-items: center;
+        width: 100%;
         max-width: 100%;
     }
 }
 
-.robbo-footer__contacts {
-    --robbo-footer-contacts-label-w: #{$robbo-footer-contacts-label-w};
+.robbo-footer__partner-col {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: flex-start;
-    justify-self: center;
-    text-align: left;
     min-width: 0;
-    width: max-content;
-    max-width: 100%;
 
     @media (max-width: 991.98px) {
-        justify-self: center;
         align-items: center;
-        text-align: center;
+        justify-content: center;
         width: 100%;
+        max-width: 100%;
     }
 }
 
-// Логотип партнёра «Фонд содействия инновациям»: компактная колонка справа.
-.robbo-footer__partner {
+.robbo-footer__col {
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    justify-self: end;
+    flex-direction: column;
+    align-items: flex-start;
     min-width: 0;
 
     @media (max-width: 991.98px) {
-        justify-self: center;
-        justify-content: center;
+        align-items: center;
+        width: 100%;
+        max-width: 100%;
     }
+}
+
+.robbo-footer__heading {
+    margin: 0 0 12px;
+    color: $robbo-brand-coal;
+    font-family: $robbo-footer-font-family;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.robbo-footer__tagline {
+    margin: 0;
+    max-width: 22em;
+    color: $robbo-brand-grey;
+    font-family: $robbo-footer-font-family;
+    font-size: clamp(11px, 1.1vw, 13px);
+    line-height: 1.45;
+}
+
+.robbo-footer__partner {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    min-width: 0;
 }
 
 .robbo-footer__partner-link {
@@ -121,7 +127,7 @@ $robbo-footer-font-family: $font-family-title, "Helvetica Neue", Arial, sans-ser
     border-radius: 4px;
 
     &:focus-visible {
-        outline: 2px solid $robbo-footer-logo-bg;
+        outline: 2px solid $robbo-brand-green;
         outline-offset: 3px;
     }
 }
@@ -129,7 +135,7 @@ $robbo-footer-font-family: $font-family-title, "Helvetica Neue", Arial, sans-ser
 .robbo-footer__partner-logo {
     display: block;
     width: auto;
-    height: clamp(40px, 4.5vw, 52px);
+    height: clamp(56px, 6.5vw, 76px);
     object-fit: contain;
 }
 
@@ -143,8 +149,8 @@ $robbo-footer-font-family: $font-family-title, "Helvetica Neue", Arial, sans-ser
     margin: 0;
     padding: clamp(4px, 1.2vw, 6px) clamp(14px, 2.2vw, 21px) clamp(4px, 1.2vw, 6px) clamp(12px, 1.8vw, 15px);
     box-sizing: border-box;
-    background: $robbo-footer-logo-bg;
-    color: #fff;
+    background: $robbo-brand-green;
+    color: $robbo-brand-white;
     font-size: clamp(14px, 2vw, 24px);
     font-weight: 700;
     line-height: 1.15;
@@ -165,77 +171,49 @@ $robbo-footer-font-family: $font-family-title, "Helvetica Neue", Arial, sans-ser
 }
 
 .robbo-footer__copyright {
-    margin: clamp(6px, 1vw, 10px) 0 0;
+    margin: 0;
     max-width: 22em;
     font-size: clamp(11px, 1.1vw, 12px);
     line-height: 1.45;
-    color: $robbo-footer-text;
+    color: $robbo-brand-grey;
     font-family: $robbo-footer-font-family;
 }
 
-.robbo-footer__nav {
+.robbo-footer__links {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: $robbo-footer-doc-links-gap;
     width: 100%;
-    max-width: 36rem;
-}
-
-.robbo-footer__links {
-    list-style: none;
     margin: 0;
     padding: 0;
-    width: 100%;
-    text-align: center;
+    list-style: none;
 
     li {
-        margin: 0 0 $robbo-footer-doc-links-stack-gap;
-
-        &:last-child {
-            margin-bottom: 0;
-        }
-
-        @media (min-width: 992px) {
-            margin: 0;
-        }
-    }
-
-    @media (max-width: 991.98px) {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: $robbo-footer-doc-links-stack-gap;
-
-        li {
-            margin: 0;
-        }
-
-        a {
-            line-height: 1.25;
-        }
-    }
-
-    @media (min-width: 992px) {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-        gap: $robbo-footer-doc-links-flex-gap;
+        margin: 0;
+        padding: 0;
     }
 
     a {
-        color: $robbo-footer-text;
-        font-size: clamp(11px, 1.1vw, 12px);
+        display: block;
+        margin: 0;
+        padding: 0;
+        color: $robbo-brand-grey;
+        font-size: clamp(11px, 1.1vw, 13px);
         line-height: 1.45;
         font-family: $robbo-footer-font-family;
-        text-decoration: underline;
+        text-decoration: none;
         word-break: break-word;
+        transition: color 0.15s ease;
 
         &:hover,
         &:focus {
-            color: $robbo-footer-hover;
+            color: $robbo-brand-green;
             text-decoration: underline;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $robbo-brand-green;
+            outline-offset: 2px;
         }
     }
 }
@@ -246,7 +224,7 @@ $robbo-footer-font-family: $font-family-title, "Helvetica Neue", Arial, sans-ser
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: $robbo-footer-contacts-gap;
     width: 100%;
 
     @media (max-width: 991.98px) {
@@ -255,47 +233,44 @@ $robbo-footer-font-family: $font-family-title, "Helvetica Neue", Arial, sans-ser
 }
 
 .robbo-footer__contacts-item {
-    display: grid;
-    grid-template-columns: var(--robbo-footer-contacts-label-w) minmax(0, 1fr);
-    column-gap: 0.4em;
-    align-items: baseline;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin: 0;
+
+    @media (max-width: 991.98px) {
+        justify-content: center;
+    }
 }
 
-.robbo-footer__contacts-title,
-.robbo-footer__contacts-label,
-.robbo-footer__contacts-link {
-    font-size: clamp(11px, 1.1vw, 12px);
-    line-height: 1.2;
-    font-family: $robbo-footer-font-family;
-}
-
-.robbo-footer__contacts-title,
-.robbo-footer__contacts-label {
-    margin: 0;
-    color: $robbo-footer-text;
-}
-
-.robbo-footer__contacts-title {
-    align-self: center;
-    width: 100%;
-    text-align: center;
-    margin-bottom: clamp(2px, 0.35vw, 4px);
-}
-
-.robbo-footer__contacts-label {
-    text-align: right;
-    white-space: nowrap;
+.robbo-footer__contacts-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    color: $robbo-brand-grey;
 }
 
 .robbo-footer__contacts-link {
     min-width: 0;
-    color: $robbo-footer-text;
-    text-decoration: underline;
+    color: $robbo-brand-grey;
+    font-size: clamp(11px, 1.1vw, 13px);
+    line-height: 1.45;
+    font-family: $robbo-footer-font-family;
+    text-decoration: none;
     overflow-wrap: anywhere;
+    transition: color 0.15s ease;
 
     &:hover,
     &:focus {
-        color: $robbo-footer-hover;
+        color: $robbo-brand-green;
+        text-decoration: underline;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $robbo-brand-green;
+        outline-offset: 2px;
     }
 }

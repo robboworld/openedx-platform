@@ -1,0 +1,69 @@
+## mako
+<%page expression_filter="h"/>
+<%!
+  from datetime import datetime
+%>
+<%namespace name='static' file='static_content.html'/>
+<div class="robbo-footer__main">
+  <div class="robbo-footer__brand-col">
+    <div class="robbo-footer__brand">
+      <span class="robbo-footer__logo" aria-label="РОББО">РОББО<sup class="robbo-footer__reg" aria-hidden="true">®</sup></span>
+    </div>
+    <p class="robbo-footer__tagline">Образовательная платформа РОББО</p>
+    <p class="robbo-footer__copyright">© ООО «РОББО ТЕХНОЛОГИИ», ${datetime.now().year}</p>
+  </div>
+  <div class="robbo-footer__partner-col">
+    <div class="robbo-footer__partner">
+      <a class="robbo-footer__partner-link" href="https://fasie.ru" target="_blank" rel="noopener noreferrer">
+        <img class="robbo-footer__partner-logo" src="${static.url('robbo-theme/images/partners/fasie.png')}" alt="Фонд содействия инновациям" />
+      </a>
+    </div>
+  </div>
+  <nav class="robbo-footer__col" aria-label="Документы">
+    <h2 class="robbo-footer__heading">Документы</h2>
+    <ul class="robbo-footer__links">
+      <li>
+        <a href="https://edurobbo.ru/skill" target="_blank" rel="noopener noreferrer">Сведения об образовательной организации</a>
+      </li>
+      <li>
+        <a href="https://robbo.ru/wp-content/uploads/policy.pdf" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>
+      </li>
+      <li>
+        <a href="https://robbo.ru/wp-content/uploads/agree.pdf" target="_blank" rel="noopener noreferrer">Согласие на обработку персональных данных</a>
+      </li>
+    </ul>
+  </nav>
+  <div class="robbo-footer__col robbo-footer__contacts-col">
+    <h2 class="robbo-footer__heading">Контакты</h2>
+    <ul class="robbo-footer__contacts-list">
+      <li class="robbo-footer__contacts-item">
+        <span class="robbo-footer__contacts-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" focusable="false">
+            <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8" fill="none"></rect>
+            <path d="M3 7l9 6 9-6" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </span>
+        <a class="robbo-footer__contacts-link" href="mailto:info@robbo.ru" aria-label="Почта: info@robbo.ru">info@robbo.ru</a>
+      </li>
+      <li class="robbo-footer__contacts-item">
+        <span class="robbo-footer__contacts-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" focusable="false">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" fill="none"></circle>
+            <path d="M3 12h18M12 3c2.5 2.8 2.5 14.2 0 18M12 3c-2.5 2.8-2.5 14.2 0 18" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </span>
+        <a class="robbo-footer__contacts-link" href="https://robbo.ru" target="_blank" rel="noopener noreferrer" aria-label="Наш сайт: robbo.ru">robbo.ru</a>
+      </li>
+      <li class="robbo-footer__contacts-item">
+        <span class="robbo-footer__contacts-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" focusable="false">
+            <path d="M4 11v3a2 2 0 002 2h1v-7H6a2 2 0 00-2 2zM18 9h1a2 2 0 012 2v3a2 2 0 01-2 2h-1V9z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"></path>
+            <path d="M8 18v1a4 4 0 004 4 4 4 0 004-4v-1" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"></path>
+            <path d="M12 14v-1a3 3 0 013-3" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"></path>
+          </svg>
+        </span>
+        <a class="robbo-footer__contacts-link" href="https://support.robbo.world/" target="_blank" rel="noopener noreferrer" aria-label="Поддержка: support.robbo.world">support.robbo.world</a>
+      </li>
+    </ul>
+  </div>
+</div>
