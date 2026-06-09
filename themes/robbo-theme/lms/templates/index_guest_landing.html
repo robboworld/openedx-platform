@@ -62,10 +62,11 @@ from mako.runtime import UNDEFINED
                 href="${reverse('register_user') | h}">Регистрация</a>
             </div>
           </div>
-          <div class="robbo-guest-hero__visual" aria-hidden="true">
-            <img class="robbo-guest-hero__logo" src="${static.url('images/guest-landing/topbar-logo.png')}"
-              width="1680" height="635" alt="" decoding="async" />
-          </div>
+          % if robbo_about is not UNDEFINED:
+            <div class="robbo-guest-hero__about">
+              <%include file="courseware/_robbo_about_company.html" args="about=robbo_about" />
+            </div>
+          % endif
         </div>
       </section>
 
@@ -100,12 +101,6 @@ from mako.runtime import UNDEFINED
           </div>
           <div class="robbo-guest-home__sentinel" aria-hidden="true"></div>
         </header>
-
-        % if robbo_about is not UNDEFINED:
-          <div class="robbo-guest-about">
-            <%include file="courseware/_robbo_about_company.html" args="about=robbo_about" />
-          </div>
-        % endif
 
         <h2 id="robbo-guest-courses-title" class="robbo-guest-courses__title">Наши курсы</h2>
 

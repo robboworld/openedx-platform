@@ -1,28 +1,43 @@
 <%page args="about" expression_filter="h"/>
-<article
-  class="robbo-courses-catalog__featured robbo-courses-catalog__featured--about"
-  aria-labelledby="robbo-about-title"
->
-  <div class="robbo-courses-catalog__about-lead">
-    <h2 id="robbo-about-title" class="robbo-courses-catalog__about-title sr-only">${about['title']}</h2>
-    <p class="robbo-courses-catalog__about-brand">
-      ${about['brand']}<sup class="robbo-courses-catalog__about-reg">®</sup>
-    </p>
-    <p class="robbo-courses-catalog__about-tagline">${about['tagline']}</p>
-  </div>
-  <div class="robbo-courses-catalog__about-body">
-    <p class="robbo-courses-catalog__about-intro">
-      Уже 19 лет мы внедряем технологии на базе открытого кода (Open Source), развиваем робототехнику и
-      занимаемся системной интеграцией сложных инженерных систем. Наши продукты и методики востребованы в
-      <span class="robbo-courses-catalog__about-accent">44 странах мира</span>.
-    </p>
-    <ul class="robbo-courses-catalog__about-list">
-      % for item in about.get('highlights', []):
-        <li>
-          <span class="robbo-courses-catalog__about-accent">${item['label']}</span>
-          ${item['text']}
+<%!
+from django.urls import reverse
+%>
+<article class="robbo-guest-about-panel" aria-labelledby="robbo-about-title">
+  <h2 id="robbo-about-title" class="robbo-guest-about-panel__title sr-only">${about['title']}</h2>
+  <p class="robbo-guest-about-panel__tagline">${about['tagline']}</p>
+
+  % if about.get('stats'):
+    <div class="robbo-guest-about-panel__stats" role="list">
+      % for stat in about['stats']:
+        <div class="robbo-guest-about-panel__stat" role="listitem">
+          <span class="robbo-guest-about-panel__stat-value" aria-hidden="true">${stat['value']}</span>
+          <span class="robbo-guest-about-panel__stat-label">
+            <span class="sr-only">${stat['value']} </span>${stat['label']}
+          </span>
+        </div>
+      % endfor
+    </div>
+  % endif
+
+  <p class="robbo-guest-about-panel__intro">
+    ${about['intro']}<span class="robbo-guest-about-panel__accent">${about['intro_accent']}</span>.
+  </p>
+
+  % if about.get('highlights'):
+    <ul class="robbo-guest-about-panel__highlights">
+      % for item in about['highlights']:
+        <li class="robbo-guest-about-panel__highlight">
+          <span class="robbo-guest-about-panel__highlight-icon" aria-hidden="true"></span>
+          <p class="robbo-guest-about-panel__highlight-text">
+            <span class="robbo-guest-about-panel__accent">${item['label']}</span>
+            ${item['text']}
+          </p>
         </li>
       % endfor
     </ul>
-  </div>
+  % endif
+
+  <p class="robbo-guest-about-panel__more">
+    <a class="robbo-guest-about-panel__more-link" href="${reverse('about') | h}">Подробнее о компании</a>
+  </p>
 </article>

@@ -121,16 +121,20 @@ def get_robbo_catalog_hero() -> dict:
 
 
 def get_robbo_catalog_about() -> Dict[str, Any]:
-    """«О компании» block on guest homepage (under platform title)."""
+    """«О компании» block in guest homepage hero (right column)."""
     return {
         'title': 'О компании',
-        'brand': 'РОББО',
         'tagline': 'Открытые технологии будущего',
+        'stats': [
+            {'value': '19', 'label': 'лет на рынке'},
+            {'value': '44', 'label': 'стран мира'},
+        ],
         'intro': (
             'Уже 19 лет мы внедряем технологии на базе открытого кода (Open Source), развиваем '
             'робототехнику и занимаемся системной интеграцией сложных инженерных систем. Наши '
-            'продукты и методики востребованы в 44 странах мира.'
+            'продукты и методики востребованы в '
         ),
+        'intro_accent': '44 странах мира',
         'highlights': [
             {
                 'label': 'Институты развития:',

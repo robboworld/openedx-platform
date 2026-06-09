@@ -627,8 +627,9 @@ a.robbo-guest-topbar__tagline {
     width: 100%;
 
     @include media-breakpoint-up(lg) {
+        align-items: start;
         gap: clamp(2rem, 4vw, 3rem);
-        grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     }
 }
 
@@ -754,22 +755,12 @@ a.robbo-guest-topbar__tagline {
     }
 }
 
-.robbo-guest-hero__visual {
-    display: none;
-    justify-content: center;
+.robbo-guest-hero__about {
     min-width: 0;
 
     @include media-breakpoint-up(lg) {
-        display: flex;
+        align-self: center;
     }
-}
-
-.robbo-guest-hero__logo {
-    display: block;
-    height: auto;
-    max-width: 320px;
-    opacity: 0.92;
-    width: 100%;
 }
 
 .robbo-guest-courses__title {
@@ -858,40 +849,162 @@ body.robbo-guest-landing-page {
         text-align: center;
     }
 
-    // «О компании»: выше каталога курсов.
-    .robbo-guest-about {
-        --robbo-cat-cta-bg: #{$robbo-tilda-green};
-        --robbo-cat-border: 1px solid #e5e7eb;
-        --robbo-cat-gap: clamp(1rem, 2.5vw, 1.75rem);
-        --robbo-cat-hero-mb: 0;
+    // «О компании»: frosted panel in hero right column.
+    .robbo-guest-hero__about {
         box-sizing: border-box;
-        margin: clamp(1rem, 3vw, 1.5rem) 0 clamp(1.25rem, 3vw, 2rem);
+        margin: 0;
         width: 100%;
 
-        .robbo-courses-catalog__featured--about {
-            --robbo-about-accent: #{$robbo-tilda-green};
-            margin-bottom: 0;
+        @media screen and (max-width: 991.98px) {
+            border-top: 1px solid rgba($robbo-tilda-green, 0.14);
+            padding-top: clamp(1.25rem, 3vw, 1.75rem);
+        }
+    }
+
+    .robbo-guest-about-panel {
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid rgba($robbo-tilda-green, 0.14);
+        border-radius: clamp(12px, 2vw, 16px);
+        box-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.04),
+            0 8px 28px rgba($robbo-tilda-green, 0.1);
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: clamp(0.85rem, 2vw, 1.15rem);
+        margin: 0;
+        padding: clamp(1.25rem, 3vw, 1.75rem);
+        width: 100%;
+
+        @supports (backdrop-filter: blur(8px)) {
+            backdrop-filter: blur(8px);
+        }
+    }
+
+    .robbo-guest-about-panel__tagline {
+        color: $robbo-tilda-green;
+        font-size: clamp(0.8125rem, 1.4vw, 0.9375rem);
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        line-height: 1.35;
+        margin: 0;
+        text-transform: uppercase;
+    }
+
+    .robbo-guest-about-panel__stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: clamp(0.75rem, 2.5vw, 1.25rem);
+        margin: 0;
+    }
+
+    .robbo-guest-about-panel__stat {
+        align-items: baseline;
+        display: flex;
+        flex: 1 1 auto;
+        flex-wrap: nowrap;
+        gap: 0.35rem 0.5rem;
+        margin: 0;
+        min-width: 0;
+    }
+
+    .robbo-guest-about-panel__stat-value {
+        color: $robbo-tilda-green;
+        font-size: clamp(1.75rem, 3.5vw, 2.25rem);
+        font-weight: 700;
+        line-height: 1;
+        margin: 0;
+    }
+
+    .robbo-guest-about-panel__stat-label {
+        color: $robbo-guest-topbar-coal;
+        font-size: clamp(0.8125rem, 1.2vw, 0.9375rem);
+        font-weight: 600;
+        line-height: 1.3;
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    .robbo-guest-about-panel__intro,
+    .robbo-guest-about-panel__highlight-text {
+        color: $robbo-guest-topbar-coal;
+        font-size: clamp(0.9375rem, 1.2vw, 1.0625rem);
+        line-height: 1.55;
+        margin: 0;
+    }
+
+    .robbo-guest-about-panel__accent {
+        color: $robbo-tilda-green;
+        font-weight: 700;
+    }
+
+    .robbo-guest-about-panel__highlights {
+        display: grid;
+        gap: clamp(0.65rem, 1.5vw, 0.85rem);
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .robbo-guest-about-panel__highlight {
+        align-items: flex-start;
+        background: rgba($robbo-tilda-green, 0.06);
+        border: 1px solid rgba($robbo-tilda-green, 0.12);
+        border-radius: 10px;
+        display: flex;
+        gap: 0.75rem;
+        margin: 0;
+        padding: clamp(0.65rem, 1.5vw, 0.85rem);
+    }
+
+    .robbo-guest-about-panel__highlight-icon {
+        background: $robbo-tilda-green;
+        border-radius: 50%;
+        flex-shrink: 0;
+        height: 1.375rem;
+        margin-top: 0.15rem;
+        position: relative;
+        width: 1.375rem;
+
+        &::after {
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            content: '';
+            height: 0.45rem;
+            left: 50%;
+            position: absolute;
+            top: 45%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            width: 0.225rem;
+        }
+    }
+
+    .robbo-guest-about-panel__more {
+        margin: clamp(0.15rem, 0.5vw, 0.35rem) 0 0;
+    }
+
+    a.robbo-guest-about-panel__more-link {
+        color: $robbo-tilda-green;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color var(--robbo-guest-transition), opacity var(--robbo-guest-transition);
+
+        &:link,
+        &:visited {
+            color: $robbo-tilda-green !important;
         }
 
-        .robbo-courses-catalog__about-lead,
-        .robbo-courses-catalog__about-brand,
-        .robbo-courses-catalog__about-tagline,
-        .robbo-courses-catalog__about-reg {
-            color: #{$robbo-tilda-green};
-            -webkit-text-fill-color: #{$robbo-tilda-green};
+        &:hover,
+        &:focus {
+            color: darken($robbo-tilda-green, 8%) !important;
+            text-decoration: underline;
+            text-underline-offset: 0.15em;
         }
 
-        .robbo-courses-catalog__about-body,
-        .robbo-courses-catalog__about-intro,
-        .robbo-courses-catalog__about-list,
-        .robbo-courses-catalog__about-list li {
-            color: #515661;
-        }
-
-        .robbo-courses-catalog__about-accent {
-            color: #{$robbo-tilda-green};
-            -webkit-text-fill-color: #{$robbo-tilda-green};
-            font-weight: 700;
+        &:focus-visible {
+            outline: 2px solid $robbo-tilda-green;
+            outline-offset: 2px;
         }
     }
 
