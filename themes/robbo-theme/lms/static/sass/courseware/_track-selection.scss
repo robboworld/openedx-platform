@@ -1,0 +1,71 @@
+// Copyright (C) 2026 Robbo <https://robbo.ru>
+// SPDX-License-Identifier: AGPL-3.0-only
+// Part of the Robbo Open edX distribution. Track selection (/course_modes/choose/).
+
+.track-selection-container {
+  .page-header h3 {
+    color: $robbo-brand-coal;
+  }
+
+  .choice-title h4 {
+    color: $robbo-brand-coal;
+    font-weight: 700;
+  }
+
+  .choice-bullets {
+    b,
+    strong,
+    .verified {
+      color: $robbo-brand-green;
+      font-weight: 700;
+    }
+  }
+
+  .verified-note .note-info b {
+    color: $robbo-brand-green;
+    font-weight: 700;
+  }
+
+  .track-selection-certificate {
+    .certificate-container {
+      background-color: $robbo-ui-primary-light;
+      border-color: mix($robbo-brand-green, #707070, 35%);
+    }
+
+    .corner-overlay {
+      border-color: $robbo-brand-green transparent transparent $robbo-brand-green;
+    }
+
+    .award-icon svg path {
+      fill: $robbo-brand-green;
+    }
+  }
+
+  #track_selection_upgrade {
+    background: $robbo-brand-green;
+    border-color: $robbo-brand-green;
+    color: $robbo-brand-white;
+    font-weight: 600;
+
+    &:hover,
+    &:focus-visible {
+      background: $robbo-ui-primary-dark;
+      border-color: $robbo-ui-primary-dark;
+      color: $robbo-brand-white;
+    }
+  }
+
+  #track_selection_audit {
+    color: $robbo-brand-coal;
+    border-color: $robbo-brand-grey;
+    background: $robbo-brand-white;
+    font-weight: 600;
+
+    &:hover,
+    &:focus-visible {
+      background: $robbo-brand-green;
+      border-color: $robbo-brand-green;
+      color: $robbo-brand-white;
+    }
+  }
+}

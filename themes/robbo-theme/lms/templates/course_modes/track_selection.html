@@ -1,0 +1,61 @@
+## Copyright (C) 2026 Robbo <https://robbo.ru>
+## SPDX-License-Identifier: AGPL-3.0-only
+## Part of the Robbo Open edX distribution. Brand colors for /course_modes/choose/.
+<%inherit file="/course_modes/track_selection.html" />
+
+<%block name="headextra">
+  <style>
+    /* Pipeline lms-main-v1.*.css can lag behind theme Sass; keep critical brand rules inline. */
+    .track-selection-container .choice-bullets b,
+    .track-selection-container .choice-bullets strong,
+    .track-selection-container .choice-bullets .verified,
+    .track-selection-container .verified-note .note-info b {
+      color: #00af41 !important;
+      font-weight: 700;
+    }
+
+    .track-selection-container .track-selection-certificate .certificate-container {
+      background-color: #edf9f2;
+      border-color: #498660;
+    }
+
+    .track-selection-container .track-selection-certificate .corner-overlay {
+      border-color: #00af41 transparent transparent #00af41 !important;
+    }
+
+    .track-selection-container .track-selection-certificate .award-icon svg path {
+      fill: #00af41;
+    }
+
+    .track-selection-container #track_selection_upgrade {
+      background: #00af41 !important;
+      background-color: #00af41 !important;
+      border-color: #00af41 !important;
+      color: #fff !important;
+      font-weight: 600;
+    }
+
+    .track-selection-container #track_selection_upgrade:hover,
+    .track-selection-container #track_selection_upgrade:focus-visible {
+      background: #007e2f !important;
+      background-color: #007e2f !important;
+      border-color: #007e2f !important;
+      color: #fff !important;
+    }
+
+    .track-selection-container #track_selection_audit {
+      color: #383838;
+      border-color: #989898;
+      background: #fff;
+      font-weight: 600;
+    }
+
+    .track-selection-container #track_selection_audit:hover,
+    .track-selection-container #track_selection_audit:focus-visible {
+      background: #00af41 !important;
+      background-color: #00af41 !important;
+      border-color: #00af41 !important;
+      color: #fff !important;
+    }
+  </style>
+</%block>

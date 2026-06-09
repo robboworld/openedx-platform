@@ -1,0 +1,31 @@
+## Copyright (C) 2026 Robbo <https://robbo.ru>
+## SPDX-License-Identifier: AGPL-3.0-only
+## Part of the Robbo Open edX distribution. Track selection bullets without external certificate link.
+<%page expression_filter="h"/>
+<%inherit file="track_selection.html" />
+<%!
+from django.utils.translation import gettext as _
+from openedx.core.djangolib.markup import HTML, Text
+%>
+<%block name="track_selection_certificate_bullets">
+<div class="choice-bullets track-selection-type-unfbe">
+    <ul>
+        <li>${Text(_("Showcase a {start_bold}verified certificate{end_bold} of completion on your resumé to advance your career")).format(
+            start_bold=HTML('<b>'),
+            end_bold=HTML('</b>'),
+        )}</li>
+        <li>${Text(_("Support our {start_bold}mission{end_bold} to increase access to high-quality education for everyone, everywhere")).format(
+            start_bold=HTML('<b>'),
+            end_bold=HTML('</b>'),
+        )}</li>
+    </ul>
+</div>
+</%block>
+
+<%block name="track_selection_audit_bullets">
+<div class="choice-bullets track-selection-type-unfbe">
+    <ul>
+        <li>${_("Get access to the course material, including videos and readings")}</li>
+    </ul>
+</div>
+</%block>

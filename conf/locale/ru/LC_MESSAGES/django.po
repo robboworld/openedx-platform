@@ -344,9 +344,10 @@ msgstr ""
 #. numerical amount in that currency. Adjust this display as needed for your
 #. language.
 #: common/djangoapps/course_modes/models.py
+#: lms/templates/course_modes/track_selection.html
 #, python-brace-format
 msgid "{currency_symbol}{price}"
-msgstr "{price}{currency_symbol}"
+msgstr "{price} {currency_symbol}"
 
 #. #-#-#-#-#  django-partial.po (0.1a)  #-#-#-#-#
 #. Translators: This refers to the cost of the course. In this case, the
@@ -6656,7 +6657,7 @@ msgstr ""
 #: openedx/core/djangoapps/ace_common/templates/ace_common/edx_ace/common/upsell_cta.txt
 #: lms/templates/course_modes/track_selection.html
 msgid "Upgrade Now"
-msgstr "Изменить статус слушателя"
+msgstr "Перейти к оплате"
 
 #: openedx/core/djangoapps/api_admin/admin.py
 #, python-brace-format
@@ -17187,6 +17188,7 @@ msgid "Explore all courses"
 msgstr "Просмотреть курсы"
 
 #: lms/templates/course_modes/fbe.html lms/templates/course_modes/unfbe.html
+#: themes/robbo-theme/lms/templates/course_modes/unfbe.html
 msgid ""
 "Showcase a {link_start}verified certificate{link_end} of completion on your "
 "resumé to advance your career"
@@ -17194,6 +17196,14 @@ msgstr ""
 "Продемонстрируйте в своем резюме подтвержденный {link_start} "
 "сертификат{link_end} об окончании обучения, чтобы продвинуться по карьерной "
 "лестнице."
+
+#: themes/robbo-theme/lms/templates/course_modes/unfbe.html
+msgid ""
+"Showcase a {start_bold}verified certificate{end_bold} of completion on your "
+"resumé to advance your career"
+msgstr ""
+"Укажите в резюме {start_bold}подтверждённый сертификат{end_bold} об окончании "
+"курса — это поможет в карьерном росте."
 
 #: lms/templates/course_modes/fbe.html
 msgid ""
@@ -17204,9 +17214,8 @@ msgstr ""
 "оцениваемые, так и неоцененные задания, пока курс работает."
 
 #: lms/templates/course_modes/fbe.html
-#, fuzzy
 msgid "Show more"
-msgstr "Показать заметки"
+msgstr "Показать ещё"
 
 #: lms/templates/course_modes/fbe.html
 msgid ""
@@ -17217,11 +17226,8 @@ msgstr ""
 "после его окончания"
 
 #: lms/templates/course_modes/fbe.html
-#, fuzzy
 msgid "{link_start}Learn more{link_end} about course access"
-msgstr ""
-"Перейдите к {link_start}панели управления{link_end}, чтобы просмотреть свои "
-"курсы."
+msgstr "{link_start}Подробнее{link_end} о доступе к курсу"
 
 #: lms/templates/course_modes/fbe.html lms/templates/course_modes/unfbe.html
 msgid ""
@@ -17256,33 +17262,28 @@ msgid "Access expires and all progress will be lost"
 msgstr "Срок доступа истекает, и весь прогресс будет потерян."
 
 #: lms/templates/course_modes/track_selection.html
-#, fuzzy
 msgid "Enroll In {course_name} | Upgrade Now"
-msgstr "Записаться на курс {course_name}"
+msgstr "Запись на курс {course_name}"
 
 #: lms/templates/course_modes/track_selection.html
-#, fuzzy
 msgid "Choose a path for your course in"
-msgstr "Гайки и болты вашего курса"
+msgstr "Выберите формат обучения на курсе"
 
 #: lms/templates/course_modes/track_selection.html
-#, fuzzy
 msgid "Earn a certificate"
-msgstr "Распечатать сертификат"
+msgstr "Сертификат об окончании"
 
 #: lms/templates/course_modes/track_selection.html
 msgid ""
 "Studies show that those who choose this option are  {start_bold}more engaged"
 " and motivated{end_bold} to complete their courses"
 msgstr ""
-"Исследования показывают, что те, кто выбирает этот вариант, "
-"{start_bold}более заинтересованы и мотивированы{end_bold} на завершение "
-"курсов."
+"Те, кто выбирает этот вариант, {start_bold}более заинтересованы и "
+"мотивированы{end_bold} на завершение курсов."
 
 #: lms/templates/course_modes/track_selection.html
-#, fuzzy
 msgid "Access this course"
-msgstr "Просмотреть курс как:"
+msgstr "Бесплатный доступ"
 
 #: lms/templates/course_modes/unfbe.html
 msgid "Get access to the course material, including videos and readings"

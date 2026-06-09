@@ -77,3 +77,20 @@
 .wrapper.wrapper-footer .copyright-site {
   color: #777;
 }
+
+/* ---- Learning MFE: verified / full-access upgrade CTA ---- */
+.course-verified-tab .course-verified-tab__upgrade-btn.btn-primary,
+.course-verified-tab .course-verified-tab__upgrade-btn.btn-brand {
+  background-color: #00af41 !important;
+  border-color: #00af41 !important;
+  color: #fff !important;
+}
+
+.course-verified-tab .course-verified-tab__upgrade-btn.btn-primary:hover,
+.course-verified-tab .course-verified-tab__upgrade-btn.btn-brand:hover,
+.course-verified-tab .course-verified-tab__upgrade-btn.btn-primary:active,
+.course-verified-tab .course-verified-tab__upgrade-btn.btn-brand:active {
+  background-color: #006d28 !important;
+  border-color: #006d28 !important;
+  color: #fff !important;
+}
