@@ -1,55 +1,34 @@
 ---
+description: Open edX submodule — docs-first, граница правок, Tutor-safety, Sass build.
 alwaysApply: true
 ---
-# Open edX, Tutor и Robbo theme/MFE overrides
 
-Единое правило: **область правок** в `openedx-platform`, работа с **Tutor**, comprehensive theme **`themes/robbo-theme`**, MFE overrides из meta-repo и плагин **`tutor-plugin-robbo-mfe-branding`** (в Tutor — `robbo-mfe-branding`).
+# Open edX submodule: safety-core
 
 ## Сначала документация
 
-- **По каждой задаче** прежде чем глубоко копать код или «изобретать» решение, **опереться на документацию**: в ней часто есть готовый ответ, рекомендованный способ и ограничения версий.
-- Проверять по порядку, что уместно: официальные источники **Open edX** (например [docs.openedx.org](https://docs.openedx.org/)), **Tutor** — [docs.tutor.edly.io](https://docs.tutor.edly.io/) и [GitHub `overhangio/tutor`](https://github.com/overhangio/tutor), **релевантные README/CHANGELOG/ADR** внутри `openedx-platform` и плагинов/темы в репозитории.
-- Если в документации описан стандартный путь (настройка, флаг, плагин, MFE, тема) — **предпочитать его** собственной эвристике, если он не противоречит задаче и правилам области правок ниже.
-- При необходимости **уточнить формулировки и актуальность** внешних страниц (версия релиза, устаревшие разделы) — использовать веб-поиск или чтение страницы, не полагаться только на память.
+Перед глубоким копанием кода — [docs.openedx.org](https://docs.openedx.org/), [docs.tutor.edly.io](https://docs.tutor.edly.io/), README/CHANGELOG в репозитории. Стандартный путь из документации — предпочитать собственной эвристике.
 
-## Где можно менять код без дополнительных вопросов
+## Граница правок
 
-- Вносить изменения **только в кодовой базе `openedx-platform`** (этот submodule: `robbo-openedx-stack/repos/openedx-platform`) или в явно запрошенных соседних submodules meta-repo, в рамках **текущей задачи**.
+- Менять **только** `openedx-platform` или явно запрошенные соседние submodules meta-repo, в рамках текущей задачи.
+- **Tutor** (`config.yml`, `env/`, плагины, патчи окружения) — **только после явного подтверждения** пользователя.
+- **Исключение:** блок «Скопировать в чат Cursor» из [`tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md`](tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md) — поручение на шаги Tutor из того блока.
 
-## Tutor и окружение развёртывания
+## Sass после правок SCSS
 
-- Любые правки в **Tutor** (корень развёртывания Tutor, `config.yml`, `env/`, плагины Tutor, патчи окружения, скрипты и конфигурация, относящиеся к Tutor, а не к исходникам edx) — **только после явного подтверждения пользователя** в чате.
-- **Исключение:** пользователь вставил в чат **блок «Скопировать в чат Cursor»** из [`tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md`](tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md) (или приложил этот файл с явной просьбой выполнить настройку по нему) — считать это **поручением** на правки `config.yml` / шаги Tutor, перечисленные в том блоке, в пределах настройки Robbo MFE branding.
-- Если подтверждения нет — **не редактировать** `config.yml` и чужой `env/`; ограничиться `openedx-platform` или задать короткий вопрос.
-
-### Сборка Sass после правок SCSS (разрешённый вызов Tutor)
-
-- Если в задаче затрагивались файлы **`.scss` / Sass** в `openedx-platform` (темы, `lms/static/sass`, CMS и т.д.), после правок **выполни пересборку стилей** сам (не ограничивайся подсказкой пользователю), если в окружении доступен `tutor`:
+После правок `.scss` в `openedx-platform` — пересобрать стили (если доступен `tutor`):
 
 ```bash
 tutor dev exec lms bash -lc 'cd /openedx/edx-platform && npm run compile-sass-dev' 2>&1
 ```
 
-- Это **не** правка конфигурации Tutor: однократный `tutor dev exec` в контейнер LMS с рабочим каталогом платформы в контейнере (`/openedx/edx-platform`).
-- Если `tutor` недоступен или команда падает (окружение не поднято), кратко опиши ошибку и что нужно пользователю для сборки.
+Это не правка конфигурации Tutor. Если `tutor` недоступен — кратко описать, что нужно пользователю.
 
-## Текущая архитектура Robbo и MFE
+## Архитектура темы и MFE
 
-- **LMS/CMS** оформляются через comprehensive theme [`themes/robbo-theme`](themes/robbo-theme) (Mako templates + Sass/CSS + статика). После правок `.scss` в теме выполнять пересборку Sass как указано выше.
-- **MFE интерфейс** сейчас правится не через общий shell-патч, а через override-репозитории `frontend-app-*` в meta-repo, подключённые `tutor mounts add`. Подробности и текущий список — в [`.cursor/rules/architecture.mdc`](.cursor/rules/architecture.mdc).
-- Минимальный набор MFE overrides находится в `robbo-openedx-stack/repos/mfe-overrides/`: `frontend-app-learner-dashboard`, `frontend-app-learning`, `frontend-app-authn`, `frontend-app-profile`, `frontend-app-account`.
-- Для MFE dev: если сервис падает с `fedx-scripts: not found`, установить зависимости в mounted repo (`npm clean-install`). `learner-dashboard` запускается отдельным сервисом (`tutor dev start --detach learner-dashboard`), а общий `mfe` контейнер нужен для встроенных MFE вроде `authoring` на порту `2001`.
-
-## Плагин Robbo MFE branding (`robbo-mfe-branding`)
-
-- **Текущая роль:** максимум минимальный runtime `MFE_CONFIG` (логотипы, `PARAGON_THEME_URLS`), если он нужен и не мешает. Не считать этот плагин основным способом оформления MFE интерфейса.
-- **Не возвращать без отдельного решения:** `robbo-mfe-shell.css`, `PLUGIN_SLOTS` footer/header override, Dockerfile-патчи для MFE shell/header/footer. Эти попытки сняты с критического пути; интерфейс MFE переносится в локальные `frontend-app-*` overrides.
-- **Код плагина:** [`tutor-plugin-robbo-mfe-branding/tutor_plugin_robbo_mfe_branding/__init__.py`](tutor-plugin-robbo-mfe-branding/tutor_plugin_robbo_mfe_branding/__init__.py).
-- **Продакшен-дока плагина:** [`tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md`](tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md) может содержать устаревший путь shell CSS; сверяться с `architecture.mdc` как с текущей архитектурой.
-- **Зависимости:** плагины **`mfe`** и **`indigo`** должны быть включены; порядок `PLUGINS` не менять без проверки сгенерированного `env/plugins/mfe/build/mfe/Dockerfile`.
-- Не смешивать в одном изменении несвязанные правки edx-platform, Tutor-плагина и внешних MFE override-репозиториев без запроса пользователя.
+Детали — [`.cursor/rules/architecture.mdc`](.cursor/rules/architecture.mdc). Карта meta-repo — `robbo-openedx-stack/.cursor/rules/robbo-stack-architecture.mdc`.
 
 ## Одна задача — один фокус
 
-- При выполнении плана, ревью диффа или списка изменений: **не трогать** файлы, шаги или правки, которые **не относятся к текущей задаче** (чужие фиксы, «заодно» улучшения, несвязанные рефакторинги).
-- Не расширять объём работы без запроса пользователя.
+Не трогать файлы и правки вне текущей задачи; не расширять объём работы без запроса.

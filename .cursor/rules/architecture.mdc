@@ -6,102 +6,52 @@ alwaysApply: false
 
 # Архитектура темы Robbo и MFE overrides
 
-## Open edX 20 и документация
+Карта meta-repo: `robbo-openedx-stack/.cursor/rules/robbo-stack-architecture.mdc`. Официальная документация Teak: [theming](https://docs.openedx.org/en/release-teak/site_ops/install_configure_run_guide/configuration/changing_appearance/theming/index.html).
 
-**Open edX Teak** — [20-й community release](https://docs.openedx.org/en/release-teak/community/release_notes/teak.html) платформы (ветка документации `release-teak`). Comprehensive theming для операторов описан в разделе [Changing Themes for an Open edX Site](https://docs.openedx.org/en/release-teak/site_ops/install_configure_run_guide/configuration/changing_appearance/theming/index.html): обзор, [корневые каталоги тем](https://docs.openedx.org/en/release-teak/site_ops/install_configure_run_guide/configuration/changing_appearance/theming/theme_directories.html), [создание темы](https://docs.openedx.org/en/release-teak/site_ops/install_configure_run_guide/configuration/changing_appearance/theming/create_theme.html), [включение и применение](https://docs.openedx.org/en/release-teak/site_ops/install_configure_run_guide/configuration/changing_appearance/theming/enable_themes.html), [сборка Sass](https://docs.openedx.org/en/release-teak/site_ops/install_configure_run_guide/configuration/changing_appearance/theming/compiling_theme.html).
+## Как платформа подключает тему
 
-По документации Teak для comprehensive theme нужны: каталог тем на файловой системе, **`ENABLE_COMPREHENSIVE_THEMING`**, список путей **`COMPREHENSIVE_THEME_DIRS`**, идентификатор темы = **имя подкаталога** темы внутри базового каталога; применение к сайту — через **Django admin → Site themes** (модель `SiteTheme`, поле theme dir name) либо через настройки в духе **`DEFAULT_SITE_THEME`** / **`THEME_NAME`** в YAML установки (см. примеры в [Enabling and Applying Themes](https://docs.openedx.org/en/release-teak/site_ops/install_configure_run_guide/configuration/changing_appearance/theming/enable_themes.html)).
+- Каталоги тем — **`COMPREHENSIVE_THEME_DIRS`**; тема = подкаталог с `lms` и/или `cms` (`helpers_dirs.py`).
+- **`CurrentSiteThemeMiddleware`**: query `site_theme` → превью → `SiteTheme` в БД → `DEFAULT_SITE_THEME`.
+- Шаблоны — точечные Mako-оверрайды (`get_template_path_with_theme`).
 
-В Teak параллельно развивается превью **Design Tokens** ([заметки релиза](https://docs.openedx.org/en/release-teak/community/release_notes/teak/design_tokens.html)) — это не замена comprehensive theming в одном релизе, а отдельный вектор; **robbo-theme** остаётся классической comprehensive-темой (шаблоны Mako + Sass/CSS + статика в дереве `lms` / `cms`).
+## Robbo-theme (LMS/CMS only)
 
-## Как платформа подключает тему (код edx-platform)
+Идентификатор: **`robbo-theme`**. Comprehensive theme (от Indigo): Mako + Sass/CSS + статика. **Не применяется к MFE.**
 
-- Каталоги тем задаются **`COMPREHENSIVE_THEME_DIRS`**; в каждой базе лежат папки тем. Каталог считается темой, если в нём есть **`lms`** и/или **`cms`** (`openedx/core/djangoapps/theming/helpers_dirs.py`, `is_theme_dir`).
-- На запросе **`CurrentSiteThemeMiddleware`** выставляет `request.site_theme`: приоритет — query **`site_theme`** → превью пользователя → первая **`SiteTheme`** у `request.site` в БД → иначе объект по **`DEFAULT_SITE_THEME`**, если задан (`openedx/core/djangoapps/theming/middleware.py`).
-- Корень файлов темы для текущего приложения: `<base>/<theme_dir_name>/lms` или `.../cms` (`Theme.path` в `helpers_dirs.py`).
-- Шаблоны — **точечные оверрайды** относительно `edx-platform` (Mako): если файл есть в теме, используется он (`get_template_path_with_theme` в `openedx/core/djangoapps/theming/helpers.py`).
-
-## Robbo-theme в репозитории: только LMS/CMS
-
-Comprehensive theme (ветка от Indigo): светлые поверхности, зелёные акценты (`#15803d`, `#f0fdf4`), тёмная палитра. Имя каталога и идентификатор темы в Django: **`robbo-theme`**. Эта тема применяется к **legacy LMS и Studio** (Mako + Sass/CSS + статика), но **не применяется автоматически к MFE**.
-
-| Слой | LMS | CMS (Studio) |
-|------|-----|----------------|
+| Слой | LMS | CMS |
+|------|-----|-----|
 | Шаблоны | `lms/templates/**` | `cms/templates/**` |
-| Sass | `lms/static/sass/**` | `cms/static/sass/**` |
-| Скомпилированный CSS | `lms/static/css/**` | `cms/static/css/**` |
-| JS, изображения, шрифты | `lms/static/js`, `images`, `fonts` | аналогично под `cms/static` |
+| Sass/CSS | `lms/static/sass/**`, `css/**` | `cms/static/sass/**`, `css/**` |
 
-Типичные оверрайды: `header/*`, `footer.html`, `index.html`, `static_templates/*`, `courseware/*`, `discovery/*`; в Studio — в т.ч. `cms/templates/widgets/footer.html`.
+После правок SCSS — `tutor dev exec lms` + `npm run compile-sass-dev` (см. `openedx-tutor-robbo.mdc`).
 
-После правок **SCSS** нужна пересборка CSS (см. `openedx-tutor-robbo.mdc`: при доступном Tutor — `tutor dev exec lms` и `npm run compile-sass-dev` в `/openedx/edx-platform`).
+Тёмная тема: `lms/static/js/dark-theme.js` (cookie `indigo-toggle-dark`, класс `indigo-dark-theme`); возможно дублирование с tutor-indigo в образе.
 
-## JavaScript и тёмная тема
+## Tutor dev: mounts
 
-- В теме: `lms/static/js/dark-theme.js` — cookie **`indigo-toggle-dark`**, класс **`indigo-dark-theme`** на `body` (наследие Indigo; согласовать с SCSS при переименовании).
-- Плагин **tutor-indigo** в образе дополнительно подмешивает **`indigo/js/dark-theme.js`** в пайплайн LMS (`openedx-common-assets-settings` / dev / production patches в `tutorindigo/plugin.py`). При работе только с файлами в `robbo-theme` помнить о возможном дублировании логики с индиго-скриптом в контейнере.
+Bind-mount **всего** checkout → `/openedx/edx-platform` на `lms`/`cms`. Symlink meta-repo: `repos/edx-platform` → `repos/openedx-platform` (basename `edx-platform`). Тема отдельно → `/openedx/themes/robbo-theme`. Подробности: `robbo-openedx-stack/tutor/mounts.md`.
 
-## Текущая среда (Tutor + этот репозиторий)
+**Нельзя:** mount только `lms` поверх `/openedx/edx-platform/lms` — ломает статику (`/courses`). Не использовать `/mnt/openedx-platform` как основной источник кода.
 
-Зафиксировано по `~/.local/share/tutor/config.yml` и выводу `tutor config` / `pip show` (без секретов и ключей):
+**Активация robbo-theme:** пока в БД `indigo` (init tutor-indigo), файлы robbo-theme на диске, но неактивны — сменить Site themes на `robbo-theme` и/или `DEFAULT_SITE_THEME` (см. `themes/robbo-theme/README.rst`).
 
-| Параметр | Значение |
-|----------|----------|
-| **Tutor** | 20.0.x (например 20.0.5) |
-| **Образ Open edX** | `docker.io/overhangio/openedx:20.0.5-indigo` (сборка линии **20** с индиго-слоем) |
-| **Плагины** | `indigo`, `mfe`, `robbo-mfe-branding` |
-| **`OPENEDX_LOCAL_PATH`** | submodule `robbo-openedx-stack/repos/openedx-platform` |
-| **LMS / Studio** | `LMS_HOST` = `local.openedx.io`, `CMS_HOST` = `studio.local.openedx.io` |
-| **Локаль** | `LANGUAGE_CODE`: ru |
-| **Платформа** | `PLATFORM_NAME`: РОББО |
+## MFE overrides
 
-**Темы в образе Tutor:** в Dockerfile образа задаётся **`COMPREHENSIVE_THEME_DIRS=/openedx/themes`**. Плагин **tutor-indigo** рендерит шаблон темы **Indigo** в `build/openedx/themes` при сборке окружения и при первом init выставляет в БД **`SiteTheme`** с **`theme_dir_name='indigo'`** для доменов LMS/CMS/preview (скрипт `tutorindigo/templates/indigo/tasks/init.sh` в пакете [tutor-indigo](https://github.com/overhangio/tutor-indigo)), если у сайта ещё нет темы.
+Shell CSS / Dockerfile-патчи через `robbo-mfe-branding` сняты с критического пути:
 
-**Монтирование (MOUNTS) в dev:** рабочий стек живёт в meta-repo `robbo-openedx-stack`. Чтобы LMS/CMS исполняли Python из вашего fork, нужен bind-mount **всего** checkout на **`/openedx/edx-platform`** на сервисах **lms** и **cms**. В корне meta-repo есть symlink **`repos/edx-platform`** → **`repos/openedx-platform`**: монтируйте **`…/repos/edx-platform`** как неявный Tutor-mount (только путь на хосте), чтобы basename каталога был **`edx-platform`** и `tutor images build openedx` получал корректный `--build-context` (см. `robbo-openedx-stack/tutor/mounts.md`). Каталог темы монтируется отдельно как **`/openedx/themes/robbo-theme`**.
+- **LMS/CMS** — `themes/robbo-theme`
+- **MFE UI** — `robbo-openedx-stack/repos/mfe-overrides/frontend-app-*` через `tutor mounts add`
+- **`robbo-mfe-branding`** — только минимальный `MFE_CONFIG` (`LOGO_*`, `PARAGON_THEME_URLS`). Не возвращать `robbo-mfe-shell.css`, `PLUGIN_SLOTS` footer/header, MFE Dockerfile-патчи без отдельного решения.
 
-- `lms` / `cms`: `.../repos/edx-platform` → `/openedx/edx-platform` (содержимое = тот же checkout, что и `repos/openedx-platform`)
-- `lms` / `cms`: `.../themes/robbo-theme` → `/openedx/themes/robbo-theme`
+Список overrides: `frontend-app-learner-dashboard`, `-learning`, `-authn`, `-profile`, `-account` (ветка `robbo-teak`). Bundled MFE (authoring) — контейнер `mfe` (`:2001`).
 
-Не монтировать только `lms` поверх `/openedx/edx-platform/lms`: это скрывает большую часть дерева и ломает статику на страницах вроде `/courses`. Монтируйте **весь** репозиторий на `/openedx/edx-platform`. Не используйте параллельный bind того же checkout в `/mnt/openedx-platform` как основной источник выполняемого кода платформы (устаревшая схема implicit-mount).
+Tutor mount: папка `frontend-app-APPNAME` → dev: `/openedx/app`; build: `APPNAME-src`. Имя папки = upstream repo name.
 
-**Важно для применения Robbo:** пока в Django для сайта указана тема **`indigo`** (или создана только она init-скриптом), монт только добавляет файлы **`robbo-theme`** на диск; активной станет **robbo-theme** после смены **Site themes** в админке на `robbo-theme` и/или настройки **`DEFAULT_SITE_THEME`** / очистки конфликтующих override в Site configuration (см. `themes/robbo-theme/README.rst`).
-
-## MFE: текущая архитектура overrides
-
-Попытка держать общий MFE-бренд через `robbo-mfe-branding` (shell CSS, Dockerfile-патчи, footer/header slots) снята с критического пути. Фактическая модель:
-
-- **LMS/CMS**: оформляются через `themes/robbo-theme`.
-- **MFE страницы**: оформляются в локальных override-репозиториях `frontend-app-*`, подключённых через `tutor mounts add`.
-- **`robbo-mfe-branding`**: не должен менять общий MFE shell/header/footer. Допустим только минимальный runtime-конфиг (`MFE_CONFIG`: `LOGO_*`, `PARAGON_THEME_URLS`), если он не мешает. Если нужен полностью чистый MFE, отключить эти патчи или сам плагин.
-
-Минимальный набор overrides сейчас расположен в meta-repo:
-
-- `robbo-openedx-stack/repos/mfe-overrides/frontend-app-learner-dashboard`
-- `robbo-openedx-stack/repos/mfe-overrides/frontend-app-learning`
-- `robbo-openedx-stack/repos/mfe-overrides/frontend-app-authn`
-- `robbo-openedx-stack/repos/mfe-overrides/frontend-app-profile`
-- `robbo-openedx-stack/repos/mfe-overrides/frontend-app-account`
-
-Все они подключены как Git submodules и переведены на рабочую ветку `robbo-teak`. Для `learner-dashboard` установлен `node_modules`, запущен dev-сервис `learner-dashboard`; общий `mfe` контейнер используется для bundled MFE вроде `authoring` (`http://apps.local.openedx.io:2001/authoring/home`).
-
-### Как работает Tutor mount для MFE
-
-Официальный `tutor-mfe` монтирует каталог с именем `frontend-app-APPNAME`:
-
-- в dev runtime: в сервис `APPNAME` как `/openedx/app`;
-- при `tutor images build mfe`: как build-time source `APPNAME-src`.
-
-Имя папки должно совпадать с оригинальным repo name (`frontend-app-learner-dashboard`, не произвольное имя).
-
-### Где теперь править интерфейс MFE
-
-- Header/footer/layout/colors конкретной MFE — в соответствующем `robbo-openedx-stack/repos/mfe-overrides/frontend-app-*`.
-- Общий UI, который повторяется между MFE, на срочном этапе можно дублировать между MFE; после релиза лучше вынести в общий npm-пакет или аккуратный Tutor-плагин.
-- Не возвращать `robbo-mfe-shell.css`, `PLUGIN_SLOTS` footer override и MFE Dockerfile-патчи в `robbo-mfe-branding` без отдельного решения.
+Плагин: [`tutor-plugin-robbo-mfe-branding/`](tutor-plugin-robbo-mfe-branding/). Зависимости: `mfe`, `indigo`. PRODUCTION.md может быть устаревшим по shell CSS — ориентир это правило.
 
 ## Ловушки
 
-- **`themes/robbo-theme/tasks/init.sh`** в репозитории темы может назначать **`indigo`** — артефакт форка; ориентир: README темы + фактическая БД/настройки Tutor.
-- Правки **Tutor** (`config.yml`, плагины, сгенерированный `env/`) — только с явного согласия пользователя или по поручению из блока в [PRODUCTION.md](../../tutor-plugin-robbo-mfe-branding/docs/PRODUCTION.md) (`openedx-tutor-robbo.mdc`).
-- Для MFE dev с mounted repo сначала установить зависимости в локальном репозитории (`npm clean-install`), иначе контейнер падает с `fedx-scripts: not found`.
-- Если на LMS страницах вроде `/courses` пропал CSS, проверить, что нет mount `.../openedx-platform/lms:/openedx/edx-platform/lms`; должен быть mount **всего** `openedx-platform` на `/openedx/edx-platform` (или образ уже собран из этого checkout) и отдельный mount `themes/robbo-theme`.
+- `themes/robbo-theme/tasks/init.sh` может назначать `indigo` — артефакт форка.
+- Tutor (`config.yml`, `env/`) — только с согласия пользователя (`openedx-tutor-robbo.mdc`).
+- MFE dev: `fedx-scripts: not found` → `npm clean-install` в mounted repo.
+- Пропал CSS на `/courses` → проверить mount всего `openedx-platform`, не только `lms`.
