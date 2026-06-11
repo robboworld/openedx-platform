@@ -28,6 +28,7 @@ class RegistrationFieldsContext(APIView):
         'year_of_birth',
         'level_of_education',
         'company',
+        'phone_number',
         'job_title',
         'title',
         'mailing_address',

@@ -16,8 +16,7 @@ robbo-guest-landing-page
 
 <%block name="headextra">
 % if not user.is_authenticated:
-  ## Белый фон каталога: legacy Open edX `.home > header { #9c9c9c }` в lms-main-v1.css.
-  ## Inline — подстраховка, если браузер/CDN отдаёт старый bundle без robbo-theme overrides.
+  ## Фон main: #f0fdf4 (start `.robbo-guest-hero` gradient); карточки курсов остаются белыми.
 <style>
   body.robbo-guest-landing-page,
   body.indigo-dark-theme.robbo-guest-landing-page,
@@ -31,8 +30,8 @@ robbo-guest-landing-page
   body.robbo-guest-landing-page .home.robbo-guest-home,
   body.robbo-guest-landing-page .home > header,
   body.robbo-guest-landing-page section#courses.home > header {
-    background: #fff !important;
-    background-color: #fff !important;
+    background: #f0fdf4 !important;
+    background-color: #f0fdf4 !important;
     background-image: none !important;
   }
   body.robbo-guest-landing-page .home > header .title {
@@ -96,8 +95,8 @@ robbo-guest-landing-page
   }
   body.robbo-guest-landing-page .robbo-guest-home > header,
   body.robbo-guest-landing-page section#courses.home > header {
-    background: #fff !important;
-    background-color: #fff !important;
+    background: #f0fdf4 !important;
+    background-color: #f0fdf4 !important;
     background-image: none !important;
     box-shadow: none !important;
   }

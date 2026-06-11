@@ -8,6 +8,7 @@ $robbo-guest-topbar-bg-alpha: 0.25;
 $robbo-tilda-orange-hero: #ff6600;
 $robbo-tilda-orange-cta: #e84c15;
 $robbo-guest-max-width: 1200px;
+$robbo-guest-hero-gradient-start: #f0fdf4;
 $robbo-guest-pad: clamp(1rem, 4vw, 2.5rem);
 // Как в экспорте Tilda page133250156 (@media screen and (max-width:980px) для t228).
 $robbo-guest-topbar-mobile-max: 980px;
@@ -36,10 +37,22 @@ $robbo-guest-topbar-logo-intrinsic-h: 635;
     --robbo-guest-topbar-actions-gap: 10px;
     --robbo-guest-topbar-tagline-fs: 20px;
     --robbo-guest-topbar-tagline-pad-x: 15px;
+    // Domain migration banner (below guest topbar)
+    --robbo-guest-domain-banner-bg: #ecfdf5;
+    --robbo-guest-domain-banner-bg-accent: #d1fae5;
+    --robbo-guest-domain-banner-fg: #14532d;
+    --robbo-guest-domain-banner-accent: #{$robbo-tilda-green};
+    --robbo-guest-domain-banner-border: rgba(0, 175, 65, 0.22);
+    --robbo-guest-domain-banner-pad-y: clamp(0.45rem, 1.4vw, 0.65rem);
+    --robbo-guest-domain-banner-pad-x: clamp(1rem, 4vw, 2rem);
+    --robbo-guest-domain-banner-fs: clamp(13px, 1.55vw, 15px);
+    --robbo-guest-domain-banner-gap: clamp(0.35rem, 1.2vw, 0.65rem);
+    --robbo-guest-domain-banner-min-h: 2.5rem;
     // Section rhythm (hero, catalog, about)
     --robbo-guest-section-gap: clamp(2rem, 5vw, 3.5rem);
     --robbo-guest-section-pad-x: #{$robbo-guest-pad};
     --robbo-guest-content-max: #{$robbo-guest-max-width};
+    --robbo-guest-page-bg: #{$robbo-guest-hero-gradient-start};
     --robbo-guest-body-muted: #515661;
     // Course cards on guest home
     --robbo-guest-card-radius: 10px;
@@ -47,8 +60,19 @@ $robbo-guest-topbar-logo-intrinsic-h: 635;
     --robbo-guest-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.05);
     --robbo-guest-card-shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.1);
     --robbo-guest-card-image-ratio: 16 / 9;
+    // Course card width: base track ×0.8 (−20%), then +35%; catalog max fits 2 cards at 1920.
+    --robbo-guest-course-card-min: #{280px * 1.8 * 0.8 * 1.35};
+    --robbo-guest-course-card-max: #{360px * 1.8 * 0.8 * 1.35};
+    --robbo-guest-course-catalog-max: calc(2 * var(--robbo-guest-course-card-max) + var(--robbo-guest-card-gap));
     --robbo-guest-transition: 0.2s ease;
     margin: 0 auto;
+}
+
+// Wide desktop: widen catalog so two +35% cards stay side-by-side (e.g. 1920×1080).
+@media screen and (min-width: 1120px) {
+    .robbo-guest-landing {
+        --robbo-guest-content-max: var(--robbo-guest-course-catalog-max);
+    }
 }
 
 .robbo-guest-skip-target {
@@ -93,7 +117,7 @@ html:has(body.robbo-guest-landing-page) {
 
     scroll-padding-top: var(--robbo-guest-topbar-scroll-pad, #{$robbo-header-bar-min-h});
 
-    background: #fff;
+    background: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start});
 
     @media (prefers-reduced-motion: reduce) {
         scroll-behavior: auto;
@@ -148,7 +172,7 @@ html:has(body.robbo-guest-landing-page) {
 // Для анонимов header/footer ещё отключаются в student index (disable_*), но правила ниже —
 // подстраховка и сброс отступов #content.
 body.robbo-guest-landing-page {
-    background: #fff !important;
+    background: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start}) !important;
 
     // Тема задаёт Inter с !important для `p`, `h*` (`_extras.scss`); без перечисления h1/h2 отдельно —
     // иначе libsass @extend из typography ломает селекторы в CSS.
@@ -178,16 +202,16 @@ body.robbo-guest-landing-page {
         width: 100% !important;
         max-width: none !important;
         box-sizing: border-box !important;
-        background: #fff !important;
-        background-color: #fff !important;
+        background: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start}) !important;
+        background-color: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start}) !important;
     }
 
-    // Плашка под любой зазор сверху (фон body по умолчанию белый).
+    // Фон main под кастомной шапкой (не белый body по умолчанию).
     // overflow-x: hidden на .window-wrap мешает полноширинному лендингу — ослабляем.
     .window-wrap {
         display: flex;
         flex-direction: column;
-        background-color: #fff !important;
+        background-color: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start}) !important;
         overflow-x: visible;
         min-height: 100vh;
         min-height: 100dvh;
@@ -230,7 +254,7 @@ body.robbo-guest-landing-page {
         margin: 0;
         padding: 0;
         max-width: none;
-        background: #fff !important;
+        background: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start}) !important;
     }
 
     // Grid: topbar | контент (1fr) | footer — footer у нижнего края viewport.
@@ -241,7 +265,7 @@ body.robbo-guest-landing-page {
         width: 100%;
         min-height: 100vh;
         min-height: 100dvh;
-        background: #fff !important;
+        background: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start}) !important;
     }
 
     .robbo-guest-hero-stack {
@@ -288,11 +312,138 @@ body.robbo-guest-landing-page {
     }
 }
 
-// Topbar sticky; зелёный фон после прокрутки intro (guest-landing-topbar.js).
+// Topbar sticky; domain banner — под шапкой, прокручивается; зелёный фон после intro (guest-landing-topbar.js).
 .robbo-guest-hero-stack {
     position: relative;
     margin: 0;
     padding: 0;
+}
+
+.robbo-guest-domain-banner {
+    animation: robbo-guest-domain-banner-glow 4s ease-in-out infinite;
+    background: linear-gradient(
+        90deg,
+        var(--robbo-guest-domain-banner-bg) 0%,
+        var(--robbo-guest-domain-banner-bg-accent) 35%,
+        #f0fdf4 50%,
+        var(--robbo-guest-domain-banner-bg-accent) 65%,
+        var(--robbo-guest-domain-banner-bg) 100%
+    );
+    background-size: 220% 100%;
+    border-bottom: 1px solid var(--robbo-guest-domain-banner-border);
+    box-sizing: border-box;
+    color: var(--robbo-guest-domain-banner-fg);
+    min-height: var(--robbo-guest-domain-banner-min-h);
+    overflow: hidden;
+    padding: var(--robbo-guest-domain-banner-pad-y) var(--robbo-guest-domain-banner-pad-x);
+    position: relative;
+    text-align: center;
+    width: 100%;
+
+    &::before {
+        animation: robbo-guest-domain-banner-shimmer 3.2s linear infinite;
+        background: linear-gradient(
+            105deg,
+            transparent 38%,
+            rgba(255, 255, 255, 0.55) 50%,
+            transparent 62%
+        );
+        background-size: 220% 100%;
+        content: '';
+        inset: 0;
+        pointer-events: none;
+        position: absolute;
+        z-index: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+        background-size: 100% 100%;
+
+        &::before {
+            animation: none;
+            display: none;
+        }
+    }
+}
+
+@keyframes robbo-guest-domain-banner-glow {
+    0%,
+    100% {
+        background-position: 0% center;
+        box-shadow: inset 0 -1px 0 var(--robbo-guest-domain-banner-border);
+    }
+
+    50% {
+        background-position: 100% center;
+        box-shadow: inset 0 -2px 0 rgba(0, 175, 65, 0.28);
+    }
+}
+
+@keyframes robbo-guest-domain-banner-shimmer {
+    0% {
+        background-position: 200% center;
+    }
+
+    100% {
+        background-position: -200% center;
+    }
+}
+
+.robbo-guest-domain-banner__inner {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: var(--robbo-guest-domain-banner-fs);
+    font-weight: 500;
+    gap: var(--robbo-guest-domain-banner-gap);
+    justify-content: center;
+    line-height: 1.45;
+    margin: 0 auto;
+    max-width: 1600px;
+    position: relative;
+    z-index: 1;
+}
+
+.robbo-guest-domain-banner__label {
+    color: var(--robbo-guest-domain-banner-fg);
+}
+
+@keyframes robbo-guest-domain-pill-pulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 175, 65, 0.45);
+        transform: scale(1);
+    }
+
+    50% {
+        box-shadow: 0 0 0 0.55rem rgba(0, 175, 65, 0);
+        transform: scale(1.04);
+    }
+}
+
+.robbo-guest-domain-banner__domain {
+    align-items: center;
+    animation: robbo-guest-domain-pill-pulse 2.2s ease-in-out infinite;
+    background: var(--robbo-guest-domain-banner-accent);
+    border: 1px solid transparent;
+    border-radius: 999px;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: default;
+    display: inline-flex;
+    font-size: inherit;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    padding: 0.28em 0.85em;
+    user-select: text;
+    will-change: transform, box-shadow;
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+        will-change: auto;
+    }
 }
 
 .robbo-guest-topbar {
@@ -427,25 +578,24 @@ body.robbo-guest-landing-page {
     vertical-align: super;
 }
 
-// По центру всей шапки (не только между лого и кнопками).
+// Слоган «{host} — образовательная платформа» по центру всей шапки.
 .robbo-guest-topbar__center {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    display: flex;
     align-items: center;
+    display: flex;
+    inset: 0;
     justify-content: center;
-    text-align: center;
     min-width: 0;
     padding: 0 20px;
     pointer-events: none;
+    position: absolute;
+    text-align: center;
+    z-index: 1;
 
     @include media-breakpoint-up(lg) {
         padding: 0 28px;
     }
 
     @media screen and (max-width: $robbo-guest-topbar-mobile-max) {
-        // Слоган — только desktop; на мобилках одна строка (лого + CTA).
         display: none;
     }
 }
@@ -604,13 +754,13 @@ a.robbo-guest-topbar__tagline {
 
 // Контент: классическая главная Open edX (каталог курсов) между topbar и footer.
 .robbo-guest-main {
+    background: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start});
     min-height: 0;
-    background: #fff;
 }
 
-// Hero: первый экран — заголовок, lede, CTA; светлый зелёный фон.
+// Hero: первый экран — заголовок, lede, CTA; фон страницы (#f0fdf4 — start hero gradient).
 .robbo-guest-hero {
-    background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 45%, #fff 100%);
+    background: transparent;
     box-sizing: border-box;
     padding: clamp(1.5rem, 4vw, 2.75rem) var(--robbo-guest-section-pad-x);
     width: 100%;
@@ -788,8 +938,8 @@ body.robbo-guest-landing-page {
     .robbo-guest-landing,
     .robbo-guest-main,
     #main {
-        background: #fff !important;
-        background-color: #fff !important;
+        background: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start}) !important;
+        background-color: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start}) !important;
     }
 
     #main section#courses.robbo-guest-home.home,
@@ -798,17 +948,17 @@ body.robbo-guest-landing-page {
         margin: 0 auto;
         padding: 0 15px var(--robbo-guest-section-gap);
         box-sizing: border-box;
-        background: #fff !important;
-        background-color: #fff !important;
+        background: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start}) !important;
+        background-color: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start}) !important;
         background-image: none !important;
     }
 
-    // Белая классическая главная: сброс legacy `.home > header` (#9c9c9c в lms-main-v1.css).
+    // Сброс legacy `.home > header` (#9c9c9c в lms-main-v1.css).
     .home.robbo-guest-home > header,
     #main section#courses.home.robbo-guest-home > header,
     #main .robbo-guest-home.style-logout > header {
-        background: #fff !important;
-        background-color: #fff !important;
+        background: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start}) !important;
+        background-color: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start}) !important;
         background-image: none !important;
         -webkit-linear-gradient: none !important;
         box-shadow: none !important;
@@ -820,8 +970,8 @@ body.robbo-guest-landing-page {
 
     #main section#courses.home.robbo-guest-home,
     #main .home.robbo-guest-home {
-        background: #fff !important;
-        background-color: #fff !important;
+        background: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start}) !important;
+        background-color: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start}) !important;
     }
 
     #main .robbo-guest-home > header .outer-wrapper {
@@ -1011,8 +1161,8 @@ body.robbo-guest-landing-page {
     #main .robbo-guest-home .courses-container,
     #main .robbo-guest-home .highlighted-courses,
     #main .robbo-guest-home .courses {
-        background: #fff !important;
-        background-color: #fff !important;
+        background: transparent !important;
+        background-color: transparent !important;
         background-image: none !important;
     }
 
@@ -1029,19 +1179,21 @@ body.robbo-guest-landing-page {
         padding-top: 0;
     }
 
-    // Каталог: центрированная сетка; карточки с hover-lift.
+    // Каталог: 2 колонки на широких экранах; карточки +35%, без схлопывания в один столбец на 1920.
     #main .robbo-guest-home .courses-container .courses .courses-listing {
         display: grid;
         gap: var(--robbo-guest-card-gap);
         grid-template-columns: minmax(0, 1fr);
         justify-content: center;
-        justify-items: center;
+        justify-items: stretch;
         letter-spacing: normal;
-        margin: 0;
+        margin: 0 auto;
+        max-width: var(--robbo-guest-course-catalog-max);
         padding: 0;
+        width: 100%;
 
-        @include media-breakpoint-up(sm) {
-            grid-template-columns: repeat(auto-fit, minmax(280px, 360px));
+        @media screen and (min-width: 1120px) {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
         .courses-listing-item {
@@ -1050,7 +1202,7 @@ body.robbo-guest-landing-page {
             letter-spacing: normal;
             margin: 0 !important;
             max-height: none !important;
-            max-width: 360px;
+            max-width: none;
             vertical-align: top;
             width: 100% !important;
         }
@@ -1340,7 +1492,7 @@ body.robbo-guest-landing-page {
 }
 
 body.indigo-dark-theme.robbo-guest-landing-page {
-    background: #fff !important;
+    background: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start}) !important;
 
     .window-wrap,
     #content.content-wrapper,
@@ -1349,8 +1501,8 @@ body.indigo-dark-theme.robbo-guest-landing-page {
     .robbo-guest-main,
     section#courses.home,
     .home > header {
-        background: #fff !important;
-        background-color: #fff !important;
+        background: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start}) !important;
+        background-color: var(--robbo-guest-page-bg, #{$robbo-guest-hero-gradient-start}) !important;
         background-image: none !important;
     }
 }

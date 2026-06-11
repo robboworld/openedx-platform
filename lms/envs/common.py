@@ -1946,7 +1946,7 @@ MEDIA_URL = '/media/'
 # Locale/Internationalization
 CELERY_TIMEZONE = 'UTC'
 TIME_ZONE = 'UTC'
-LANGUAGE_CODE = 'en'  # http://www.i18nguy.com/unicode/language-identifiers.html
+LANGUAGE_CODE = 'ru'  # Robbo default locale (upstream Open edX uses 'en')
 
 # edx-ace transactional email default when ``personalize(..., language=None)`` (see ace_common.message).
 # Override via Site configuration key ACE_EMAIL_DEFAULT_LANGUAGE if needed.
@@ -5668,6 +5668,11 @@ ROBBO_CATALOG_FEATURED_IMAGE = 'mcu.png'
 ROBBO_COURSE_INTEREST_RECIPIENTS = ['e.sovkov@robbo.ru']
 # Optional LMS log files used as a fallback for historic course-interest submissions.
 ROBBO_COURSE_INTEREST_LOG_PATHS = []
+
+# Guest landing: migration banner — only on online.robbo.ru (not dev/stage hosts).
+ROBBO_GUEST_MIGRATION_BANNER_HOSTS = (
+    'online.robbo.ru',
+)
 
 # Yandex Metrika: disabled by default. Tutor ``openedx-lms-development-settings`` forces off;
 # production enables via ``ROBBO_YANDEX_METRIKA_COUNTER_ID`` in ``config.yml`` (plugin).

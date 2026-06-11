@@ -12,19 +12,44 @@ section.home {
 }
 .global-header .nav-links .secondary {
     .btn-holder {
-        letter-spacing: -.32em;
-        margin: 0 -7px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        letter-spacing: normal;
+        margin: 0;
         .nav-item {
             letter-spacing: normal;
-            margin: 0 7px;
+            margin: 0;
             padding: 0;
             .btn {
-                line-height: 20px;
-                padding: 9px 17px;
+                box-sizing: border-box;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 36px;
+                padding: 0 22px;
                 font-size: 14px;
-                border-radius: 6px;
-                font-weight: 500;
-                display: block;
+                font-weight: 600;
+                line-height: 1.4;
+                border-radius: 18px;
+                white-space: nowrap;
+                transition-duration: 0.2s;
+                transition-property: background-color, color, border-color, box-shadow, opacity, transform;
+                transition-timing-function: ease-in-out;
+
+                &,
+                &:link,
+                &:visited,
+                &:hover,
+                &:focus,
+                &:active {
+                    text-decoration: none !important;
+                }
+
+                &:focus-visible {
+                    outline: 2px solid #fff;
+                    outline-offset: 2px;
+                }
             }
         }
     }
@@ -153,14 +178,14 @@ body.indigo-dark-theme {
             .nav-item {
                 .btn {
                     &.sign-in-btn {
-                        background: $primary-d;
-                        color: $btn-color-d;
-                        border-color: $primary-d;
+                        background-color: #fff;
+                        border-color: transparent;
+                        color: #000 !important;
                     }
                     &.register-btn {
-                        color: $text-color-d;
-                        border-color: $text-color-d;
-                        background: none;
+                        background-color: #fff;
+                        border-color: #fff !important;
+                        color: #333 !important;
                     }
                 }
             }

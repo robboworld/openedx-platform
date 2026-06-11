@@ -2,9 +2,28 @@
 <%namespace name='static' file='static_content.html' />
 <%!
 from datetime import datetime
+from django.conf import settings
 from django.utils.translation import gettext as _
 from django.urls import reverse
 from mako.runtime import UNDEFINED
+
+def _robbo_normalize_host(host):
+    if not host:
+        return ''
+    return host.split(':')[0].strip().lower()
+
+def _robbo_show_guest_migration_banner(request):
+    """Show migration banner only on online.robbo.ru."""
+    allowed_hosts = getattr(settings, 'ROBBO_GUEST_MIGRATION_BANNER_HOSTS', ())
+    if not allowed_hosts:
+        return False
+    current_host = _robbo_normalize_host(request.get_host())
+    allowed = {_robbo_normalize_host(host) for host in allowed_hosts}
+    return current_host in allowed
+%>
+<%
+guest_landing_host = request.get_host().split(':')[0]
+guest_landing_tagline = f'{guest_landing_host} - образовательная платформа'
 %>
   ## Гостевая главная: кастомный topbar/footer; контент — классическая главная Open edX (каталог курсов).
   <section class="robbo-guest-landing" lang="ru">
@@ -24,7 +43,8 @@ from mako.runtime import UNDEFINED
             </a>
           </div>
           <div class="robbo-guest-topbar__center">
-            <a class="robbo-guest-topbar__tagline" href="${reverse('about') | h}">О компании</a>
+            <a class="robbo-guest-topbar__tagline" href="#courses"
+              aria-label="Перейти к каталогу курсов">${guest_landing_tagline}</a>
           </div>
           <div class="robbo-guest-topbar__trailing">
             <div class="robbo-guest-topbar__actions">
@@ -36,6 +56,14 @@ from mako.runtime import UNDEFINED
           </div>
         </div>
       </header>
+      % if _robbo_show_guest_migration_banner(request):
+        <div class="robbo-guest-domain-banner" role="status" aria-live="polite">
+          <p class="robbo-guest-domain-banner__inner">
+            <span class="robbo-guest-domain-banner__label">Мы переехали на новый домен</span>
+            <span class="robbo-guest-domain-banner__domain">online.robbo.ru</span>
+          </p>
+        </div>
+      % endif
     </div>
     <script src="${static.url('js/guest-landing-topbar.js')}"></script>
 

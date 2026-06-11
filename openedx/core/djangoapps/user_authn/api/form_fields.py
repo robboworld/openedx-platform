@@ -197,6 +197,19 @@ def add_company_field(is_field_required=False):
     return _add_field_with_configurable_select_options('company', company_label, is_field_required)
 
 
+def add_phone_number_field(is_field_required=False):
+    """
+    Returns the phone number field description for Authn MFE optional fields API.
+    """
+    phone_number_label = _("Phone number")
+    return {
+        'name': 'phone_number',
+        'type': 'tel',
+        'label': phone_number_label,
+        'required': is_field_required,
+    }
+
+
 def add_title_field(is_field_required=False):
     """
     Returns the title field description

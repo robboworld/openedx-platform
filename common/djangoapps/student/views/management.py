@@ -154,6 +154,7 @@ def index(request, extra_context=None, user=AnonymousUser()):
     if not user.is_authenticated:
         context['disable_header'] = True
         context['disable_footer'] = True
+        context['robbo_guest_homepage'] = True
         try:
             from lms.djangoapps.courseware.robbo_catalog import get_robbo_catalog_about
             context['robbo_about'] = get_robbo_catalog_about()

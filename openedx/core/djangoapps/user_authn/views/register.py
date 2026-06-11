@@ -170,21 +170,27 @@ def _reject_fast_registration_if_needed(request, params):
     return None
 
 
-def _log_registration_audit(user, params):
+def _log_registration_audit(user, params, profile=None):
     """
-    Registration audit line: timestamp, login, company, UI language.
+    Registration audit line: timestamp, login, company, phone_number, UI language.
 
     Filter LMS logs by logger name ``robbo.registration`` or substring
     ``user_authn.registration.robbo_audit`` (REGISTRATION_AUDIT_SEARCH_TAG).
     """
     company = _scalar_post_value(params, "company")
+    phone_number = ""
+    if profile is not None and profile.phone_number:
+        phone_number = profile.phone_number
+    else:
+        phone_number = _scalar_post_value(params, "phone_number")
     ts = timezone.now().isoformat()
     lang = get_language() or ""
-    msg = "%s ts=%s login=%r company=%r language=%r" % (
+    msg = "%s ts=%s login=%r company=%r phone_number=%r language=%r" % (
         REGISTRATION_AUDIT_SEARCH_TAG,
         ts,
         user.username,
         company,
+        phone_number,
         lang,
     )
     REGISTRATION_LOG.info(msg)
@@ -296,7 +302,7 @@ def create_account_with_params(request, params):  # pylint: disable=too-many-sta
     with outer_atomic():
         # first, create the account
         (user, profile, registration) = do_create_account(form, custom_form)
-        _log_registration_audit(user, params)
+        _log_registration_audit(user, params, profile)
 
         third_party_provider, running_pipeline = _link_user_to_third_party_provider(
             is_third_party_auth_enabled, third_party_auth_credentials_in_api, user, request, params,
