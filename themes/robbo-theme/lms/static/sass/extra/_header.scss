@@ -30,6 +30,17 @@ $robbo-header-green: #00b140;
 // Wordmark (РОББО): 30px; primary tabs — same as MFE `$robbo-mfe-header-nav-fs` (20px)
 $robbo-header-nav-font: 20px;
 $robbo-header-wordmark: 30px;
+$robbo-dropdown-enter-duration: 200ms;
+$robbo-dropdown-enter-ease: ease-out;
+$robbo-profile-chevron-size: 5px;
+$robbo-profile-chevron-border: 2px;
+$robbo-profile-chevron-nudge-closed: -2px;
+$robbo-profile-chevron-nudge-open: 0;
+$robbo-profile-chevron-duration: 200ms;
+$robbo-menu-item-enter-duration: 180ms;
+$robbo-menu-item-stagger-start: 80ms;
+$robbo-menu-item-stagger-step: 45ms;
+$robbo-menu-item-stagger-count: 8; // mobile
 $robbo-header-user-menu-fs: 1.125rem; // Sign in / Register
 $robbo-header-profile-toggle-fs: 1rem; // 16px: −2px vs 18px for .toggle-user-dropdown
 
@@ -303,27 +314,29 @@ header.global-header {
 
                 &:after {
                     margin: 0;
-                    border: 2px solid #fff;
-                    border-width: 0 2px 2px 0;
+                    border: $robbo-profile-chevron-border solid #fff;
+                    border-width: 0 $robbo-profile-chevron-border $robbo-profile-chevron-border 0;
                     transform: rotate(45deg);
                     content: "";
-                    height: 5px;
-                    width: 5px;
+                    height: $robbo-profile-chevron-size;
+                    width: $robbo-profile-chevron-size;
                     position: relative;
-                    top: -2px;
+                    top: $robbo-profile-chevron-nudge-closed;
                     display: inline-block;
                     vertical-align: middle;
-                }
-
-                &.open:after {
-                    top: 0;
-                    transform: rotate(225deg);
+                    transition: transform $robbo-profile-chevron-duration ease,
+                        top $robbo-profile-chevron-duration ease;
                 }
 
                 .username {
                     font: inherit;
                     color: inherit;
                 }
+            }
+
+            .nav-item-dropdown:has(.dropdown-user-menu:not(.hidden)) .toggle-user-dropdown:after {
+                top: $robbo-profile-chevron-nudge-open;
+                transform: rotate(225deg);
             }
 
             .dropdown-user-menu {
@@ -336,6 +349,10 @@ header.global-header {
                 border: none;
                 overflow: hidden;
                 background: #fff;
+
+                &:not(.hidden) {
+                    animation: robbo-dropdown-enter $robbo-dropdown-enter-duration $robbo-dropdown-enter-ease;
+                }
 
                 .dropdown-item {
                     border: none !important;
@@ -487,6 +504,9 @@ header.global-header {
 
     .mobile-menu:not(.hidden) {
         display: block !important;
+        &:not(.hidden) {
+            animation: robbo-dropdown-enter $robbo-dropdown-enter-duration $robbo-dropdown-enter-ease;
+        }
     }
 }
 
@@ -786,3 +806,57 @@ body.indigo-dark-theme {
         }
     }
 }
+
+
+@keyframes robbo-dropdown-enter {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+}
+
+@keyframes robbo-menu-item-enter {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  header.global-header .nav-links .secondary .dropdown-user-menu:not(.hidden) .dropdown-item {
+    animation: robbo-menu-item-enter $robbo-menu-item-enter-duration ease-out backwards;
+  }
+  
+  @for $i from 1 through $robbo-menu-item-stagger-count {
+    header.global-header .nav-links .secondary .dropdown-user-menu:not(.hidden) .dropdown-item:nth-child(#{$i}) {
+      animation-delay: $robbo-menu-item-stagger-start + ($i - 1) * $robbo-menu-item-stagger-step;
+    }
+  }
+  
+  // Mobile
+  header.global-header .mobile-menu:not(.hidden) .mobile-nav-link {
+    animation: robbo-menu-item-enter $robbo-menu-item-enter-duration ease-out backwards;
+  }
+  
+  @for $i from 1 through $robbo-menu-item-stagger-count {
+    header.global-header .mobile-menu:not(.hidden) .mobile-nav-link:nth-child(#{$i}) {
+      animation-delay: $robbo-menu-item-stagger-start + ($i - 1) * $robbo-menu-item-stagger-step;
+    }
+  }
+
+@media (prefers-reduced-motion: reduce) {
+    header.global-header .nav-links .secondary .dropdown-user-menu:not(.hidden),
+    header.global-header .mobile-menu:not(.hidden) {
+      animation: none;
+    }
+  
+    header.global-header .nav-links .secondary .toggle-user-dropdown:after {
+      transition: none;
+    }
+    header.global-header .nav-links .secondary .dropdown-user-menu:not(.hidden) .dropdown-item,
+    header.global-header .mobile-menu:not(.hidden) .mobile-nav-link {
+        animation: none;
+    }
+  }
+

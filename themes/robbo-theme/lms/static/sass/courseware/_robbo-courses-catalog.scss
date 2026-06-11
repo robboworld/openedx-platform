@@ -333,6 +333,15 @@
   padding: var(--robbo-cat-pad);
   position: relative;
 
+  @media (prefers-reduced-motion: no-preference) {
+    transition: box-shadow 200ms ease, transform 200ms ease;
+    @media (hover: hover) {
+      &:hover {
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+      }
+    }
+  }
+
   @include media-breakpoint-up(lg) {
     // Reserve a dedicated art lane; illustration sits in a fixed-size box (same column as MCU).
     display: block;
@@ -739,5 +748,12 @@ a.robbo-courses-catalog__featured-cta--enroll.is-enrolling {
 @keyframes robbo-catalog-spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .robbo-courses-catalog__stub .robbo-courses-catalog__stub-notify.is-loading::after {
+    animation: none;
+    content: none;
   }
 }
