@@ -120,6 +120,14 @@ REGISTRATION_EXTRA_FIELDS['company'] = 'hidden'
 _PATCH_ROBBO_LMS_LANGUAGE = """
 LANGUAGE_CODE = 'ru'
 """
+
+# Force Russian for all LMS requests (overrides stale language cookies).
+_PATCH_ROBBO_FORCE_RUSSIAN_LANGUAGE = """
+MIDDLEWARE.insert(
+    0,
+    'lms.djangoapps.robbo_lang.middleware.RobboForceRussianLanguageMiddleware',
+)
+"""
 # tutor-indigo init assigns SiteTheme "indigo" for LMS_HOST; force default comprehensive theme.
 _PATCH_ROBBO_DEFAULT_SITE_THEME = """
 DEFAULT_SITE_THEME = "robbo-theme"
@@ -293,6 +301,8 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_LMS_SERVER_CATALOG),
         ("openedx-lms-development-settings", _PATCH_ROBBO_LMS_LANGUAGE),
         ("openedx-lms-production-settings", _PATCH_ROBBO_LMS_LANGUAGE),
+        ("openedx-lms-development-settings", _PATCH_ROBBO_FORCE_RUSSIAN_LANGUAGE),
+        ("openedx-lms-production-settings", _PATCH_ROBBO_FORCE_RUSSIAN_LANGUAGE),
         ("openedx-lms-development-settings", _PATCH_ROBBO_SUPPORT),
         ("openedx-lms-production-settings", _PATCH_ROBBO_SUPPORT),
         ("openedx-lms-development-settings", _PATCH_ROBBO_EMAIL_CONFIRMATION),
