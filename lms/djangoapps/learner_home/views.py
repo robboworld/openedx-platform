@@ -1,5 +1,7 @@
 """
 Views for Learner Home
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 import logging
@@ -257,13 +259,32 @@ def get_org_block_and_allow_lists():
     return get_org_black_and_whitelist_for_site()
 
 
-@function_trace("get_resume_urls_for_course_enrollments")
-def get_resume_urls_for_course_enrollments(user, course_enrollments):
+def _resolve_resume_block_title(block_key):
+    """Return display name for the resume block, or None if unavailable."""
+    try:
+        from xmodule.modulestore.django import modulestore  # pylint: disable=import-outside-toplevel
+
+        block = modulestore().get_item(block_key)
+    except Exception:  # pylint: disable=broad-except
+        return None
+
+    title = getattr(block, "display_name_with_default", None) or getattr(
+        block, "display_name", None
+    )
+    return str(title) if title else None
+
+
+@function_trace("get_resume_data_for_course_enrollments")
+def get_resume_data_for_course_enrollments(user, course_enrollments):
     """
+    Resume jump URLs and block titles for course enrollments.
+
     Modeled off of get_resume_urls_for_enrollments but removes check for actual presence of block
     in course structure for better performance.
     """
     resume_course_urls = OrderedDict()
+    resume_block_titles = {}
+
     for enrollment in course_enrollments:
         url_to_block = None
         try:
@@ -273,11 +294,57 @@ def get_resume_urls_for_course_enrollments(user, course_enrollments):
                     "jump_to",
                     kwargs={"course_id": enrollment.course_id, "location": block_key},
                 )
+                block_title = _resolve_resume_block_title(block_key)
+                if block_title:
+                    resume_block_titles[enrollment.course_id] = block_title
         except UnavailableCompletionData:
             # This is acceptable, the user hasn't started the course so jump URL will be None
             pass
         resume_course_urls[enrollment.course_id] = url_to_block
+
+    return resume_course_urls, resume_block_titles
+
+
+@function_trace("get_resume_urls_for_course_enrollments")
+def get_resume_urls_for_course_enrollments(user, course_enrollments):
+    """Backward-compatible wrapper returning only resume URLs."""
+    resume_course_urls, _ = get_resume_data_for_course_enrollments(user, course_enrollments)
     return resume_course_urls
+
+
+@function_trace("get_course_progress")
+def get_course_progress(user, course_enrollments):
+    """Unit completion summary for enrolled courses."""
+    from lms.djangoapps.courseware.courses import (  # pylint: disable=import-outside-toplevel
+        get_course_blocks_completion_summary,
+    )
+
+    course_progress = {}
+
+    for enrollment in course_enrollments:
+        try:
+            summary = get_course_blocks_completion_summary(
+                enrollment.course_id, user
+            )
+            complete = int(summary.get("complete_count") or 0)
+            incomplete = int(summary.get("incomplete_count") or 0)
+            total = complete + incomplete
+            if total <= 0:
+                continue
+            percent = min(100, max(0, round(100 * complete / total)))
+            course_progress[enrollment.course_id] = {
+                "completed": complete,
+                "total": total,
+                "percent": percent,
+            }
+        except Exception as ex:  # pylint: disable=broad-except
+            logger.debug(
+                "Unable to load course progress for %s: %s",
+                enrollment.course_id,
+                ex,
+            )
+
+    return course_progress
 
 
 def _get_courses_with_unmet_prerequisites(user, course_enrollments):
@@ -528,10 +595,11 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
         # e-commerce info
         ecommerce_payment_page = get_ecommerce_payment_page(user)
 
-        # Gather urls for course card resume buttons.
-        resume_button_urls = get_resume_urls_for_course_enrollments(
+        # Gather urls and block titles for course card resume buttons.
+        resume_button_urls, resume_block_titles = get_resume_data_for_course_enrollments(
             user, course_enrollments
         )
+        course_progress = get_course_progress(user, course_enrollments)
 
         # Get suggested courses
         suggested_courses = get_suggested_courses().get("courses", [])
@@ -562,6 +630,8 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
             "credit_statuses": user_credit_statuses,
             "grade_statuses": grade_statuses,
             "resume_course_urls": resume_button_urls,
+            "resume_block_titles": resume_block_titles,
+            "course_progress": course_progress,
             "course_share_urls": course_share_urls,
             "show_email_settings_for": show_email_settings_for,
             "fulfilled_entitlements": fulfilled_entitlements_by_course_key,

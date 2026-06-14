@@ -1,5 +1,7 @@
 """
 Serializers for Learner Home
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 from datetime import date, timedelta
@@ -69,6 +71,7 @@ class CourseSerializer(serializers.Serializer):
     requires_context = True
 
     bannerImgSrc = serializers.SerializerMethodField()
+    bannerImgIsPlaceholder = serializers.SerializerMethodField()
     courseName = serializers.CharField(source="display_name_with_default")
     courseNumber = serializers.CharField(source="display_number_with_default")
     socialShareUrl = serializers.SerializerMethodField()
@@ -82,15 +85,28 @@ class CourseSerializer(serializers.Serializer):
         often served from another origin; relative URLs would load from the MFE
         host and break. Prefix with LMS_ROOT_URL when the URL has no netloc.
         """
+        lms_root = getattr(settings, "LMS_ROOT_URL", None) or ""
+        if self.get_bannerImgIsPlaceholder(obj):
+            placeholder = "/theming/asset/images/no_course_image.png"
+            if lms_root:
+                return urljoin(lms_root.rstrip("/") + "/", placeholder.lstrip("/"))
+            return placeholder
+
         url = obj.image_urls["small"]
         if not url:
             return url
         if urlparse(url).netloc:
             return url
-        lms_root = getattr(settings, "LMS_ROOT_URL", None) or ""
         if not lms_root:
             return url
         return urljoin(lms_root.rstrip("/") + "/", url)
+
+    def get_bannerImgIsPlaceholder(self, obj):
+        from lms.djangoapps.courseware.robbo_catalog import (  # pylint: disable=import-outside-toplevel
+            _catalog_course_uses_placeholder_image,
+        )
+
+        return _catalog_course_uses_placeholder_image(obj)
 
     def get_socialShareUrl(self, instance):
         return self.context.get("course_share_urls", {}).get(instance.id)
@@ -122,9 +138,11 @@ class CourseRunSerializer(serializers.Serializer):
         source="course_overview.marketing_url", allow_null=True
     )
     progressUrl = serializers.SerializerMethodField()
+    progress = serializers.SerializerMethodField()
     unenrollUrl = serializers.SerializerMethodField()
     upgradeUrl = serializers.SerializerMethodField()
     resumeUrl = serializers.SerializerMethodField()
+    resumeBlockTitle = serializers.SerializerMethodField()
 
     def get_isStarted(self, instance):
         return instance.course_overview.has_started()
@@ -161,6 +179,19 @@ class CourseRunSerializer(serializers.Serializer):
 
     def get_resumeUrl(self, instance):
         return self.context.get("resume_course_urls", {}).get(instance.course_id)
+
+    def get_progress(self, instance):
+        progress = self.context.get("course_progress", {}).get(instance.course_id)
+        if not progress:
+            return None
+        return {
+            "completedCount": progress["completed"],
+            "totalCount": progress["total"],
+            "percent": progress["percent"],
+        }
+
+    def get_resumeBlockTitle(self, instance):
+        return self.context.get("resume_block_titles", {}).get(instance.course_id)
 
     def to_representation(self, instance):
         """Serialize the courserun instance to be able to update the values before the API finishes rendering."""
