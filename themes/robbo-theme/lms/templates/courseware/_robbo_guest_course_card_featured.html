@@ -1,0 +1,64 @@
+<%page args="course_card, card_index" expression_filter="h"/>
+<%
+  course_link_label = '{}: {}'.format(course_card['cta_label'], course_card['title'])
+  has_course_meta = course_card.get('organization') or course_card.get('start_label')
+  media_classes = 'robbo-guest-course-featured__media-frame'
+  if course_card.get('is_image_placeholder'):
+      media_classes += ' is-placeholder'
+  img_onerror = (
+      "this.onerror=null;this.src='/theming/asset/images/no_course_image.png';"
+      "this.closest('.robbo-guest-course-featured__media-frame').classList.add('is-placeholder');"
+  )
+%>
+<article
+  class="robbo-guest-course-featured"
+  id="${course_card['course_id']}"
+  aria-labelledby="robbo-guest-featured-title-${card_index}"
+>
+  <div class="robbo-guest-course-featured__inner">
+    % if course_card.get('cta_url'):
+      <a
+        class="robbo-guest-course-featured__media"
+        href="${course_card['cta_url']}"
+        aria-label="${course_link_label}"
+        tabindex="-1"
+      >
+        <div class="${media_classes}" role="presentation">
+          <img
+            class="robbo-guest-course-featured__img"
+            src="${course_card['image_url']}"
+            alt=""
+            width="960"
+            height="540"
+            loading="eager"
+            fetchpriority="high"
+            onerror="${img_onerror}"
+          />
+        </div>
+        <div class="robbo-guest-course-featured__media-shade" aria-hidden="true"></div>
+      </a>
+    % endif
+    <div class="robbo-guest-course-featured__content">
+      <p class="robbo-guest-course-featured__eyebrow">Рекомендуем</p>
+      <h3 id="robbo-guest-featured-title-${card_index}" class="robbo-guest-course-featured__title">${course_card['title']}</h3>
+      % if has_course_meta:
+        <p class="robbo-guest-course-featured__meta">
+          % if course_card.get('organization'):
+            <span>${course_card['organization']}</span>
+          % endif
+          % if course_card.get('start_label'):
+            <span>${course_card['start_label']}</span>
+          % endif
+        </p>
+      % endif
+      % if course_card.get('description'):
+        <p class="robbo-guest-course-featured__desc">${course_card['description']}</p>
+      % else:
+        <p class="robbo-guest-course-featured__desc robbo-guest-course-featured__desc--empty">Описание курса скоро появится.</p>
+      % endif
+      <div class="robbo-guest-course-featured__actions">
+        <a class="robbo-guest-course-featured__cta robbo-guest-course-featured__cta--primary" href="${course_card['cta_url']}">${course_card['cta_label']}</a>
+      </div>
+    </div>
+  </div>
+</article>

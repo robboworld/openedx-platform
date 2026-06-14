@@ -54,12 +54,21 @@ $robbo-guest-topbar-logo-intrinsic-h: 635;
     --robbo-guest-content-max: #{$robbo-guest-max-width};
     --robbo-guest-page-bg: #{$robbo-guest-hero-gradient-start};
     --robbo-guest-body-muted: #515661;
-    // Course cards on guest home
+    // Course cards on guest home (compact; align with /courses catalog scale).
     --robbo-guest-card-radius: 10px;
-    --robbo-guest-card-gap: clamp(1rem, 2.5vw, 1.5rem);
+    --robbo-guest-card-gap: clamp(0.85rem, 2vw, 1.25rem);
     --robbo-guest-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.05);
     --robbo-guest-card-shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.1);
-    --robbo-guest-card-image-ratio: 16 / 9;
+    --robbo-guest-card-image-ratio: 4 / 3;
+    --robbo-guest-card-image-max-h: clamp(8rem, 20vw, 10.5rem);
+    --robbo-guest-card-cta-pill: 23px;
+    --robbo-guest-card-cta-max-w: 14rem;
+    --robbo-guest-card-cta-h: 42px;
+    --robbo-guest-card-art-lane-w: clamp(6.5rem, 22vw, 9.5rem);
+    --robbo-guest-card-desc-max-lines: 3;
+    --robbo-guest-card-footer-gap: 0.75rem;
+    // Compact course grid only; page sections keep legacy content width below.
+    --robbo-guest-course-grid-max: #{"min(100%, 960px)"};
     // Course card width: base track ×0.8 (−20%), then +35%; catalog max fits 2 cards at 1920.
     --robbo-guest-course-card-min: #{280px * 1.8 * 0.8 * 1.35};
     --robbo-guest-course-card-max: #{360px * 1.8 * 0.8 * 1.35};
@@ -68,7 +77,7 @@ $robbo-guest-topbar-logo-intrinsic-h: 635;
     margin: 0 auto;
 }
 
-// Wide desktop: widen catalog so two +35% cards stay side-by-side (e.g. 1920×1080).
+// Wide desktop: widen page content so two +35% cards stay side-by-side (e.g. 1920×1080).
 @media screen and (min-width: 1120px) {
     .robbo-guest-landing {
         --robbo-guest-content-max: var(--robbo-guest-course-catalog-max);
@@ -533,7 +542,7 @@ body.robbo-guest-landing-page {
     }
 }
 
-.robbo-guest-topbar__brand {
+a.robbo-guest-topbar__brand {
     align-items: center;
     display: inline-flex;
     line-height: 1;
@@ -544,8 +553,8 @@ body.robbo-guest-landing-page {
     &:hover,
     &:focus,
     &:active {
-        color: #fff;
-        text-decoration: none;
+        color: #fff !important;
+        text-decoration: none !important;
     }
 
     &:hover,
@@ -913,7 +922,13 @@ a.robbo-guest-topbar__tagline {
     }
 }
 
-.robbo-guest-courses__title {
+.robbo-guest-courses-showcase {
+    margin: clamp(1.25rem, 3vw, 1.75rem) auto 0;
+    max-width: var(--robbo-guest-content-max);
+    width: 100%;
+}
+
+.robbo-guest-courses-showcase__title {
     color: $robbo-tilda-green;
     font-family: var(--robbo-guest-font);
     font-size: clamp(1.25rem, 2.5vw, 1.75rem);
@@ -993,7 +1008,7 @@ body.robbo-guest-landing-page {
         min-height: 0;
     }
 
-    #main .robbo-guest-home .robbo-guest-courses__title {
+    #main .robbo-guest-home .robbo-guest-courses-showcase__title {
         color: #{$robbo-tilda-green};
         margin-top: clamp(1.25rem, 3vw, 1.75rem);
         text-align: center;
@@ -1179,8 +1194,471 @@ body.robbo-guest-landing-page {
         padding-top: 0;
     }
 
-    // Каталог: 2 колонки на широких экранах; карточки +35%, без схлопывания в один столбец на 1920.
-    #main .robbo-guest-home .courses-container .courses .courses-listing {
+    // Guest landing course showcase (featured hero + compact grid).
+    .robbo-guest-courses-showcase {
+        --robbo-guest-showcase-gap: clamp(1.15rem, 2.5vw, 1.65rem);
+        --robbo-guest-showcase-max: #{"min(100%, 1080px)"};
+        margin-left: auto;
+        margin-right: auto;
+        max-width: var(--robbo-guest-showcase-max);
+    }
+
+    .robbo-guest-courses-showcase__grid {
+        display: grid;
+        gap: var(--robbo-guest-showcase-gap);
+    }
+
+    .robbo-guest-courses-showcase__compact-list {
+        display: grid;
+        gap: var(--robbo-guest-card-gap);
+        grid-template-columns: minmax(0, 1fr);
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        @media screen and (min-width: 768px) {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        &--centered {
+            justify-items: center;
+
+            @media screen and (min-width: 768px) {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .robbo-guest-courses-showcase__cell {
+                max-width: #{"min(100%, 34rem)"};
+                width: 100%;
+            }
+        }
+    }
+
+    .robbo-guest-courses-showcase__cell {
+        margin: 0;
+        min-width: 0;
+    }
+
+    .robbo-guest-course-featured {
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.07);
+        border-radius: clamp(14px, 2vw, 18px);
+        box-shadow:
+            0 1px 2px rgba(15, 23, 42, 0.04),
+            0 10px 28px rgba(15, 23, 42, 0.07);
+        overflow: hidden;
+        position: relative;
+        transition:
+            box-shadow var(--robbo-guest-transition),
+            transform var(--robbo-guest-transition);
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+
+            &:hover,
+            &:focus-within {
+                transform: none;
+            }
+        }
+
+        &:hover,
+        &:focus-within {
+            box-shadow:
+                0 4px 12px rgba(15, 23, 42, 0.07),
+                0 18px 44px rgba(0, 175, 65, 0.1);
+            transform: translateY(-3px);
+        }
+
+        &__inner {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+
+            @media screen and (min-width: 992px) {
+                grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+                min-height: clamp(17rem, 26vw, 21rem);
+            }
+        }
+
+        &__media {
+            display: block;
+            min-height: 0;
+            min-width: 0;
+            overflow: hidden;
+            position: relative;
+            text-decoration: none;
+
+            @media screen and (min-width: 992px) {
+                height: 100%;
+            }
+
+            &:focus-visible {
+                outline: 2px solid rgba($robbo-tilda-green, 0.55);
+                outline-offset: -2px;
+            }
+        }
+
+        &__media-frame {
+            aspect-ratio: 16 / 9;
+            background: #eef2f7;
+            height: 100%;
+            min-height: clamp(10.5rem, 32vw, 15rem);
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+
+            @media screen and (min-width: 992px) {
+                aspect-ratio: auto;
+                min-height: 100%;
+            }
+
+            &.is-placeholder {
+                align-items: center;
+                background: linear-gradient(145deg, #f8fafc 0%, #eef2f7 100%);
+                display: flex;
+                justify-content: center;
+
+                .robbo-guest-course-featured__img {
+                    height: auto;
+                    max-height: 55%;
+                    max-width: 55%;
+                    object-fit: contain;
+                    opacity: 0.72;
+                    padding: 1rem;
+                    width: auto;
+                }
+            }
+        }
+
+        &__img {
+            display: block;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.45s ease;
+            width: 100%;
+
+            @media (prefers-reduced-motion: reduce) {
+                transition: none;
+            }
+        }
+
+        &__media-shade {
+            background: linear-gradient(
+                180deg,
+                rgba(15, 23, 42, 0) 55%,
+                rgba(15, 23, 42, 0.12) 100%
+            );
+            inset: 0;
+            pointer-events: none;
+            position: absolute;
+
+            @media screen and (min-width: 992px) {
+                background: linear-gradient(
+                    90deg,
+                    rgba(15, 23, 42, 0) 0%,
+                    rgba(15, 23, 42, 0.1) 100%
+                );
+            }
+        }
+
+        &:hover &__img,
+        &:focus-within &__img {
+            transform: scale(1.03);
+        }
+
+        &__content {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.55rem, 1.2vw, 0.75rem);
+            justify-content: center;
+            min-width: 0;
+            padding: clamp(1.15rem, 2.8vw, 1.75rem);
+
+            @media screen and (min-width: 992px) {
+                padding: clamp(1.35rem, 2.5vw, 2rem) clamp(1.35rem, 2.5vw, 2rem) clamp(1.35rem, 2.5vw, 2rem) clamp(1rem, 2vw, 1.35rem);
+            }
+        }
+
+        &__eyebrow {
+            align-items: center;
+            background: rgba($robbo-tilda-green, 0.1);
+            border-radius: 999px;
+            color: darken($robbo-tilda-green, 4%);
+            display: inline-flex;
+            font-size: 0.6875rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            line-height: 1;
+            margin: 0;
+            padding: 0.35rem 0.7rem;
+            text-transform: uppercase;
+            width: fit-content;
+        }
+
+        &__title {
+            color: #111827;
+            font-size: clamp(1.3125rem, 2.6vw, 1.875rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin: 0.1rem 0 0;
+        }
+
+        &__meta {
+            color: #6b7280;
+            display: flex;
+            flex-wrap: wrap;
+            font-size: 0.8125rem;
+            gap: 0.35rem 0.65rem;
+            line-height: 1.35;
+            margin: 0;
+
+            span + span::before {
+                color: #d1d5db;
+                content: '·';
+                margin-right: 0.65rem;
+            }
+        }
+
+        &__desc {
+            -webkit-box-orient: vertical;
+            color: var(--robbo-guest-body-muted);
+            display: -webkit-box;
+            font-size: clamp(0.9375rem, 1.45vw, 1rem);
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            line-height: 1.55;
+            margin: 0.2rem 0 0;
+            overflow: hidden;
+
+            &--empty {
+                color: #9ca3af;
+                font-style: italic;
+            }
+        }
+
+        &__actions {
+            align-items: center;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: clamp(0.5rem, 1.2vw, 0.85rem);
+        }
+
+        &__cta {
+            align-items: center;
+            border-radius: var(--robbo-guest-card-cta-pill);
+            box-sizing: border-box;
+            display: inline-flex;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            justify-content: center;
+            line-height: 1.25;
+            min-height: var(--robbo-guest-card-cta-h);
+            padding: 0.45rem 1.25rem;
+            text-decoration: none !important;
+            transition:
+                background-color var(--robbo-guest-transition),
+                border-color var(--robbo-guest-transition),
+                box-shadow var(--robbo-guest-transition),
+                color var(--robbo-guest-transition);
+
+            &--primary {
+                background: $robbo-tilda-green;
+                box-shadow: 0 2px 10px rgba(0, 175, 65, 0.22);
+                color: #fff !important;
+                font-size: 1rem;
+                min-height: 48px;
+                min-width: 13rem;
+                padding: 0.55rem 1.75rem;
+
+                &:hover {
+                    background: darken($robbo-tilda-green, 6%);
+                    box-shadow: 0 4px 14px rgba(0, 175, 65, 0.28);
+                    color: #fff !important;
+                }
+            }
+
+            &--ghost {
+                background: transparent;
+                border: 1.5px solid rgba($robbo-tilda-green, 0.38);
+                color: $robbo-tilda-green !important;
+
+                &:hover {
+                    background: rgba($robbo-tilda-green, 0.06);
+                    border-color: $robbo-tilda-green;
+                    color: darken($robbo-tilda-green, 6%) !important;
+                }
+            }
+
+            &:focus-visible {
+                outline: 2px solid rgba($robbo-tilda-green, 0.45);
+                outline-offset: 2px;
+            }
+        }
+    }
+
+    .robbo-guest-course-compact {
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 14px;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        height: 100%;
+        overflow: hidden;
+        transition:
+            border-color var(--robbo-guest-transition),
+            box-shadow var(--robbo-guest-transition),
+            transform var(--robbo-guest-transition);
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+
+            &:hover,
+            &:focus-within {
+                transform: none;
+            }
+        }
+
+        &:hover,
+        &:focus-within {
+            border-color: rgba($robbo-tilda-green, 0.28);
+            box-shadow:
+                0 6px 18px rgba(15, 23, 42, 0.07),
+                0 0 0 1px rgba($robbo-tilda-green, 0.06);
+            transform: translateY(-2px);
+        }
+
+        &__link {
+            align-items: flex-start;
+            color: inherit;
+            display: flex;
+            gap: clamp(0.85rem, 2vw, 1rem);
+            height: 100%;
+            padding: clamp(0.85rem, 1.8vw, 1rem);
+            text-decoration: none !important;
+
+            &:focus-visible {
+                outline: 2px solid rgba($robbo-tilda-green, 0.45);
+                outline-offset: -2px;
+            }
+        }
+
+        &__media {
+            align-self: flex-start;
+            aspect-ratio: 4 / 3;
+            background: #eef2f7;
+            border-radius: 10px;
+            box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.05);
+            flex-shrink: 0;
+            overflow: hidden;
+            width: clamp(5.75rem, 17vw, 7.25rem);
+
+            &.is-placeholder {
+                align-items: center;
+                background: linear-gradient(145deg, #f8fafc 0%, #eef2f7 100%);
+                display: flex;
+                justify-content: center;
+
+                .robbo-guest-course-compact__img {
+                    height: auto;
+                    max-height: 68%;
+                    max-width: 68%;
+                    object-fit: contain;
+                    opacity: 0.72;
+                    width: auto;
+                }
+            }
+        }
+
+        &__img {
+            display: block;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            width: 100%;
+        }
+
+        &__body {
+            display: grid;
+            flex: 1 1 auto;
+            gap: 0.25rem;
+            min-width: 0;
+        }
+
+        &__title {
+            -webkit-box-orient: vertical;
+            color: #111827;
+            display: -webkit-box;
+            font-size: clamp(0.9375rem, 1.35vw, 1.03125rem);
+            font-weight: 700;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            line-height: 1.3;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        &__meta {
+            color: #9ca3af;
+            display: flex;
+            flex-wrap: wrap;
+            font-size: 0.75rem;
+            gap: 0.25rem 0.55rem;
+            line-height: 1.35;
+            margin: 0;
+
+            span + span::before {
+                color: #d1d5db;
+                content: '·';
+                margin-right: 0.55rem;
+            }
+        }
+
+        &__desc {
+            -webkit-box-orient: vertical;
+            color: var(--robbo-guest-body-muted);
+            display: -webkit-box;
+            font-size: 0.8125rem;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            line-height: 1.45;
+            margin: 0.15rem 0 0;
+            overflow: hidden;
+
+            &--empty {
+                color: #9ca3af;
+                font-style: italic;
+            }
+        }
+
+        &__arrow {
+            align-items: center;
+            align-self: center;
+            background: rgba($robbo-tilda-green, 0.1);
+            border-radius: 50%;
+            color: $robbo-tilda-green;
+            display: inline-flex;
+            flex-shrink: 0;
+            font-size: 0.9375rem;
+            font-weight: 700;
+            height: 2.125rem;
+            justify-content: center;
+            line-height: 1;
+            transition:
+                background-color var(--robbo-guest-transition),
+                transform var(--robbo-guest-transition);
+            width: 2.125rem;
+        }
+
+        &:hover &__arrow,
+        &:focus-within &__arrow {
+            background: rgba($robbo-tilda-green, 0.16);
+            transform: translateX(2px);
+        }
+    }
+
+    // Legacy Open edX homepage cards (non-guest fallback).
+    #main .robbo-guest-home .courses-container .courses .courses-listing:not(.robbo-guest-course-cards) {
         display: grid;
         gap: var(--robbo-guest-card-gap);
         grid-template-columns: minmax(0, 1fr);
@@ -1188,7 +1666,7 @@ body.robbo-guest-landing-page {
         justify-items: stretch;
         letter-spacing: normal;
         margin: 0 auto;
-        max-width: var(--robbo-guest-course-catalog-max);
+        max-width: var(--robbo-guest-course-grid-max);
         padding: 0;
         width: 100%;
 
@@ -1238,6 +1716,7 @@ body.robbo-guest-landing-page {
             .course-image .cover-image {
                 aspect-ratio: var(--robbo-guest-card-image-ratio);
                 height: auto;
+                max-height: var(--robbo-guest-card-image-max-h);
                 overflow: hidden;
 
                 &::before {
@@ -1247,6 +1726,7 @@ body.robbo-guest-landing-page {
                 img {
                     display: block;
                     height: 100%;
+                    max-height: var(--robbo-guest-card-image-max-h);
                     object-fit: cover;
                     object-position: top center;
                     width: 100%;
@@ -1260,7 +1740,7 @@ body.robbo-guest-landing-page {
                 font-family: var(--robbo-guest-font);
                 height: auto;
                 min-height: 0;
-                padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 2.5vw, 1.25rem) 0;
+                padding: clamp(0.65rem, 1.75vw, 0.85rem) clamp(0.85rem, 2vw, 1rem) 0;
 
                 h2.course-name {
                     height: auto;
@@ -1275,12 +1755,12 @@ body.robbo-guest-landing-page {
                     -webkit-box-orient: vertical;
                     color: #111827;
                     display: -webkit-box;
-                    font-size: clamp(0.9375rem, 1.2vw, 1rem);
+                    font-size: clamp(1rem, 1.35vw, 1.0625rem);
                     font-weight: 700;
                     height: auto;
                     -webkit-line-clamp: 2;
                     line-clamp: 2;
-                    line-height: 1.35;
+                    line-height: 1.3;
                     margin: 0 0 0.35rem;
                     overflow: hidden;
                     padding: 0;
@@ -1290,10 +1770,10 @@ body.robbo-guest-landing-page {
                 .course-organization {
                     color: var(--robbo-guest-body-muted);
                     display: block;
-                    font-size: 0.875rem;
+                    font-size: 0.8125rem;
                     height: auto;
                     line-height: 1.4;
-                    margin: 0 0 0.75rem;
+                    margin: 0 0 0.5rem;
                     overflow: hidden;
                     padding: 0;
                     text-overflow: ellipsis;
@@ -1301,15 +1781,22 @@ body.robbo-guest-landing-page {
                 }
 
                 .learn-more {
+                    align-items: center;
+                    align-self: stretch;
                     background: $robbo-tilda-green;
-                    border-radius: 6px;
-                    display: block;
-                    font-size: 0.875rem;
+                    border-radius: var(--robbo-guest-card-cta-pill);
+                    box-sizing: border-box;
+                    display: inline-flex;
+                    flex-shrink: 0;
+                    font-size: 0.9375rem;
                     font-weight: 600;
+                    justify-content: center;
                     line-height: 1.25;
-                    margin: 0 0 clamp(0.75rem, 2vw, 1rem);
-                    padding: 0.6rem 1rem;
+                    margin: auto 0 clamp(0.65rem, 1.75vw, 0.85rem);
+                    min-height: 42px;
+                    padding: 0.4rem 1.15rem;
                     text-align: center;
+                    width: 100%;
                     transition: background-color var(--robbo-guest-transition),
                         opacity var(--robbo-guest-transition);
 
@@ -1338,13 +1825,14 @@ body.robbo-guest-landing-page {
                 .course-date {
                     border-top: 1px solid #ecf0f4;
                     color: var(--robbo-guest-body-muted);
-                    font-size: 0.875rem;
+                    flex-shrink: 0;
+                    font-size: 0.8125rem;
                     line-height: 1.4;
-                    margin-top: auto;
-                    margin-left: calc(-1 * clamp(1rem, 2.5vw, 1.25rem));
-                    margin-right: calc(-1 * clamp(1rem, 2.5vw, 1.25rem));
+                    margin-left: calc(-1 * clamp(0.85rem, 2vw, 1rem));
+                    margin-right: calc(-1 * clamp(0.85rem, 2vw, 1rem));
+                    margin-top: 0;
                     margin-bottom: 0;
-                    padding: 0.65rem clamp(1rem, 2.5vw, 1.25rem);
+                    padding: 0.55rem clamp(0.85rem, 2vw, 1rem);
 
                     svg {
                         display: inline-block;

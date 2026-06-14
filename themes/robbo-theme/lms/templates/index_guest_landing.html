@@ -35,11 +35,10 @@ guest_landing_tagline = f'{guest_landing_host} - образовательная 
         ## Сетка как `.header-container` + `.robbo-main-header` на /courses: leading | center | trailing.
         <div class="robbo-guest-topbar__main">
           <div class="robbo-guest-topbar__leading">
-            <a class="robbo-guest-topbar__brand" href="https://skill.robbo.ru" target="_blank"
-              rel="noopener noreferrer">
+            <a class="robbo-guest-topbar__brand" href="#courses" aria-label="Перейти к каталогу курсов">
               <span class="robbo-guest-topbar__wordmark" aria-hidden="true">РОББО<sup
                   class="robbo-guest-topbar__wordmark-reg">®</sup></span>
-              <span class="sr-only">Робототехника для мальчиков и девочек от 5 до 15 лет</span>
+              <span class="sr-only">Перейти к каталогу курсов</span>
             </a>
           </div>
           <div class="robbo-guest-topbar__center">
@@ -130,9 +129,36 @@ guest_landing_tagline = f'{guest_landing_host} - образовательная 
           <div class="robbo-guest-home__sentinel" aria-hidden="true"></div>
         </header>
 
-        <h2 id="robbo-guest-courses-title" class="robbo-guest-courses__title">Наши курсы</h2>
+        <div class="robbo-guest-courses-showcase">
+          <h2 id="robbo-guest-courses-title" class="robbo-guest-courses-showcase__title">Наши курсы</h2>
 
-        <%include file="${courses_list}" />
+          % if robbo_guest_course_cards is not UNDEFINED and robbo_guest_course_cards:
+            <%
+              showcase_cards = robbo_guest_course_cards[:homepage_course_max]
+              featured_card = showcase_cards[0] if showcase_cards else None
+              compact_cards = showcase_cards[1:] if len(showcase_cards) > 1 else []
+              center_compact_list = len(showcase_cards) == 2
+            %>
+            <div class="robbo-guest-courses-showcase__grid">
+              % if featured_card is not None:
+                <div class="robbo-guest-courses-showcase__cell robbo-guest-courses-showcase__cell--featured">
+                  <%include file="courseware/_robbo_guest_course_card_featured.html" args="course_card=featured_card, card_index=0" />
+                </div>
+              % endif
+              % if compact_cards:
+                <ul class="robbo-guest-courses-showcase__compact-list${' robbo-guest-courses-showcase__compact-list--centered' if center_compact_list else ''}">
+                  % for offset, course_card in enumerate(compact_cards):
+                    <li class="robbo-guest-courses-showcase__cell">
+                      <%include file="courseware/_robbo_guest_course_card_compact.html" args="course_card=course_card, card_index=offset + 1" />
+                    </li>
+                  % endfor
+                </ul>
+              % endif
+            </div>
+          % else:
+            <%include file="${courses_list}" />
+          % endif
+        </div>
       </section>
     </div>
 

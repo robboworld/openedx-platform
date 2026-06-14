@@ -1,29 +1,108 @@
 <%page args="course_card, account, card_index" expression_filter="h"/>
+<%
+  card_classes = 'robbo-courses-catalog__stub robbo-courses-catalog__stub--course'
+  if course_card.get('is_enrolled'):
+      card_classes += ' is-enrolled'
+  about_aria_label = 'О курсе: {}'.format(course_card['title'])
+  has_course_meta = (
+      course_card.get('organization')
+      or course_card.get('start_label')
+      or course_card.get('about_url')
+  )
+  has_course_status = has_course_meta or course_card.get('progress_percent') is not None
+  media_classes = 'robbo-courses-catalog__stub-media'
+  if course_card.get('is_image_placeholder'):
+      media_classes += ' is-placeholder'
+  img_onerror = (
+      "this.onerror=null;this.src='/theming/asset/images/no_course_image.png';"
+      "this.closest('.robbo-courses-catalog__stub-media').classList.add('is-placeholder');"
+  )
+%>
 <article
-  class="robbo-courses-catalog__stub robbo-courses-catalog__stub--course"
+  class="${card_classes}"
   data-course-id="${course_card['course_id']}"
   aria-labelledby="robbo-course-title-${card_index}"
 >
   <div class="robbo-courses-catalog__stub-body">
-    <h3 id="robbo-course-title-${card_index}" class="robbo-courses-catalog__stub-title">${course_card['title']}</h3>
     <div class="robbo-courses-catalog__stub-copy">
-      <div class="robbo-courses-catalog__stub-media" role="presentation">
-        <img
-          class="robbo-courses-catalog__stub-img"
-          src="${course_card['image_url']}"
-          alt="${course_card['image_alt']}"
-          width="552"
-          height="320"
-          loading="lazy"
-          onerror="this.onerror=null;this.src='/theming/asset/images/no_course_image.png';"
-        />
+      <div class="robbo-courses-catalog__stub-copy-main">
+        % if course_card.get('is_enrolled'):
+          <span class="robbo-courses-catalog__course-badge">Вы записаны</span>
+        % endif
+        <h3 id="robbo-course-title-${card_index}" class="robbo-courses-catalog__stub-title">${course_card['title']}</h3>
+        % if has_course_status:
+          <div class="robbo-courses-catalog__course-status">
+            % if has_course_meta:
+              <p class="robbo-courses-catalog__course-meta">
+                % if course_card.get('organization'):
+                  <span class="robbo-courses-catalog__course-meta-item">${course_card['organization']}</span>
+                % endif
+                % if course_card.get('start_label'):
+                  <span class="robbo-courses-catalog__course-meta-item">${course_card['start_label']}</span>
+                % endif
+                % if course_card.get('about_url'):
+                  <a class="robbo-courses-catalog__course-about-link" href="${course_card['about_url']}">О курсе</a>
+                % endif
+              </p>
+            % endif
+            % if course_card.get('progress_percent') is not None:
+              <div
+                class="robbo-courses-catalog__course-progress"
+                style="--robbo-cat-progress: ${course_card['progress_percent']};"
+                role="progressbar"
+                aria-valuenow="${course_card['progress_percent']}"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-label="Прогресс курса"
+              >
+                <div class="robbo-courses-catalog__course-progress-track">
+                  <div class="robbo-courses-catalog__course-progress-bar"></div>
+                </div>
+                <span class="robbo-courses-catalog__course-progress-label">${course_card['progress_percent']}%</span>
+              </div>
+            % endif
+          </div>
+        % endif
+        % if course_card.get('description'):
+          <p class="robbo-courses-catalog__stub-desc">${course_card['description']}</p>
+        % else:
+          <p class="robbo-courses-catalog__stub-desc robbo-courses-catalog__stub-desc--empty">Описание курса скоро появится.</p>
+        % endif
       </div>
-      % if course_card.get('description'):
-        <p class="robbo-courses-catalog__stub-desc">${course_card['description']}</p>
+      % if course_card.get('about_url'):
+        <a
+          class="robbo-courses-catalog__stub-media-link"
+          href="${course_card['about_url']}"
+          aria-label="${about_aria_label}"
+        >
+          <div class="${media_classes}" role="presentation">
+            <img
+              class="robbo-courses-catalog__stub-img"
+              src="${course_card['image_url']}"
+              alt=""
+              width="552"
+              height="320"
+              loading="lazy"
+              onerror="${img_onerror}"
+            />
+          </div>
+        </a>
+      % else:
+        <div class="${media_classes}" role="presentation">
+          <img
+            class="robbo-courses-catalog__stub-img"
+            src="${course_card['image_url']}"
+            alt="${course_card['image_alt']}"
+            width="552"
+            height="320"
+            loading="lazy"
+            onerror="${img_onerror}"
+          />
+        </div>
       % endif
     </div>
     <div class="robbo-courses-catalog__stub-footer">
-      <div class="robbo-courses-catalog__stub-actions">
+      <div class="robbo-courses-catalog__stub-footer-actions">
         % if account and account.get('mode') == 'inactive':
           <span
             class="robbo-courses-catalog__btn robbo-courses-catalog__btn--primary robbo-courses-catalog__btn--disabled"

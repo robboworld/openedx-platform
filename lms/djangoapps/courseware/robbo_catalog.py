@@ -284,6 +284,27 @@ def _catalog_course_image_url(course) -> str:
     )
 
 
+_GENERIC_CATALOG_ORGS = frozenset({
+    'edx',
+    'open edx',
+    'openedx',
+})
+
+
+def _catalog_course_uses_placeholder_image(course) -> bool:
+    """True when the card will show the platform default / missing-course artwork."""
+    raw = (_catalog_course_image_url(course) or '').strip()
+    if not raw:
+        return True
+
+    path = raw.split('?', 1)[0].rstrip('/')
+    if path.endswith('no_course_image.png'):
+        return True
+
+    default = (settings.STATIC_URL + settings.DEFAULT_COURSE_ABOUT_IMAGE_URL).rstrip('/')
+    return path == default or path.endswith(default.lstrip('/'))
+
+
 def build_robbo_catalog_course_cards(
     request,
     courses_list: list,
@@ -304,6 +325,8 @@ def build_robbo_catalog_course_cards(
 
         cta_url = _absolute_url(request, course_home_url(course.id))
         image_url = _absolute_url(request, _catalog_course_image_url(course))
+        about_url = _absolute_url(request, reverse('about_course', args=[str(course.id)]))
+        is_image_placeholder = _catalog_course_uses_placeholder_image(course)
 
         card: Dict[str, Any] = {
             'course_id': str(course.id),
@@ -311,13 +334,20 @@ def build_robbo_catalog_course_cards(
             'description': short,
             'image_url': image_url,
             'image_alt': title,
+            'is_image_placeholder': is_image_placeholder,
+            'about_url': about_url,
             'cta_url': cta_url,
             'cta_label': 'Начать обучение',
         }
+        card.update(_course_card_meta(course))
 
         if user is not None and user.is_authenticated and user.is_active:
             if CourseEnrollment.is_enrolled(user, course.id):
+                card['is_enrolled'] = True
                 card['cta_label'] = 'Продолжить обучение'
+                progress_percent = _enrolled_course_progress_percent(user, course.id)
+                if progress_percent is not None and progress_percent > 0:
+                    card['progress_percent'] = progress_percent
             else:
                 card['cta_enroll'] = True
                 card['change_enrollment_url'] = reverse('change_enrollment')
@@ -325,6 +355,125 @@ def build_robbo_catalog_course_cards(
         cards.append(card)
 
     return cards
+
+
+def build_robbo_guest_homepage_course_cards(
+    request,
+    courses_list: list,
+) -> List[Dict[str, Any]]:
+    """
+    Guest landing (/) course cards: catalog-like data with sign-in / dashboard CTA.
+    """
+    from urllib.parse import urlencode  # pylint: disable=import-outside-toplevel
+
+    cards: List[Dict[str, Any]] = []
+    user = getattr(request, 'user', None) if request else None
+
+    learner_home = getattr(settings, 'LEARNER_HOME_MICROFRONTEND_URL', None)
+    if learner_home:
+        my_courses_url = learner_home.rstrip('/') + '/'
+    else:
+        my_courses_url = _absolute_url(request, reverse('dashboard'))
+
+    if user is not None and user.is_authenticated:
+        default_cta_url = my_courses_url
+    else:
+        signin_path = reverse('signin_user') + '?' + urlencode({'next': my_courses_url})
+        default_cta_url = _absolute_url(request, signin_path)
+
+    for course in courses_list:
+        title = course.display_name_with_default
+        short = (getattr(course, 'short_description', None) or '').strip()
+        if not short:
+            short = get_course_excerpt_from_overview(course)
+        short = _normalize_guest_course_description(short)
+
+        about_url = _absolute_url(request, reverse('about_course', args=[str(course.id)]))
+        image_url = _absolute_url(request, _catalog_course_image_url(course))
+
+        card: Dict[str, Any] = {
+            'course_id': str(course.id),
+            'title': title,
+            'description': short,
+            'image_url': image_url,
+            'image_alt': title,
+            'is_image_placeholder': _catalog_course_uses_placeholder_image(course),
+            'about_url': about_url,
+            'cta_url': default_cta_url,
+            'cta_label': 'Узнать больше',
+        }
+        card.update(_course_card_meta(course))
+        card['teaser'] = _guest_card_teaser(short)
+        cards.append(card)
+
+    return cards
+
+
+def _guest_card_teaser(text: str, max_len: int = 96) -> str:
+    """One-line teaser for compact landing cards."""
+    snippet = _normalize_guest_course_description(text)
+    if not snippet:
+        return ''
+    if len(snippet) > max_len:
+        return snippet[: max_len - 1].rstrip() + '…'
+    return snippet
+
+
+_GUEST_COURSE_DESC_BOILERPLATE = (
+    'about this course',
+    'include your long course description here',
+    'include your course description here',
+    'enter short description',
+)
+
+
+def _normalize_guest_course_description(text: str) -> str:
+    """Drop Open edX placeholder copy from guest landing cards."""
+    snippet = (text or '').strip()
+    if not snippet:
+        return ''
+    lowered = snippet.lower()
+    for phrase in _GUEST_COURSE_DESC_BOILERPLATE:
+        if phrase in lowered:
+            return ''
+    return snippet
+
+
+def _course_card_meta(course) -> Dict[str, str]:
+    """Organization and start date for catalog cards (single-line meta row)."""
+    meta: Dict[str, str] = {}
+
+    org = (getattr(course, 'display_org_with_default', None) or '').strip()
+    if org and org.lower() not in _GENERIC_CATALOG_ORGS:
+        meta['organization'] = org
+
+    advertised_start = getattr(course, 'advertised_start', None)
+    if advertised_start:
+        meta['start_label'] = f'Старт: {advertised_start}'
+    else:
+        start = getattr(course, 'start', None)
+        if start is not None:
+            meta['start_label'] = f'Старт: {start.strftime("%d.%m.%Y")}'
+
+    return meta
+
+
+def _enrolled_course_progress_percent(user, course_key) -> Optional[int]:
+    """Unit completion percent for enrolled learners; None if unavailable or no countable units."""
+    try:
+        from lms.djangoapps.courseware.courses import get_course_blocks_completion_summary  # pylint: disable=import-outside-toplevel
+
+        summary = get_course_blocks_completion_summary(course_key, user)
+    except Exception:  # pylint: disable=broad-except
+        return None
+
+    complete = int(summary.get('complete_count') or 0)
+    incomplete = int(summary.get('incomplete_count') or 0)
+    total = complete + incomplete
+    if total <= 0:
+        return None
+
+    return min(100, max(0, round(100 * complete / total)))
 
 
 def build_robbo_catalog_featured(

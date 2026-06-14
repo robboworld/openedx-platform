@@ -156,8 +156,14 @@ def index(request, extra_context=None, user=AnonymousUser()):
         context['disable_footer'] = True
         context['robbo_guest_homepage'] = True
         try:
-            from lms.djangoapps.courseware.robbo_catalog import get_robbo_catalog_about
+            from lms.djangoapps.courseware.robbo_catalog import (
+                build_robbo_guest_homepage_course_cards,
+                get_robbo_catalog_about,
+            )
             context['robbo_about'] = get_robbo_catalog_about()
+            context['robbo_guest_course_cards'] = build_robbo_guest_homepage_course_cards(
+                request, courses
+            )
         except ImportError:
             pass
 
