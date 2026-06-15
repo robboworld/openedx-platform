@@ -128,6 +128,27 @@ MIDDLEWARE.insert(
     'lms.djangoapps.robbo_lang.middleware.RobboForceRussianLanguageMiddleware',
 )
 """
+
+# MFE: set openedx-language-preference=ru before React bundles read locale (replaces prod index.html hotfix).
+_PATCH_MFE_FORCE_RU_LANG_BUILDTIME = """
+const _robboLangPrefCookie = 'openedx-language-preference';
+const _robboLangCookies = new Cookies();
+if (typeof document !== 'undefined') {
+  const _robboLangSecure = typeof location !== 'undefined' && location.protocol === 'https:';
+  if (_robboLangCookies.get(_robboLangPrefCookie) !== 'ru') {
+    _robboLangCookies.set(_robboLangPrefCookie, 'ru', {
+      domain: '{{ LMS_HOST }}',
+      path: '/',
+      maxAge: 31536000,
+      secure: _robboLangSecure,
+      sameSite: _robboLangSecure ? 'none' : 'lax',
+    });
+  }
+  if (document.documentElement) {
+    document.documentElement.lang = 'ru';
+  }
+}
+"""
 # tutor-indigo init assigns SiteTheme "indigo" for LMS_HOST; force default comprehensive theme.
 _PATCH_ROBBO_DEFAULT_SITE_THEME = """
 DEFAULT_SITE_THEME = "robbo-theme"
@@ -323,5 +344,6 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_YANDEX_METRIKA_PROD_LMS),
         ("openedx-dockerfile-post-python-requirements", _PATCH_OPENEDX_ROBBO_XBLOCKS),
         ("caddyfile", _PATCH_CADDYFILE_SCRATCH),
+        ("mfe-env-config-buildtime-definitions", _PATCH_MFE_FORCE_RU_LANG_BUILDTIME),
     ]
 )
