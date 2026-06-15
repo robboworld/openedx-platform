@@ -1288,3 +1288,10 @@ a.robbo-courses-catalog__featured-cta--enroll.is-enrolling {
     transform: rotate(360deg);
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .robbo-courses-catalog__stub .robbo-courses-catalog__stub-notify.is-loading::after {
+    animation: none;
+    content: none;
+  }
+}
