@@ -7,7 +7,11 @@ from completion.test_utils import CompletionWaffleTestMixin
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from openedx.core.djangoapps.user_api.accounts.utils import retrieve_last_sitewide_block_completed
+from openedx.core.djangoapps.user_api.accounts.utils import (
+    is_valid_robbo_phone_number,
+    normalize_robbo_phone_number,
+    retrieve_last_sitewide_block_completed,
+)
 from openedx.core.djangolib.testing.utils import skip_unless_lms
 from common.djangoapps.student.models import CourseEnrollment
 from common.djangoapps.student.tests.factories import UserFactory
@@ -15,6 +19,38 @@ from xmodule.modulestore.tests.django_utils import SharedModuleStoreTestCase  # 
 from xmodule.modulestore.tests.factories import CourseFactory, BlockFactory  # lint-amnesty, pylint: disable=wrong-import-order
 
 from ..utils import format_social_link, validate_social_link
+
+
+@ddt.ddt
+class RobboPhoneNumberUtilsTest(TestCase):
+    """Unit tests for Robbo phone normalization and validation."""
+
+    @ddt.data(
+        ('+79161234567', '+79161234567'),
+        ('+7 916 123 45 67', '+79161234567'),
+        ('+783723727334', '+783723727334'),
+        ('+7 8372 3727 334', '+783723727334'),
+        ('', ''),
+        (None, ''),
+    )
+    @ddt.unpack
+    def test_normalize_robbo_phone_number(self, raw, expected):
+        assert normalize_robbo_phone_number(raw) == expected
+
+    @ddt.data(
+        ('+79161234567', True),
+        ('+74951234567', True),
+        ('+78001234567', True),
+        ('+783723727334', False),
+        ('+7 8372 3727 334', False),
+        ('+7916123456', False),
+        ('+12345678901', True),
+        ('', True),
+        (None, True),
+    )
+    @ddt.unpack
+    def test_is_valid_robbo_phone_number(self, raw, expected):
+        assert is_valid_robbo_phone_number(raw) is expected
 
 
 @ddt.ddt
