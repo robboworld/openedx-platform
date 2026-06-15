@@ -706,19 +706,6 @@
     padding-right: var(--robbo-cat-pad);
   }
 
-  .robbo-courses-catalog__course-badge {
-    align-self: flex-start;
-    background: var(--robbo-cat-course-badge-bg);
-    border: 1px solid var(--robbo-cat-course-badge-border);
-    border-radius: 999px;
-    color: var(--robbo-cat-course-badge-fg);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: normal;
-    line-height: 1.2;
-    padding: 0.22rem 0.6rem;
-  }
-
   .robbo-courses-catalog__stub-title {
     font-size: var(--robbo-cat-course-title-size);
     letter-spacing: -0.01em;
@@ -748,10 +735,21 @@
   .robbo-courses-catalog__course-meta-item {
     min-width: 0;
 
+    &--enrolled {
+      color: var(--robbo-cat-course-badge-fg);
+      font-weight: 600;
+    }
+
     &+.robbo-courses-catalog__course-meta-item::before {
       color: #d1d5db;
       content: '·';
       margin-right: 0.65rem;
+    }
+
+    &:has(+ .robbo-courses-catalog__course-about-link)::after {
+      color: #d1d5db;
+      content: '·';
+      margin-left: 0.65rem;
     }
   }
 
@@ -766,12 +764,6 @@
     text-decoration: none;
     transition: color 0.15s ease;
     white-space: nowrap;
-
-    .robbo-courses-catalog__course-meta-item+&::before {
-      color: #d1d5db;
-      content: '·';
-      margin-right: 0.65rem;
-    }
 
     &:hover {
       color: var(--robbo-cat-cta-bg);
