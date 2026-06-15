@@ -23,7 +23,7 @@
   --robbo-cat-cta-min-h: 60px;
   --robbo-cat-cta-pill: 30px;
   --robbo-cat-cta-font: clamp(0.95rem, 1.1vw, 1.0625rem);
-  // Stub course card CTA (compact pill; featured uses --robbo-cat-cta-* above)
+  // Stub course card CTA (full-width pill; featured uses --robbo-cat-cta-* above)
   --robbo-cat-stub-cta-min-w: 10rem;
   --robbo-cat-stub-cta-h: 46px;
   --robbo-cat-stub-cta-pill: 23px;
@@ -663,7 +663,7 @@
   }
 }
 
-// Real course cards: equal row height; CTA pinned to bottom, centered.
+// Real course cards: equal row height; CTA pinned to bottom, full width (guest landing parity).
 .robbo-courses-catalog__stub.robbo-courses-catalog__stub--course {
   align-self: stretch;
   box-shadow: var(--robbo-cat-card-shadow);
@@ -1007,12 +1007,12 @@
   }
 
   .robbo-courses-catalog__stub-footer-actions {
-    align-items: center;
+    align-items: stretch;
     box-sizing: border-box;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    justify-content: center;
+    justify-content: stretch;
     width: 100%;
   }
 
@@ -1020,12 +1020,12 @@
   .robbo-courses-catalog__btn--primary {
     border-radius: var(--robbo-cat-stub-cta-pill);
     box-sizing: border-box;
-    flex: 0 0 auto;
+    flex: 1 1 auto;
     font-size: var(--robbo-cat-stub-cta-font);
     height: auto;
-    max-width: #{"min(100%, 14rem)"};
+    max-width: none;
     min-height: var(--robbo-cat-stub-cta-h);
-    min-width: var(--robbo-cat-stub-cta-min-w);
+    min-width: 0;
     padding: 0.4rem 1.15rem;
     width: 100%;
   }
@@ -1109,15 +1109,15 @@ a.robbo-courses-catalog__btn--primary {
   }
 }
 
-// Course grid cards: compact CTA must win over featured-sized `.btn--primary` above.
+// Course grid cards: full-width CTA must win over featured-sized `.btn--primary` above.
 .robbo-courses-catalog__stub.robbo-courses-catalog__stub--course {
 
   a.robbo-courses-catalog__btn--primary,
   .robbo-courses-catalog__btn--primary {
     height: auto;
-    max-width: #{"min(100%, 14rem)"};
+    max-width: none;
     min-height: var(--robbo-cat-stub-cta-h);
-    min-width: var(--robbo-cat-stub-cta-min-w);
+    min-width: 0;
     padding: 0.4rem 1.15rem;
     width: 100%;
   }
