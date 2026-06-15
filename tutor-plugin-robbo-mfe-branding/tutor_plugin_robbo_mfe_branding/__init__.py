@@ -135,15 +135,17 @@ const _robboLangPrefCookie = 'openedx-language-preference';
 const _robboLangCookies = new Cookies();
 if (typeof document !== 'undefined') {
   const _robboLangSecure = typeof location !== 'undefined' && location.protocol === 'https:';
-  if (_robboLangCookies.get(_robboLangPrefCookie) !== 'ru') {
-    _robboLangCookies.set(_robboLangPrefCookie, 'ru', {
-      domain: '{{ LMS_HOST }}',
-      path: '/',
-      maxAge: 31536000,
-      secure: _robboLangSecure,
-      sameSite: _robboLangSecure ? 'none' : 'lax',
-    });
-  }
+  const _robboLangDomain = '{{ LMS_HOST }}';
+  // Host-only cookies on apps.* beat parent-domain values; clear before forcing ru.
+  _robboLangCookies.remove(_robboLangPrefCookie);
+  _robboLangCookies.remove(_robboLangPrefCookie, { path: '/', domain: _robboLangDomain });
+  _robboLangCookies.set(_robboLangPrefCookie, 'ru', {
+    domain: _robboLangDomain,
+    path: '/',
+    maxAge: 31536000,
+    secure: _robboLangSecure,
+    sameSite: _robboLangSecure ? 'none' : 'lax',
+  });
   if (document.documentElement) {
     document.documentElement.lang = 'ru';
   }
