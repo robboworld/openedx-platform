@@ -19,6 +19,22 @@ msgstr "Каталог курсов"
 msgid "Register for free"
 msgstr "Зарегистрироваться бесплатно"
 
+#: themes/robbo-theme/lms/templates/courseware/course_about.html
+msgid "Course Summary"
+msgstr "Сводка по курсу"
+
+#: themes/robbo-theme/lms/templates/courseware/course_about.html
+msgid "Already Enrolled"
+msgstr "Вы записаны"
+
+#: themes/robbo-theme/lms/templates/courseware/course_about.html
+msgid "Enroll Now"
+msgstr "Записаться"
+
+#: themes/robbo-theme/lms/templates/courseware/course_about.html
+msgid "Additional Resources"
+msgstr "Дополнительные материалы"
+
 #: openedx/core/djangoapps/user_authn/views/registration_form.py
 msgid "Incorrect company entry."
 msgstr "Некорректное название компании"

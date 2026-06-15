@@ -1,5 +1,24 @@
-// Include custom about page
+// Course about page — Robbo theme polish
+$about-radius: 8px;
+$about-text-muted: $robbo-brand-grey;
+$about-text-body: mix($robbo-brand-coal, $robbo-brand-grey, 35%);
+$about-text-label: $light-dark;
+$about-border-subtle: $gray-light;
+$about-icon-accent: $robbo-ui-primary-dark;
+$about-cta-min-height: 44px;
+$about-content-gap-md: 35px;
+$about-content-gap-lg: 57px;
+
+@mixin about-focus-ring {
+    &:focus-visible {
+        outline: 2px solid $primary;
+        outline-offset: 2px;
+    }
+}
+
 .course-info.about {
+    --about-sidebar-width: #{"min(32%, 400px)"};
+
     &.container {
         padding-top: 50px;
         padding-bottom: 20px;
@@ -13,62 +32,78 @@
         background: none;
         .intro-inner-wrapper {
             background: none;
-            padding: 0 0 60px;
+            display: grid;
+            gap: 16px;
+            padding: 0 0 32px;
+            grid-template-columns: minmax(0, 1fr);
+            grid-template-areas:
+                "media"
+                "info"
+                "cta";
+
             @include media-breakpoint-up(md) {
-                padding: 0 0 20px;
+                gap: 20px $about-content-gap-md;
+                padding: 0 0 24px;
+                grid-template-columns: minmax(0, 1fr) var(--about-sidebar-width);
+                grid-template-areas:
+                    "info media"
+                    "cta media";
+                align-items: start;
             }
+
             @include media-breakpoint-up(lg) {
-                padding: 36px 0 60px;
+                gap: 24px $about-content-gap-lg;
             }
         }
     }
     .intro-inner-wrapper .profile-top {
-        &:after {
-            display: block;
-            content: "";
-            clear: both;
-        }
+        display: contents;
+
         .info-profile {
+            grid-area: info;
             overflow: hidden;
-            padding: 0 0 10px;
-            @include media-breakpoint-up(md) {
-                padding: 0 0 70px;
-            }
+            padding: 0;
+            min-width: 0;
+            align-self: start;
+
             h1 {
                 font-size: 24px;
                 font-weight: 800;
                 margin: 0 0 8px;
                 line-height: 30px;
-                color: #111827;
+                color: $dark;
                 text-align: left;
             }
             .org {
                 display: block;
-                color: #515661;
+                color: $about-text-body;
                 font-size: 16px;
                 line-height: 22px;
             }
         }
         .media {
-            margin: 0 auto 20px;
+            grid-area: media;
+            margin: 0;
             padding: 0;
             display: block;
-            max-width: 400px;
             width: 100%;
+            max-width: 400px;
+            justify-self: center;
+
             @include media-breakpoint-up(md) {
-                float: right;
-                width: 32%;
-                margin: 0 0 0 80px;
+                max-width: none;
+                justify-self: stretch;
             }
+
             img {
                 display: block;
                 width: 100%;
                 height: auto;
+                aspect-ratio: 16 / 9;
+                object-fit: cover;
                 position: relative;
                 z-index: 1;
-                border-radius: 8px;
-                height: 180px;
-                object-fit: cover;
+                border-radius: $about-radius;
             }
             .hero {
                 position: relative;
@@ -81,109 +116,130 @@
                     width: calc(100% - 2px);
                     height: calc(100% - 2px);
                     content: "";
-                    border-radius: 8px;
+                    border-radius: $about-radius;
                     border: 1px solid $primary-light;
+                    pointer-events: none;
                 }
-                .play-intro{
+                .play-intro {
                     z-index: 10;
                 }
             }
         }
     }
     .main-cta {
-        @include media-breakpoint-up(md) {
-            margin: -50px 0 0;
-        }
-        span {
-          &.register {
-            &.disabled {
-              display: inline-block;
-              vertical-align: top;
-              padding: 7px 14px;
-              color: #374151;
-              border-radius: 6px;
-              background: #fff;
-              font-size: 16px;
-              line-height: 24px;
-              font-weight: 500;
-              text-decoration: none !important;
-              border: 1px solid #D1D5DB;
-              margin-right: 20px;
-              @include media-breakpoint-up(md) {
-                  padding: 12px 24px;
-              }
+        grid-area: cta;
+        align-self: start;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px 20px;
+        margin: 0;
 
-              &:hover {
-                opacity: 1;
-              }
+        span {
+            &.register {
+                &.disabled {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    min-height: $about-cta-min-height;
+                    padding: 7px 14px;
+                    color: $about-text-label;
+                    border-radius: 6px;
+                    background: $robbo-brand-white;
+                    font-size: 16px;
+                    line-height: 24px;
+                    font-weight: 500;
+                    text-decoration: none !important;
+                    border: 1px solid $about-border-subtle;
+                    cursor: default;
+                    pointer-events: none;
+                    user-select: none;
+                    @include media-breakpoint-up(md) {
+                        padding: 12px 24px;
+                    }
+                }
             }
-          }
         }
 
         a {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             text-decoration: none !important;
+            @include about-focus-ring;
         }
-        a.register, a strong, >span.register, a.add-to-cart {
-            display: inline-block;
-            vertical-align: top;
+
+        a.register,
+        a strong,
+        > span.register,
+        a.add-to-cart {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: $about-cta-min-height;
             padding: 8px 15px;
-            color: #fff;
+            color: $robbo-brand-white;
             border-radius: 6px;
             background: $primary;
+            border: 1px solid transparent;
             font-size: 16px;
             line-height: 24px;
-            font-weight: 500;
+            font-weight: 600;
             text-decoration: none !important;
             @include media-breakpoint-up(md) {
                 padding: 13px 25px;
             }
+
             &:hover {
                 text-decoration: none;
-                opacity: .8;
+                background: darken($primary, 7%);
             }
         }
+
         span.closed {
             background: $primary-light;
             border-radius: 6px;
-            color: #9CA3AF;
+            color: $about-text-muted;
             font-size: 16px;
             line-height: 24px;
-            padding: 16px;
+            min-height: $about-cta-min-height;
+            padding: 10px 16px;
             font-weight: 500;
-            display: inline-block;
-            vertical-align: top;
+            display: inline-flex;
+            align-items: center;
+            @include about-focus-ring;
         }
     }
     .about-content {
-        display: flex;
-        flex-flow: column-reverse;
-        flex-wrap: wrap;
+        display: grid;
+        gap: 25px;
+        align-items: start;
+
         @include media-breakpoint-up(md) {
-            display: block;
+            gap: $about-content-gap-md;
+            grid-template-columns: minmax(0, 1fr) var(--about-sidebar-width);
         }
-        &:after {
-            display: block;
-            clear: both;
-            content: "";
+
+        @include media-breakpoint-up(lg) {
+            gap: $about-content-gap-lg;
         }
+
         .details {
-            width: 100%;
+            width: auto;
+            margin: 0;
+            min-width: 0;
+            order: 2;
+
             @include media-breakpoint-up(md) {
-                width: calc(100% - 32% - 35px);
-                margin-right: 35px;
-            }
-            @include media-breakpoint-up(lg) {
-                width: calc(100% - 32% - 57px);
-                margin-right: 57px;
+                order: 0;
             }
             .wrap-instructor-info {
                 display: none;
             }
             .about, .prerequisites, .course-staff, .faq {
                 font: 16px/20px $font-family-title;
-                color: #515661;
-                border-radius: 8px;
+                color: $about-text-body;
+                border-radius: $about-radius;
                 border: 1px solid $primary-light;
                 border-left: 14px solid $primary-light;
                 padding: 24px 16px 10px 16px;
@@ -197,14 +253,14 @@
                 }
                 h2 {
                     margin: 0 0 14px;
-                    color: #111827;
+                    color: $dark;
                     font-size: 18px;
                     line-height: 24px;
                     font-weight: 600;
                 }
                 h3 {
                     margin: 0 0 5px;
-                    color: #4B5563;
+                    color: $about-text-label;
                     font-size: 14px;
                     line-height: 20px;
                     font-weight: 500;
@@ -272,18 +328,19 @@
     .course-sidebar {
         background: $primary-light;
         padding: 24px;
-        border-radius: 8px;
-        width: 100%;
+        border-radius: $about-radius;
+        width: auto;
         box-sizing: border-box;
-        margin: 0 0 25px;
+        margin: 0;
+        min-width: 0;
+        order: 1;
+
         @include media-breakpoint-up(md) {
-            width: 32%;
-            margin: 0;
-            max-width: 400px;
-            float: right;
+            order: 0;
+            max-width: none;
         }
         h2 {
-            color:#111827;
+            color: $dark;
             font-size: 20px;
             line-height: 28px;
             font-weight: 700;
@@ -291,7 +348,7 @@
         }
         header {
             padding: 0;
-            margin: 0;
+            margin: 16px 0 0;
             border: none;
             text-align: left;
             &:after {
@@ -300,20 +357,42 @@
             .social-sharing {
                 height: auto;
                 text-align: left;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 8px 12px;
                 .sharing-message {
-                    background: white;
+                    background: $robbo-brand-white;
                     border: none;
                     border-top: 4px solid $primary;
-                    color: #000;
-                    font: 10px/15px $font-family-title;
+                    color: $dark;
+                    font: 12px/18px $font-family-title;
                     padding: 10px;
+                    flex: 1 1 100%;
+                    border-radius: 4px 4px 0 0;
                 }
                 .share {
-                    width: auto;
-                    height: auto;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: $about-cta-min-height;
+                    height: $about-cta-min-height;
                     opacity: 1;
-                    margin-right: 10px;
+                    margin: 0;
                     vertical-align: top;
+                    color: $about-icon-accent;
+                    border-radius: 6px;
+                    transition: color 0.15s ease, background-color 0.15s ease;
+                    @include about-focus-ring;
+
+                    svg {
+                        display: block;
+                    }
+
+                    &:hover {
+                        color: $primary;
+                        background: rgba($primary, 0.08);
+                    }
                 }
             }
         }
@@ -332,15 +411,19 @@
                     left: 0;
                     top: 0;
                     margin: 0;
-                    color: #9CA3AF;
+                    color: $about-icon-accent;
                     opacity: 1;
+
+                    path {
+                        fill: currentColor;
+                    }
                 }
                 p {
                     font-size: 14px;
                     font-weight: 500;
                     line-height: 24px;
                     float: none;
-                    color: #4B5563;
+                    color: $about-text-label;
                     margin: 0 0 5px;
                     font-family: $font-family-title;
                     float: left;
@@ -355,7 +438,7 @@
                     float: none;
                     font-size: 12px;
                     line-height: 24px;
-                    color: #515661;
+                    color: $about-text-body;
                     display: block;
                     font-weight: normal;
                     font-family: $font-family-title;
