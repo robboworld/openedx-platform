@@ -5,7 +5,8 @@
       card_classes += ' is-enrolled'
   about_aria_label = 'О курсе: {}'.format(course_card['title'])
   has_course_meta = (
-      course_card.get('organization')
+      course_card.get('is_enrolled')
+      or course_card.get('organization')
       or course_card.get('start_label')
       or course_card.get('about_url')
   )
@@ -26,15 +27,14 @@
   <div class="robbo-courses-catalog__stub-body">
     <div class="robbo-courses-catalog__stub-copy">
       <div class="robbo-courses-catalog__stub-copy-main">
-        % if course_card.get('is_enrolled'):
-          <span class="robbo-courses-catalog__course-badge">Вы записаны</span>
-        % endif
         <h3 id="robbo-course-title-${card_index}" class="robbo-courses-catalog__stub-title">${course_card['title']}</h3>
         % if has_course_status:
           <div class="robbo-courses-catalog__course-status">
             % if has_course_meta:
               <p class="robbo-courses-catalog__course-meta">
-                % if course_card.get('organization'):
+                % if course_card.get('is_enrolled'):
+                  <span class="robbo-courses-catalog__course-meta-item robbo-courses-catalog__course-meta-item--enrolled">Вы записаны</span>
+                % elif course_card.get('organization'):
                   <span class="robbo-courses-catalog__course-meta-item">${course_card['organization']}</span>
                 % endif
                 % if course_card.get('start_label'):
