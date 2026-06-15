@@ -6,7 +6,6 @@
   about_aria_label = 'О курсе: {}'.format(course_card['title'])
   has_course_meta = (
       course_card.get('is_enrolled')
-      or course_card.get('organization')
       or course_card.get('start_label')
       or course_card.get('about_url')
   )
@@ -34,8 +33,6 @@
               <p class="robbo-courses-catalog__course-meta">
                 % if course_card.get('is_enrolled'):
                   <span class="robbo-courses-catalog__course-meta-item robbo-courses-catalog__course-meta-item--enrolled">Вы записаны</span>
-                % elif course_card.get('organization'):
-                  <span class="robbo-courses-catalog__course-meta-item">${course_card['organization']}</span>
                 % endif
                 % if course_card.get('start_label'):
                   <span class="robbo-courses-catalog__course-meta-item">${course_card['start_label']}</span>
