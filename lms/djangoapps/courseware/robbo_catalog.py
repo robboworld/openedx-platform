@@ -284,12 +284,6 @@ def _catalog_course_image_url(course) -> str:
     )
 
 
-_GENERIC_CATALOG_ORGS = frozenset({
-    'edx',
-    'open edx',
-    'openedx',
-})
-
 
 def _catalog_course_uses_placeholder_image(course) -> bool:
     """True when the card will show the platform default / missing-course artwork."""
@@ -357,29 +351,46 @@ def build_robbo_catalog_course_cards(
     return cards
 
 
+def _guest_course_price_offer(course) -> Dict[str, Any]:
+    """Price badge and register CTA copy for guest landing cards."""
+    from common.djangoapps.course_modes.models import CourseMode  # pylint: disable=import-outside-toplevel
+    from lms.djangoapps.robbo_payments.utils import format_checkout_price_display  # pylint: disable=import-outside-toplevel
+
+    verified = CourseMode.verified_mode_for_course(course.id)
+    if verified and int(verified.min_price) > 0:
+        price_display = format_checkout_price_display(verified.min_price, verified.currency)
+        return {
+            'cta_label': f'Записаться — {price_display}',
+        }
+    return {
+        'cta_label': 'Записаться бесплатно',
+    }
+
+
+def _guest_course_register_cta(request, course, about_path: str) -> Dict[str, Any]:
+    """Per-course registration URL (next = course about page) for anonymous guests."""
+    offer = _guest_course_price_offer(course)
+    next_url = _absolute_url(request, about_path)
+    register_path = reverse('register_user') + '?' + urlencode({'next': next_url})
+    return {
+        'cta_url': _absolute_url(request, register_path),
+        'cta_label': offer['cta_label'],
+        'show_about_link': True,
+    }
+
+
 def build_robbo_guest_homepage_course_cards(
     request,
     courses_list: list,
 ) -> List[Dict[str, Any]]:
     """
-    Guest landing (/) course cards: catalog-like data with sign-in / dashboard CTA.
+    Guest landing (/) course cards: register CTA per course (next = about page).
     """
-    from urllib.parse import urlencode  # pylint: disable=import-outside-toplevel
+    from openedx.features.course_experience import course_home_url  # pylint: disable=import-outside-toplevel
 
     cards: List[Dict[str, Any]] = []
     user = getattr(request, 'user', None) if request else None
-
-    learner_home = getattr(settings, 'LEARNER_HOME_MICROFRONTEND_URL', None)
-    if learner_home:
-        my_courses_url = learner_home.rstrip('/') + '/'
-    else:
-        my_courses_url = _absolute_url(request, reverse('dashboard'))
-
-    if user is not None and user.is_authenticated:
-        default_cta_url = my_courses_url
-    else:
-        signin_path = reverse('signin_user') + '?' + urlencode({'next': my_courses_url})
-        default_cta_url = _absolute_url(request, signin_path)
+    is_authenticated = user is not None and user.is_authenticated
 
     for course in courses_list:
         title = course.display_name_with_default
@@ -388,7 +399,8 @@ def build_robbo_guest_homepage_course_cards(
             short = get_course_excerpt_from_overview(course)
         short = _normalize_guest_course_description(short)
 
-        about_url = _absolute_url(request, reverse('about_course', args=[str(course.id)]))
+        about_path = reverse('about_course', args=[str(course.id)])
+        about_url = _absolute_url(request, about_path)
         image_url = _absolute_url(request, _catalog_course_image_url(course))
 
         card: Dict[str, Any] = {
@@ -399,11 +411,19 @@ def build_robbo_guest_homepage_course_cards(
             'image_alt': title,
             'is_image_placeholder': _catalog_course_uses_placeholder_image(course),
             'about_url': about_url,
-            'cta_url': default_cta_url,
-            'cta_label': 'Узнать больше',
         }
         card.update(_course_card_meta(course))
         card['teaser'] = _guest_card_teaser(short)
+
+        if is_authenticated:
+            card.update({
+                'cta_url': _absolute_url(request, course_home_url(course.id)),
+                'cta_label': 'Начать обучение',
+                'show_about_link': False,
+            })
+        else:
+            card.update(_guest_course_register_cta(request, course, about_path))
+
         cards.append(card)
 
     return cards
@@ -440,12 +460,8 @@ def _normalize_guest_course_description(text: str) -> str:
 
 
 def _course_card_meta(course) -> Dict[str, str]:
-    """Organization and start date for catalog cards (single-line meta row)."""
+    """Start date for catalog and guest landing cards (single-line meta row)."""
     meta: Dict[str, str] = {}
-
-    org = (getattr(course, 'display_org_with_default', None) or '').strip()
-    if org and org.lower() not in _GENERIC_CATALOG_ORGS:
-        meta['organization'] = org
 
     advertised_start = getattr(course, 'advertised_start', None)
     if advertised_start:
