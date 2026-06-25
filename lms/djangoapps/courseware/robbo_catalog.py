@@ -40,7 +40,99 @@ from openedx.core.djangoapps.models.course_details import CourseDetails
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from openedx.core.djangolib.markup import HTML, Text
 
-from common.djangoapps.student.models import CourseEnrollment
+from common.djangoapps.student.models import CourseAccessRole, CourseEnrollment
+from common.djangoapps.student.roles import (
+    CourseInstructorRole,
+    CourseLimitedStaffRole,
+    CourseStaffRole,
+    GlobalStaff,
+)
+
+# Course team in Studio + platform personnel (see instructor-catalog tooltip).
+_INSTRUCTOR_CATALOG_ROLE_NAMES = frozenset({
+    CourseStaffRole.ROLE,
+    CourseLimitedStaffRole.ROLE,
+    CourseInstructorRole.ROLE,
+})
+
+
+def user_can_see_robbo_instructor_catalog(user) -> bool:
+    """
+    True for course team, platform superuser, or platform staff (see tooltip on /courses).
+    """
+    if user is None or not user.is_authenticated:
+        return False
+    if getattr(user, 'is_superuser', False):
+        return True
+    if GlobalStaff().has_user(user):
+        return True
+    return CourseAccessRole.objects.filter(
+        user=user,
+        role__in=_INSTRUCTOR_CATALOG_ROLE_NAMES,
+    ).exists()
+
+
+def get_robbo_instructor_catalog_banner(course_count: int = 0) -> Dict[str, Any]:
+    """
+    Copy for the instructor-only section divider on /courses.
+
+    See docs/design/robbo-courses-catalog-instructor-banner.md for layout spec.
+    """
+    label = 'Ниже расположены курсы, которые видят только преподаватели'
+    label_html = Text('Ниже расположены курсы, которые видят только {accent}').format(
+        accent=_build_instructor_tip_accent_html(),
+    )
+    return {
+        'label': label,
+        'label_html': label_html,
+    }
+
+
+def _build_instructor_tip_accent_html() -> HTML:
+    """«преподаватели» with hover/focus tooltip listing Studio course-team roles."""
+    return HTML(
+        '<div class="robbo-courses-catalog__instructor-tip">'
+        '<span class="robbo-courses-catalog__instructor-tip-anchor" '
+        'tabindex="0" role="button" '
+        'aria-label="Подсказка: кто считается преподавателем" '
+        'aria-describedby="robbo-instructor-role-tip">'
+        '<span class="robbo-courses-catalog__instructor-bar-accent">преподаватели</span>'
+        '<span class="robbo-courses-catalog__instructor-tip-icon" aria-hidden="true">'
+        '<svg class="robbo-courses-catalog__instructor-tip-icon-svg" width="14" height="14" '
+        'viewBox="0 0 16 16" focusable="false" xmlns="http://www.w3.org/2000/svg">'
+        '<circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" fill="none"/>'
+        '<path d="M8 7.1V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'
+        '<circle cx="8" cy="4.9" r="0.9" fill="currentColor"/>'
+        '</svg>'
+        '</span>'
+        '</span>'
+        '<div id="robbo-instructor-role-tip" role="tooltip" '
+        'class="robbo-courses-catalog__instructor-tip-popup">'
+        '<p class="robbo-courses-catalog__instructor-tip-heading">'
+        'Кто считается преподавателем'
+        '</p>'
+        '<ul class="robbo-courses-catalog__instructor-tip-list">'
+        '<li>Главный инструктор курса</li>'
+        '<li>Член команды курса</li>'
+        '<li>Администратор</li>'
+        '<li>Персонал образовательной платформы</li>'
+        '</ul>'
+        '</div>'
+        '</div>'
+    )
+
+
+def get_robbo_instructor_catalog_courses(public_courses_list: list) -> List[Any]:
+    """
+    All published site courses hidden from the learner catalog (any ``catalog_visibility``).
+
+    ``CourseOverview`` only includes published runs. Courses already shown in the public
+    grid above are excluded to avoid duplicate cards.
+    """
+    from lms.djangoapps.branding import get_visible_courses  # pylint: disable=import-outside-toplevel
+
+    public_ids = {course.id for course in public_courses_list}
+    return [course for course in get_visible_courses() if course.id not in public_ids]
 
 
 def get_robbo_courses_account_banners(request) -> Dict[str, Any]:
@@ -316,6 +408,7 @@ def build_robbo_catalog_course_cards(
         short = (getattr(course, 'short_description', None) or '').strip()
         if not short:
             short = get_course_excerpt_from_overview(course)
+        short = _normalize_catalog_course_description(short)
 
         cta_url = _absolute_url(request, course_home_url(course.id))
         image_url = _absolute_url(request, _catalog_course_image_url(course))
@@ -446,17 +539,27 @@ _GUEST_COURSE_DESC_BOILERPLATE = (
     'enter short description',
 )
 
+# Default Open edX overview / short_description placeholder (catalog cards).
+_CATALOG_DEFAULT_DESC_PREFIX = 'about this course include your long course'
 
-def _normalize_guest_course_description(text: str) -> str:
-    """Drop Open edX placeholder copy from guest landing cards."""
+
+def _normalize_catalog_course_description(text: str) -> str:
+    """Drop Open edX placeholder copy from catalog and guest landing cards."""
     snippet = (text or '').strip()
     if not snippet:
         return ''
     lowered = snippet.lower()
+    if lowered.startswith(_CATALOG_DEFAULT_DESC_PREFIX):
+        return ''
     for phrase in _GUEST_COURSE_DESC_BOILERPLATE:
         if phrase in lowered:
             return ''
     return snippet
+
+
+def _normalize_guest_course_description(text: str) -> str:
+    """Drop Open edX placeholder copy from guest landing cards."""
+    return _normalize_catalog_course_description(text)
 
 
 def _course_card_meta(course) -> Dict[str, str]:
@@ -510,6 +613,7 @@ def build_robbo_catalog_featured(
     short = (getattr(course, 'short_description', None) or '').strip()
     if not short:
         short = get_course_excerpt_from_overview(course)
+    short = _normalize_catalog_course_description(short)
     if not short:
         short = (
             'Практический курс по российским микроконтроллерам: архитектура, локализация и '

@@ -157,6 +157,9 @@ from ..robbo_catalog import (
     get_robbo_catalog_about,
     get_robbo_catalog_hero,
     get_robbo_courses_account_banners,
+    get_robbo_instructor_catalog_banner,
+    get_robbo_instructor_catalog_courses,
+    user_can_see_robbo_instructor_catalog,
 )
 from ..block_render import get_block, get_block_by_usage_id, get_block_for_descriptor
 from ..tabs import _get_dynamic_tabs
@@ -316,6 +319,25 @@ def courses(request):
     # Add marketable programs to the context.
     programs_list = get_programs_with_type(request.site, include_hidden=False)
 
+    robbo_instructor_catalog_courses: list = []
+    robbo_instructor_catalog_banner = None
+    if user_can_see_robbo_instructor_catalog(request.user):
+        instructor_courses_list = get_robbo_instructor_catalog_courses(courses_list)
+        if instructor_courses_list:
+            if configuration_helpers.get_value(
+                "ENABLE_COURSE_SORTING_BY_START_DATE",
+                settings.FEATURES["ENABLE_COURSE_SORTING_BY_START_DATE"],
+            ):
+                instructor_courses_list = sort_by_start_date(instructor_courses_list)
+            else:
+                instructor_courses_list = sort_by_announcement(instructor_courses_list)
+            robbo_instructor_catalog_courses = build_robbo_catalog_course_cards(
+                request, instructor_courses_list
+            )
+            robbo_instructor_catalog_banner = get_robbo_instructor_catalog_banner(
+                len(instructor_courses_list)
+            )
+
     return render_to_response(
         "courseware/courses.html",
         {
@@ -326,6 +348,8 @@ def courses(request):
             'robbo_catalog_hero': get_robbo_catalog_hero(),
             'robbo_catalog_about': get_robbo_catalog_about(),
             'robbo_catalog_courses': build_robbo_catalog_course_cards(request, courses_list),
+            'robbo_instructor_catalog_banner': robbo_instructor_catalog_banner,
+            'robbo_instructor_catalog_courses': robbo_instructor_catalog_courses,
             'robbo_courses_account': get_robbo_courses_account_banners(request),
             # Match learner dashboard header: primary nav tabs are hidden when unset (Mako treats as falsy).
             'show_dashboard_tabs': True,

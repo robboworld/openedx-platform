@@ -1,0 +1,14 @@
+<%page args="banner" expression_filter="h"/>
+<div
+  class="robbo-courses-catalog__instructor-bar"
+  role="separator"
+  aria-label="${banner['label']}"
+>
+  <div id="robbo-instructor-catalog-heading" class="robbo-courses-catalog__instructor-bar-text">
+    % if banner.get('label_html') is not None:
+      ${banner['label_html']|n, decode.utf8}
+    % else:
+      ${banner['label']}
+    % endif
+  </div>
+</div>

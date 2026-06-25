@@ -89,6 +89,152 @@
   width: 100%;
 }
 
+// Instructor-only block: width matches the 2-column course grid in __wrap.
+.robbo-courses-catalog__instructor-section {
+  box-sizing: border-box;
+  margin-top: clamp(1.5rem, 4vw, 2.25rem);
+  width: 100%;
+}
+
+.robbo-courses-catalog__instructor-bar {
+  align-items: center;
+  background: #fff;
+  border: 2px solid #00af41;
+  border-radius: var(--robbo-cat-radius);
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  margin: 0 0 var(--robbo-cat-gap);
+  min-height: 3.25rem;
+  overflow: visible;
+  padding: 1rem;
+  width: 100%;
+}
+
+.robbo-courses-catalog__instructor-bar-text {
+  color: #383838;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 52rem;
+  overflow: visible;
+  text-align: center;
+  width: 100%;
+}
+
+.robbo-courses-catalog__instructor-bar-accent {
+  color: #00af41;
+  font-weight: 700;
+}
+
+.robbo-courses-catalog__instructor-tip {
+  display: inline-block;
+  position: relative;
+  vertical-align: baseline;
+  white-space: normal;
+}
+
+.robbo-courses-catalog__instructor-tip-anchor {
+  align-items: center;
+  border-bottom: 1px dashed #00af41;
+  cursor: help;
+  display: inline-flex;
+  gap: 0.25rem;
+  vertical-align: baseline;
+
+  &:focus {
+    outline: 2px solid #00af41;
+    outline-offset: 2px;
+  }
+}
+
+.robbo-courses-catalog__instructor-tip-icon {
+  align-items: center;
+  color: #00af41;
+  display: inline-flex;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.robbo-courses-catalog__instructor-tip-icon-svg {
+  display: block;
+}
+
+.robbo-courses-catalog__instructor-tip-popup {
+  background: #fff;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  bottom: calc(100% + 0.45rem);
+  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.12);
+  box-sizing: border-box;
+  color: #383838;
+  display: none;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  left: 50%;
+  line-height: 1.45;
+  margin: 0;
+  max-width: 20rem;
+  padding: 0.65rem 0.85rem;
+  pointer-events: none;
+  position: absolute;
+  text-align: left;
+  transform: translateX(-50%);
+  width: max-content;
+  z-index: 30;
+
+  &::after {
+    background: #fff;
+    border-bottom: 1px solid #bbf7d0;
+    border-right: 1px solid #bbf7d0;
+    bottom: -5px;
+    content: "";
+    height: 8px;
+    left: 50%;
+    position: absolute;
+    transform: translateX(-50%) rotate(45deg);
+    width: 8px;
+  }
+}
+
+.robbo-courses-catalog__instructor-tip-heading {
+  color: #111827;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0 0 0.4rem;
+}
+
+.robbo-courses-catalog__instructor-tip-list {
+  margin: 0;
+  padding-left: 1.1rem;
+
+  li {
+    margin: 0.2rem 0;
+
+    &::marker {
+      color: #00af41;
+    }
+  }
+}
+
+.robbo-courses-catalog__instructor-tip:hover .robbo-courses-catalog__instructor-tip-popup,
+.robbo-courses-catalog__instructor-tip:focus-within .robbo-courses-catalog__instructor-tip-popup {
+  display: block;
+}
+
+.robbo-courses-catalog__stubs--instructor {
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 767.98px) {
+  .robbo-courses-catalog__instructor-bar {
+    padding: 1rem 1.5rem;
+  }
+}
+
 .robbo-courses-catalog__wrap {
   box-sizing: border-box;
   margin: 0 auto;
