@@ -37,6 +37,8 @@ $robbo-guest-topbar-logo-intrinsic-h: 635;
     --robbo-guest-topbar-actions-gap: 10px;
     --robbo-guest-topbar-tagline-fs: 20px;
     --robbo-guest-topbar-tagline-pad-x: 15px;
+    --robbo-guest-topbar-mobile-pad-x: 20px;
+    --robbo-guest-topbar-mobile-pad-y: 6px;
     // Domain migration banner (below guest topbar)
     --robbo-guest-domain-banner-bg: #ecfdf5;
     --robbo-guest-domain-banner-bg-accent: #d1fae5;
@@ -499,14 +501,16 @@ body.robbo-guest-landing-page {
     @media screen and (max-width: $robbo-guest-topbar-mobile-max) {
         display: flex;
         flex-direction: row;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         justify-content: space-between;
         align-items: center;
-        align-content: center;
-        gap: 0.35rem 0.75rem;
+        column-gap: 12px;
         min-height: var(--robbo-guest-topbar-height);
-        padding-top: calc(6px + #{unquote('env(safe-area-inset-top, 0px)')});
-        padding-bottom: 6px;
+        padding:
+            calc(var(--robbo-guest-topbar-mobile-pad-y) + #{unquote('env(safe-area-inset-top, 0px)')})
+            var(--robbo-guest-topbar-mobile-pad-x)
+            var(--robbo-guest-topbar-mobile-pad-y)
+            var(--robbo-guest-topbar-mobile-pad-x);
     }
 }
 
@@ -522,11 +526,12 @@ body.robbo-guest-landing-page {
     z-index: 2;
 
     @media screen and (max-width: $robbo-guest-topbar-mobile-max) {
-        flex: 1 1 auto;
+        flex: 0 0 auto;
         justify-content: flex-start;
         justify-self: unset;
         order: 1;
         align-self: center;
+        min-width: 0;
     }
 }
 
@@ -662,11 +667,12 @@ a.robbo-guest-topbar__tagline {
     z-index: 2;
 
     @media screen and (max-width: $robbo-guest-topbar-mobile-max) {
-        flex: 0 1 auto;
+        flex: 0 0 auto;
         justify-content: flex-end;
         justify-self: unset;
         order: 2;
         align-self: center;
+        min-width: 0;
     }
 }
 
@@ -680,6 +686,7 @@ a.robbo-guest-topbar__tagline {
 
     @media screen and (max-width: $robbo-guest-topbar-mobile-max) {
         flex-wrap: nowrap;
+        justify-content: flex-end;
     }
 }
 
@@ -716,10 +723,10 @@ a.robbo-guest-topbar__tagline {
     }
 
     @media screen and (max-width: $robbo-guest-topbar-mobile-max) {
-        height: var(--robbo-guest-topbar-btn-height);
-        min-height: 0;
-        max-height: var(--robbo-guest-topbar-btn-height);
-        line-height: 1.15;
+        min-height: var(--robbo-guest-topbar-btn-height);
+        height: auto;
+        max-height: none;
+        line-height: 1.2;
     }
 }
 
