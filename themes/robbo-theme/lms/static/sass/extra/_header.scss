@@ -43,6 +43,7 @@ $robbo-menu-item-enter-duration: 180ms;
 $robbo-menu-item-stagger-start: 80ms;
 $robbo-menu-item-stagger-step: 45ms;
 $robbo-menu-item-stagger-count: 8; // mobile
+$robbo-header-user-dropdown-viewport-gutter: 16px;
 
 // Mobile hamburger (match MFE `robbo-layout-user-menu__hamburger*`).
 $robbo-header-hamburger-line-width: #{unquote("clamp(24px, 7.2vw, 30px)")};
@@ -348,7 +349,8 @@ header.global-header {
                 position: absolute;
                 right: 0;
                 top: calc(100% + 10px);
-                width: 224px;
+                width: max-content;
+                max-width: calc(100vw - #{$robbo-header-user-dropdown-viewport-gutter});
                 border-radius: 8px;
                 box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
                 border: none;
@@ -374,6 +376,7 @@ header.global-header {
                         font-size: 14px;
                         line-height: 20px;
                         color: $light-dark;
+                        white-space: nowrap;
 
                         &:hover {
                             background: $primary-light;
@@ -520,9 +523,8 @@ header.global-header {
         top: calc(#{$robbo-header-bar-min-h-mobile} + 8px);
         right: clamp(12px, 4vw, 20px);
         left: auto;
-        width: auto;
-        min-width: 200px;
-        max-width: unquote("min(264px, calc(100vw - 24px))");
+        width: max-content;
+        max-width: calc(100vw - 24px);
         max-height: unquote("min(70vh, 28rem)");
         overflow-x: hidden;
         overflow-y: auto;
@@ -543,7 +545,7 @@ header.global-header {
             a {
                 display: block;
                 box-sizing: border-box;
-                width: 100%;
+                width: auto;
                 margin: 0;
                 padding: 10px 14px;
                 font-size: 14px;
@@ -551,6 +553,7 @@ header.global-header {
                 font-weight: 400;
                 color: #333;
                 text-decoration: none;
+                white-space: nowrap;
                 border: none;
                 background: transparent;
                 @include text-align(left);
