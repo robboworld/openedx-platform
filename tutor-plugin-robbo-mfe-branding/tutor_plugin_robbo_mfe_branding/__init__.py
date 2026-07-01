@@ -57,6 +57,7 @@ MFE_CONFIG["TOS_AND_HONOR_CODE"] = "https://robbo.ru/wp-content/uploads/agree.pd
 MFE_CONFIG["PRIVACY_POLICY"] = "https://robbo.ru/wp-content/uploads/policy.pdf"
 MFE_CONFIG["ENABLE_YANDEX_METRIKA"] = False
 MFE_CONFIG["YANDEX_METRIKA_COUNTER_ID"] = None
+MFE_CONFIG["ROBBO_ANALYTICS_URL"] = "http://{{ LMS_HOST }}:8000/robbo/analytics/"
 """
 
 _PATCH_MFE_PROD = """
@@ -75,6 +76,7 @@ MFE_CONFIG["YANDEX_METRIKA_COUNTER_ID"] = {{ ROBBO_YANDEX_METRIKA_COUNTER_ID }}
 MFE_CONFIG["ENABLE_YANDEX_METRIKA"] = False
 MFE_CONFIG["YANDEX_METRIKA_COUNTER_ID"] = None
 {% endif %}
+MFE_CONFIG["ROBBO_ANALYTICS_URL"] = "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/robbo/analytics/"
 """
 
 # Tutor sets FEATURES["ENABLE_COURSE_DISCOVERY"] = True. Stock courseware.views.courses
@@ -111,6 +113,14 @@ REGISTRATION_MIN_COMPLETION_SECONDS = 5
 # tutor-indigo init assigns SiteTheme "indigo" for LMS_HOST; force default comprehensive theme.
 _PATCH_ROBBO_DEFAULT_SITE_THEME = """
 DEFAULT_SITE_THEME = "robbo-theme"
+"""
+
+# Share LMS session between LMS_HOST and apps.* MFE host (e.g. local.openedx.io ↔ apps.local.openedx.io).
+_PATCH_MFE_CROSS_DOMAIN_SESSION = """
+{% if MFE_HOST and MFE_HOST != LMS_HOST %}
+SESSION_COOKIE_DOMAIN = ".{{ LMS_HOST }}"
+CSRF_COOKIE_DOMAIN = ".{{ LMS_HOST }}"
+{% endif %}
 """
 
 _PATCH_ROBBO_THEME_LOCALES = """
@@ -206,6 +216,7 @@ def _patch_mfe_overrides_paragon_null() -> str:
                 f'    "{app}": {{',
                 f'        **MFE_CONFIG_OVERRIDES.get("{app}", {{}}),',
                 '        "PARAGON_THEME_URLS": None,',
+                '        "ROBBO_ANALYTICS_URL": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/robbo/analytics/",',
                 "    },",
             ]
         )
@@ -263,6 +274,8 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_EMAIL_CONFIRMATION),
         ("openedx-lms-development-settings", _PATCH_ROBBO_REGISTRATION_ANTI_SPAM),
         ("openedx-lms-production-settings", _PATCH_ROBBO_REGISTRATION_ANTI_SPAM),
+        ("openedx-lms-development-settings", _PATCH_MFE_CROSS_DOMAIN_SESSION),
+        ("openedx-lms-production-settings", _PATCH_MFE_CROSS_DOMAIN_SESSION),
         ("openedx-lms-development-settings", _PATCH_ROBBO_DEFAULT_SITE_THEME),
         ("openedx-lms-production-settings", _PATCH_ROBBO_DEFAULT_SITE_THEME),
         ("openedx-cms-development-settings", _PATCH_ROBBO_DEFAULT_SITE_THEME),

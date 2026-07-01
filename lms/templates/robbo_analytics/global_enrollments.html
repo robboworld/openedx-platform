@@ -1,0 +1,222 @@
+<%page expression_filter="h"/>
+<%inherit file="../main.html" />
+<%namespace name='static' file='../static_content.html'/>
+
+<%!
+from django.utils.translation import gettext as _
+%>
+
+<%block name="pagetitle">${_("Analytics")}</%block>
+<%block name="bodyclass">robbo-global-analytics </%block>
+<%block name="headextra">
+  <link rel="stylesheet" href="${static.url('css/robbo-analytics-tabs.css')}" type="text/css" />
+</%block>
+
+<main id="main" class="robbo-global-analytics" aria-label="Content" tabindex="-1">
+  <div class="robbo-global-analytics__wrap">
+    <h1 class="robbo-global-analytics__title">${_("Analytics")}</h1>
+    <p class="robbo-global-analytics__intro">
+      ${_("Platform-wide and per-course learner statistics.")}
+    </p>
+
+    <form class="robbo-analytics-filter" method="get" action="">
+      <fieldset class="robbo-analytics-filter__fieldset">
+        <legend class="robbo-analytics-filter__legend">${_("Show courses")}</legend>
+        <label class="robbo-analytics-filter__option">
+          <input type="radio" name="filter" value="active"${' checked="checked"' if course_filter == 'active' else '' | n} />
+          <span>${_("Active courses")}</span>
+        </label>
+        <label class="robbo-analytics-filter__option">
+          <input type="radio" name="filter" value="all"${' checked="checked"' if course_filter == 'all' else '' | n} />
+          <span>${_("All courses")}</span>
+        </label>
+        <label class="robbo-analytics-filter__option">
+          <input type="radio" name="filter" value="archived"${' checked="checked"' if course_filter == 'archived' else '' | n} />
+          <span>${_("Archived courses")}</span>
+        </label>
+      </fieldset>
+    </form>
+
+    <section class="robbo-analytics-summary" aria-labelledby="robbo-analytics-summary-title">
+      <h2 class="robbo-analytics-summary__title" id="robbo-analytics-summary-title">${_("Platform summary")}</h2>
+      <div class="robbo-analytics-summary__grid">
+        <div class="robbo-analytics-stat">
+          <span class="robbo-analytics-stat__label">${_("Courses")}</span>
+          <span class="robbo-analytics-stat__value">${platform_summary['courses_count']}</span>
+        </div>
+        <div class="robbo-analytics-stat">
+          <span class="robbo-analytics-stat__label">${_("Total enrolled")}</span>
+          <span class="robbo-analytics-stat__value">${platform_summary['total_enrolled']}</span>
+        </div>
+        <div class="robbo-analytics-stat">
+          <span class="robbo-analytics-stat__label">${_("Completed the course")}</span>
+          <span class="robbo-analytics-stat__value">${platform_summary['completed_count']}</span>
+        </div>
+        <div class="robbo-analytics-stat">
+          <span class="robbo-analytics-stat__label">${_("Average course grade")}</span>
+          <span class="robbo-analytics-stat__value">${platform_summary['average_grade_display']}</span>
+        </div>
+        <div class="robbo-analytics-stat">
+          <span class="robbo-analytics-stat__label">${_("Average time since enrollment")}</span>
+          <span class="robbo-analytics-stat__value">${platform_summary['average_duration_display']}</span>
+        </div>
+        <div class="robbo-analytics-stat">
+          <span class="robbo-analytics-stat__label">${_("Active learners")}</span>
+          <span class="robbo-analytics-stat__value">${platform_summary['active_count']}</span>
+        </div>
+        <div class="robbo-analytics-stat">
+          <span class="robbo-analytics-stat__label">${_("Dropped out")}</span>
+          <span class="robbo-analytics-stat__value">${platform_summary['dropped_count']}</span>
+        </div>
+      </div>
+    </section>
+
+    % if not course_summaries:
+      <p class="robbo-global-analytics__empty">${_("No courses match the selected filter.")}</p>
+    % else:
+      <h2 class="robbo-global-analytics__section-title">${_("Courses")}</h2>
+      % for course in course_summaries:
+        <%
+          participants = course['participants']
+          enrollment_modes = course['enrollment_count']
+        %>
+        <section class="robbo-analytics-course-block" data-robbo-analytics-course aria-labelledby="robbo-analytics-course-${course['course_anchor']}">
+          <div class="robbo-analytics-course-block__header">
+            <h2 class="robbo-analytics-course-block__title" id="robbo-analytics-course-${course['course_anchor']}">
+              ${course['course_display_name']}
+            </h2>
+            <p class="robbo-analytics-course-block__meta">
+              ${course['course_org']} / ${course['course_number']} / ${course['course_run']}
+              % if course['is_archived']:
+                <span class="robbo-analytics-course-block__badge">${_("Archived")}</span>
+              % else:
+                <span class="robbo-analytics-course-block__badge robbo-analytics-course-block__badge--active">${_("Active")}</span>
+              % endif
+            </p>
+          </div>
+
+          <div class="robbo-analytics-tabs" role="tablist" aria-label="${course['course_display_name']}">
+            <button
+              type="button"
+              class="robbo-analytics-tabs__btn is-active"
+              role="tab"
+              aria-selected="true"
+              aria-controls="robbo-tab-about-${course['course_anchor']}"
+              id="robbo-tab-btn-about-${course['course_anchor']}"
+              data-robbo-tab="about"
+            >
+              ${_("About the course")}
+            </button>
+            <button
+              type="button"
+              class="robbo-analytics-tabs__btn"
+              role="tab"
+              aria-selected="false"
+              aria-controls="robbo-tab-participants-${course['course_anchor']}"
+              id="robbo-tab-btn-participants-${course['course_anchor']}"
+              data-robbo-tab="participants"
+            >
+              ${_("Participants")}
+            </button>
+          </div>
+
+          <div
+            class="robbo-analytics-tab-panel is-active"
+            id="robbo-tab-about-${course['course_anchor']}"
+            role="tabpanel"
+            aria-labelledby="robbo-tab-btn-about-${course['course_anchor']}"
+            data-robbo-tab-panel="about"
+          >
+            % if course['short_description'] != '—':
+              <p class="robbo-analytics-course-block__description">${course['short_description']}</p>
+            % endif
+            <dl class="robbo-analytics-course-block__facts">
+              <div>
+                <dt>${_("Start date")}</dt>
+                <dd>${course['course_start_display']}</dd>
+              </div>
+              <div>
+                <dt>${_("End date")}</dt>
+                <dd>${course['course_end_display']}</dd>
+              </div>
+              <div>
+                <dt>${_("Enrolled learners")}</dt>
+                <dd>${participants['total_enrolled']}</dd>
+              </div>
+            </dl>
+            <h4 class="robbo-analytics-course-block__subheading">${_("Enrollment by track")}</h4>
+            <div class="enrollment-wrapper">
+              <%include file="_enrollment_counts.html" args="modes=enrollment_modes" />
+            </div>
+          </div>
+
+          <div
+            class="robbo-analytics-tab-panel"
+            id="robbo-tab-participants-${course['course_anchor']}"
+            role="tabpanel"
+            aria-labelledby="robbo-tab-btn-participants-${course['course_anchor']}"
+            data-robbo-tab-panel="participants"
+            hidden="hidden"
+          >
+            <div class="robbo-analytics-participants">
+              <div class="robbo-analytics-stat">
+                <span class="robbo-analytics-stat__label">${_("Completed the course")}</span>
+                <span class="robbo-analytics-stat__value">${participants['completed_count']}</span>
+                <span class="robbo-analytics-stat__hint">${_("Passed the final graded assessment")}</span>
+              </div>
+              <div class="robbo-analytics-stat">
+                <span class="robbo-analytics-stat__label">${_("Average course grade")}</span>
+                <span class="robbo-analytics-stat__value">${participants['average_grade_display']}</span>
+              </div>
+              <div class="robbo-analytics-stat">
+                <span class="robbo-analytics-stat__label">${_("Average time since enrollment")}</span>
+                <span class="robbo-analytics-stat__value">${participants['average_duration_display']}</span>
+              </div>
+              <div class="robbo-analytics-stat">
+                <span class="robbo-analytics-stat__label">${_("Dropped out")}</span>
+                <span class="robbo-analytics-stat__value">${participants['dropped_count']}</span>
+                <span class="robbo-analytics-stat__hint">${_("No activity for more than 30 days")}</span>
+              </div>
+              <div class="robbo-analytics-stat">
+                <span class="robbo-analytics-stat__label">${_("Active learners")}</span>
+                <span class="robbo-analytics-stat__value">${participants['active_count']}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      % endfor
+    % endif
+  </div>
+</main>
+
+<%text>
+<script type="text/javascript">
+(function () {
+  var form = document.querySelector('.robbo-analytics-filter');
+  if (form) {
+    form.addEventListener('change', function () { form.submit(); });
+  }
+
+  document.querySelectorAll('[data-robbo-analytics-course]').forEach(function (block) {
+    var tabs = block.querySelectorAll('[data-robbo-tab]');
+    var panels = block.querySelectorAll('[data-robbo-tab-panel]');
+
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var target = tab.getAttribute('data-robbo-tab');
+        tabs.forEach(function (item) {
+          var isActive = item === tab;
+          item.classList.toggle('is-active', isActive);
+          item.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+        panels.forEach(function (panel) {
+          var isActive = panel.getAttribute('data-robbo-tab-panel') === target;
+          panel.classList.toggle('is-active', isActive);
+          panel.hidden = !isActive;
+        });
+      });
+    });
+  });
+})();
+</script>
+</%text>

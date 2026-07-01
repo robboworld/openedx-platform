@@ -19,6 +19,7 @@ from common.djangoapps.student import views as student_views
 from common.djangoapps.util import views as util_views
 from lms.djangoapps.branding import views as branding_views
 from lms.djangoapps.courseware import robbo_course_interest
+from lms.djangoapps.robbo_analytics import views as robbo_analytics_views
 from lms.djangoapps.courseware.masquerade import MasqueradeView
 from lms.djangoapps.courseware.block_render import (
     handle_xblock_callback,
@@ -362,6 +363,16 @@ urlpatterns += [
         'api/robbo/course-interest/',
         robbo_course_interest.course_interest,
         name='robbo_course_interest',
+    ),
+    path(
+        'robbo/analytics/',
+        robbo_analytics_views.global_enrollments,
+        name='robbo_global_analytics',
+    ),
+    path(
+        'api/robbo/v1/analytics-menu/',
+        robbo_analytics_views.analytics_menu,
+        name='robbo_analytics_menu',
     ),
 
     re_path(r'^courses/?$', branding_views.courses, name='courses'),

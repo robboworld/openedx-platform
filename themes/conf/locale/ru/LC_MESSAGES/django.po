@@ -26,3 +26,137 @@ msgstr "Некорректное название компании"
 #: openedx/core/djangoapps/user_authn/views/registration_form.py
 msgid "Full name must contain three words separated by spaces."
 msgstr "ФИО должно состоять из трёх слов, разделённых пробелом"
+
+#: lms/templates/robbo_analytics/global_enrollments.html
+#: themes/robbo-theme/lms/templates/header/user_dropdown.html
+msgid "Analytics"
+msgstr "Аналитика"
+
+msgid "Platform-wide and per-course learner statistics."
+msgstr "Сводная статистика по платформе и по каждому курсу."
+
+msgid "Show courses"
+msgstr "Показать курсы"
+
+msgid "Active courses"
+msgstr "Активные курсы"
+
+msgid "All courses"
+msgstr "Все курсы"
+
+msgid "Archived courses"
+msgstr "Архивные курсы"
+
+msgid "Platform summary"
+msgstr "Общая статистика"
+
+msgid "Courses"
+msgstr "Курсы"
+
+msgid "Total enrolled"
+msgstr "Всего записано"
+
+msgid "Completed the course"
+msgstr "Завершили курс"
+
+msgid "Average course grade"
+msgstr "Средняя оценка по курсу"
+
+msgid "Average time since enrollment"
+msgstr "Среднее время с момента записи"
+
+msgid "Active learners"
+msgstr "Активные учащиеся"
+
+msgid "Dropped out"
+msgstr "Бросили курс"
+
+msgid "No courses match the selected filter."
+msgstr "Нет курсов по выбранному фильтру."
+
+msgid "Archived"
+msgstr "Архивный"
+
+msgid "Active"
+msgstr "Активный"
+
+msgid "About the course"
+msgstr "О курсе"
+
+msgid "Start date"
+msgstr "Дата начала"
+
+msgid "End date"
+msgstr "Дата окончания"
+
+msgid "Enrolled learners"
+msgstr "Записанные учащиеся"
+
+msgid "Enrollment by track"
+msgstr "Запись по типам обучения"
+
+msgid "Participants"
+msgstr "Участники"
+
+msgid "Passed the final graded assessment"
+msgstr "Сдали итоговое тестирование"
+
+msgid "No activity for more than 30 days"
+msgstr "Нет активности более 30 дней"
+
+msgid "Total enrolled minus dropped out"
+msgstr "Всего записано минус бросившие"
+
+msgid "Content"
+msgstr "Содержимое"
+
+#: lms/templates/robbo_analytics/_enrollment_counts.html
+msgid "Number of enrollees (admins, staff, and students) by track"
+msgstr "Количество записавшихся (администраторы, сотрудники и учащиеся) по типам"
+
+msgid "Verified"
+msgstr "Подтверждённый"
+
+msgid "Audit"
+msgstr "Аудит"
+
+msgid "Honor"
+msgstr "Без сертификата"
+
+msgid "Professional"
+msgstr "Профессиональный"
+
+msgid "Executive Education"
+msgstr "Корпоративное обучение"
+
+msgid "Unpaid Executive Education"
+msgstr "Корпоративное обучение (неоплаченное)"
+
+msgid "Paid Executive Education"
+msgstr "Корпоративное обучение (оплаченное)"
+
+msgid "Master's"
+msgstr "Магистратура"
+
+msgid "Unpaid Bootcamp"
+msgstr "Буткемп (неоплаченный)"
+
+msgid "Paid Bootcamp"
+msgstr "Буткемп (оплаченный)"
+
+msgid "Total"
+msgstr "Итого"
+
+#: lms/djangoapps/robbo_analytics/services.py
+msgid "%(months)s month"
+msgid_plural "%(months)s months"
+msgstr[0] "%(months)s месяц"
+msgstr[1] "%(months)s месяца"
+msgstr[2] "%(months)s месяцев"
+
+msgid "%(days)s day"
+msgid_plural "%(days)s days"
+msgstr[0] "%(days)s день"
+msgstr[1] "%(days)s дня"
+msgstr[2] "%(days)s дней"
+

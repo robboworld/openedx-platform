@@ -1,0 +1,57 @@
+<%page args="modes" expression_filter="h"/>
+<%!
+from django.utils.translation import gettext as _
+%>
+<table>
+    <caption class="tip">${_("Number of enrollees (admins, staff, and students) by track")}</caption>
+    <tr>
+        <th scope="row">${_("Verified")}</th><td>${modes.get('verified', 0)}</td>
+    </tr>
+    <tr>
+        <th scope="row">${_("Audit")}</th><td>${modes.get('audit', 0)}</td>
+    </tr>
+    <tr>
+        <th scope="row">${_("Honor")}</th><td>${modes.get('honor', 0)}</td>
+    </tr>
+    <tr>
+        <th scope="row">${_("Professional")}</th><td>${modes.get('professional', 0) + modes.get('no-id-professional', 0)}</td>
+    </tr>
+    %if modes.get("executive-education", 0) > 0:
+      <tr>
+          <th scope="row">${_("Executive Education")}</th><td>${modes['executive-education']}</td>
+      </tr>
+    %endif
+    %if modes.get("unpaid-executive-education", 0) > 0:
+      <tr>
+          <th scope="row">${_("Unpaid Executive Education")}</th><td>${modes['unpaid-executive-education']}</td>
+      </tr>
+    %endif
+    %if modes.get("paid-executive-education", 0) > 0:
+      <tr>
+          <th scope="row">${_("Paid Executive Education")}</th><td>${modes['paid-executive-education']}</td>
+      </tr>
+    %endif
+    %if modes.get('masters', 0) > 0:
+        <tr>
+            <th scope="row">${_("Master's")}</th><td>${modes['masters']}</td>
+        </tr>
+    %endif
+    %if modes.get("unpaid-bootcamp", 0) > 0:
+      <tr>
+          <th scope="row">${_("Unpaid Bootcamp")}</th><td>${modes['unpaid-bootcamp']}</td>
+      </tr>
+    %endif
+    %if modes.get("paid-bootcamp", 0) > 0:
+      <tr>
+          <th scope="row">${_("Paid Bootcamp")}</th><td>${modes['paid-bootcamp']}</td>
+      </tr>
+    %endif
+    <tr class="total">
+        <th scope="row">
+            <strong>${_("Total")}</strong>
+        </th>
+        <td>
+            <strong>${modes.get('total', 0)}</strong>
+        </td>
+    </tr>
+</table>

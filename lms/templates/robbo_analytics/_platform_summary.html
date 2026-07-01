@@ -1,0 +1,39 @@
+<%page args="summary" expression_filter="h"/>
+<%!
+from django.utils.translation import gettext as _
+%>
+<section class="robbo-analytics-summary" aria-labelledby="robbo-analytics-summary-title">
+  <h2 class="robbo-analytics-summary__title" id="robbo-analytics-summary-title">
+    ${_("Platform summary")}
+  </h2>
+  <div class="robbo-analytics-summary__grid">
+    <div class="robbo-analytics-stat">
+      <span class="robbo-analytics-stat__label">${_("Courses")}</span>
+      <span class="robbo-analytics-stat__value">${summary['courses_count']}</span>
+    </div>
+    <div class="robbo-analytics-stat">
+      <span class="robbo-analytics-stat__label">${_("Total enrolled")}</span>
+      <span class="robbo-analytics-stat__value">${summary['total_enrolled']}</span>
+    </div>
+    <div class="robbo-analytics-stat">
+      <span class="robbo-analytics-stat__label">${_("Completed the course")}</span>
+      <span class="robbo-analytics-stat__value">${summary['completed_count']}</span>
+    </div>
+    <div class="robbo-analytics-stat">
+      <span class="robbo-analytics-stat__label">${_("Average course grade")}</span>
+      <span class="robbo-analytics-stat__value">${summary['average_grade_display']}</span>
+    </div>
+    <div class="robbo-analytics-stat">
+      <span class="robbo-analytics-stat__label">${_("Average time since enrollment")}</span>
+      <span class="robbo-analytics-stat__value">${summary['average_duration_display']}</span>
+    </div>
+    <div class="robbo-analytics-stat">
+      <span class="robbo-analytics-stat__label">${_("Active learners")}</span>
+      <span class="robbo-analytics-stat__value">${summary['active_count']}</span>
+    </div>
+    <div class="robbo-analytics-stat">
+      <span class="robbo-analytics-stat__label">${_("Dropped out")}</span>
+      <span class="robbo-analytics-stat__value">${summary['dropped_count']}</span>
+    </div>
+  </div>
+</section>

@@ -11,6 +11,29 @@ from django.utils.translation import gettext as _
 
 from openedx.core.djangoapps.user_api.accounts.image_helpers import get_profile_image_urls_for_user
 from openedx.features.enterprise_support.utils import get_enterprise_learner_generic_name
+
+try:
+    from lms.djangoapps.robbo_analytics.access import can_access_robbo_global_analytics
+except ImportError:
+    from common.djangoapps.student.roles import (
+        CourseInstructorRole,
+        GlobalStaff,
+        UserBasedRole,
+    )
+
+    def can_access_robbo_global_analytics(user):
+        if user is None or not getattr(user, 'is_authenticated', False):
+            return False
+        if not user.is_active:
+            return False
+        if GlobalStaff().has_user(user) or user.is_superuser:
+            return True
+        return UserBasedRole(user, CourseInstructorRole.ROLE).courses_with_role().exists()
+
+try:
+    _robbo_analytics_url = reverse('robbo_global_analytics')
+except Exception:
+    _robbo_analytics_url = '/robbo/analytics/'
 %>
 
 <%
@@ -33,6 +56,9 @@ displayname = get_enterprise_learner_generic_name(request) or username
         <div class="mobile-nav-item dropdown-item dropdown-nav-item"><a href="${urljoin(settings.PROFILE_MICROFRONTEND_URL, f'{user.username}')}" role="menuitem">${_("Profile")}</a></div>
         % if settings.ACCOUNT_MICROFRONTEND_URL:
         <div class="mobile-nav-item dropdown-item dropdown-nav-item"><a href="${settings.ACCOUNT_MICROFRONTEND_URL}" role="menuitem">${_("Account")}</a></div>
+        % endif
+        % if can_access_robbo_global_analytics(user):
+        <div class="mobile-nav-item dropdown-item dropdown-nav-item"><a href="${_robbo_analytics_url}" role="menuitem">${_("Analytics")}</a></div>
         % endif
         <div class="mobile-nav-item dropdown-item dropdown-nav-item"><a href="${reverse('logout')}?next=/" role="menuitem">${_("Sign Out")}</a></div>
     </div>

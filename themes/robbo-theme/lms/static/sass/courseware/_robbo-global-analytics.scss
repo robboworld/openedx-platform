@@ -1,0 +1,346 @@
+// /robbo/analytics — scoped layout (same pattern as _robbo-courses-catalog.scss).
+.robbo-global-analytics {
+  --robbo-analytics-gap: clamp(1rem, 2.5vw, 1.75rem);
+  --robbo-analytics-pad: clamp(1rem, 3vw, 1.5rem);
+  --robbo-analytics-radius: 10px;
+  --robbo-analytics-max: 1200px;
+  --robbo-analytics-surface: #fff;
+  --robbo-analytics-muted: #6b7280;
+  --robbo-analytics-text: #111827;
+  --robbo-analytics-accent: #00b140;
+  --robbo-analytics-accent-light: #ecfdf3;
+  --robbo-analytics-border: #e5e7eb;
+  --robbo-analytics-btn-radius: 9999px;
+  --robbo-analytics-btn-primary-bg: #00b140;
+  --robbo-analytics-btn-primary-bg-hover: #009e3c;
+  --robbo-analytics-btn-secondary-bg: #fff;
+  --robbo-analytics-btn-secondary-bg-hover: #f0fdf4;
+  --robbo-analytics-btn-secondary-border: #cbd5e1;
+
+  background: #f9fafb;
+  box-sizing: border-box;
+  min-height: 40vh;
+  padding: var(--robbo-analytics-pad) 0 3rem;
+  width: 100%;
+}
+
+.robbo-global-analytics__wrap {
+  box-sizing: border-box;
+  margin: 0 auto;
+  max-width: var(--robbo-analytics-max);
+  padding: 0 var(--robbo-analytics-pad);
+  width: 100%;
+}
+
+.robbo-global-analytics__title {
+  color: var(--robbo-analytics-text);
+  font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0 0 0.5rem;
+}
+
+.robbo-global-analytics__intro,
+.robbo-global-analytics__empty {
+  color: var(--robbo-analytics-muted);
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0 0 var(--robbo-analytics-gap);
+}
+
+.robbo-global-analytics__section-title {
+  color: var(--robbo-analytics-text);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 var(--robbo-analytics-gap);
+}
+
+.robbo-analytics-filter {
+  background: var(--robbo-analytics-surface);
+  border: 1px solid var(--robbo-analytics-border);
+  border-radius: var(--robbo-analytics-radius);
+  margin-bottom: var(--robbo-analytics-gap);
+  padding: 1rem 1.25rem;
+}
+
+.robbo-analytics-filter__fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.robbo-analytics-filter__legend {
+  color: var(--robbo-analytics-text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  padding: 0;
+}
+
+.robbo-analytics-filter__option {
+  align-items: center;
+  color: var(--robbo-analytics-text);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 0.95rem;
+  gap: 0.45rem;
+  margin-right: 1.25rem;
+}
+
+.robbo-analytics-summary {
+  background: var(--robbo-analytics-surface);
+  border: 1px solid var(--robbo-analytics-border);
+  border-radius: var(--robbo-analytics-radius);
+  margin-bottom: var(--robbo-analytics-gap);
+  padding: 1.25rem;
+}
+
+.robbo-analytics-summary__title {
+  color: var(--robbo-analytics-text);
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 1rem;
+}
+
+.robbo-analytics-summary__grid,
+.robbo-analytics-participants {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+}
+
+.robbo-analytics-stat {
+  background: var(--robbo-analytics-accent-light);
+  border: 1px solid var(--robbo-analytics-border);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-height: 5.5rem;
+  padding: 0.85rem 1rem;
+}
+
+.robbo-analytics-stat__label {
+  color: var(--robbo-analytics-muted);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.robbo-analytics-stat__value {
+  color: var(--robbo-analytics-text);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.robbo-analytics-stat__hint {
+  color: var(--robbo-analytics-muted);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.robbo-analytics-course-block {
+  background: var(--robbo-analytics-surface);
+  border: 1px solid var(--robbo-analytics-border);
+  border-radius: var(--robbo-analytics-radius);
+  box-sizing: border-box;
+  margin-bottom: var(--robbo-analytics-gap);
+  overflow: hidden;
+  width: 100%;
+}
+
+.robbo-analytics-course-block__header {
+  padding: 1rem 1.25rem 0.5rem;
+}
+
+.robbo-analytics-course-block__title {
+  color: var(--robbo-analytics-text);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.robbo-analytics-course-block__meta {
+  align-items: center;
+  color: var(--robbo-analytics-muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+  gap: 0.5rem;
+  line-height: 1.4;
+  margin: 0.35rem 0 0;
+}
+
+.robbo-analytics-course-block__badge {
+  background: #f3f4f6;
+  border-radius: 999px;
+  color: var(--robbo-analytics-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.55rem;
+  text-transform: uppercase;
+}
+
+.robbo-analytics-course-block__badge--active {
+  background: var(--robbo-analytics-accent-light);
+  color: var(--robbo-analytics-accent);
+}
+
+.robbo-global-analytics .robbo-analytics-tabs {
+  border-bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem 0;
+
+  .btn {
+    border-radius: 0.375rem !important;
+    box-shadow: none !important;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    min-height: 2.75rem;
+    padding: 0.5625rem 1rem;
+    text-shadow: none !important;
+  }
+
+  .btn-primary {
+    background-color: #00af41 !important;
+    border-color: #00af41 !important;
+    color: #fff !important;
+
+    &:hover:not(:disabled) {
+      background-color: #00a13c !important;
+      border-color: #00a13c !important;
+      color: #fff !important;
+    }
+
+    &:focus,
+    &:focus-visible {
+      background-color: #00af41 !important;
+      border-color: #00af41 !important;
+      box-shadow: 0 0 0 0.2rem rgba(0, 126, 47, 0.45) !important;
+      color: #fff !important;
+      outline: none;
+    }
+
+    &:active:not(:disabled) {
+      background-color: #007e2f !important;
+      border-color: #007e2f !important;
+      color: #fff !important;
+    }
+  }
+
+  .btn-outline-primary {
+    background-color: #fff !important;
+    border-color: #00af41 !important;
+    color: #00af41 !important;
+
+    &:hover:not(:disabled) {
+      background-color: #00af41 !important;
+      border-color: #00af41 !important;
+      color: #fff !important;
+    }
+
+    &:focus,
+    &:focus-visible {
+      border-color: #00af41 !important;
+      box-shadow: 0 0 0 0.2rem rgba(0, 126, 47, 0.45) !important;
+      outline: none;
+    }
+
+    &:active:not(:disabled) {
+      background-color: #007e2f !important;
+      border-color: #007e2f !important;
+      color: #fff !important;
+    }
+  }
+}
+
+.robbo-global-analytics .robbo-analytics-tab-panel {
+  padding: 1rem 1.25rem 1.25rem;
+  margin-top: 0.75rem;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.robbo-analytics-course-block__description {
+  color: var(--robbo-analytics-text);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0 0 1rem;
+}
+
+.robbo-analytics-course-block__facts {
+  display: grid;
+  gap: 0.75rem 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  margin: 0 0 1rem;
+
+  div {
+    margin: 0;
+  }
+
+  dt {
+    color: var(--robbo-analytics-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin: 0 0 0.2rem;
+  }
+
+  dd {
+    color: var(--robbo-analytics-text);
+    font-size: 0.95rem;
+    margin: 0;
+  }
+}
+
+.robbo-analytics-course-block__subheading {
+  color: var(--robbo-analytics-text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+}
+
+.robbo-analytics-course-block .enrollment-wrapper {
+  padding: 0;
+
+  .tip {
+    color: var(--robbo-analytics-muted);
+    font-size: 0.875rem;
+    font-weight: 400;
+    margin: 0 0 0.75rem;
+    text-align: left;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+
+    th,
+    td {
+      border-bottom: 1px solid var(--robbo-analytics-border);
+      color: var(--robbo-analytics-text);
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1.5;
+      padding: 0.65rem 0.5rem;
+      text-align: left;
+      vertical-align: top;
+      width: 50%;
+    }
+
+    tr.total {
+      th,
+      td {
+        border-bottom: 0;
+        color: var(--robbo-analytics-accent);
+        font-weight: 700;
+        padding-top: 0.85rem;
+      }
+    }
+  }
+}

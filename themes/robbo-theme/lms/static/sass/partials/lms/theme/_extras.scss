@@ -470,8 +470,10 @@ body.view-teams {
     }
   }
 }
-body.view-instructordash {
-  .container {
+body.view-instructordash,
+body.robbo-global-analytics {
+  .container,
+  .robbo-global-analytics__wrap {
     max-width: 1600px !important;
     padding: 0 15px !important;
     margin: 0 auto;
@@ -613,6 +615,50 @@ body.view-instructordash {
         }
       }
     }
+    .robbo-global-analytics__intro {
+      margin: 0 0 24px;
+      color: $light-dark;
+      font-size: 16px;
+      line-height: 24px;
+    }
+    .robbo-analytics-course-block {
+      margin-bottom: 30px;
+
+      &__title {
+        margin-bottom: 4px;
+      }
+
+      &__meta {
+        margin: 0 0 12px;
+        color: $light-dark;
+        font-size: 14px;
+        line-height: 20px;
+      }
+
+      > h4.hd-4 {
+        background: $primary-light;
+        padding: 15px 0 0 15px;
+        font-size: 18px;
+        color: $dark;
+        font-weight: 600;
+        margin-bottom: 0;
+      }
+
+      > .enrollment-wrapper {
+        padding-top: 0 !important;
+        background: $primary-light;
+        padding: 15px;
+        margin: 0;
+
+        .tip {
+          text-align: left;
+          font-size: 14px;
+          font-weight: normal;
+          color: $light-dark;
+          margin-bottom: 10px;
+        }
+      }
+    }
     .list-input {
       list-style: none;
       padding: 0;
@@ -632,14 +678,15 @@ body.view-instructordash {
         }
       }
     }
-  }
-  .enrollment-button, input[type=button], button.btn {
-    background: $primary;
-    border-color: $primary;
-    color: white;
-    font-weight: 500;
-    font-size: 14px;
-    box-shadow: none;
+
+    .enrollment-button, input[type=button], button.btn {
+      background: $primary;
+      border-color: $primary;
+      color: white;
+      font-weight: 500;
+      font-size: 14px;
+      box-shadow: none;
+    }
   }
 }
 .course-wrapper .course-content .xblock.xblock-student_view-vertical,
@@ -1752,6 +1799,7 @@ body.indigo-dark-theme {
 @import '../../../dashboard/dashboard';
 @import '../../../courseware/discover';
 @import '../../../courseware/robbo-courses-catalog';
+@import '../../../courseware/robbo-global-analytics';
 @import '../../../courseware/about';
 @import '../../../courseware/bookmarks';
 @import '../../../courseware/learning-mfe-unit-content';
