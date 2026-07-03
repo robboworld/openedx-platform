@@ -309,6 +309,7 @@ class CertificateSerializer(serializers.Serializer):
     isRestricted = serializers.SerializerMethodField()
     isEarned = serializers.SerializerMethodField()
     isDownloadable = serializers.SerializerMethodField()
+    isRequestable = serializers.SerializerMethodField()
     certPreviewUrl = serializers.SerializerMethodField()
 
     def get_cert_info(self, enrollment):
@@ -347,6 +348,10 @@ class CertificateSerializer(serializers.Serializer):
     def get_isDownloadable(self, enrollment):
         """Cert is considered downloadable based on certificate status"""
         return self.get_cert_info(enrollment).get("status") == "downloadable"
+
+    def get_isRequestable(self, enrollment):
+        """Cert can be requested by the learner (self-generated certificates)."""
+        return self.get_cert_info(enrollment).get("status") == "requesting"
 
     def get_certPreviewUrl(self, enrollment):
         """Cert preview URL comes from certificate info"""

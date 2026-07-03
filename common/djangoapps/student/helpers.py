@@ -523,8 +523,18 @@ def _cert_info(user, enrollment, cert_status):
         'can_unenroll': True,
     }
 
-    if cert_status is None or enrollment is None:
+    if enrollment is None:
         return default_info
+
+    # No GeneratedCertificate row yet — API returns unavailable without uuid.
+    # Treat as notpassing so the requesting status can be set below.
+    if cert_status is None:
+        cert_status = {'status': CertificateStatuses.notpassing}
+    elif (
+        cert_status.get('status') == CertificateStatuses.unavailable
+        and not cert_status.get('uuid')
+    ):
+        cert_status = {**cert_status, 'status': CertificateStatuses.notpassing}
 
     course_overview = enrollment.course_overview if enrollment else None
     status = template_state.get(cert_status['status'], default_status)
