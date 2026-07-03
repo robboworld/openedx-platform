@@ -658,6 +658,23 @@ class TestCertificateSerializer(LearnerDashboardBaseTest):
         self.assertEqual(output_data["isDownloadable"], is_downloadable_expected)
 
     @ddt.data(
+        ("requesting", True),
+        ("downloadable", False),
+        ("generating", False),
+        ("notpassing", False),
+    )
+    @ddt.unpack
+    def test_is_requestable(self, cert_status, is_requestable_expected):
+        """Test for isRequestable field"""
+        input_data = self.create_test_enrollment(course_mode=CourseMode.VERIFIED)
+        input_context = self.create_test_context(input_data.course)
+        input_context["cert_statuses"][input_data.course.id]["status"] = cert_status
+
+        output_data = CertificateSerializer(input_data, context=input_context).data
+
+        self.assertEqual(output_data["isRequestable"], is_requestable_expected)
+
+    @ddt.data(
         (True, random_url()),
         (False, random_url()),
         (True, None),
