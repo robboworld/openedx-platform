@@ -124,7 +124,7 @@ def _build_instructor_tip_accent_html() -> HTML:
 
 def get_robbo_instructor_catalog_courses(public_courses_list: list) -> List[Any]:
     """
-    All published site courses hidden from the learner catalog (any ``catalog_visibility``).
+    Published, non-archived site courses hidden from the learner catalog.
 
     ``CourseOverview`` only includes published runs. Courses already shown in the public
     grid above are excluded to avoid duplicate cards.
@@ -132,7 +132,10 @@ def get_robbo_instructor_catalog_courses(public_courses_list: list) -> List[Any]
     from lms.djangoapps.branding import get_visible_courses  # pylint: disable=import-outside-toplevel
 
     public_ids = {course.id for course in public_courses_list}
-    return [course for course in get_visible_courses() if course.id not in public_ids]
+    return [
+        course for course in get_visible_courses(active_only=True)
+        if course.id not in public_ids
+    ]
 
 
 def get_robbo_courses_account_banners(request) -> Dict[str, Any]:
