@@ -11,6 +11,7 @@ from uuid import uuid4
 import pytz
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.utils import translation
@@ -28,7 +29,6 @@ from common.djangoapps.util.date_utils import strftime_localized
 from common.djangoapps.util.views import handle_500
 from lms.djangoapps.certificates.api import (
     certificates_viewable_for_course,
-    display_date_for_certificate,
     get_active_web_certificate,
     get_certificate_footer_context,
     get_certificate_header_context,
@@ -112,14 +112,11 @@ def _update_certificate_context(context, course, course_overview, user_certifica
         suffix=context.get('certificate_verify_url_suffix')
     )
 
-    # We prefer a CourseOverview for this function because it validates and corrects certificate_available_date
-    # and certificates_display_behavior values. However, not all certificates are guaranteed to have a CourseOverview
-    # associated with them, so we fall back on the course in that case. This shouldn't cause a problem because courses
-    # that are missing CourseOverviews are generally old courses, and thus their display values are no longer relevant
-    if course_overview:
-        date = display_date_for_certificate(course_overview, user_certificate)
-    else:
-        date = display_date_for_certificate(course, user_certificate)
+    # Issue date on the web certificate: when it was generated (not course end / available date).
+    try:
+        date = user_certificate.date_override.date
+    except ObjectDoesNotExist:
+        date = user_certificate.modified_date
     # Translators:  The format of the date includes the full name of the month
     context['certificate_date_issued'] = strftime_localized(date, settings.CERTIFICATE_DATE_FORMAT)
 
