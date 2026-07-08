@@ -404,8 +404,13 @@ class RegistrationFormFactory:
 
         # Check that the setting is configured correctly
         for field_name in self.EXTRA_FIELDS:
-            if self._extra_fields_setting.get(field_name, "hidden") not in ["required", "optional", "hidden"]:
-                msg = "Setting REGISTRATION_EXTRA_FIELDS values must be either required, optional, or hidden."
+            if self._extra_fields_setting.get(field_name, "hidden") not in [
+                "required", "optional", "optional-exposed", "hidden",
+            ]:
+                msg = (
+                    "Setting REGISTRATION_EXTRA_FIELDS values must be either "
+                    "required, optional, optional-exposed, or hidden."
+                )
                 raise ImproperlyConfigured(msg)
 
         # Map field names to the instance method used to add the field to the form

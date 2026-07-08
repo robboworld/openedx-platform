@@ -71,7 +71,14 @@ class RegistrationFieldsContext(APIView):
             ordered_extra_fields.remove('year_of_birth')
 
         self.valid_fields = [
-            field for field in ordered_extra_fields if self._fields_setting.get(field) == self.field_type
+            field for field in ordered_extra_fields
+            if (
+                self._fields_setting.get(field) == self.field_type
+                or (
+                    self.field_type == 'required'
+                    and self._fields_setting.get(field) == 'optional-exposed'
+                )
+            )
         ]
 
         custom_form = get_registration_extension_form()
@@ -121,6 +128,7 @@ class RegistrationFieldsContext(APIView):
             else:
                 field_handler = getattr(form_fields, f'add_{field}_field', None)
                 if field_handler:
-                    response[field] = field_handler(self.field_type == 'required')
+                    is_required = self._fields_setting.get(field) == 'required'
+                    response[field] = field_handler(is_required)
 
         return response

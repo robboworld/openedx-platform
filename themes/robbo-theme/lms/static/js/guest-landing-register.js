@@ -303,12 +303,8 @@
       hasError = true;
     }
 
-    var marketing = form.querySelector('input[name="marketing_emails_opt_in"]');
     var honor = form.querySelector('input[name="honor_code"]');
-    if (!marketing || !marketing.checked) {
-      setFormError(M.marketing);
-      hasError = true;
-    } else if (!honor || !honor.checked) {
+    if (!honor || !honor.checked) {
       setFormError(M.honor);
       hasError = true;
     }
@@ -340,6 +336,17 @@
     return message;
   }
 
+  var usernameTakenServerMessages = {
+    'It looks like this username is already taken': true,
+  };
+
+  function localizeUsernameServerMessage(message) {
+    if (usernameTakenServerMessages[String(message || '').trim()]) {
+      return 'Похоже, этот логин уже занят';
+    }
+    return message;
+  }
+
   function showFieldErrors(payload) {
     if (!payload || typeof payload !== 'object') {
       return;
@@ -354,6 +361,8 @@
         msg = localizeNameServerMessage(msg);
       } else if (key === 'company') {
         msg = localizeCompanyServerMessage(msg);
+      } else if (key === 'username') {
+        msg = localizeUsernameServerMessage(msg);
       }
       showFieldError(key, msg);
     });
