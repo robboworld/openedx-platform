@@ -1,0 +1,54 @@
+## mako
+<%page expression_filter="h"/>
+<%!
+from lms.djangoapps.courseware.robbo_catalog import (
+    get_robbo_studio_root_url,
+    user_can_see_robbo_studio_header_link,
+)
+%>
+<%
+  robbo_studio_url = get_robbo_studio_root_url()
+  show_robbo_studio_link = (
+      user_can_see_robbo_studio_header_link(user) and bool(robbo_studio_url)
+  )
+%>
+% if show_robbo_studio_link:
+<style>
+header.global-header .nav-links .secondary .robbo-header-studio-link {
+  display: inline-block;
+  margin-right: 10px;
+  padding: 0 !important;
+}
+header.global-header .nav-links .secondary .robbo-header-studio-link .robbo-header-studio-link__btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 6px 16px !important;
+  margin: 0 !important;
+  background: transparent !important;
+  color: #fff !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+  border-radius: 999px !important;
+  border: 1px solid #fff !important;
+  box-sizing: border-box !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+}
+header.global-header .nav-links .secondary .robbo-header-studio-link .robbo-header-studio-link__btn:hover,
+header.global-header .nav-links .secondary .robbo-header-studio-link .robbo-header-studio-link__btn:focus,
+header.global-header .nav-links .secondary .robbo-header-studio-link .robbo-header-studio-link__btn:focus-visible {
+  color: #fff !important;
+  text-decoration: none !important;
+}
+</style>
+  <div class="nav-item hidden-mobile robbo-header-studio-link">
+    <a
+      class="robbo-header-studio-link__btn"
+      href="${robbo_studio_url}"
+      aria-label="Перейти в Studio"
+    >Студия</a>
+  </div>
+% endif

@@ -111,6 +111,7 @@ header.global-header {
 
     .robbo-main-header__trailing {
         justify-self: end;
+        gap: 0;
     }
 
     .hamburger-menu,
@@ -342,6 +343,38 @@ header.global-header {
                 .username {
                     font: inherit;
                     color: inherit;
+                }
+            }
+
+            // Studio link: pill like user menu toggle, plain navigation (no header.js dropdown).
+            .robbo-header-studio-link {
+                margin-right: 10px;
+
+                .robbo-header-studio-link__btn {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 6px;
+                    padding: 6px 16px;
+                    margin: 0;
+                    background: transparent;
+                    color: #fff !important;
+                    font-size: $robbo-header-profile-toggle-fs;
+                    font-weight: 700;
+                    line-height: 1.35;
+                    border-radius: 999px;
+                    border: 1px solid #fff;
+                    box-sizing: border-box;
+                    cursor: pointer;
+                    text-decoration: none;
+                    white-space: nowrap;
+
+                    &:hover,
+                    &:focus,
+                    &:focus-visible {
+                        color: #fff !important;
+                        text-decoration: none !important;
+                    }
                 }
             }
 

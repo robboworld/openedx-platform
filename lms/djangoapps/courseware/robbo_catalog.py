@@ -40,36 +40,52 @@ from openedx.core.djangoapps.models.course_details import CourseDetails
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from openedx.core.djangolib.markup import HTML, Text
 
-from common.djangoapps.student.models import CourseAccessRole, CourseEnrollment
-from common.djangoapps.student.roles import (
-    CourseInstructorRole,
-    CourseLimitedStaffRole,
-    CourseStaffRole,
-    GlobalStaff,
-)
-
-# Course team in Studio + platform personnel (see instructor-catalog tooltip).
-_INSTRUCTOR_CATALOG_ROLE_NAMES = frozenset({
-    CourseStaffRole.ROLE,
-    CourseLimitedStaffRole.ROLE,
-    CourseInstructorRole.ROLE,
-})
+from common.djangoapps.student.models import CourseEnrollment
+from common.djangoapps.student.roles import GlobalStaff
 
 
 def user_can_see_robbo_instructor_catalog(user) -> bool:
     """
-    True for course team, platform superuser, or platform staff (see tooltip on /courses).
+    True only for platform superuser or global staff (GlobalStaff).
+
+    Course-team roles (instructor/staff on a course) do not see the hidden catalog block.
     """
     if user is None or not user.is_authenticated:
         return False
     if getattr(user, 'is_superuser', False):
         return True
-    if GlobalStaff().has_user(user):
-        return True
-    return CourseAccessRole.objects.filter(
-        user=user,
-        role__in=_INSTRUCTOR_CATALOG_ROLE_NAMES,
-    ).exists()
+    return GlobalStaff().has_user(user)
+
+
+def user_can_see_robbo_studio_header_link(user) -> bool:
+    """Superuser or global staff only (same as hidden catalog block)."""
+    return user_can_see_robbo_instructor_catalog(user)
+
+
+def get_robbo_studio_root_url() -> str:
+    """
+    CMS / Studio base URL from site config or LMS settings (Tutor ``CMS_ROOT_URL`` / ``CMS_BASE``).
+    """
+    url = configuration_helpers.get_value(
+        'CMS_ROOT_URL',
+        getattr(settings, 'CMS_ROOT_URL', None),
+    )
+    if url:
+        return str(url).rstrip('/')
+
+    cms_base = getattr(settings, 'CMS_BASE', None)
+    if not cms_base:
+        return ''
+
+    if str(cms_base).startswith(('http://', 'https://')):
+        return str(cms_base).rstrip('/')
+
+    use_https = configuration_helpers.get_value(
+        'ENABLE_HTTPS',
+        settings.FEATURES.get('ENABLE_HTTPS', False),
+    )
+    scheme = 'https' if use_https else 'http'
+    return f'{scheme}://{cms_base}'.rstrip('/')
 
 
 def get_robbo_instructor_catalog_banner(course_count: int = 0) -> Dict[str, Any]:
@@ -78,7 +94,7 @@ def get_robbo_instructor_catalog_banner(course_count: int = 0) -> Dict[str, Any]
 
     See docs/design/robbo-courses-catalog-instructor-banner.md for layout spec.
     """
-    label = 'Ниже расположены курсы, которые видят только преподаватели'
+    label = 'Ниже расположены курсы, которые видят только персонал платформы'
     label_html = Text('Ниже расположены курсы, которые видят только {accent}').format(
         accent=_build_instructor_tip_accent_html(),
     )
@@ -89,14 +105,14 @@ def get_robbo_instructor_catalog_banner(course_count: int = 0) -> Dict[str, Any]
 
 
 def _build_instructor_tip_accent_html() -> HTML:
-    """«преподаватели» with hover/focus tooltip listing Studio course-team roles."""
+    """«персонал платформы» with hover/focus tooltip."""
     return HTML(
         '<div class="robbo-courses-catalog__instructor-tip">'
         '<span class="robbo-courses-catalog__instructor-tip-anchor" '
         'tabindex="0" role="button" '
-        'aria-label="Подсказка: кто считается преподавателем" '
+        'aria-label="Подсказка: кто видит скрытый каталог" '
         'aria-describedby="robbo-instructor-role-tip">'
-        '<span class="robbo-courses-catalog__instructor-bar-accent">преподаватели</span>'
+        '<span class="robbo-courses-catalog__instructor-bar-accent">персонал платформы</span>'
         '<span class="robbo-courses-catalog__instructor-tip-icon" aria-hidden="true">'
         '<svg class="robbo-courses-catalog__instructor-tip-icon-svg" width="14" height="14" '
         'viewBox="0 0 16 16" focusable="false" xmlns="http://www.w3.org/2000/svg">'
@@ -109,13 +125,11 @@ def _build_instructor_tip_accent_html() -> HTML:
         '<div id="robbo-instructor-role-tip" role="tooltip" '
         'class="robbo-courses-catalog__instructor-tip-popup">'
         '<p class="robbo-courses-catalog__instructor-tip-heading">'
-        'Кто считается преподавателем'
+        'Кто видит этот блок'
         '</p>'
         '<ul class="robbo-courses-catalog__instructor-tip-list">'
-        '<li>Главный инструктор курса</li>'
-        '<li>Член команды курса</li>'
         '<li>Администратор</li>'
-        '<li>Персонал образовательной платформы</li>'
+        '<li>Персонал образовательной платформы (глобальный staff)</li>'
         '</ul>'
         '</div>'
         '</div>'
