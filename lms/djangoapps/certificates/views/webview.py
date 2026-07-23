@@ -1,5 +1,7 @@
 """
 Certificate HTML webview.
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 
@@ -122,6 +124,12 @@ def _update_certificate_context(context, course, course_overview, user_certifica
         date = display_date_for_certificate(course, user_certificate)
     # Translators:  The format of the date includes the full name of the month
     context['certificate_date_issued'] = strftime_localized(date, settings.CERTIFICATE_DATE_FORMAT)
+    # Robbo cert sheet: creation date, day-first (e.g. "3 июля 2026")
+    created = getattr(user_certificate, 'created_date', None) or getattr(user_certificate, 'created', None)
+    if created:
+        context['certificate_created_date'] = strftime_localized(created, '%-d %B %Y')
+    else:
+        context['certificate_created_date'] = strftime_localized(date, '%-d %B %Y')
 
     # Translators:  This text represents the verification of the certificate
     context['document_meta_description'] = _('This is a valid {platform_name} certificate for {user_name}, '

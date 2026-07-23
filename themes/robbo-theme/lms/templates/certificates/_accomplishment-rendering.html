@@ -1,69 +1,112 @@
 <%page expression_filter="h"/>
+<%! from django.utils.translation import gettext as _ %>
 <%namespace name='static' file='/static_content.html'/>
-<%!
-from django.utils.translation import gettext as _
-import re
-
-def robbo_cert_date_display(date_str):
-    """Swap month/day: 'мая 29, 2026' -> '29 мая 2026'."""
-    if not date_str:
-        return date_str
-    match = re.match(r'^(\S+)\s+(\d{1,2}),\s+(\d{4})\s*$', date_str.strip())
-    if match:
-        month, day, year = match.groups()
-        return f"{day} {month} {year}"
-    return date_str
-%>
-
 <%
-signatories = certificate_data.get('signatories', []) if certificate_data else []
-primary_signatory = signatories[0] if signatories else None
-recipient_name = accomplishment_copy_name or accomplishment_copy_username or 'Иван Иванов'
-certificate_date_display = robbo_cert_date_display(certificate_date_issued)
+# Exact Koa Scratch-Olympiad sheet markup
+# (Yarila682/edx-platform @ 4004f229379da2e2de238697dc73190de0256afb)
+# Teak note: stock CSS hides .accomplishment-type-symbol for certificate-honor —
+# overridden in robbo-certificate.css (.robbo-koa-cert).
+course_mode_class = course_mode if course_mode else ''
+cert_mode = course_mode or ''
 %>
 
-<main class="accomplishment accomplishment-main" role="main" aria-label="${_('Course completion certificate')}">
-    <div class="wrapper-accomplishment-rendering">
-        <div class="robbo-cert">
-    <div class="robbo-cert__sheet">
-        <div class="robbo-cert__body">
-            <header class="robbo-cert__header">
-                <img class="robbo-cert__logo" src="${static.url('robbo-theme/images/certificates/robbo-cert-logo.svg')}" alt="РОББО" />
-                <h1 class="robbo-cert__title">СЕРТИФИКАТ О ПРОХОЖДЕНИИ КУРСА</h1>
-            </header>
+<main class="accomplishment accomplishment-main">
 
-            <div class="robbo-cert__statement">
-                <p class="robbo-cert__lead">Выдан в подтверждение того, что</p>
-                <p class="robbo-cert__recipient">${recipient_name}</p>
-                <p class="robbo-cert__course-line">
-                    успешно прошёл(‑ла) курс
-                    <span class="robbo-cert__course-name">«${accomplishment_copy_course_name}»</span>
-                </p>
+    <div class="wrapper-accomplishment-rendering">
+        <div class="accomplishment-rendering robbo-koa-cert">
+        <!--    <span class="deco-corner deco-corner-tl"></span>
+            <span class="deco-corner deco-corner-tr"></span>
+            <span class="deco-corner deco-corner-bl"></span>
+            <span class="deco-corner deco-corner-br"></span> -->
+
+            <div class="accomplishment-type">
+
+                <span style="margin-top: 20px; margin-bottom: 6.5%" class="accomplishment-type-symbol">
+                  <img style="width: 95% !important; max-width: 95% !important;" class="src" src="${static.url('robbo-theme/images/certificates/Robbo-scratch-olympiad.png')}" alt="Image for course mode of type ${course_mode_class}">
+                </span>
+
             </div>
 
-            <footer class="robbo-cert__footer">
-                <div class="robbo-cert__signatory">
-                    <div class="robbo-cert__signature-container">
-                        % if primary_signatory and primary_signatory.get('signature_image_path'):
-                            <img class="robbo-cert__signature" src="${static.url(primary_signatory['signature_image_path'])}" alt="" />
-                        % else:
-                            <img class="robbo-cert__signature" src="${static.url('robbo-theme/images/certificates/signature_PF.png')}" alt="" />
-                        % endif
-                    </div>
-                    <div class="robbo-cert__signatory-info">
-                        % if primary_signatory:
-                            <p class="robbo-cert__signatory-role">${primary_signatory.get('title') or 'Генеральный директор ООО «РОББО ТЕХНОЛОГИИ»'}</p>
-                            <p class="robbo-cert__signatory-name">${primary_signatory.get('name') or 'Павел Фролов'}</p>
-                        % else:
-                            <p class="robbo-cert__signatory-role">Генеральный директор ООО «РОББО ТЕХНОЛОГИИ»</p>
-                            <p class="robbo-cert__signatory-name">Павел Фролов</p>
-                        % endif
-                        <p class="robbo-cert__issued">Выдан: ${certificate_date_display} года</p>
+            <div class="wrapper-statement-and-signatories-top">
+                <div style="margin-bottom: 30px !important; margin-left:13.3% !important; margin-right: 13.3% !important;" class="accomplishment-statement-left">
+
+                    <p style="white-space: pre; max-width: 100% !important;" class="accomplishment-type-label hd-3-s"> С Е Р Т И Ф И К А Т   О   П Р О Х О Ж Д Е Н И И    К У Р С А</p>
+
+                    <p class="accomplishment-statement-lead">
+                        <p style="text-align: left; line-height: 1.0 !important;" class="accomplishment-summary copy copy-lead-middle"> Выдан в подтверждение того, что</p>
+
+                        <strong class="accomplishment-recipient emphasized hd-1-emphasized ">${accomplishment_copy_name}</strong>
+                    </p>
+                    <p style="border-bottom: 2px dotted gray; margin-bottom: 30px !important;" class="accomplishment-summary copy copy-lead">&nbsp;</p>
+
+                    <p style="line-height: 1.35 !important; margin-bottom: 25px !important;" class="accomplishment-statement-detail copy copy-lead-middle">успешно прошел (-ла) курс «${accomplishment_copy_course_name}»</p>
+                </div>
+            </div>
+
+
+            <div class="wrapper-statement-and-signatories">
+                % if cert_mode != 'base':
+                <div class="accomplishment-signatories">
+                    <h3 class="accomplishment-signatories-title sr-only">${_("Noted by")}</h3>
+                    <div class="wrapper-signatories">
+                        <div class="list-signatories">
+                            % if certificate_data:
+                                % for signatory in certificate_data.get('signatories', []):
+                                    % if signatory.get('signature_image_path'):
+                                    <div class="signatory robbo-koa-cert__signatory-row">
+                                        <div class="robbo-koa-cert__links">
+                                            <h4 class="signatory-name hd-5-middle label-hashtag">#ScratchOlympiad</h4>
+                                            <h4 class="signatory-name hd-5-middle label-hashtag robbo-koa-cert__web-link">creativeprogramming.org</h4>
+                                        </div>
+
+                                        <div class="signatory-simple robbo-koa-cert__sign-block">
+                                           <img class="signatory-signature robbo-koa-cert__signature" src="${static.url(signatory['signature_image_path'])}" alt="${signatory['name']}">
+                                            <div class="signatory-name robbo-koa-cert__role">
+                                               <h4 class="signatory-name hd-5-middle name-part">Председатель</h4>
+                                               <h4 class="signatory-name hd-5-middle name-part">Организационного комитета</h4>
+                                               <h4 class="signatory-name hd-5-middle-name name-part">Павел Фролов</h4>
+                                             </div>
+                                        </div>
+                                    </div>
+                                    % endif
+                                % endfor
+                            % endif
+                        </div>
                     </div>
                 </div>
-            </footer>
-        </div>
-    </div>
+                % endif
+            </div>
+            <div style="margin-bottom: 0rem !important; margin-top: 0rem !important;" class="accomplishment-orgs">
+                <h3 class="accomplishment-orgs-title sr-only">${_("Supported by the following organizations")}</h3>
+                <ul style="justify-content: space-between;" class="wrapper-orgs list-orgs">
+
+                    % if organization_logo:
+                  <li class="wrapper-organization">
+                        <div class="organization">
+                        </div>
+                    </li>
+                    % endif
+
+                    <li class="wrapper-organization print-left">
+                        <div class="organization print-left">
+                           <img style="margin-left: 0px !important;" class="organization-logo" src="${static.url('robbo-theme/images/certificates/Robbo-Logo-Eng.png')}" alt="${platform_name}">
+                        </div>
+                    </li>
+
+                    <li class="wrapper-organization"></li>
+                        <div class="organization organization-edX">
+
+                        </div>
+                    </li>
+
+                    <li class="wrapper-organization">
+                        <div class="organization-right print-right robbo-koa-cert__issued">
+                             <span class="robbo-koa-cert__issued-line">Выдан: ${certificate_created_date}</span>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
         </div>
     </div>
 </main>

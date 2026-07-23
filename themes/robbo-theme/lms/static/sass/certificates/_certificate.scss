@@ -1,53 +1,32 @@
-// Robbo certificate — scoped to .robbo-cert (preview page keeps edx chrome).
-@import '../partials/lms/theme/robbo-brand-tokens';
+/* Teak changed stock certificate CSS vs Koa:
+ * .certificate-honor hides .accomplishment-type-symbol and .signatory-signature.
+ * Restore Koa Scratch-Olympiad sheet visibility + typography.
+ * Page chrome (banner/footer) stays modern Robbo.
+ */
 
+/* ---- modern page chrome ---- */
 .layout-accomplishment .wrapper-view .wrapper-banner-user {
   margin-top: 0 !important;
   padding-top: 24px;
-  background: $robbo-brand-green;
+  background: #00af41;
   box-shadow: none;
 }
 
 .layout-accomplishment .wrapper-view .banner-user .message-title,
 .layout-accomplishment .wrapper-view .banner-user .message-copy {
-  color: $robbo-brand-white;
+  color: #fff;
 }
 
 .layout-accomplishment .wrapper-view .banner-user .message-actions .action {
-  border-color: $robbo-brand-white;
-  color: $robbo-brand-white;
+  border-color: #fff;
+  color: #fff;
   background: transparent;
-}
-
-.layout-accomplishment .wrapper-view .banner-user .message-actions .action:hover,
-.layout-accomplishment .wrapper-view .banner-user .message-actions .action:focus {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: $robbo-brand-white;
-  color: $robbo-brand-white;
-}
-
-.layout-accomplishment .wrapper-view .wrapper-introduction {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.layout-accomplishment .wrapper-view .wrapper-introduction .introduction {
-  margin-bottom: 0;
 }
 
 .layout-accomplishment .wrapper-view .wrapper-footer .footer-app {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-}
-
-.layout-accomplishment .wrapper-view .wrapper-footer .footer-app-copyright,
-.layout-accomplishment .wrapper-view .wrapper-footer .footer-app-nav {
-  width: 100%;
-  max-width: 100%;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
   text-align: center;
 }
 
@@ -61,290 +40,360 @@
   align-items: center;
 }
 
-.layout-accomplishment .wrapper-view .wrapper-footer .footer-app-nav .list-legal .nav-item {
+/* ---- undo Teak honor hides (root cause of missing olympiad logo / signature) ---- */
+.layout-accomplishment.certificate-honor .robbo-koa-cert .accomplishment-type-symbol,
+.layout-accomplishment.certificate-honor .robbo-koa-cert .signatory-signature,
+.layout-accomplishment .robbo-koa-cert .accomplishment-type-symbol,
+.layout-accomplishment .robbo-koa-cert .signatory-signature {
   display: block !important;
-  margin-right: 0 !important;
-  margin-left: 0 !important;
-  text-align: center;
 }
 
-.layout-accomplishment .wrapper-accomplishment-rendering .accomplishment-rendering,
-.layout-accomplishment .wrapper-accomplishment-rendering .robbo-cert {
-  top: 0;
-}
-
-@media screen {
-  .layout-accomplishment .wrapper-accomplishment-rendering {
-    overflow-x: auto;
-    overflow-y: visible;
-    -webkit-overflow-scrolling: touch;
-    max-width: 100%;
-  }
-
-  .wrapper-accomplishment-rendering .robbo-cert {
-    width: 297mm;
-    height: 210mm;
-    min-width: 297mm;
-    min-height: 210mm;
-    max-width: none;
-    flex-shrink: 0;
-    margin: 0 auto;
-  }
-
-  .robbo-cert__sheet {
-    width: 297mm;
-    height: 210mm;
-    min-width: 297mm;
-    min-height: 210mm;
-    max-width: 297mm;
-    max-height: 210mm;
-  }
-}
-
-.robbo-cert__sheet {
-  position: relative;
-  width: 297mm;
-  height: 210mm;
-  overflow: hidden;
-  background-color: #fff;
-  background-image: url("../images/certificates/cert_bg.jpg");
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;
-  aspect-ratio: auto;
-  min-height: 0;
-}
-
-.robbo-cert__body {
-  position: relative;
-  z-index: 1;
+/* Stock Teak draws a black top bar + negative offset on .accomplishment-rendering */
+.robbo-koa-cert.accomplishment-rendering,
+.layout-accomplishment .robbo-koa-cert.accomplishment-rendering {
+  top: 0 !important;
+  border-top: none !important;
+  border: 1px solid #c5d6e2 !important;
+  box-shadow: none !important;
+  background: #fff !important;
+  max-width: 100%;
   box-sizing: border-box;
-  min-height: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  text-align: center;
-  padding: 5%;
 }
 
-.robbo-cert__header {
-  margin: 0 auto 3%;
-  width: 55%;
-  max-width: 55%;
-  text-align: center;
+/* ---- Koa sheet: olympiad logo — same size on screen and print ---- */
+.robbo-koa-cert .accomplishment-type {
+  text-align: center !important;
+  margin-top: 0 !important;
+  margin-bottom: 5px !important;
 }
 
-.robbo-cert__logo {
-  width: 395px;
-  max-width: none;
-  height: auto;
-  margin: 0 auto 2%;
+.robbo-koa-cert .accomplishment-type-symbol {
+  display: block !important;
+  width: 320px !important;
+  max-width: 320px !important;
+  height: auto !important;
+  max-height: none !important;
+  margin: 16px auto 20px auto !important;
+  overflow: visible !important;
+  border: none !important;
+}
+
+.robbo-koa-cert .accomplishment-type-symbol .src {
+  display: block !important;
+  width: 100% !important;
+  max-width: 320px !important;
+  height: auto !important;
+  margin: 0 auto !important;
+}
+
+/* ---- Koa typography / centering ---- */
+.robbo-koa-cert .hd-3-s {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 25.1px;
+  font-weight: 200 !important;
+  letter-spacing: 0.285mm;
+  line-height: 2;
+  text-align: center;
+  white-space: pre;
+  max-width: 100% !important;
+}
+
+.robbo-koa-cert .hd-1-emphasized {
+  margin-bottom: -55px !important;
+  font-size: 38px;
+  line-height: 1.4;
+  text-align: center;
   display: block;
 }
 
-.robbo-cert__title {
-  margin: 0 0 4%;
-  font-size: 27px;
-  line-height: 1.15;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: #000;
+.robbo-koa-cert .copy-lead-middle,
+.robbo-koa-cert .accomplishment-summary.copy-lead-middle,
+.robbo-koa-cert .accomplishment-statement-detail.copy-lead-middle {
+  font-size: 19.9px;
+  line-height: 1.5;
+  font-weight: 300;
+  letter-spacing: 0.22mm;
 }
 
-.robbo-cert__statement {
-  width: 55%;
-  max-width: 55%;
-  margin: 0 auto;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.robbo-cert__lead {
-  margin: 0 0 1%;
-  font-size: 16px;
-  line-height: 1.35;
+.robbo-koa-cert .wrapper-statement-and-signatories-top {
   width: 100%;
-  max-width: 100%;
-  text-align: center;
-  align-self: center;
 }
 
-.robbo-cert__recipient {
-  margin: 0 0 2%;
-  padding-bottom: 0.4%;
-  border-bottom: 2px dotted #888;
-  font-size: 22px;
-  line-height: 1.25;
-  font-weight: 700;
+.robbo-koa-cert .accomplishment-statement-left {
+  margin: 0 13.3% 30px 13.3% !important;
+  text-align: center !important;
+}
+
+.robbo-koa-cert .hd-5-middle {
+  margin-bottom: 0.5rem;
+  font-size: 21px !important;
+  font-weight: 300 !important;
+  line-height: 1;
+}
+
+.robbo-koa-cert .hd-5-middle-name {
+  margin-bottom: 0.5rem;
+  font-size: 21px !important;
+  font-weight: 600 !important;
+  line-height: 1;
+}
+
+.robbo-koa-cert .list-signatories {
   width: 100%;
-  max-width: 100%;
-  text-align: center;
+  box-sizing: border-box;
+  padding: 8px 16px;
 }
 
-.robbo-cert__course-line {
-  margin: 0;
-  font-size: 18px;
-  line-height: 1.45;
-  max-width: 100%;
-  width: 100%;
-  text-align: center;
-}
-
-.robbo-cert__course-name {
-  font-weight: 700;
-}
-
-.robbo-cert__footer {
-  width: 68%;
-  max-width: 68%;
-  margin-top: auto;
-  margin-right: 4%;
-  margin-left: auto;
-  padding-top: 7%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  align-self: flex-end;
-  text-align: right;
-}
-
-.robbo-cert__signatory {
-  display: flex;
+.robbo-koa-cert__signatory-row,
+.robbo-koa-cert .signatory.robbo-koa-cert__signatory-row {
+  display: flex !important;
   flex-direction: row;
   align-items: center;
-  gap: 16px;
-  text-align: left;
-}
-
-.robbo-cert__signature-container {
-  flex-shrink: 0;
-}
-
-.robbo-cert__signature {
-  width: 140px;
-  height: auto;
-  margin: 0;
-  display: block;
-}
-
-.robbo-cert__signatory-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left !important;
-  width: 200px;
-  max-width: 200px;
-  flex-shrink: 0;
-  padding: 0;
-  margin: 0;
-}
-
-.robbo-cert__signatory-role {
-  max-width: 200px;
+  justify-content: space-between !important;
   width: 100%;
+  max-width: 100%;
+  gap: 16px;
+  margin: 0 !important;
 }
 
-.robbo-cert__signatory-role,
-.robbo-cert__signatory-name,
-.robbo-cert__issued {
-  margin: 0;
-  padding: 0;
-  text-indent: 0;
-  font-size: 12px;
-  line-height: 1.4;
-  color: #000;
+.robbo-koa-cert__links {
+  flex: 0 0 auto;
   text-align: left !important;
-  align-self: stretch;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.robbo-koa-cert__links .label-hashtag,
+.robbo-koa-cert .label-hashtag {
+  font-weight: 900 !important;
+  color: rgb(13, 115, 186) !important;
+  margin: 0 0 4px 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+.robbo-koa-cert__web-link {
+  text-decoration: underline;
+}
+
+.robbo-koa-cert__sign-block,
+.robbo-koa-cert .signatory-simple.robbo-koa-cert__sign-block {
+  display: flex !important;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin: 0 0 0 auto !important;
+  flex: 0 0 auto;
+}
+
+.robbo-koa-cert__signature,
+.robbo-koa-cert .signatory-signature.robbo-koa-cert__signature {
+  display: block !important;
+  box-sizing: border-box;
+  width: 160px !important;
+  min-width: 160px !important;
+  max-width: 160px !important;
+  height: auto !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  flex-shrink: 0;
+}
+
+.robbo-koa-cert__role {
+  text-align: right !important;
+  margin: 0 !important;
+  flex: 0 0 auto;
+}
+
+.robbo-koa-cert__role .name-part,
+.robbo-koa-cert .signatory-name .name-part {
+  margin: 0 0 4px 0 !important;
+  padding: 0 !important;
+  font-weight: 400;
+  text-align: right !important;
+}
+
+.robbo-koa-cert__role .hd-5-middle-name {
+  font-weight: 600 !important;
+}
+
+.robbo-koa-cert .accomplishment-orgs .wrapper-orgs {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0 16px;
   width: 100%;
   box-sizing: border-box;
 }
 
-.robbo-cert__signatory-name {
-  margin-top: 5px;
-  font-weight: 800;
-  font-size: 13px;
+.robbo-koa-cert .accomplishment-orgs .wrapper-organization {
+  display: flex;
+  align-items: center;
+  height: auto !important;
+  max-width: none !important;
+  width: auto !important;
 }
 
-.robbo-cert__issued {
-  margin-top: 10px;
-  white-space: nowrap;
+.robbo-koa-cert .organization-logo {
+  max-width: 180px !important;
+  height: auto !important;
+  position: static !important;
+  transform: none !important;
+  margin: 0 !important;
+  display: block !important;
+}
+
+.robbo-koa-cert .organization.print-left {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.robbo-koa-cert__issued,
+.robbo-koa-cert .organization-right {
+  text-align: right !important;
+  padding: 0 !important;
+  margin: 0 0 0 auto !important;
+  white-space: nowrap !important;
+}
+
+.robbo-koa-cert__issued-line {
+  display: inline-block;
+  white-space: nowrap !important;
+  font-size: 16px;
+  line-height: 1.3;
 }
 
 @media print {
   @page {
     size: A4 landscape;
-    margin: 0;
+    margin: 8mm;
   }
 
   html,
   body.layout-accomplishment {
+    width: auto !important;
+    height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
-    width: 297mm;
-    height: 210mm;
-    overflow: hidden !important;
     background: #fff !important;
+    overflow: visible !important;
   }
 
-  body.layout-accomplishment .wrapper-view,
-  body.layout-accomplishment .accomplishment-main,
-  body.layout-accomplishment .wrapper-accomplishment-rendering {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 297mm !important;
-    height: 210mm !important;
-    overflow: hidden !important;
-    page-break-inside: avoid;
-    page-break-after: avoid;
-    break-inside: avoid;
-  }
-
+  /* Hide page chrome; print only the certificate sheet */
   .layout-accomplishment .wrapper-banner-user,
+  .layout-accomplishment .wrapper-introduction,
   .layout-accomplishment .wrapper-about,
   .layout-accomplishment .wrapper-footer,
-  .layout-accomplishment .wrapper-introduction,
   .layout-accomplishment .wrapper-header,
-  .layout-accomplishment hr.divider {
+  .layout-accomplishment hr.divider,
+  .layout-accomplishment .wrapper-accomplishment-metadata {
     display: none !important;
   }
 
-  .wrapper-accomplishment-rendering .robbo-cert {
-    width: 297mm !important;
-    height: 210mm !important;
-    max-width: none !important;
+  .layout-accomplishment .wrapper-view,
+  .layout-accomplishment .accomplishment-main,
+  .layout-accomplishment .wrapper-accomplishment-rendering {
     margin: 0 !important;
-    page-break-inside: avoid;
-    page-break-after: avoid;
-    break-inside: avoid;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    background: transparent !important;
+    overflow: visible !important;
   }
 
-  .robbo-cert__sheet {
-    width: 297mm !important;
-    height: 210mm !important;
-    max-width: 297mm !important;
-    max-height: 210mm !important;
-    min-height: 0 !important;
-    aspect-ratio: auto !important;
-    overflow: hidden !important;
-    border-radius: 0 !important;
+  .layout-accomplishment.certificate-honor .robbo-koa-cert .accomplishment-type-symbol,
+  .layout-accomplishment.certificate-honor .robbo-koa-cert .signatory-signature {
+    display: block !important;
+  }
+
+  .robbo-koa-cert.accomplishment-rendering,
+  .layout-accomplishment .robbo-koa-cert.accomplishment-rendering {
+    position: relative !important;
+    top: 0 !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0 auto !important;
+    padding: 12mm 14mm !important;
+    border: 1px solid #c5d6e2 !important;
+    border-top: none !important;
     box-shadow: none !important;
     page-break-inside: avoid;
-    page-break-before: avoid;
-    page-break-after: avoid;
     break-inside: avoid;
+    page-break-after: avoid;
+    overflow: hidden !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
-  .robbo-cert__body {
-    height: 100% !important;
-    min-height: 0 !important;
-    page-break-inside: avoid;
-    break-inside: avoid;
+  /* Keep logo the same size as on-screen preview (not stock print 4.6875rem / not auto-blowup) */
+  .robbo-koa-cert .accomplishment-type-symbol {
+    display: block !important;
+    width: 320px !important;
+    max-width: 320px !important;
+    height: auto !important;
+    margin: 8px auto 12px auto !important;
+    border: none !important;
+  }
+
+  .robbo-koa-cert .accomplishment-type-symbol .src {
+    width: 100% !important;
+    max-width: 320px !important;
+    height: auto !important;
+  }
+
+  .robbo-koa-cert .hd-3-s {
+    font-size: 22px !important;
+    font-weight: 200 !important;
+    letter-spacing: 0.2mm !important;
+    line-height: 1.6 !important;
+  }
+
+  .robbo-koa-cert .hd-1-emphasized {
+    font-size: 28px !important;
+    margin-bottom: -28px !important;
+    line-height: 1.3 !important;
+  }
+
+  .robbo-koa-cert .copy-lead-middle,
+  .robbo-koa-cert .accomplishment-statement-detail.copy-lead-middle {
+    font-size: 16px !important;
+    line-height: 1.35 !important;
+    font-weight: 300 !important;
+  }
+
+  .robbo-koa-cert .label-hashtag {
+    margin-left: 0 !important;
+  }
+
+  .robbo-koa-cert__signature,
+  .robbo-koa-cert .signatory-signature.robbo-koa-cert__signature {
+    width: 140px !important;
+    min-width: 140px !important;
+    max-width: 140px !important;
+  }
+
+  .robbo-koa-cert .organization-logo {
+    max-width: 160px !important;
+  }
+
+  .robbo-koa-cert__issued-line {
+    white-space: nowrap !important;
+  }
+
+  .robbo-koa-cert .accomplishment-signatories,
+  .robbo-koa-cert .wrapper-statement-and-signatories {
+    border-bottom: none !important;
+    margin-bottom: 0.5rem !important;
+    padding-bottom: 0 !important;
   }
 }

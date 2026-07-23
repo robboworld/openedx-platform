@@ -156,6 +156,12 @@ _PATCH_ROBBO_DEFAULT_SITE_THEME = """
 DEFAULT_SITE_THEME = "robbo-theme"
 """
 
+# One platform-wide HTML certificate (robbo-theme Mako overrides). Tutor env.yml usually
+# already sets this; keep it explicit so Studio + LMS stay aligned after upgrades.
+_PATCH_ROBBO_CERTIFICATES_HTML_VIEW = """
+FEATURES["CERTIFICATES_HTML_VIEW"] = True
+"""
+
 # Bake Robbo xblocks from $TUTOR_ROOT/env/build/openedx/requirements/private.txt (Koa parity).
 # pip 24 resolves "-e ./pkg" relative to CWD, not private.txt — must cd into requirements/ first.
 _PATCH_OPENEDX_ROBBO_XBLOCKS = """
@@ -338,6 +344,10 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_DEFAULT_SITE_THEME),
         ("openedx-cms-development-settings", _PATCH_ROBBO_DEFAULT_SITE_THEME),
         ("openedx-cms-production-settings", _PATCH_ROBBO_DEFAULT_SITE_THEME),
+        ("openedx-lms-development-settings", _PATCH_ROBBO_CERTIFICATES_HTML_VIEW),
+        ("openedx-lms-production-settings", _PATCH_ROBBO_CERTIFICATES_HTML_VIEW),
+        ("openedx-cms-development-settings", _PATCH_ROBBO_CERTIFICATES_HTML_VIEW),
+        ("openedx-cms-production-settings", _PATCH_ROBBO_CERTIFICATES_HTML_VIEW),
         ("openedx-lms-development-settings", _PATCH_ROBBO_THEME_LOCALES),
         ("openedx-lms-production-settings", _PATCH_ROBBO_THEME_LOCALES),
         ("openedx-lms-development-settings", _PATCH_ROBBO_BINDMOUNT_MFES_SKIP_RUNTIME_PARAGON),
