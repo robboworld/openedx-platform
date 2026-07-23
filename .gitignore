@@ -126,6 +126,9 @@ cms/static/sass/*.css
 cms/static/sass/*.css.map
 cms/static/themed_sass/
 themes/**/css
+# Hand-authored Paragon brand override (served to MFEs via PARAGON_THEME_URLS)
+!themes/robbo-theme/lms/static/css/
+!themes/robbo-theme/lms/static/css/paragon-brand-robbo.css
 
 ### Logging artifacts
 log/
@@ -141,6 +144,9 @@ database.sqlite
 courseware/static/js/mathjax/*
 flushdb.sh
 build
+# Tutor MFE build-context templates (path must contain `build/`; keep Robbo brand package tracked)
+!tutor-plugin-robbo-mfe-branding/tutor_plugin_robbo_mfe_branding/templates/mfe/build/
+!tutor-plugin-robbo-mfe-branding/tutor_plugin_robbo_mfe_branding/templates/mfe/build/**
 /src/
 \#*\#
 .env/

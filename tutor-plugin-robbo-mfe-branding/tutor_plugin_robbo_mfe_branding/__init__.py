@@ -5,7 +5,8 @@
 
 """
 Tutor plugin: Robbo MFE branding — MFE_CONFIG, Paragon URLs; trims tutor-indigo image
-injects for bind-mounted MFEs (brand, header/footer packages, footer slot, env imports).
+injects for bind-mounted MFEs (brand, header/footer packages, footer slot, env imports);
+installs Robbo ``@edx/brand`` for Authoring MFE at image build time.
 """
 from __future__ import annotations
 
@@ -15,6 +16,14 @@ from tutor import hooks
 from tutormfe.hooks import PLUGIN_SLOTS
 
 _PKG = "tutor_plugin_robbo_mfe_branding"
+
+# Authoring (Studio home / courses / libraries) is not bind-mounted; tutor-indigo does not
+# restyle it either. Bake Robbo Paragon tokens via local brand package in the MFE build context
+# (templates/mfe/build/mfe/robbo-brand-openedx → env after `tutor config save`).
+_PATCH_AUTHORING_ROBBO_BRAND = """
+COPY robbo-brand-openedx /openedx/robbo-brand-openedx
+RUN npm install '@edx/brand@file:/openedx/robbo-brand-openedx'
+"""
 
 
 @hooks.Filters.ENV_TEMPLATE_ROOTS.add(priority=hooks.priorities.LOW)
@@ -29,7 +38,7 @@ MFE_CONFIG["PARAGON_THEME_URLS"] = {
     "core": {
         "urls": {
             "default": "https://cdn.jsdelivr.net/npm/@openedx/paragon@$paragonVersion/dist/core.min.css",
-            "brandOverride": "https://cdn.jsdelivr.net/npm/@openedx/brand-openedx@$brandVersion/dist/core.min.css",
+            "brandOverride": "http://{{ LMS_HOST }}:8000/static/robbo-theme/css/paragon-brand-robbo.css",
         },
     },
     "defaults": {
@@ -39,7 +48,30 @@ MFE_CONFIG["PARAGON_THEME_URLS"] = {
         "light": {
             "urls": {
                 "default": "https://cdn.jsdelivr.net/npm/@openedx/paragon@$paragonVersion/dist/light.min.css",
-                "brandOverride": "https://cdn.jsdelivr.net/npm/@openedx/brand-openedx@$brandVersion/dist/light.min.css",
+                "brandOverride": "http://{{ LMS_HOST }}:8000/static/robbo-theme/css/paragon-brand-robbo.css",
+            },
+        },
+    },
+}
+"""
+
+# Production / local without :8000 — overrides brandOverride from common (dev) defaults.
+_PARAGON_THEME_URLS_PROD = """
+MFE_CONFIG["PARAGON_THEME_URLS"] = {
+    "core": {
+        "urls": {
+            "default": "https://cdn.jsdelivr.net/npm/@openedx/paragon@$paragonVersion/dist/core.min.css",
+            "brandOverride": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/static/robbo-theme/css/paragon-brand-robbo.css",
+        },
+    },
+    "defaults": {
+        "light": "light",
+    },
+    "variants": {
+        "light": {
+            "urls": {
+                "default": "https://cdn.jsdelivr.net/npm/@openedx/paragon@$paragonVersion/dist/light.min.css",
+                "brandOverride": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/static/robbo-theme/css/paragon-brand-robbo.css",
             },
         },
     },
@@ -294,9 +326,11 @@ hooks.Filters.CONFIG_DEFAULTS.add_items(
 
 hooks.Filters.ENV_PATCHES.add_items(
     [
+        ("mfe-dockerfile-post-npm-install-authoring", _PATCH_AUTHORING_ROBBO_BRAND),
         ("mfe-lms-common-settings", _PARAGON_THEME_URLS),
         ("mfe-lms-development-settings", _PATCH_MFE_DEV),
         ("mfe-lms-production-settings", _PATCH_MFE_PROD),
+        ("mfe-lms-production-settings", _PARAGON_THEME_URLS_PROD),
         ("openedx-lms-development-settings", _PATCH_ROBBO_LMS_SERVER_CATALOG),
         ("openedx-lms-production-settings", _PATCH_ROBBO_LMS_SERVER_CATALOG),
         ("openedx-lms-development-settings", _PATCH_ROBBO_LMS_LANGUAGE),

@@ -43,7 +43,7 @@ Shell CSS / Dockerfile-патчи через `robbo-mfe-branding` сняты с 
 - **MFE UI** — `robbo-openedx-stack/repos/mfe-overrides/frontend-app-*` через `tutor mounts add`
 - **`robbo-mfe-branding`** — только минимальный `MFE_CONFIG` (`LOGO_*`, `PARAGON_THEME_URLS`). Не возвращать `robbo-mfe-shell.css`, `PLUGIN_SLOTS` footer/header, MFE Dockerfile-патчи без отдельного решения.
 
-Список overrides: `frontend-app-learner-dashboard`, `-learning`, `-authn`, `-profile`, `-account` (ветка `robbo-teak`). Bundled MFE (authoring) — контейнер `mfe` (`:2001`).
+Список overrides: `frontend-app-learner-dashboard`, `-learning`, `-authn`, `-profile`, `-account` (ветка `robbo-teak`). Bundled MFE (authoring) — контейнер `mfe` (`:2001`); зелёный Paragon primary через `robbo-brand-openedx` в `robbo-mfe-branding` при `tutor images build mfe`.
 
 Tutor mount: папка `frontend-app-APPNAME` → dev: `/openedx/app`; build: `APPNAME-src`. Имя папки = upstream repo name.
 
