@@ -351,6 +351,8 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-cms-production-settings", _PATCH_ROBBO_DEFAULT_SITE_THEME),
         ("openedx-lms-development-settings", _PATCH_ROBBO_THEME_LOCALES),
         ("openedx-lms-production-settings", _PATCH_ROBBO_THEME_LOCALES),
+        ("openedx-cms-development-settings", _PATCH_ROBBO_THEME_LOCALES),
+        ("openedx-cms-production-settings", _PATCH_ROBBO_THEME_LOCALES),
         ("openedx-lms-development-settings", _PATCH_ROBBO_BINDMOUNT_MFES_SKIP_RUNTIME_PARAGON),
         ("openedx-lms-production-settings", _PATCH_ROBBO_BINDMOUNT_MFES_SKIP_RUNTIME_PARAGON),
         ("openedx-lms-development-settings", _PATCH_YANDEX_METRIKA_DEV_LMS),
