@@ -106,7 +106,7 @@ def profile_distribution(course_id, feature):
         prd.type = 'EASY_CHOICE'
 
         if feature == 'gender':
-            raw_choices = UserProfile.GENDER_CHOICES
+            raw_choices = UserProfile.GENDER_CHOICES + UserProfile.GENDER_LEGACY_CHOICES
         elif feature == 'level_of_education':
             raw_choices = UserProfile.LEVEL_OF_EDUCATION_CHOICES
 

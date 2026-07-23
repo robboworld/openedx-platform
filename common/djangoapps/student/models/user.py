@@ -460,8 +460,11 @@ class UserProfile(models.Model):
     GENDER_CHOICES = (
         ('m', gettext_noop('Male')),
         ('f', gettext_noop('Female')),
-        # Translators: 'Other' refers to the student's gender
-        ('o', gettext_noop('Other/Prefer Not to Say'))
+    )
+    # Legacy DB values (not offered in registration / profile forms).
+    GENDER_LEGACY_CHOICES = (
+        # Translators: 'Other' refers to a legacy student gender value
+        ('o', gettext_noop('Other/Prefer Not to Say')),
     )
     gender = models.CharField(
         blank=True, null=True, max_length=6, db_index=True, choices=GENDER_CHOICES
@@ -584,7 +587,10 @@ class UserProfile(models.Model):
     def gender_display(self):
         """ Convenience method that returns the human readable gender. """
         if self.gender:
-            return self.__enumerable_to_display(self.GENDER_CHOICES, self.gender)
+            return self.__enumerable_to_display(
+                self.GENDER_CHOICES + self.GENDER_LEGACY_CHOICES,
+                self.gender,
+            )
 
     def get_meta(self):  # pylint: disable=missing-function-docstring
         js_str = self.meta
