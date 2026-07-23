@@ -2,6 +2,8 @@
 
 Patches [tutor-mfe](https://github.com/overhangio/tutor-mfe) so MFEs get Robbo logos and Paragon theme CSS (light only) from the LMS config API, and **Indigo header/footer** are recolored to match LMS `robbo-theme` via `robbo-mfe-shell.css` injected at **`tutor images build mfe`** time.
 
+**Authoring (Studio):** installs local brand package `robbo-brand-openedx` as `@edx/brand` during the Authoring MFE image build (`$primary: #00af41`). Rebuild `mfe` after changing brand SCSS.
+
 ## Documentation
 
 - **[PRODUCTION.md](docs/PRODUCTION.md)** — блок **«Скопировать в чат Cursor»** для одношаговой настройки; справочник оператора (классы A/B/C, продакшен). Правило Cursor: [.cursor/rules/openedx-tutor-robbo.mdc](../.cursor/rules/openedx-tutor-robbo.mdc).
@@ -18,18 +20,19 @@ tutor config save
 
 Ensure `INDIGO_ENABLE_DARK_TOGGLE: false` is set in `config.yml` if you use tutor-indigo and want the theme toggle hidden on LMS/MFE.
 
-Regenerate env, **rebuild the MFE image** (shell CSS is baked in), restart:
+Regenerate env, **rebuild the MFE image** (Authoring brand + shell CSS are baked in), restart:
 
 ```bash
 tutor config save
 tutor images build mfe
-tutor local launch   # or: tutor dev launch
+tutor local launch   # or: tutor dev restart mfe
 ```
 
-Runtime-only changes (`MFE_CONFIG`, logos URLs) do not need an MFE rebuild; header/footer shell overrides do.
+Runtime-only changes (`MFE_CONFIG`, logos URLs) do not need an MFE rebuild; Authoring primary color and header/footer shell overrides do.
 
 ## What it does
 
+- **`mfe-dockerfile-post-npm-install-authoring`**: `COPY` + `npm install @edx/brand@file:…/robbo-brand-openedx` (green Paragon tokens for Studio)
 - **`mfe-lms-development-settings`**: `LOGO_*`, `FAVICON_URL` pointing at `http://{{ LMS_HOST }}:8000/static/robbo-theme/...`
 - **`mfe-lms-production-settings`**: same paths with `http(s)://{{ LMS_HOST }}` (no port)
 - **`mfe-lms-common-settings`**: `PARAGON_THEME_URLS` with only `light` (Paragon + `@openedx/brand-openedx` from jsDelivr, `$paragonVersion` / `$brandVersion` wildcards)
