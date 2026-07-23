@@ -42,3 +42,12 @@ msgstr "Некорректное название компании"
 #: openedx/core/djangoapps/user_authn/views/registration_form.py
 msgid "Full name must contain three words separated by spaces."
 msgstr "ФИО должно состоять из трёх слов, разделённых пробелом"
+
+# Studio branding (CMS STUDIO_NAME / STUDIO_SHORT_NAME)
+#: cms/envs/common.py
+msgid "Your Platform Studio"
+msgstr "РОББО Studio"
+
+#: cms/envs/common.py
+msgid "Studio"
+msgstr "Studio"
