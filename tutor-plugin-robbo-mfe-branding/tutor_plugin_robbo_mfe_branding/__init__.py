@@ -51,7 +51,6 @@ _AUTHORING_STUDIO_FOOTER_SLOT = """
             },
 """
 
-
 @hooks.Filters.ENV_TEMPLATE_ROOTS.add(priority=hooks.priorities.LOW)
 def _prepend_robbo_template_root(roots: list[str]) -> list[str]:
     """Put Robbo templates first so overrides (e.g. MFE Dockerfile) win over tutormfe."""
