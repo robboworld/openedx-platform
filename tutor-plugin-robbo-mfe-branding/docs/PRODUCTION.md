@@ -66,7 +66,7 @@ END CURSOR PROMPT
 
 - На сервере (или в CI) установлены **тот же** `tutor`, версии плагинов **`mfe`**, **`indigo`**, **`robbo-mfe-branding`**, что и при разработке (или совместимые мажорные версии).
 - В `config.yml` включён плагин `robbo-mfe-branding`, при необходимости заданы `INDIGO_ENABLE_DARK_TOGGLE`, `LMS_HOST`, `ENABLE_HTTPS`, маунты темы `robbo-theme` и т.д.
-- Статика логотипов (`Vector.svg`, `logo-mfe-white.svg`) доступна с браузера по URL вида `https://<LMS_HOST>/static/robbo-theme/...` (HTTPS в проде обычно обязателен).
+- Статика логотипов (`logo-robbo.svg`, `logo-robbo-white.svg`) доступна с браузера по URL вида `https://<LMS_HOST>/static/robbo-theme/...` (HTTPS в проде обычно обязателен).
 
 ### A. Только рантайм-конфиг MFE (без пересборки образа `mfe`)
 
