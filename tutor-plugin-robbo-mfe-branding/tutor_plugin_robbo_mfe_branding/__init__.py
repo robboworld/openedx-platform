@@ -6,7 +6,7 @@
 """
 Tutor plugin: Robbo MFE branding — MFE_CONFIG, Paragon URLs; trims tutor-indigo image
 injects for bind-mounted MFEs (brand, header/footer packages, footer slot, env imports);
-installs Robbo ``@edx/brand`` for Authoring MFE at image build time.
+installs Robbo ``@edx/brand`` and RobboFooter chrome for Authoring MFE at image build time.
 """
 from __future__ import annotations
 
@@ -23,6 +23,32 @@ _PKG = "tutor_plugin_robbo_mfe_branding"
 _PATCH_AUTHORING_ROBBO_BRAND = """
 COPY robbo-brand-openedx /openedx/robbo-brand-openedx
 RUN npm install '@edx/brand@file:/openedx/robbo-brand-openedx'
+"""
+
+# After full app COPY + env.config.jsx: put chrome under src/ so babel transpiles JSX
+# (node_modules is excluded from babel-loader).
+_PATCH_AUTHORING_ROBBO_CHROME_SRC = """
+COPY robbo-frontend-chrome /openedx/app/src/robbo-frontend-chrome
+"""
+
+_PATCH_AUTHORING_ROBBO_FOOTER_IMPORT = """
+const { RobboFooter } = await import('./src/robbo-frontend-chrome');
+"""
+
+_AUTHORING_STUDIO_FOOTER_SLOT = """
+            {
+                op: PLUGIN_OPERATIONS.Hide,
+                widgetId: 'default_contents',
+            },
+            {
+                op: PLUGIN_OPERATIONS.Insert,
+                widget: {
+                    id: 'default_contents',
+                    type: DIRECT_PLUGIN,
+                    priority: 1,
+                    RenderWidget: <RobboFooter />,
+                },
+            },
 """
 
 
@@ -319,6 +345,15 @@ def _drop_indigo_footer_slots_for_robbo_bindmounts(
     ]
 
 
+# Authoring Studio footer → RobboFooter (same chrome as LMS / bind-mounted MFEs).
+PLUGIN_SLOTS.add_item(
+    (
+        "authoring",
+        "org.openedx.frontend.layout.studio_footer.v1",
+        _AUTHORING_STUDIO_FOOTER_SLOT,
+    )
+)
+
 hooks.Filters.CONFIG_DEFAULTS.add_items(
     [
         ("ROBBO_YANDEX_METRIKA_COUNTER_ID", ""),
@@ -328,6 +363,8 @@ hooks.Filters.CONFIG_DEFAULTS.add_items(
 hooks.Filters.ENV_PATCHES.add_items(
     [
         ("mfe-dockerfile-post-npm-install-authoring", _PATCH_AUTHORING_ROBBO_BRAND),
+        ("mfe-dockerfile-pre-npm-build-authoring", _PATCH_AUTHORING_ROBBO_CHROME_SRC),
+        ("mfe-env-config-runtime-definitions-authoring", _PATCH_AUTHORING_ROBBO_FOOTER_IMPORT),
         ("mfe-lms-common-settings", _PARAGON_THEME_URLS),
         ("mfe-lms-development-settings", _PATCH_MFE_DEV),
         ("mfe-lms-production-settings", _PATCH_MFE_PROD),

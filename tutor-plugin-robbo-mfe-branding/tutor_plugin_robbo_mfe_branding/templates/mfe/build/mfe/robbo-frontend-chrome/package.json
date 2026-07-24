@@ -1,0 +1,12 @@
+{
+  "name": "@robbo/frontend-chrome",
+  "version": "1.0.0",
+  "description": "Robbo header/footer chrome for Open edX MFEs (Authoring Studio footer slot).",
+  "license": "AGPL-3.0-only",
+  "author": "Robbo <https://robbo.ru>",
+  "main": "index.jsx",
+  "peerDependencies": {
+    "react": "^17.0.0 || ^18.0.0",
+    "@edx/frontend-platform": "*"
+  }
+}
