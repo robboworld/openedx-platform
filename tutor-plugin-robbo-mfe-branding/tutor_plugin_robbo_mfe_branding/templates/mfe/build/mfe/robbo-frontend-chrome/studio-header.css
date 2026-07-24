@@ -1,0 +1,295 @@
+/*
+ * Copyright (C) 2026 Robbo <https://robbo.ru>
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * Part of the Robbo Open edX distribution. See NOTICE at repository root.
+ *
+ * Authoring StudioHeader — match LMS / learner-dashboard Robbo header.
+ */
+
+@font-face {
+  font-family: "ProximaNova";
+  src: url("./fonts/ProximaNova-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ProximaNova";
+  src: url("./fonts/ProximaNova-Extrabold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ProximaNova";
+  src: url("./fonts/ProximaNova-Extrabold.woff") format("woff");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+.studio-header,
+.studio-header .container,
+.studio-header .container-xl,
+.studio-header .container-fluid,
+.studio-header header,
+.studio-header .pgn__action-row,
+.studio-header [class*="action-row"] {
+  background: #00af41 !important;
+  background-color: #00af41 !important;
+}
+
+.studio-header {
+  min-height: 75px !important;
+  height: auto !important;
+  box-shadow: none !important;
+  border-bottom: none !important;
+  color: #fff !important;
+}
+
+/* Same inner width/padding as LMS `.header-container` / MFE `__inner` */
+.studio-header .container,
+.studio-header .container-xl,
+.studio-header .container-fluid {
+  max-width: 1600px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  width: 100% !important;
+}
+
+@media (min-width: 992px) {
+  .studio-header .container,
+  .studio-header .container-xl,
+  .studio-header .container-fluid {
+    padding-left: 28px !important;
+    padding-right: 28px !important;
+  }
+}
+
+.studio-header header,
+.studio-header .pgn__action-row,
+.studio-header [class*="action-row"] {
+  align-items: center !important;
+  min-height: 75px !important;
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+}
+
+/*
+ * Wordmark = LMS: ProximaNova 30px + superscript ® (0.45em).
+ * Markup: <a><img.logo></a> — hide img; ::after = РОББО; child span via
+ * adjacent trick not available — use ::after for letters and a real
+ * superscript via ::after's sibling... Use flex + two pseudos with order.
+ */
+.studio-header a:has(> img.logo),
+.studio-header a:has(> img.d-block.logo) {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  align-self: center !important;
+  gap: 0.06em;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.1 !important;
+  text-decoration: none !important;
+  color: #fff !important;
+  font-family: "ProximaNova", "Proxima Nova", Helvetica, Arial, sans-serif !important;
+  font-size: 30px !important;
+  font-weight: 700 !important;
+}
+
+.studio-header a:has(> img.logo)::after,
+.studio-header a:has(> img.d-block.logo)::after {
+  content: "\0420\041E\0411\0411\041E";
+  order: 1;
+  color: #fff !important;
+  font-family: inherit !important;
+  font-size: 1em !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.studio-header a:has(> img.logo)::before,
+.studio-header a:has(> img.d-block.logo)::before {
+  content: "\00AE" !important;
+  display: inline !important;
+  order: 2;
+  color: #fff !important;
+  font-family: inherit !important;
+  font-size: 0.45em !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  margin: 0.15em 0 0 0 !important;
+  padding: 0 !important;
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  width: auto !important;
+  height: auto !important;
+  border: 0 !important;
+  transform: none !important;
+  background: none !important;
+}
+
+.studio-header img.logo,
+.studio-header img.d-block.logo {
+  order: 0;
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  border: 0 !important;
+  opacity: 0 !important;
+}
+
+.studio-header .course-title-lockup {
+  border-right-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+.studio-header .course-title-lockup span,
+.studio-header .nav-item,
+.studio-header .nav-link,
+.studio-header a:not(.dropdown-item) {
+  color: #fff !important;
+}
+
+/* Search icon — no pill */
+.studio-header button[data-testid="search-button"],
+.studio-header .btn:has(> svg):not(.dropdown-toggle):not([id*="dropdown"]),
+.studio-header .btn:has(> .pgn__icon):not(.dropdown-toggle):not([id*="dropdown"]) {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #fff !important;
+  border-radius: 0.25rem !important;
+  padding: 0.35rem 0.5rem !important;
+}
+
+.studio-header button[data-testid="search-button"] svg,
+.studio-header .pgn__icon {
+  color: #fff !important;
+  fill: currentColor !important;
+}
+
+/* User pill — LMS `.robbo-layout-user-menu__toggle` */
+.studio-header #user-dropdown-menu,
+.studio-header button#user-dropdown-menu {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 0 !important;
+  padding: 6px 16px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  color: #fff !important;
+  border: 1px solid #fff !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  font-family: "ProximaNova", "Proxima Nova", Helvetica, Arial, sans-serif !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+}
+
+.studio-header #user-dropdown-menu:hover,
+.studio-header #user-dropdown-menu:focus,
+.studio-header button#user-dropdown-menu:hover,
+.studio-header button#user-dropdown-menu:focus {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+
+.studio-header #user-dropdown-menu .pgn__avatar,
+.studio-header #user-dropdown-menu img,
+.studio-header #user-dropdown-menu .pgn__icon,
+.studio-header #user-dropdown-menu svg {
+  display: none !important;
+}
+
+/*
+ * Chevron on ::after only (same as LMS). Do not use ::before — conflicts with
+ * Bootstrap caret and caused the arrow to jump on open.
+ */
+.studio-header #user-dropdown-menu::before,
+.studio-header button#user-dropdown-menu::before {
+  content: none !important;
+  display: none !important;
+}
+
+.studio-header #user-dropdown-menu::after,
+.studio-header button#user-dropdown-menu::after,
+.studio-header #user-dropdown-menu.dropdown-toggle::after {
+  content: "" !important;
+  display: inline-block !important;
+  flex-shrink: 0 !important;
+  box-sizing: content-box !important;
+  width: 5px !important;
+  height: 5px !important;
+  margin: 0 0 0 0 !important;
+  padding: 0 !important;
+  border-style: solid !important;
+  border-color: #fff !important;
+  border-width: 0 2px 2px 0 !important;
+  background: transparent !important;
+  vertical-align: middle !important;
+  position: relative !important;
+  top: -2px !important;
+  left: auto !important;
+  right: auto !important;
+  float: none !important;
+  transform: rotate(45deg) !important;
+  transition: transform 200ms ease, top 200ms ease !important;
+}
+
+.studio-header #user-dropdown-menu[aria-expanded="true"]::after,
+.studio-header #user-dropdown-menu.show::after,
+.studio-header button#user-dropdown-menu[aria-expanded="true"]::after {
+  top: 0 !important;
+  transform: rotate(225deg) !important;
+}
+
+/* Other course nav dropdowns */
+.studio-header .btn-outline-primary:not(#user-dropdown-menu),
+.studio-header .dropdown > .btn:not(#user-dropdown-menu) {
+  background: transparent !important;
+  border: 1px solid #fff !important;
+  border-radius: 999px !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+
+.studio-header .dropdown-menu {
+  color: #383838;
+}
+
+.studio-header .dropdown-menu a,
+.studio-header .dropdown-menu .dropdown-item,
+.studio-header .dropdown-menu button {
+  color: #383838 !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+@media (max-width: 767.98px) {
+  .studio-header,
+  .studio-header header,
+  .studio-header .pgn__action-row {
+    min-height: 55px !important;
+  }
+
+  .studio-header a:has(> img.logo),
+  .studio-header a:has(> img.d-block.logo) {
+    font-size: 22px !important;
+  }
+}
