@@ -27,7 +27,9 @@ def user_fields_changed(
     # This mirrors the logic in ./views/register.py:_track_user_registration
     if table == 'auth_userprofile':
         if 'gender' in fields and fields['gender']:
-            fields['gender'] = dict(UserProfile.GENDER_CHOICES)[fields['gender']]
+            fields['gender'] = dict(
+                UserProfile.GENDER_CHOICES + UserProfile.GENDER_LEGACY_CHOICES
+            ).get(fields['gender'], fields['gender'])
         if 'country' in fields:
             fields['country'] = str(fields['country'])
         if 'level_of_education' in fields and fields['level_of_education']:
