@@ -151,6 +151,7 @@ if (typeof document !== 'undefined') {
   }
 }
 """
+
 # tutor-indigo init assigns SiteTheme "indigo" for LMS_HOST; force default comprehensive theme.
 _PATCH_ROBBO_DEFAULT_SITE_THEME = """
 DEFAULT_SITE_THEME = "robbo-theme"
