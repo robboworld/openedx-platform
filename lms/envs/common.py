@@ -3756,6 +3756,7 @@ REGISTRATION_FIELD_ORDER = [
     "city",
     "state",
     "country",
+    "date_of_birth",
     "year_of_birth",
     "level_of_education",
     "gender",

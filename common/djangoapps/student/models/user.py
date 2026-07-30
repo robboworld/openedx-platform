@@ -457,6 +457,8 @@ class UserProfile(models.Model):
     this_year = datetime.now(UTC).year
     VALID_YEARS = list(range(this_year, this_year - 120, -1))
     year_of_birth = models.IntegerField(blank=True, null=True, db_index=True)
+    # Full date of birth (Robbo registration). NULL for legacy users; year_of_birth kept in sync when set.
+    date_of_birth = models.DateField(blank=True, null=True, db_index=True)
     GENDER_CHOICES = (
         ('m', gettext_noop('Male')),
         ('f', gettext_noop('Female')),

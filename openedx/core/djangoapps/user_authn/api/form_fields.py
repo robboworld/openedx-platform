@@ -210,6 +210,20 @@ def add_phone_number_field(is_field_required=False):
     }
 
 
+def add_date_of_birth_field(is_field_required=False):
+    """
+    Returns the date of birth field description for Authn MFE registration API.
+    """
+    date_of_birth_label = _("Date of birth")
+    return {
+        'name': 'date_of_birth',
+        'type': 'text',
+        'label': date_of_birth_label,
+        'error_message': accounts.REQUIRED_FIELD_DATE_OF_BIRTH_MSG if is_field_required else '',
+        'required': is_field_required,
+    }
+
+
 def add_title_field(is_field_required=False):
     """
     Returns the title field description

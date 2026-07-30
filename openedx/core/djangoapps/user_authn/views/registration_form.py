@@ -4,6 +4,7 @@ Objects and utilities used to construct registration forms.
 
 import copy
 import re
+from datetime import date, datetime
 from importlib import import_module
 
 from django import forms
@@ -210,6 +211,7 @@ class AccountCreationForm(forms.Form):
             "level_of_education": _("A level of education is required"),
             "gender": _("Your gender is required"),
             "year_of_birth": _("Your year of birth is required"),
+            "date_of_birth": accounts.REQUIRED_FIELD_DATE_OF_BIRTH_MSG,
             "mailing_address": _("Your mailing address is required"),
             "goals": _("A description of your goals is required"),
             "city": _("A city is required"),
@@ -300,6 +302,27 @@ class AccountCreationForm(forms.Form):
             return int(year_str) if year_str is not None else None
         except ValueError:
             return None
+
+    def clean_date_of_birth(self):
+        """
+        Parse date_of_birth as ISO YYYY-MM-DD; reject future dates and years before 1900.
+        """
+        raw = self.cleaned_data.get("date_of_birth")
+        if raw is None or (isinstance(raw, str) and not raw.strip()):
+            return None
+        if isinstance(raw, date) and not isinstance(raw, datetime):
+            dob = raw
+        else:
+            try:
+                dob = datetime.strptime(str(raw).strip()[:10], "%Y-%m-%d").date()
+            except (TypeError, ValueError) as exc:
+                raise ValidationError(_("Enter a valid date of birth (YYYY-MM-DD).")) from exc
+        today = date.today()
+        if dob > today:
+            raise ValidationError(_("Date of birth cannot be in the future."))
+        if dob.year < 1900:
+            raise ValidationError(_("Enter a valid date of birth."))
+        return dob
 
     @property
     def cleaned_extended_profile(self):
@@ -394,6 +417,7 @@ class RegistrationFormFactory:
             "country",
             "gender",
             "year_of_birth",
+            "date_of_birth",
             "level_of_education",
             "company",
             "phone_number",
@@ -942,6 +966,20 @@ class RegistrationFormFactory:
             "phone_number",
             label=phone_number_label,
             required=required
+        )
+
+    def _add_date_of_birth_field(self, form_desc, required=False):
+        """Add a date of birth field to a form description."""
+        date_of_birth_label = _("Date of birth")
+        error_msg = accounts.REQUIRED_FIELD_DATE_OF_BIRTH_MSG
+
+        form_desc.add_field(
+            "date_of_birth",
+            label=date_of_birth_label,
+            required=required,
+            error_messages={
+                "required": error_msg
+            }
         )
 
     def _add_title_field(self, form_desc, required=False):

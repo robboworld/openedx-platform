@@ -743,12 +743,15 @@ def do_create_account(form, custom_form=None):
 
     profile_fields = [
         "name", "level_of_education", "gender", "mailing_address", "city", "country", "goals",
-        "year_of_birth", "phone_number",
+        "year_of_birth", "date_of_birth", "phone_number",
     ]
     profile = UserProfile(
         user=user,
         **{key: form.cleaned_data.get(key) for key in profile_fields}
     )
+    # Keep year_of_birth in sync for Open edX age/analytics that use year only.
+    if profile.date_of_birth is not None:
+        profile.year_of_birth = profile.date_of_birth.year
     extended_profile = form.cleaned_extended_profile
     if extended_profile:
         profile.meta = json.dumps(extended_profile)
