@@ -107,6 +107,15 @@ REGISTRATION_RATELIMIT = '20/d'
 REGISTRATION_MIN_COMPLETION_SECONDS = 5
 """
 
+# Soften login lockouts: stock defaults (100/5m IP, 30/5m email, 6 failures / 30 min)
+# lock out staff and learners too aggressively after password typos or shared NATs.
+_PATCH_ROBBO_LOGIN_LIMITS = """
+LOGISTRATION_RATELIMIT_RATE = '500/5m'
+LOGISTRATION_PER_EMAIL_RATELIMIT_RATE = '100/5m'
+LOGIN_AND_REGISTER_FORM_RATELIMIT = '500/5m'
+FEATURES['ENABLE_MAX_FAILED_LOGIN_ATTEMPTS'] = False
+"""
+
 # Authn MFE: company field off (see docs/production.md). Overrides stale site config defaults.
 _PATCH_ROBBO_REGISTRATION_FIELDS = """
 try:
@@ -115,6 +124,8 @@ except NameError:
     REGISTRATION_EXTRA_FIELDS = {}
 REGISTRATION_EXTRA_FIELDS['company'] = 'hidden'
 REGISTRATION_EXTRA_FIELDS['date_of_birth'] = 'required'
+REGISTRATION_EXTRA_FIELDS['honor_code'] = 'required'
+REGISTRATION_EXTRA_FIELDS.setdefault('phone_number', 'optional')
 """
 
 # Robbo default locale for LMS/CMS (see also tutor config LANGUAGE_CODE).
@@ -340,6 +351,8 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_EMAIL_CONFIRMATION),
         ("openedx-lms-development-settings", _PATCH_ROBBO_REGISTRATION_ANTI_SPAM),
         ("openedx-lms-production-settings", _PATCH_ROBBO_REGISTRATION_ANTI_SPAM),
+        ("openedx-lms-development-settings", _PATCH_ROBBO_LOGIN_LIMITS),
+        ("openedx-lms-production-settings", _PATCH_ROBBO_LOGIN_LIMITS),
         ("openedx-lms-development-settings", _PATCH_ROBBO_REGISTRATION_FIELDS),
         ("openedx-lms-production-settings", _PATCH_ROBBO_REGISTRATION_FIELDS),
         ("openedx-lms-development-settings", _PATCH_ROBBO_DEFAULT_SITE_THEME),

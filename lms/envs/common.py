@@ -3743,6 +3743,8 @@ REGISTRATION_EXTRA_FIELDS = {
     'company': 'hidden',
     'honor_code': 'required',
     'phone_number': 'optional',
+    # Required for Authn MFE «Дата рождения» (also patched in robbo-mfe-branding).
+    'date_of_birth': 'required',
 }
 
 REGISTRATION_FIELD_ORDER = [
