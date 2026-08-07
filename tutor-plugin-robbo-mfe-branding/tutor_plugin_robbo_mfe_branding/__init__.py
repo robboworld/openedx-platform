@@ -32,10 +32,12 @@ COPY robbo-frontend-chrome /openedx/app/src/robbo-frontend-chrome
 """
 
 _PATCH_AUTHORING_ROBBO_FOOTER_IMPORT = """
-const { RobboFooter } = await import('./src/robbo-frontend-chrome');
+const { RobboStudioHelpContent } = await import('./src/robbo-frontend-chrome');
 """
 
-_AUTHORING_STUDIO_FOOTER_SLOT = """
+# Only replace Studio help buttons (docs + demo course) → Robbo support.
+# Keep the default Studio footer chrome/UI unchanged.
+_AUTHORING_STUDIO_HELP_CONTENT_SLOT = """
             {
                 op: PLUGIN_OPERATIONS.Hide,
                 widgetId: 'default_contents',
@@ -43,10 +45,10 @@ _AUTHORING_STUDIO_FOOTER_SLOT = """
             {
                 op: PLUGIN_OPERATIONS.Insert,
                 widget: {
-                    id: 'default_contents',
+                    id: 'robbo_studio_help_content',
                     type: DIRECT_PLUGIN,
                     priority: 1,
-                    RenderWidget: <RobboFooter />,
+                    RenderWidget: <RobboStudioHelpContent />,
                 },
             },
 """
@@ -344,12 +346,11 @@ def _drop_indigo_footer_slots_for_robbo_bindmounts(
     ]
 
 
-# Authoring Studio footer → RobboFooter (same chrome as LMS / bind-mounted MFEs).
 PLUGIN_SLOTS.add_item(
     (
         "authoring",
-        "org.openedx.frontend.layout.studio_footer.v1",
-        _AUTHORING_STUDIO_FOOTER_SLOT,
+        "org.openedx.frontend.layout.studio_footer_help-content.v1",
+        _AUTHORING_STUDIO_HELP_CONTENT_SLOT,
     )
 )
 

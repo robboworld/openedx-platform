@@ -554,6 +554,8 @@ _GUEST_COURSE_DESC_BOILERPLATE = (
     'include your long course description here',
     'include your course description here',
     'enter short description',
+    'вставьте здесь подробное описание курса',
+    'это второй абзац подробного описания',
 )
 
 # Default Open edX overview / short_description placeholder (catalog cards).

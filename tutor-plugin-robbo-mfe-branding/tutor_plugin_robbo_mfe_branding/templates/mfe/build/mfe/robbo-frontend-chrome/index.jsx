@@ -5,9 +5,12 @@
  *
  * RobboFooter for Authoring (Studio) via studio_footer PLUGIN_SLOT.
  * Markup/classes match LMS theme + bind-mounted MFE robbo-layout.
+ * RobboStudioHelpContent replaces default Studio help buttons only.
  */
 import React from 'react';
 import { getConfig } from '@edx/frontend-platform';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { ActionRow, Button } from '@openedx/paragon';
 
 import './footer.css';
 import './studio-header.css';
@@ -42,6 +45,31 @@ const CONTACTS_HEADING = '\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u044B';
 const POLICY_LABEL = '\u041F\u043E\u043B\u0438\u0442\u0438\u043A\u0430 \u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0438 \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0445 \u0434\u0430\u043D\u043D\u044B\u0445';
 const CONSENT_LABEL = '\u0421\u043E\u0433\u043B\u0430\u0441\u0438\u0435 \u043D\u0430 \u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0443 \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0445 \u0434\u0430\u043D\u043D\u044B\u0445';
 const FASIE_ALT = '\u0424\u043E\u043D\u0434 \u0441\u043E\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F \u0438\u043D\u043D\u043E\u0432\u0430\u0446\u0438\u044F\u043C';
+
+const SUPPORT_URL = 'https://support.robbo.world/';
+
+/** Replaces default Studio help buttons (docs + demo course) with Robbo support. */
+export function RobboStudioHelpContent() {
+  return (
+    <ActionRow key="help-link-button-row" className="py-4" data-testid="helpButtonRow">
+      <ActionRow.Spacer />
+      <Button
+        as="a"
+        href={SUPPORT_URL}
+        size="sm"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <FormattedMessage
+          id="authoring.footer.help.educatorsDocs.button.label"
+          defaultMessage="ROBBO Support"
+          description="Label for Robbo support button in Studio help section"
+        />
+      </Button>
+      <ActionRow.Spacer />
+    </ActionRow>
+  );
+}
 
 export function RobboFooter() {
   const lmsBase = (getConfig().LMS_BASE_URL || '').replace(/\/$/, '');

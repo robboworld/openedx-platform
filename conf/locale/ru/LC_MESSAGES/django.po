@@ -10785,11 +10785,9 @@ msgstr ""
 "доступен калькулятор на странице курса."
 
 #: xmodule/course_block.py
-#, fuzzy
 msgid "Enter the name of the course as it should appear in the course list."
 msgstr ""
-"Введите названия дополнительных модулей, которые будут использованы в вашем "
-"курсе."
+"Введите название курса так, как оно должно отображаться в списке курсов."
 
 #: xmodule/course_block.py
 msgid "Course Display Name"
@@ -10903,14 +10901,12 @@ msgid "Course Is New"
 msgstr "Курс новый"
 
 #: xmodule/course_block.py
-#, fuzzy
 msgid ""
 "Enter true or false. If true, the course appears in the list of new courses,"
 " and a New! badge temporarily appears next to the course image."
 msgstr ""
-"Введите, правда или неправда. Если это правда, любые основные моменты, "
-"связанные с содержанием в курсе, будут сообщаться учащимся по их расписанию."
-" "
+"Введите true или false. Если значение true, курс отображается в списке "
+"новых курсов, а рядом с изображением курса временно появляется значок New!"
 
 #: xmodule/course_block.py
 msgid "Mobile Course Available"
@@ -11306,13 +11302,12 @@ msgid "Allow Public Wiki Access"
 msgstr "Общий доступ к вики"
 
 #: xmodule/course_block.py
-#, fuzzy
 msgid ""
 "Enter true or false. If true, students can view the course wiki even if "
 "they're not enrolled in the course."
 msgstr ""
-"Введите true или false.  Если введено значение true, слушателям будет "
-"доступен калькулятор на странице курса."
+"Введите true или false. Если значение true, студенты могут просматривать "
+"вики курса, даже если они не записаны на курс."
 
 #: xmodule/course_block.py
 msgid "Invitation Only"
@@ -11433,16 +11428,15 @@ msgstr "Настройка команд"
 msgid ""
 "Configure team sets, limit team sizes, and set visibility settings using "
 "JSON. See <a target=\"&#95;blank\" "
-"href=\"https://edx.readthedocs.io/projects/edx-partner-course-"
-"staff/en/latest/course_features/teams/teams_setup.html#enable-and-configure-"
-"teams\">teams configuration documentation</a> for help and examples."
+"href=\"https://docs.openedx.org/en/latest/educators/references/"
+"advanced_features/teams_configuration_options.html>teams "
+"configuration documentation</a> for help and examples."
 msgstr ""
 "Настраивайте наборы команд, ограничивайте размеры команд и устанавливайте "
 "параметры видимости с помощью JSON. См. <a target=\"&#95;blank\" "
-"href=\"https://edx.readthedocs.io/projects/edx-partner-course-"
-"staff/en/latest/course_features/teams/teams_setup.html#enable-and-configure-"
-"teams\">документацию по настройке команд</a> для получения справки и "
-"примеров."
+"href=\"https://docs.openedx.org/en/latest/educators/references/"
+"advanced_features/teams_configuration_options.html>документацию по "
+"настройке команд</a> для получения справки и примеров."
 
 #: xmodule/course_block.py
 msgid "Enable Proctored Exams"
