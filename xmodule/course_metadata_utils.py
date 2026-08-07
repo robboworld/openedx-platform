@@ -5,6 +5,7 @@ This is a place to put simple functions that operate on course metadata. It
 allows us to share code between the CourseBlock and CourseOverview
 classes, which both need these type of functions.
 """
+# Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 
 
 from base64 import b32encode
@@ -53,6 +54,53 @@ DEFAULT_GRADING_POLICY = {
         "Pass": 0.5,
     },
 }
+
+"""
+Russian default grading policy for course runs created with language=ru.
+"""
+DEFAULT_GRADING_POLICY_RU = {
+    "GRADER": [
+        {
+            "type": "Домашнее задание",
+            "short_label": "ДЗ",
+            "min_count": 12,
+            "drop_count": 2,
+            "weight": 0.15,
+        },
+        {
+            "type": "Лабораторная работа",
+            "min_count": 12,
+            "drop_count": 2,
+            "weight": 0.15,
+        },
+        {
+            "type": "Промежуточный экзамен",
+            "short_label": "Пром.",
+            "min_count": 1,
+            "drop_count": 0,
+            "weight": 0.3,
+        },
+        {
+            "type": "Итоговый экзамен",
+            "short_label": "Итог",
+            "min_count": 1,
+            "drop_count": 0,
+            "weight": 0.4,
+        }
+    ],
+    "GRADE_CUTOFFS": {
+        "Зачёт": 0.5,
+    },
+}
+
+
+def get_default_grading_policy(language=None):
+    """
+    Return the default grading policy for the given language code.
+    """
+    if language and str(language).lower().startswith('ru'):
+        return DEFAULT_GRADING_POLICY_RU
+    return DEFAULT_GRADING_POLICY
 
 
 def clean_course_key(course_key, padding_char):

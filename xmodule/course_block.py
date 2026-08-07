@@ -471,7 +471,10 @@ class CourseFields:  # lint-amnesty, pylint: disable=missing-class-docstring
         display_name=_("Video Upload Credentials"),
         help=_(
             "Enter the unique identifier for your course's video files provided by {platform_name}."
-        ).format(platform_name=settings.PLATFORM_NAME),
+        ),
+        help_format_args=dict(
+            platform_name=settings.PLATFORM_NAME,
+        ),
         scope=Scope.settings
     )
     no_grade = Boolean(
@@ -518,7 +521,10 @@ class CourseFields:  # lint-amnesty, pylint: disable=missing-class-docstring
             "Allow course instructors to assign CCX Coach roles, and allow coaches to manage "
             "Custom Courses on {platform_name}. When false, Custom Courses cannot be created, "
             "but existing Custom Courses will be preserved."
-        ).format(platform_name=settings.PLATFORM_NAME),
+        ),
+        help_format_args=dict(
+            platform_name=settings.PLATFORM_NAME,
+        ),
         default=False,
         scope=Scope.settings
     )
