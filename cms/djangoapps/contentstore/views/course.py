@@ -990,6 +990,11 @@ def create_new_course_in_store(store, user, org, number, run, fields):
         'cert_html_view_enabled': True,
     })
 
+    # Localize default assignment/cutoff labels for Russian courses.
+    if 'grading_policy' not in fields:
+        from xmodule.course_metadata_utils import get_default_grading_policy  # lint-amnesty, pylint: disable=import-outside-toplevel
+        fields['grading_policy'] = get_default_grading_policy(fields.get('language'))
+
     with modulestore().default_store(store):
         # Creating the course raises DuplicateCourseError if an existing course with this org/name is found
         new_course = modulestore().create_course(

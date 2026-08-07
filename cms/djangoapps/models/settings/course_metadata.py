@@ -181,6 +181,10 @@ class CourseMetadata:
             if filter_fields and field.name not in filter_fields:
                 continue
 
+            # Hidden mixin metadata (e.g. upstream sync) is not editable in Advanced Settings.
+            if field.runtime_options.get('hidden', False):
+                continue
+
             field_help = _(field.help)  # lint-amnesty, pylint: disable=translation-of-non-string
             help_args = field.runtime_options.get('help_format_args')
             if help_args is not None:
