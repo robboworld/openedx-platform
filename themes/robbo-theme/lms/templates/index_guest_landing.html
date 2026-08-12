@@ -3,7 +3,7 @@
 <%!
 from datetime import datetime
 from django.conf import settings
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, get_language
 from django.urls import reverse
 from mako.runtime import UNDEFINED
 
@@ -23,34 +23,35 @@ def _robbo_show_guest_migration_banner(request):
 %>
 <%
 guest_landing_host = request.get_host().split(':')[0]
-guest_landing_tagline = f'{guest_landing_host} - образовательная платформа'
+guest_landing_tagline = _('{host} — learning platform').format(host=guest_landing_host)
+guest_lang = (get_language() or settings.LANGUAGE_CODE or 'en').split('-')[0]
 %>
-  ## Гостевая главная: кастомный topbar/footer; контент — классическая главная Open edX (каталог курсов).
-  <section class="robbo-guest-landing" lang="ru">
-    <p class="robbo-guest-skip-target"><a class="robbo-guest-skip-target__link" href="#courses">К содержанию страницы</a>
+  ## Guest home: custom topbar/footer; content is the classic Open edX course catalog home.
+  <section class="robbo-guest-landing" lang="${guest_lang}">
+    <p class="robbo-guest-skip-target"><a class="robbo-guest-skip-target__link" href="#courses">${_("Skip to page content")}</a>
     </p>
 
     <div class="robbo-guest-hero-stack">
       <header class="robbo-guest-topbar" role="banner">
-        ## Сетка как `.header-container` + `.robbo-main-header` на /courses: leading | center | trailing.
+        ## Grid like `.header-container` + `.robbo-main-header` on /courses: leading | center | trailing.
         <div class="robbo-guest-topbar__main">
           <div class="robbo-guest-topbar__leading">
-            <a class="robbo-guest-topbar__brand" href="#courses" aria-label="Перейти к каталогу курсов">
-              <span class="robbo-guest-topbar__wordmark" aria-hidden="true">РОББО<sup
+            <a class="robbo-guest-topbar__brand" href="#courses" aria-label="${_("Go to course catalog")}">
+              <span class="robbo-guest-topbar__wordmark" aria-hidden="true">ROBBO<sup
                   class="robbo-guest-topbar__wordmark-reg">®</sup></span>
-              <span class="sr-only">Перейти к каталогу курсов</span>
+              <span class="sr-only">${_("Go to course catalog")}</span>
             </a>
           </div>
           <div class="robbo-guest-topbar__center">
             <a class="robbo-guest-topbar__tagline" href="#courses"
-              aria-label="Перейти к каталогу курсов">${guest_landing_tagline}</a>
+              aria-label="${_("Go to course catalog")}">${guest_landing_tagline}</a>
           </div>
           <div class="robbo-guest-topbar__trailing">
             <div class="robbo-guest-topbar__actions">
               <a class="robbo-guest-topbar__btn robbo-guest-topbar__btn--solid"
-                href="${reverse('signin_user') | h}">Вход</a>
+                href="${reverse('signin_user') | h}">${_("Sign in")}</a>
               <a class="robbo-guest-topbar__btn robbo-guest-topbar__btn--outline"
-                href="${reverse('register_user') | h}">Регистрация</a>
+                href="${reverse('register_user') | h}">${_("Register")}</a>
             </div>
           </div>
         </div>
@@ -58,7 +59,7 @@ guest_landing_tagline = f'{guest_landing_host} - образовательная 
       % if _robbo_show_guest_migration_banner(request):
         <div class="robbo-guest-domain-banner" role="status" aria-live="polite">
           <p class="robbo-guest-domain-banner__inner">
-            <span class="robbo-guest-domain-banner__label">Мы переехали на новый домен</span>
+            <span class="robbo-guest-domain-banner__label">${_("We have moved to a new domain")}</span>
             <span class="robbo-guest-domain-banner__domain">online.robbo.ru</span>
           </p>
         </div>
@@ -76,17 +77,16 @@ guest_landing_tagline = f'{guest_landing_host} - образовательная 
               </div>
             % else:
               <h1 id="robbo-guest-hero-title" class="robbo-guest-hero__title">
-                Образовательная платформа — онлайн-курсы и программы обучения
+                ${_("Learning platform — online courses and training programs")}
               </h1>
             % endif
             <p class="robbo-guest-hero__lede">
-              Робототехника, программирование и инженерные технологии на базе открытого кода — для детей, педагогов и
-              специалистов.
+              ${_("Robotics, programming, and engineering based on open source — for children, educators, and professionals.")}
             </p>
             <div class="robbo-guest-hero__actions">
-              <a class="robbo-guest-hero__btn robbo-guest-hero__btn--primary" href="#courses">Смотреть курсы</a>
+              <a class="robbo-guest-hero__btn robbo-guest-hero__btn--primary" href="#courses">${_("Browse courses")}</a>
               <a class="robbo-guest-hero__btn robbo-guest-hero__btn--secondary"
-                href="${reverse('register_user') | h}">Регистрация</a>
+                href="${reverse('register_user') | h}">${_("Register")}</a>
             </div>
           </div>
           % if robbo_about is not UNDEFINED:
@@ -130,7 +130,7 @@ guest_landing_tagline = f'{guest_landing_host} - образовательная 
         </header>
 
         <div class="robbo-guest-courses-showcase">
-          <h2 id="robbo-guest-courses-title" class="robbo-guest-courses-showcase__title">Наши курсы</h2>
+          <h2 id="robbo-guest-courses-title" class="robbo-guest-courses-showcase__title">${_("Our courses")}</h2>
 
           % if robbo_guest_course_cards is not UNDEFINED and robbo_guest_course_cards:
             <%
@@ -150,7 +150,7 @@ guest_landing_tagline = f'{guest_landing_host} - образовательная 
       </section>
     </div>
 
-    <footer id="footer-guest" class="robbo-site-footer robbo-guest-footer" lang="ru">
+    <footer id="footer-guest" class="robbo-site-footer robbo-guest-footer" lang="${guest_lang}">
       <div class="robbo-site-footer__inner">
         <%include file="robbo_footer_inner.html" />
       </div>

@@ -1,7 +1,4 @@
 <%page args="about" expression_filter="h"/>
-<%!
-from django.urls import reverse
-%>
 <article class="robbo-guest-about-panel" aria-labelledby="robbo-about-title">
   <h2 id="robbo-about-title" class="robbo-guest-about-panel__title sr-only">${about['title']}</h2>
   <p class="robbo-guest-about-panel__tagline">${about['tagline']}</p>
@@ -37,7 +34,4 @@ from django.urls import reverse
     </ul>
   % endif
 
-  <p class="robbo-guest-about-panel__more">
-    <a class="robbo-guest-about-panel__more-link" href="${reverse('about') | h}">Подробнее о компании</a>
-  </p>
 </article>

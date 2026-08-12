@@ -1,9 +1,12 @@
 <%page args="course_card, account, card_index" expression_filter="h"/>
+<%!
+from django.utils.translation import gettext as _
+%>
 <%
   card_classes = 'robbo-courses-catalog__stub robbo-courses-catalog__stub--course'
   if course_card.get('is_enrolled'):
       card_classes += ' is-enrolled'
-  about_aria_label = 'О курсе: {}'.format(course_card['title'])
+  about_aria_label = _('About the course: {title}').format(title=course_card['title'])
   has_course_meta = (
       course_card.get('is_enrolled')
       or course_card.get('start_label')
@@ -32,13 +35,13 @@
             % if has_course_meta:
               <p class="robbo-courses-catalog__course-meta">
                 % if course_card.get('is_enrolled'):
-                  <span class="robbo-courses-catalog__course-meta-item robbo-courses-catalog__course-meta-item--enrolled">Вы записаны</span>
+                  <span class="robbo-courses-catalog__course-meta-item robbo-courses-catalog__course-meta-item--enrolled">${_("Enrolled")}</span>
                 % endif
                 % if course_card.get('start_label'):
                   <span class="robbo-courses-catalog__course-meta-item">${course_card['start_label']}</span>
                 % endif
                 % if course_card.get('about_url'):
-                  <a class="robbo-courses-catalog__course-about-link" href="${course_card['about_url']}">О курсе</a>
+                  <a class="robbo-courses-catalog__course-about-link" href="${course_card['about_url']}">${_("About the course")}</a>
                 % endif
               </p>
             % endif
@@ -50,7 +53,7 @@
                 aria-valuenow="${course_card['progress_percent']}"
                 aria-valuemin="0"
                 aria-valuemax="100"
-                aria-label="Прогресс курса"
+                aria-label="${_("Course progress")}"
               >
                 <div class="robbo-courses-catalog__course-progress-track">
                   <div class="robbo-courses-catalog__course-progress-bar"></div>
@@ -103,7 +106,7 @@
             class="robbo-courses-catalog__btn robbo-courses-catalog__btn--primary robbo-courses-catalog__btn--disabled"
             role="button"
             aria-disabled="true"
-            title="Подтвердите email, чтобы начать обучение"
+            title="${_("Confirm your email to start learning")}"
           >
             ${course_card['cta_label']}
           </span>

@@ -53,8 +53,8 @@ MFE_CONFIG["LOGO_WHITE_URL"] = "http://{{ LMS_HOST }}:8000/static/robbo-theme/im
 MFE_CONFIG["FAVICON_URL"] = "http://{{ LMS_HOST }}:8000/favicon.ico"
 MFE_CONFIG["ENABLE_DYNAMIC_REGISTRATION_FIELDS"] = True
 MFE_CONFIG["MARKETING_EMAILS_OPT_IN"] = True
-MFE_CONFIG["TOS_AND_HONOR_CODE"] = "https://robbo.ru/wp-content/uploads/agree.pdf"
-MFE_CONFIG["PRIVACY_POLICY"] = "https://robbo.ru/wp-content/uploads/policy.pdf"
+MFE_CONFIG["TOS_AND_HONOR_CODE"] = "http://{{ LMS_HOST }}:8000/tos"
+MFE_CONFIG["PRIVACY_POLICY"] = "http://{{ LMS_HOST }}:8000/privacy"
 MFE_CONFIG["ENABLE_YANDEX_METRIKA"] = False
 MFE_CONFIG["YANDEX_METRIKA_COUNTER_ID"] = None
 """
@@ -66,8 +66,8 @@ MFE_CONFIG["LOGO_WHITE_URL"] = "{% if ENABLE_HTTPS %}https{% else %}http{% endif
 MFE_CONFIG["FAVICON_URL"] = "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/favicon.ico"
 MFE_CONFIG["ENABLE_DYNAMIC_REGISTRATION_FIELDS"] = True
 MFE_CONFIG["MARKETING_EMAILS_OPT_IN"] = True
-MFE_CONFIG["TOS_AND_HONOR_CODE"] = "https://robbo.ru/wp-content/uploads/agree.pdf"
-MFE_CONFIG["PRIVACY_POLICY"] = "https://robbo.ru/wp-content/uploads/policy.pdf"
+MFE_CONFIG["TOS_AND_HONOR_CODE"] = "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/tos"
+MFE_CONFIG["PRIVACY_POLICY"] = "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/privacy"
 {% if ROBBO_YANDEX_METRIKA_COUNTER_ID %}
 MFE_CONFIG["ENABLE_YANDEX_METRIKA"] = True
 MFE_CONFIG["YANDEX_METRIKA_COUNTER_ID"] = {{ ROBBO_YANDEX_METRIKA_COUNTER_ID }}
@@ -83,7 +83,7 @@ MFE_CONFIG["YANDEX_METRIKA_COUNTER_ID"] = None
 # view fills `courses` from MySQL CourseOverview.
 _PATCH_ROBBO_LMS_SERVER_CATALOG = """
 FEATURES["ENABLE_COURSE_DISCOVERY"] = False
-# Show Robbo ``logout.html`` (Russian) then redirect via inline script; fast path still uses ``?next=/``.
+# Show Robbo ``logout.html`` then redirect via inline script; fast path still uses ``?next=/``.
 FEATURES["SKIP_INTERMEDIATE_LOGOUT_PAGE"] = False
 """
 
@@ -128,30 +128,33 @@ REGISTRATION_EXTRA_FIELDS['honor_code'] = 'required'
 REGISTRATION_EXTRA_FIELDS.setdefault('phone_number', 'optional')
 """
 
-# Robbo default locale for LMS/CMS (see also tutor config LANGUAGE_CODE).
+# LMS/CMS locale from Tutor config.yml LANGUAGE_CODE (ru on skill, en when Russian is off).
 _PATCH_ROBBO_LMS_LANGUAGE = """
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = '{{ LANGUAGE_CODE }}'
+ACE_EMAIL_DEFAULT_LANGUAGE = '{{ LANGUAGE_CODE }}'
+ACTIVATION_EMAIL_LANGUAGE = '{{ LANGUAGE_CODE }}'
 """
 
-# Force Russian for all LMS requests (overrides stale language cookies).
-_PATCH_ROBBO_FORCE_RUSSIAN_LANGUAGE = """
+# Force platform language for all LMS requests (overrides stale language cookies).
+_PATCH_ROBBO_FORCE_PLATFORM_LANGUAGE = """
 MIDDLEWARE.insert(
     0,
-    'lms.djangoapps.robbo_lang.middleware.RobboForceRussianLanguageMiddleware',
+    'lms.djangoapps.robbo_lang.middleware.RobboForcePlatformLanguageMiddleware',
 )
 """
 
-# MFE: set openedx-language-preference=ru before React bundles read locale (replaces prod index.html hotfix).
-_PATCH_MFE_FORCE_RU_LANG_BUILDTIME = """
+# MFE: set openedx-language-preference to Tutor LANGUAGE_CODE before React reads locale.
+_PATCH_MFE_FORCE_PLATFORM_LANG_BUILDTIME = """
 const _robboLangPrefCookie = 'openedx-language-preference';
 const _robboLangCookies = new Cookies();
 if (typeof document !== 'undefined') {
   const _robboLangSecure = typeof location !== 'undefined' && location.protocol === 'https:';
   const _robboLangDomain = '{{ LMS_HOST }}';
-  // Host-only cookies on apps.* beat parent-domain values; clear before forcing ru.
+  const _robboLangCode = '{{ LANGUAGE_CODE }}';
+  // Host-only cookies on apps.* beat parent-domain values; clear before forcing.
   _robboLangCookies.remove(_robboLangPrefCookie);
   _robboLangCookies.remove(_robboLangPrefCookie, { path: '/', domain: _robboLangDomain });
-  _robboLangCookies.set(_robboLangPrefCookie, 'ru', {
+  _robboLangCookies.set(_robboLangPrefCookie, _robboLangCode, {
     domain: _robboLangDomain,
     path: '/',
     maxAge: 31536000,
@@ -159,11 +162,10 @@ if (typeof document !== 'undefined') {
     sameSite: _robboLangSecure ? 'none' : 'lax',
   });
   if (document.documentElement) {
-    document.documentElement.lang = 'ru';
+    document.documentElement.lang = _robboLangCode;
   }
 }
 """
-
 # tutor-indigo init assigns SiteTheme "indigo" for LMS_HOST; force default comprehensive theme.
 _PATCH_ROBBO_DEFAULT_SITE_THEME = """
 DEFAULT_SITE_THEME = "robbo-theme"
@@ -343,8 +345,8 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_LMS_SERVER_CATALOG),
         ("openedx-lms-development-settings", _PATCH_ROBBO_LMS_LANGUAGE),
         ("openedx-lms-production-settings", _PATCH_ROBBO_LMS_LANGUAGE),
-        ("openedx-lms-development-settings", _PATCH_ROBBO_FORCE_RUSSIAN_LANGUAGE),
-        ("openedx-lms-production-settings", _PATCH_ROBBO_FORCE_RUSSIAN_LANGUAGE),
+        ("openedx-lms-development-settings", _PATCH_ROBBO_FORCE_PLATFORM_LANGUAGE),
+        ("openedx-lms-production-settings", _PATCH_ROBBO_FORCE_PLATFORM_LANGUAGE),
         ("openedx-lms-development-settings", _PATCH_ROBBO_SUPPORT),
         ("openedx-lms-production-settings", _PATCH_ROBBO_SUPPORT),
         ("openedx-lms-development-settings", _PATCH_ROBBO_EMAIL_CONFIRMATION),
@@ -371,6 +373,6 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_YANDEX_METRIKA_PROD_LMS),
         ("openedx-dockerfile-post-python-requirements", _PATCH_OPENEDX_ROBBO_XBLOCKS),
         ("caddyfile", _PATCH_CADDYFILE_SCRATCH),
-        ("mfe-env-config-buildtime-definitions", _PATCH_MFE_FORCE_RU_LANG_BUILDTIME),
+        ("mfe-env-config-buildtime-definitions", _PATCH_MFE_FORCE_PLATFORM_LANG_BUILDTIME),
     ]
 )

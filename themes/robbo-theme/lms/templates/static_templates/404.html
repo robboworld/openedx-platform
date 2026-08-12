@@ -4,23 +4,24 @@
 # Copyright (C) 2026 Robbo <https://robbo.ru>
 # SPDX-License-Identifier: AGPL-3.0-only
 # Part of the Robbo Open edX distribution (robbo-theme). See NOTICE at repository root.
+from django.utils.translation import gettext as _
 from openedx.core.djangolib.markup import HTML, Text
 %>
 <%inherit file="../main.html" />
 
-<%block name="pagetitle">Страница не найдена</%block>
+<%block name="pagetitle">${_("Page not found")}</%block>
 
 <main id="main" aria-label="Content" tabindex="-1">
     <section class="outside-app">
         <h1>
-            <%block name="pageheader">${page_header or 'Страница не найдена'}</%block>
+            <%block name="pageheader">${page_header or _("Page not found")}</%block>
         </h1>
         <p>
             <%block name="pagecontent">
                 % if page_content:
                     ${page_content}
                 % else:
-                    ${Text('Страница, которую вы искали, не найдена. Вернитесь на {link_start}главную страницу{link_end}.').format(
+                    ${Text(_("The page you were looking for was not found. Return to the {link_start}home page{link_end}.")).format(
                         link_start=HTML('<a href="/">'),
                         link_end=HTML('</a>'),
                     )}

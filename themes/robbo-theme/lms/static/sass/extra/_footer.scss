@@ -30,7 +30,7 @@ $robbo-main-footer-gap: clamp(24px, 4vw, 40px);
 
 .robbo-footer__main {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     column-gap: clamp(20px, 4vw, 48px);
     align-items: start;
     width: 100%;

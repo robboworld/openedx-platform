@@ -1,4 +1,7 @@
 <%page args="course_card, card_index" expression_filter="h"/>
+<%!
+from django.utils.translation import gettext as _
+%>
 <%
   course_link_label = '{}: {}'.format(course_card['cta_label'], course_card['title'])
   has_course_meta = course_card.get('start_label')
@@ -50,12 +53,12 @@
       % if course_card.get('description'):
         <p class="robbo-guest-course-card__desc">${course_card['description']}</p>
       % else:
-        <p class="robbo-guest-course-card__desc robbo-guest-course-card__desc--empty">Описание курса скоро появится.</p>
+        <p class="robbo-guest-course-card__desc robbo-guest-course-card__desc--empty">${_("Course description coming soon.")}</p>
       % endif
       <div class="robbo-guest-course-card__actions">
         <a class="robbo-guest-course-card__cta robbo-guest-course-card__cta--primary" href="${course_card['cta_url']}">${course_card['cta_label']}</a>
         % if course_card.get('show_about_link') and course_card.get('about_url'):
-          <a class="robbo-guest-course-card__cta robbo-guest-course-card__cta--ghost" href="${course_card['about_url']}">Подробнее о курсе</a>
+          <a class="robbo-guest-course-card__cta robbo-guest-course-card__cta--ghost" href="${course_card['about_url']}">${_("About this course")}</a>
         % endif
       </div>
     </div>

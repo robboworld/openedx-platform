@@ -1,22 +1,214 @@
+<%!
+# Copyright (C) 2024-2026 Robbo <https://robbo.ru>
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# Part of the Robbo Open edX distribution. See NOTICE at repository root.
+%>
 <%namespace name='static' file='../static_content.html'/>
 <%page expression_filter="h"/>
-<%! from django.utils.translation import gettext as _ %>
+<%!
+from django.utils.translation import gettext as _
+%>
 <%inherit file="../main.html" />
+
+<%block name="bodyclass">robbo-about</%block>
 
 <%block name="pagetitle">${_("Terms of Service")}</%block>
 
 <main id="main" aria-label="Content" tabindex="-1">
-    <section class="container about">
-        <h1>
-            <%block name="pageheader">${page_header or _("Terms of Service")}</%block>
-        </h1>
-        <p>
-            <%block name="pagecontent">${page_content or _("This page left intentionally blank. Feel free to add your own content.")}</%block>
-        </p>
-        <!-- NEW IN INDIGO: add graphic image -->
-        <div class="graphic-img">
-            <img src="${static.url('images/tos.svg')}" alt="Runs on Tutor" />
-            <img class="dark" src="${static.url('images/tos-dark.svg')}" alt="Runs on Tutor" />
-        </div>
+    <h1 class="sr-only">${_("Terms of Service")}</h1>
+    <section class="container about robbo-about-page">
+        <section class="robbo-about-page__section robbo-about-page__section--intro" aria-labelledby="robbo-legal-title">
+            <h2 id="robbo-legal-title" class="robbo-about-page__section-title">${_("Terms of Service")}</h2>
+            <div class="robbo-about-page__prose">
+            </div>
+        </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-1">
+                <h2 id="robbo-tos-1" class="robbo-about-page__section-title">1. Acceptance of terms</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        ROBBO FINLAND Oy provides the following Terms of Service ("TOS") to you, which we may update from time to time without notice to you. By accessing and using the ROBBO website, you accept and agree to be bound by the terms and provision of the TOS.
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-2">
+                <h2 id="robbo-tos-2" class="robbo-about-page__section-title">2. Description of ROBBO services</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        ROBBO provides supplemental science, technology, engineering, and math software and training classes for students enrolled in ROBBO Club courses including, but not limited to, curriculum and assessments, analytic tools, personalized content, and programming though its website and working with third party services. You understand and agree that ROBBO services may include advertisements and certain communications from ROBBO that you will not be able to opt out of, including but not limited to notifications about account activity, service announcements, administrative messages, and newsletters; these communications are considered part of your ROBBO membership. Unless explicitly stated otherwise, any new features that augment or enhance current ROBBO services shall be subject to the TOS. You understand that ROBBO services are provided "AS-IS" and that ROBBO assumes no responsibility for the timeliness, deletion, mis-delivery of information or data. You must provide and are responsible for all equipment necessary to access the ROBBO services. Most ROBBO Club classes and courses are delivered by independent third-parties—including but not limited to schools, individual teachers, retail stores, and entrepreneurs—who are not under the control of ROBBO. ROBBO assumes no responsibility for the actions of these individuals, and you agree to hold ROBBO harmless for third party actions in accordance with section 8 of the TOS. You understand that the technical processing and transmission of the ROBBO services may involve (a) transmissions over various networks; and (b) changes to conform and adapt to technical requirements of connecting networks or devices.
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-3">
+                <h2 id="robbo-tos-3" class="robbo-about-page__section-title">3. Your registration obligations</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        In consideration of your use of the ROBBO services, you represent that you are of legal age to form a binding contract and are not a person barred from receiving ROBBO services under the laws of the Republic of Finland or other applicable jurisdiction. You also agree to: (a) provide true, accurate, current and complete information about yourself as prompted by the ROBBO registration form (the "Registration Data") and (b) maintain and promptly update the Registration Data to keep it true, accurate, current and complete. If you provide any information that is untrue, inaccurate, not current or incomplete, or if ROBBO has reasonable grounds to suspect that such information is untrue, inaccurate, not current or incomplete, ROBBO has the right to suspend or terminate your account and refuse any and all current or future use of the ROBBO services (or any portion thereof).
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-4">
+                <h2 id="robbo-tos-4" class="robbo-about-page__section-title">4. ROBBO privacy policy</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        Registration Data and certain other information about you are subject to our applicable privacy policy. For more information, see our <a href="/privacy">Privacy Policy</a>. You understand that through your use of ROBBO, you consent to the collection and use (as set forth in the applicable privacy policy) of this information, including the transfer of this information to the data storage, processing and use by ROBBO and its affiliates.
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-5">
+                <h2 id="robbo-tos-5" class="robbo-about-page__section-title">5. Contributions to ROBBO</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        By submitting ideas, suggestions, documents, and/or proposals ("Contributions") to ROBBO, you acknowledge and agree that: (a) your Contributions do not contain confidential or proprietary information; (b) ROBBO is not under any obligation of confidentiality, express or implied, with respect to the Contributions; (c) ROBBO shall be entitled to use or disclose (or choose not to use or disclose) such Contributions for any purpose, in any way, in any media worldwide; (d) ROBBO may have something similar to the Contributions already under consideration or in development; (e) your Contributions automatically become the property of ROBBO without any obligation of ROBBO to you; and (f) you are not entitled to any compensation or reimbursement of any kind from ROBBO under any circumstances.
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-6">
+                <h2 id="robbo-tos-6" class="robbo-about-page__section-title">6. Indemnity</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        You agree to indemnify and hold ROBBO and its subsidiaries, affiliates, officers, agents, employees, partners and licensors harmless from any claim or demand, including reasonable attorneys' fees, made by any third party due to or arising out of content you submit, post, transmit, modify or otherwise make available through the ROBBO website, your use of the ROBBO services, your connection to the ROBBO services, your violation of the TOS, or your violation of any rights of another. You agree to indemnify and hold ROBBO and its subsidiaries, affiliates, officers, agents, employees, partners and licensors harmless from any claim or demand, including reasonable attorneys' fees, arising out of a dispute or claim against an independent third party—including but not limited to schools, individual teachers, retail stores, and entrepreneurs—for the third party's actions or omissions.
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-7">
+                <h2 id="robbo-tos-7" class="robbo-about-page__section-title">7. No commercial reuse of ROBBO</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        You agree not to reproduce, duplicate, copy, sell, trade, resell or exploit for any commercial purposes, any portion or use of, or access to, ROBBO services (including but not limited to Content, Curriculum, Software, Analysis).
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-8">
+                <h2 id="robbo-tos-8" class="robbo-about-page__section-title">8. General practices regarding use and storage</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        You acknowledge that ROBBO may establish general practices and limits concerning use of the ROBBO services, including without limitation the maximum number of days that data will be retained by ROBBO and the maximum number of times (and the maximum duration for which) you may access the ROBBO services in a given period of time. You agree that ROBBO has no responsibility or liability for the deletion or failure to store any content. You acknowledge that ROBBO reserves the right to log off accounts that are inactive for an extended period. You further acknowledge that ROBBO reserves the right to modify these general practices and limits from time to time.
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-9">
+                <h2 id="robbo-tos-9" class="robbo-about-page__section-title">9. Modifications to ROBBO services</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        ROBBO reserves the right at any time and from time to time to modify or discontinue, temporarily or permanently, the ROBBO services (or any part thereof) with or without notice. You agree that ROBBO shall not be liable to you or to any third party for any modification, suspension or discontinuance of the ROBBO services (or any part thereof).
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-10">
+                <h2 id="robbo-tos-10" class="robbo-about-page__section-title">10. Links</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        ROBBO may provide, or third parties may provide, links to other World Wide Web sites or resources. You acknowledge and agree that ROBBO is not responsible for the availability of such external sites or resources, and does not endorse and is not responsible or liable for any content, advertising, products or other materials on or available from such sites or resources. You further acknowledge and agree that ROBBO shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with use of or reliance on any such content, goods or services available on or through any such site or resource.
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-11">
+                <h2 id="robbo-tos-11" class="robbo-about-page__section-title">11. ROBBO's proprietary rights</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        You acknowledge and agree that the ROBBO services and any necessary software used in connection with the ROBBO services ("Software") contain proprietary and confidential information that is protected by applicable intellectual property and other laws. You further acknowledge and agree that Content contained in advertisements or information presented to you through ROBBO or by advertisers is protected by copyrights, trademarks, service marks, patents or other proprietary rights and laws. Except as expressly permitted by applicable law or as authorized by ROBBO or the applicable licensor (such as an advertiser), you agree not to modify, rent, lease, loan, sell, distribute, transmit, broadcast, publicly perform or create derivative works based on the ROBBO services, such Content or the Software, in whole or in part. ROBBO grants you a personal, non-transferable and non-exclusive right and license to use the object code of its Software on a single computer; provided that you do not (and do not allow any third party to) copy, modify, create a derivative work from, reverse engineer, reverse assemble or otherwise attempt to discover any source code, sell, assign, sublicense, grant a security interest in or otherwise transfer any right in the Software. You agree not to modify the Software in any manner or form, nor to use modified versions of the Software, including (without limitation) for the purpose of obtaining unauthorized access to the ROBBO website or services. You agree not to access ROBBO by any means other than through the interface that is provided by ROBBO for use in accessing its services.
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-12">
+                <h2 id="robbo-tos-12" class="robbo-about-page__section-title">12. Disclaimer of warranties</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        YOU EXPRESSLY UNDERSTAND AND AGREE THAT:
+                    </p>
+                    <p>
+                        a. Your use of the ROBBO services and software are at your sole risk. The ROBBO services and software are provided on an "as is" and "as available" basis. ROBBO and its subsidiaries, affiliates, officers, employees, agents, partners and licensors expressly disclaim all warranties of any kind, whether express or implied, including, but not limited to the implied warranties of title, merchantability, fitness for a particular purpose and non-infringement.
+                    </p>
+                    <p>
+                        b. ROBBO and its subsidiaries, affiliates, officers, employees, agents, partners and licensors make no warranty that (I) the ROBBO services or software will meet your requirements; (II) the ROBBO services or software will be uninterrupted, timely, secure or error-free; (III) the results that may be obtained from the use of the ROBBO services or software will be accurate or reliable; (IV) the quality of any products, services, information or other material purchased or obtained by you through the ROBBO services or software will meet your expectations; and (V) any errors in the software will be corrected.
+                    </p>
+                    <p>
+                        c. ROBBO will not refund payments for any reason, including but not limited to missed classes, malfunction of software, and dissatisfaction with services.
+                    </p>
+                    <p>
+                        d. Any material downloaded or otherwise obtained through the use of the ROBBO services or software is accessed at your own discretion and risk, and you will be solely responsible for and hereby waive any and all claims and causes of action with respect to any damage to your computer system, internet access, download or display device, or loss of data that results from the download of any such material.
+                    </p>
+                    <p>
+                        e. No advice or information, whether oral or written, obtained by you from ROBBO or through or from ROBBO services or software shall create any warranty not expressly stated in the TOS.
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-13">
+                <h2 id="robbo-tos-13" class="robbo-about-page__section-title">13. Limitation of liability</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        You expressly understand and agree that ROBBO and its subsidiaries, affiliates, officers, employees, agents, partners and licensors shall not be liable to you for any punitive, indirect, incidental, special, consequential or exemplary damages, including, but not limited to, damages for loss of profits, goodwill, use, data or other intangible losses (even if ROBBO has been advised of the possibility of such damages), resulting from: (A) the use or the inability to use the ROBBO service; (B) the cost of procurement of substitute goods and services; (C) unauthorized access to or alteration of your transmissions or data; (D) statements or conduct of any third party on the ROBBO service; or (E) any other matter relating to the ROBBO service.
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-14">
+                <h2 id="robbo-tos-14" class="robbo-about-page__section-title">14. Exclusions and limitations</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        Some jurisdictions do not allow the exclusion of certain warranties or the limitation or exclusion of liability for incidental or consequential damages. Accordingly, some of the above limitations of sections 17 and 18 may not apply to you.
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-15">
+                <h2 id="robbo-tos-15" class="robbo-about-page__section-title">15. No third-party beneficiaries</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        You agree that, except as otherwise expressly provided in this TOS, there shall be no third-party beneficiaries to this agreement.
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-16">
+                <h2 id="robbo-tos-16" class="robbo-about-page__section-title">16. Notice</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        ROBBO may provide you with notices, including those regarding changes to the TOS, including by but not limited to email, regular mail, SMS, MMS, text message, postings on the ROBBO website, or other reasonable means now known or hereafter developed. Such notices may not be received if you violate this TOS by accessing the ROBBO services in an unauthorized manner. Your agreement to this TOS constitutes your agreement that you are deemed to have received any and all notices that would have been delivered had you accessed the ROBBO services in an authorized manner.
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-17">
+                <h2 id="robbo-tos-17" class="robbo-about-page__section-title">17. Trademark information</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        You agree that all ROBBO's and ROBBO's trademarks, trade names, service marks and other ROBBO and ROBBO's logos and brand features, and product and service names are trademarks and the property of ROBBO. Without ROBBO's prior written permission, you agree not to display or use in any manner the ROBBO or ROBBO logos and trademarks.
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-18">
+                <h2 id="robbo-tos-18" class="robbo-about-page__section-title">18. Email newsletter</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        You acknowledge and agree that by creating an account using ROBBO's services you will be added to the appropriate campus email newsletter distribution list. These emails contain information about new curriculum, upcoming events, and changes to ROBBO services. You may unsubscribe at any time using the Unsubscribe link included in every email.
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-19">
+                <h2 id="robbo-tos-19" class="robbo-about-page__section-title">19. General information</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        <strong>Entire Agreement.</strong><br />The TOS constitutes the entire agreement between you and ROBBO and governs your use of the ROBBO services, superseding any prior version of this TOS between you and ROBBO with respect to the ROBBO services. You also may be subject to additional terms and conditions that may apply when you use or purchase certain other ROBBO services, affiliate services, third-party content or third-party software.
+                    </p>
+                    <p>
+                        <strong>Choice of Law and Forum.</strong><br />You and ROBBO each agree that the TOS and the relationship between the parties shall be governed by the laws of Republic of Finland without regard to its conflict of law provisions and that any and all claims, causes of action or disputes (regardless of theory) arising out of or relating to the TOS, or the relationship between you and ROBBO shall be brought exclusively in the courts located in the county of Lake. You and ROBBO agree to submit to the personal jurisdiction of the courts located within the county of Lake, Utah, and agree to waive any and all objections to the exercise of jurisdiction over the parties by such courts and to venue in such courts.
+                    </p>
+                    <p>
+                        <strong>Waiver and Severability of Terms.</strong><br />The failure of ROBBO to exercise or enforce any right or provision of the TOS shall not constitute a waiver of such right or provision. If any provision of the TOS is found by a court of competent jurisdiction to be invalid, the parties nevertheless agree that the court should endeavor to give effect to the parties' intentions as reflected in the provision, and the other provisions of the TOS remain in full force and effect.
+                    </p>
+                    <p>
+                        <strong>No Right of Survivorship and Non-Transferability.</strong><br />You agree that your ROBBO account is non-transferable and any rights to your ROBBO services or contents within your account terminate upon your death. Upon receipt of a copy of a death certificate, your account may be terminated, and all contents therein permanently deleted.
+                    </p>
+                    <p>
+                        <strong>Statute of Limitations.</strong><br />You agree that regardless of any statute or law to the contrary, any claim or cause of action arising out of or related to use of the ROBBO services or the TOS must be filed within one (1) year after such claim or cause of action arose or be forever barred. The section titles in the TOS are for convenience only and have no legal or contractual effect.
+                    </p>
+                </div>
+            </section>
+            <section class="robbo-about-page__section" aria-labelledby="robbo-tos-20">
+                <h2 id="robbo-tos-20" class="robbo-about-page__section-title">20. Violations</h2>
+                <div class="robbo-about-page__prose">
+                    <p>
+                        Please report any violations of the TOS at <a href="mailto:info@robbo.world">info@robbo.world</a>.
+                    </p>
+                </div>
+            </section>
     </section>
 </main>

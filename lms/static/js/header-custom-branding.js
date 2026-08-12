@@ -1,21 +1,7 @@
 /**
- * Header copy tweaks when Indigo (or other) templates are not overridden from this repo.
+ * Header copy tweaks (legacy). Intentionally empty: theme templates own chrome i18n.
+ * Kept so existing static.url('js/header-custom-branding.js') references do not 404.
  */
 (function () {
   'use strict';
-
-  function apply() {
-    document.querySelectorAll('a.register-btn').forEach(function (anchor) {
-      var t = (anchor.textContent || '').trim();
-      if (t === 'Register for free' || t.indexOf('Register') === 0) {
-        anchor.textContent = 'Зарегистрироваться бесплатно';
-      }
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', apply);
-  } else {
-    apply();
-  }
 }());

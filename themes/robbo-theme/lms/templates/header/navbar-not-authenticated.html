@@ -17,7 +17,24 @@ from django.utils.translation import gettext as _
   allows_login = not settings.FEATURES['DISABLE_LOGIN_BUTTON'] and not combined_login_and_register
   can_discover_courses = settings.FEATURES.get('ENABLE_COURSE_DISCOVERY')
   allow_public_account_creation = static.get_value('ALLOW_PUBLIC_ACCOUNT_CREATION', settings.FEATURES.get('ALLOW_PUBLIC_ACCOUNT_CREATION')) and settings.FEATURES.get('SHOW_REGISTRATION_LINKS', True)
+  # On English instances, pin chrome CTA copy (avoid stale RU cookie/catalog races).
+  _force_en_chrome = not str(getattr(settings, 'LANGUAGE_CODE', 'en') or 'en').lower().startswith('ru')
+  _signin_label = 'Sign in' if _force_en_chrome else _('Sign in')
+  _register_label = 'Register' if _force_en_chrome else _('Register')
 %>
+<style>
+/* Header CTAs: Sign in (solid) then Register (outline). */
+header.global-header .nav-links .secondary .btn-holder .sign-in-btn.btn {
+  background-color: #fff !important;
+  border: 1px solid #fff !important;
+  color: #166534 !important;
+}
+header.global-header .nav-links .secondary .btn-holder .register-btn.btn {
+  background-color: transparent !important;
+  border: 1px solid #fff !important;
+  color: #fff !important;
+}
+</style>
 <!-- NEW IN INDIGO update nav: primary + trailing are grid children of .robbo-main-header -->
   <nav class="main robbo-header-primary-nav robbo-main-header__primary" aria-label=${_("Site navigation")}>
     <ul class="robbo-header-primary-nav__list">
@@ -50,14 +67,14 @@ from django.utils.translation import gettext as _
     <%include file="./theme-toggle-button.html" />
     <div class="btn-holder">
       % if allows_login:
+        <div class="mobile-nav-item hidden-mobile nav-item">
+            <a class="sign-in-btn btn" href="/login${login_query()}" data-robbo-i18n="header-signin">${_signin_label}</a>
+        </div>
         % if allow_public_account_creation and not disable_register_button:
             <div class="mobile-nav-item hidden-mobile nav-item">
-                <a class="register-btn btn" href="/register${login_query()}">Зарегистрироваться бесплатно</a>
+                <a class="register-btn btn" href="/register${login_query()}" data-robbo-i18n="header-register">${_register_label}</a>
             </div>
         % endif
-        <div class="mobile-nav-item hidden-mobile nav-item">
-            <a class="sign-in-btn btn" href="/login${login_query()}">Войти</a>
-        </div>
       % endif
     </div>
   </div>

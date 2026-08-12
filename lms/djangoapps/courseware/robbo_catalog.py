@@ -34,6 +34,7 @@ from urllib.parse import urlencode
 
 from django.conf import settings
 from django.urls import reverse
+from django.utils.translation import gettext as _
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 from openedx.core.djangoapps.models.course_details import CourseDetails
@@ -94,8 +95,10 @@ def get_robbo_instructor_catalog_banner(course_count: int = 0) -> Dict[str, Any]
 
     See docs/design/robbo-courses-catalog-instructor-banner.md for layout spec.
     """
-    label = 'Ниже расположены курсы, которые видят только персонал платформы'
-    label_html = Text('Ниже расположены курсы, которые видят только {accent}').format(
+    label = _('Courses below are visible only to platform staff')
+    label_html = Text(
+        _('Courses below are visible only to {accent}')
+    ).format(
         accent=_build_instructor_tip_accent_html(),
     )
     return {
@@ -105,14 +108,14 @@ def get_robbo_instructor_catalog_banner(course_count: int = 0) -> Dict[str, Any]
 
 
 def _build_instructor_tip_accent_html() -> HTML:
-    """«персонал платформы» with hover/focus tooltip."""
+    """«platform staff» with hover/focus tooltip."""
     return HTML(
         '<div class="robbo-courses-catalog__instructor-tip">'
         '<span class="robbo-courses-catalog__instructor-tip-anchor" '
         'tabindex="0" role="button" '
-        'aria-label="Подсказка: кто видит скрытый каталог" '
+        'aria-label="{aria}" '
         'aria-describedby="robbo-instructor-role-tip">'
-        '<span class="robbo-courses-catalog__instructor-bar-accent">персонал платформы</span>'
+        '<span class="robbo-courses-catalog__instructor-bar-accent">{accent}</span>'
         '<span class="robbo-courses-catalog__instructor-tip-icon" aria-hidden="true">'
         '<svg class="robbo-courses-catalog__instructor-tip-icon-svg" width="14" height="14" '
         'viewBox="0 0 16 16" focusable="false" xmlns="http://www.w3.org/2000/svg">'
@@ -125,14 +128,20 @@ def _build_instructor_tip_accent_html() -> HTML:
         '<div id="robbo-instructor-role-tip" role="tooltip" '
         'class="robbo-courses-catalog__instructor-tip-popup">'
         '<p class="robbo-courses-catalog__instructor-tip-heading">'
-        'Кто видит этот блок'
+        '{heading}'
         '</p>'
         '<ul class="robbo-courses-catalog__instructor-tip-list">'
-        '<li>Администратор</li>'
-        '<li>Персонал образовательной платформы (глобальный staff)</li>'
+        '<li>{admin}</li>'
+        '<li>{staff}</li>'
         '</ul>'
         '</div>'
         '</div>'
+    ).format(
+        aria=_('Tip: who can see the hidden catalog'),
+        accent=_('platform staff'),
+        heading=_('Who can see this block'),
+        admin=_('Administrator'),
+        staff=_('Learning platform staff (global staff)'),
     )
 
 
@@ -157,7 +166,7 @@ def get_robbo_courses_account_banners(request) -> Dict[str, Any]:
     Page-top and featured-card notices for /courses (parity with learner dashboard patterns).
 
     - Anonymous: prompt to sign in / register (two placements: banner + featured line).
-    - Authenticated, inactive: email activation copy (banner + «Требуется активация…» on card).
+    - Authenticated, inactive: email activation copy (banner + activation line on card).
     """
     user = getattr(request, 'user', None)
     if user is None or (user.is_authenticated and user.is_active):
@@ -176,20 +185,20 @@ def get_robbo_courses_account_banners(request) -> Dict[str, Any]:
 
     if not user.is_authenticated:
         top_body = Text(
-            'Чтобы получить полный доступ к каталогу, {signin} или {register}.'
+            _('For full catalog access, {signin} or {register}.')
         ).format(
             signin=HTML(
-                '<a class="robbo-courses-catalog__account-banner-link" href="{u}">войдите</a>'
-            ).format(u=signin_url),
+                '<a class="robbo-courses-catalog__account-banner-link" href="{u}">{label}</a>'
+            ).format(u=signin_url, label=_('sign in')),
             register=HTML(
-                '<a class="robbo-courses-catalog__account-banner-link" href="{u}">зарегистрируйтесь</a>'
-            ).format(u=register_url),
+                '<a class="robbo-courses-catalog__account-banner-link" href="{u}">{label}</a>'
+            ).format(u=register_url, label=_('register')),
         )
         return {
             'mode': 'anonymous',
-            'top_title': 'Войдите или зарегистрируйтесь',
+            'top_title': _('Sign in or register'),
             'top_body': top_body,
-            'featured_line': 'Для полного доступа к курсу войдите в учётную запись.',
+            'featured_line': _('Sign in to get full access to the course.'),
         }
 
     activation_email_support_link = (
@@ -199,9 +208,11 @@ def get_robbo_courses_account_banners(request) -> Dict[str, Any]:
         or settings.SUPPORT_SITE_LINK
     )
     top_body = Text(
-        'Проверьте почту {email_start}{email}{email_end} — мы отправили ссылку для активации '
-        'учётной записи «{platform}». Если письма нет, загляните в «Спам» или '
-        '{link_start}напишите в поддержку{link_end}.'
+        _(
+            'Check your inbox {email_start}{email}{email_end} — we sent an activation link '
+            'for your «{platform}» account. If you do not see the email, check Spam or '
+            '{link_start}contact support{link_end}.'
+        )
     ).format(
         email_start=HTML('<strong>'),
         email_end=HTML('</strong>'),
@@ -215,9 +226,9 @@ def get_robbo_courses_account_banners(request) -> Dict[str, Any]:
     )
     return {
         'mode': 'inactive',
-        'top_title': 'Активируйте свою учётную запись!',
+        'top_title': _('Activate your account!'),
         'top_body': top_body,
-        'featured_line': 'Требуется активация для полного доступа',
+        'featured_line': _('Activation required for full access'),
     }
 
 
@@ -230,28 +241,33 @@ def get_robbo_catalog_hero() -> dict:
 
 
 def get_robbo_catalog_about() -> Dict[str, Any]:
-    """«О компании» block in guest homepage hero (right column)."""
+    """About-company block in guest homepage hero (right column)."""
     return {
-        'title': 'О компании',
-        'tagline': 'Открытые технологии будущего',
+        'title': _('About the company'),
+        'tagline': _('Open technologies for the future'),
         'stats': [
-            {'value': '19', 'label': 'лет на рынке'},
-            {'value': '44', 'label': 'стран мира'},
+            {'value': '19', 'label': _('years on the market')},
+            {'value': '44', 'label': _('countries worldwide')},
         ],
-        'intro': (
-            'Уже 19 лет мы внедряем технологии на базе открытого кода (Open Source), развиваем '
-            'робототехнику и занимаемся системной интеграцией сложных инженерных систем. Наши '
-            'продукты и методики востребованы в '
+        'intro': _(
+            'For 19 years we have been deploying open-source technologies, developing '
+            'robotics, and integrating complex engineering systems. Our products and methods '
+            'are used in '
         ),
-        'intro_accent': '44 странах мира',
+        'intro_accent': _('44 countries worldwide'),
         'highlights': [
             {
-                'label': 'Институты развития:',
-                'text': 'лидерский проект АСИ, Лидер НТИ, резидент «Сколково» и кластера «Ломоносов».',
+                'label': _('Development institutes:'),
+                'text': _(
+                    'ASI flagship project, NTI Leader, Skolkovo resident and Lomonosov cluster member.'
+                ),
             },
             {
-                'label': 'При поддержке:',
-                'text': 'Минпромторг, Минцифры, Минобрнауки, Минэкономразвития.',
+                'label': _('With support from:'),
+                'text': _(
+                    'Ministry of Industry and Trade, Ministry of Digital Development, '
+                    'Ministry of Science and Higher Education, Ministry of Economic Development.'
+                ),
             },
         ],
     }
@@ -269,7 +285,7 @@ def get_robbo_catalog_stubs() -> List[Dict[str, Any]]:
                 'локальных компонентов.'
             ),
             'image': 'mcu.png',
-            'notify_label': 'Сообщить об открытии',
+            'notify_label': _('Notify me when it opens'),
         },
         {
             'id': 'postgres',
@@ -280,7 +296,7 @@ def get_robbo_catalog_stubs() -> List[Dict[str, Any]]:
                 'оптимизации производительности в среде PostgreSQL.'
             ),
             'image': 'featured-mcu.png',
-            'notify_label': 'Сообщить об открытии',
+            'notify_label': _('Notify me when it opens'),
         },
         {
             'id': 'freecad',
@@ -291,7 +307,7 @@ def get_robbo_catalog_stubs() -> List[Dict[str, Any]]:
                 'моделей для производства в открытом ПО.'
             ),
             'image': 'stub-freecad.png',
-            'notify_label': 'Сообщить об открытии',
+            'notify_label': _('Notify me when it opens'),
         },
         {
             'id': 'linux-admin',
@@ -302,7 +318,7 @@ def get_robbo_catalog_stubs() -> List[Dict[str, Any]]:
                 'задач для обеспечения стабильной ИТ-инфраструктуры.'
             ),
             'image': 'stub-linux.png',
-            'notify_label': 'Сообщить об открытии',
+            'notify_label': _('Notify me when it opens'),
         },
         {
             'id': 'manipulators',
@@ -313,7 +329,7 @@ def get_robbo_catalog_stubs() -> List[Dict[str, Any]]:
                 'машинного зрения в робототехнике.'
             ),
             'image': 'stub-manipulators.png',
-            'notify_label': 'Сообщить об открытии',
+            'notify_label': _('Notify me when it opens'),
         },
         {
             'id': 'ai-production',
@@ -324,7 +340,7 @@ def get_robbo_catalog_stubs() -> List[Dict[str, Any]]:
                 'обучения для повышения эффективности предприятия.'
             ),
             'image': 'stub-ai.png',
-            'notify_label': 'Сообщить об открытии',
+            'notify_label': _('Notify me when it opens'),
         },
         {
             'id': 'python',
@@ -335,7 +351,7 @@ def get_robbo_catalog_stubs() -> List[Dict[str, Any]]:
                 'инструментов обработки данных и интеграции сервисов.'
             ),
             'image': 'stub-python.png',
-            'notify_label': 'Сообщить об открытии',
+            'notify_label': _('Notify me when it opens'),
         },
         {
             'id': 'industrial-controllers',
@@ -346,7 +362,7 @@ def get_robbo_catalog_stubs() -> List[Dict[str, Any]]:
                 'надёжных систем промышленной автоматизации (АСУ ТП).'
             ),
             'image': 'stub-industrial.png',
-            'notify_label': 'Сообщить об открытии',
+            'notify_label': _('Notify me when it opens'),
         },
     ]
 
@@ -441,14 +457,14 @@ def build_robbo_catalog_course_cards(
             'is_image_placeholder': is_image_placeholder,
             'about_url': about_url,
             'cta_url': cta_url,
-            'cta_label': 'Начать обучение',
+            'cta_label': _('Start learning'),
         }
         card.update(_course_card_meta(course))
 
         if user is not None and user.is_authenticated and user.is_active:
             if CourseEnrollment.is_enrolled(user, course.id):
                 card['is_enrolled'] = True
-                card['cta_label'] = 'Продолжить обучение'
+                card['cta_label'] = _('Continue learning')
                 progress_percent = _enrolled_course_progress_percent(user, course.id)
                 if progress_percent is not None and progress_percent > 0:
                     card['progress_percent'] = progress_percent
@@ -470,10 +486,10 @@ def _guest_course_price_offer(course) -> Dict[str, Any]:
     if verified and int(verified.min_price) > 0:
         price_display = format_checkout_price_display(verified.min_price, verified.currency)
         return {
-            'cta_label': f'Записаться — {price_display}',
+            'cta_label': _('Enroll — {price}').format(price=price_display),
         }
     return {
-        'cta_label': 'Записаться бесплатно',
+        'cta_label': _('Enroll for free'),
     }
 
 
@@ -528,7 +544,7 @@ def build_robbo_guest_homepage_course_cards(
         if is_authenticated:
             card.update({
                 'cta_url': _absolute_url(request, course_home_url(course.id)),
-                'cta_label': 'Начать обучение',
+                'cta_label': _('Start learning'),
                 'show_about_link': False,
             })
         else:
@@ -585,11 +601,11 @@ def _course_card_meta(course) -> Dict[str, str]:
 
     advertised_start = getattr(course, 'advertised_start', None)
     if advertised_start:
-        meta['start_label'] = f'Старт: {advertised_start}'
+        meta['start_label'] = _('Starts: {date}').format(date=advertised_start)
     else:
         start = getattr(course, 'start', None)
         if start is not None:
-            meta['start_label'] = f'Старт: {start.strftime("%d.%m.%Y")}'
+            meta['start_label'] = _('Starts: {date}').format(date=start.strftime('%d.%m.%Y'))
 
     return meta
 
@@ -646,7 +662,7 @@ def build_robbo_catalog_featured(
         'title': title,
         'description': short,
         'cta_url': cta_url,
-        'cta_label': 'Начать обучение',
+        'cta_label': _('Start learning'),
         'image': image_filename,
         'image_alt': title,
     }

@@ -1,6 +1,7 @@
 ## mako
 <%page expression_filter="h"/>
 <%!
+from django.utils.translation import gettext as _
 from lms.djangoapps.courseware.robbo_catalog import (
     get_robbo_studio_root_url,
     user_can_see_robbo_studio_header_link,
@@ -48,7 +49,7 @@ header.global-header .nav-links .secondary .robbo-header-studio-link .robbo-head
     <a
       class="robbo-header-studio-link__btn"
       href="${robbo_studio_url}"
-      aria-label="Перейти в Studio"
-    >Студия</a>
+      aria-label="${_("Go to Studio")}"
+    >${_("Studio")}</a>
   </div>
 % endif

@@ -1,37 +1,26 @@
 ## mako
 <%page expression_filter="h"/>
-<%!
-  from datetime import datetime
-%>
 <%namespace name='static' file='../static_content.html'/>
 <div class="robbo-footer__main">
   <div class="robbo-footer__brand-col">
     <div class="robbo-footer__brand">
-      <span class="robbo-footer__logo" aria-label="РОББО">РОББО<sup class="robbo-footer__reg" aria-hidden="true">®</sup></span>
+      <span class="robbo-footer__logo" aria-label="ROBBO">ROBBO<sup class="robbo-footer__reg" aria-hidden="true">®</sup></span>
     </div>
-    <p class="robbo-footer__tagline">Образовательная платформа РОББО</p>
-    <p class="robbo-footer__copyright">© ООО «РОББО ТЕХНОЛОГИИ», ${datetime.now().year}</p>
+    <p class="robbo-footer__tagline">ROBBO learning platform</p>
   </div>
-  <div class="robbo-footer__partner-col">
-    <div class="robbo-footer__partner">
-      <a class="robbo-footer__partner-link" href="https://fasie.ru" target="_blank" rel="noopener noreferrer">
-        <img class="robbo-footer__partner-logo" src="${static.url('robbo-theme/images/partners/fasie.png')}" alt="Фонд содействия инновациям" />
-      </a>
-    </div>
-  </div>
-  <nav class="robbo-footer__col" aria-label="Документы">
-    <h2 class="robbo-footer__heading">Документы</h2>
+  <nav class="robbo-footer__col" aria-label="Documents">
+    <h2 class="robbo-footer__heading">Documents</h2>
     <ul class="robbo-footer__links">
       <li>
-        <a href="https://robbo.ru/wp-content/uploads/policy.pdf" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>
+        <a href="/privacy">Privacy Policy</a>
       </li>
       <li>
-        <a href="https://robbo.ru/wp-content/uploads/agree.pdf" target="_blank" rel="noopener noreferrer">Согласие на обработку персональных данных</a>
+        <a href="/tos">Terms of Service</a>
       </li>
     </ul>
   </nav>
   <div class="robbo-footer__col robbo-footer__contacts-col">
-    <h2 class="robbo-footer__heading">Контакты</h2>
+    <h2 class="robbo-footer__heading">Contacts</h2>
     <ul class="robbo-footer__contacts-list">
       <li class="robbo-footer__contacts-item">
         <span class="robbo-footer__contacts-icon" aria-hidden="true">
@@ -40,7 +29,7 @@
             <path d="M3 7l9 6 9-6" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
         </span>
-        <a class="robbo-footer__contacts-link" href="mailto:info@robbo.ru" aria-label="Почта: info@robbo.ru">info@robbo.ru</a>
+        <a class="robbo-footer__contacts-link" href="mailto:info@robbo.ru" aria-label="Email: info@robbo.ru">info@robbo.ru</a>
       </li>
       <li class="robbo-footer__contacts-item">
         <span class="robbo-footer__contacts-icon" aria-hidden="true">
@@ -49,7 +38,7 @@
             <path d="M3 12h18M12 3c2.5 2.8 2.5 14.2 0 18M12 3c-2.5 2.8-2.5 14.2 0 18" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"></path>
           </svg>
         </span>
-        <a class="robbo-footer__contacts-link" href="https://robbo.ru" target="_blank" rel="noopener noreferrer" aria-label="Наш сайт: robbo.ru">robbo.ru</a>
+        <a class="robbo-footer__contacts-link" href="https://robbo.ru" target="_blank" rel="noopener noreferrer" aria-label="Our website: robbo.ru">robbo.ru</a>
       </li>
       <li class="robbo-footer__contacts-item">
         <span class="robbo-footer__contacts-icon" aria-hidden="true">
@@ -59,7 +48,7 @@
             <path d="M12 14v-1a3 3 0 013-3" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"></path>
           </svg>
         </span>
-        <a class="robbo-footer__contacts-link" href="https://support.robbo.world/" target="_blank" rel="noopener noreferrer" aria-label="Поддержка: support.robbo.world">support.robbo.world</a>
+        <a class="robbo-footer__contacts-link" href="https://support.robbo.world/" target="_blank" rel="noopener noreferrer" aria-label="Support: support.robbo.world">support.robbo.world</a>
       </li>
     </ul>
   </div>

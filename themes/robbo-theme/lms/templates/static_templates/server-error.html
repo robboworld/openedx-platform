@@ -4,6 +4,7 @@
 # Copyright (C) 2026 Robbo <https://robbo.ru>
 # SPDX-License-Identifier: AGPL-3.0-only
 # Part of the Robbo Open edX distribution (robbo-theme). See NOTICE at repository root.
+from django.utils.translation import gettext as _
 from openedx.core.djangolib.markup import HTML, Text
 %>
 <%inherit file="../main.html" />
@@ -15,7 +16,7 @@ from openedx.core.djangolib.markup import HTML, Text
                 % if page_header:
                     ${page_header}
                 % else:
-                    ${Text('На серверах {platform_name} произошла ошибка 500').format(
+                    ${Text(_('There has been a 500 error on the {platform_name} servers')).format(
                         platform_name=HTML('<em>{platform_name}</em>').format(platform_name=Text(static.get_platform_name()))
                     )}
                 % endif
@@ -26,7 +27,7 @@ from openedx.core.djangolib.markup import HTML, Text
                 % if page_content:
                     ${page_content}
                 % else:
-                    Пожалуйста, подождите несколько секунд и перезагрузите страницу.
+                    ${_('Please wait a few seconds and then reload the page.')}
                 % endif
             </%block>
         </p>
