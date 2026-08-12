@@ -68,35 +68,6 @@ guest_lang = (get_language() or settings.LANGUAGE_CODE or 'en').split('-')[0]
     <script src="${static.url('js/guest-landing-topbar.js')}"></script>
 
     <div class="robbo-guest-main">
-      <section class="robbo-guest-hero" aria-labelledby="robbo-guest-hero-title">
-        <div class="robbo-guest-hero__inner">
-          <div class="robbo-guest-hero__copy">
-            % if homepage_overlay_html:
-              <div class="robbo-guest-hero__title-wrap">
-                ${homepage_overlay_html | n, decode.utf8}
-              </div>
-            % else:
-              <h1 id="robbo-guest-hero-title" class="robbo-guest-hero__title">
-                ${_("Learning platform — online courses and training programs")}
-              </h1>
-            % endif
-            <p class="robbo-guest-hero__lede">
-              ${_("Robotics, programming, and engineering based on open source — for children, educators, and professionals.")}
-            </p>
-            <div class="robbo-guest-hero__actions">
-              <a class="robbo-guest-hero__btn robbo-guest-hero__btn--primary" href="#courses">${_("Browse courses")}</a>
-              <a class="robbo-guest-hero__btn robbo-guest-hero__btn--secondary"
-                href="${reverse('register_user') | h}">${_("Register")}</a>
-            </div>
-          </div>
-          % if robbo_about is not UNDEFINED:
-            <div class="robbo-guest-hero__about">
-              <%include file="courseware/_robbo_about_company.html" args="about=robbo_about" />
-            </div>
-          % endif
-        </div>
-      </section>
-
       <section id="courses" class="home robbo-guest-home style-logout" aria-labelledby="robbo-guest-courses-title">
         <header>
           <div class="outer-wrapper">
