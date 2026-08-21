@@ -176,18 +176,33 @@ except NameError:
 REGISTRATION_EXTRA_FIELDS['company'] = 'hidden'
 """
 
-# Robbo default locale for LMS/CMS (see also tutor config LANGUAGE_CODE).
+# Robbo default locale for LMS/CMS on ``robbo/courses`` (English product).
+# Tutor ``config.yml`` may also set LANGUAGE_CODE; this patch must match courses EN.
 _PATCH_ROBBO_LMS_LANGUAGE = """
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = 'en'
+ROBBO_FORCED_LANGUAGE = 'en'
 """
 
-# Force Russian for all LMS requests (overrides stale language cookies).
+# Force platform language for all LMS requests (overrides stale language cookies).
+# On ``robbo/courses`` this is always English via LANGUAGE_CODE / ROBBO_FORCED_LANGUAGE.
 _PATCH_ROBBO_FORCE_RUSSIAN_LANGUAGE = """
 MIDDLEWARE.insert(
     0,
     'lms.djangoapps.robbo_lang.middleware.RobboForceRussianLanguageMiddleware',
 )
 """
+
+# LK password login → Open edX session via GET /robbo/lk-handoff (HMAC shared with ЛК).
+# Must match ЛК ``LK_LMS_HANDOFF_SECRET``. Empty → endpoint returns 403 "handoff disabled".
+_PATCH_ROBBO_LK_HANDOFF = """
+{% if ROBBO_LK_HANDOFF_SECRET %}
+ROBBO_LK_HANDOFF_SECRET = "{{ ROBBO_LK_HANDOFF_SECRET }}"
+{% else %}
+ROBBO_LK_HANDOFF_SECRET = ""
+{% endif %}
+ROBBO_LK_FRONTEND_BASE = "{{ ROBBO_LK_FRONTEND_BASE }}"
+"""
+
 # tutor-indigo init assigns SiteTheme "indigo" for LMS_HOST; force default comprehensive theme.
 _PATCH_ROBBO_DEFAULT_SITE_THEME = """
 DEFAULT_SITE_THEME = "robbo-theme"
@@ -357,6 +372,9 @@ PLUGIN_SLOTS.add_item(
 hooks.Filters.CONFIG_DEFAULTS.add_items(
     [
         ("ROBBO_YANDEX_METRIKA_COUNTER_ID", ""),
+        # Shared with ЛК ``LK_LMS_HANDOFF_SECRET`` (see robbo_personal_account backend).
+        ("ROBBO_LK_HANDOFF_SECRET", ""),
+        ("ROBBO_LK_FRONTEND_BASE", "http://localhost:3030"),
     ]
 )
 
@@ -375,6 +393,8 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_LMS_LANGUAGE),
         ("openedx-lms-development-settings", _PATCH_ROBBO_FORCE_RUSSIAN_LANGUAGE),
         ("openedx-lms-production-settings", _PATCH_ROBBO_FORCE_RUSSIAN_LANGUAGE),
+        ("openedx-lms-development-settings", _PATCH_ROBBO_LK_HANDOFF),
+        ("openedx-lms-production-settings", _PATCH_ROBBO_LK_HANDOFF),
         ("openedx-lms-development-settings", _PATCH_ROBBO_SUPPORT),
         ("openedx-lms-production-settings", _PATCH_ROBBO_SUPPORT),
         ("openedx-lms-development-settings", _PATCH_ROBBO_EMAIL_CONFIRMATION),

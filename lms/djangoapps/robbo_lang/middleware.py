@@ -8,7 +8,7 @@ Force the platform LANGUAGE_CODE for Robbo LMS.
 
 Overrides stale ``openedx-language-preference`` cookies and browser
 Accept-Language so Django translations and anonymous caches stay on the
-instance language (typically ``ru`` or ``en`` via Tutor ``LANGUAGE_CODE``).
+instance language (``en`` on ``robbo/courses``, ``ru`` on ``robbo/online``).
 """
 from django.conf import settings
 from django.utils.deprecation import MiddlewareMixin
@@ -25,7 +25,7 @@ class RobboForceRussianLanguageMiddleware(MiddlewareMixin):
     Keep LMS responses on the platform language regardless of browser cookies.
 
     Class name kept for Tutor patch compatibility; language comes from
-    ``ROBBO_FORCED_LANGUAGE`` or ``LANGUAGE_CODE``.
+    ``ROBBO_FORCED_LANGUAGE`` or ``LANGUAGE_CODE`` (English on courses).
 
     Inserted at the start of ``MIDDLEWARE`` so ``process_response`` runs last
     and wins over ``LanguagePreferenceMiddleware``.

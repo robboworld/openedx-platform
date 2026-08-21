@@ -1946,7 +1946,7 @@ MEDIA_URL = '/media/'
 # Locale/Internationalization
 CELERY_TIMEZONE = 'UTC'
 TIME_ZONE = 'UTC'
-LANGUAGE_CODE = 'ru'  # Robbo default locale (upstream Open edX uses 'en')
+LANGUAGE_CODE = 'en'  # Robbo courses instance default locale (online keeps 'ru')
 
 # edx-ace transactional email default when ``personalize(..., language=None)`` (see ace_common.message).
 # Override via Site configuration key ACE_EMAIL_DEFAULT_LANGUAGE if needed.
