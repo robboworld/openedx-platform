@@ -194,6 +194,7 @@ MIDDLEWARE.insert(
 
 # LK password login → Open edX session via GET /robbo/lk-handoff (HMAC shared with ЛК).
 # Must match ЛК ``LK_LMS_HANDOFF_SECRET``. Empty → endpoint returns 403 "handoff disabled".
+# Open edX → ЛК: authenticated GET /robbo/lk redirects to ``ROBBO_LK_BACKEND_BASE``/auth/oidc/from-lms.
 _PATCH_ROBBO_LK_HANDOFF = """
 {% if ROBBO_LK_HANDOFF_SECRET %}
 ROBBO_LK_HANDOFF_SECRET = "{{ ROBBO_LK_HANDOFF_SECRET }}"
@@ -201,6 +202,7 @@ ROBBO_LK_HANDOFF_SECRET = "{{ ROBBO_LK_HANDOFF_SECRET }}"
 ROBBO_LK_HANDOFF_SECRET = ""
 {% endif %}
 ROBBO_LK_FRONTEND_BASE = "{{ ROBBO_LK_FRONTEND_BASE }}"
+ROBBO_LK_BACKEND_BASE = "{{ ROBBO_LK_BACKEND_BASE }}"
 """
 
 # tutor-indigo init assigns SiteTheme "indigo" for LMS_HOST; force default comprehensive theme.
@@ -375,6 +377,7 @@ hooks.Filters.CONFIG_DEFAULTS.add_items(
         # Shared with ЛК ``LK_LMS_HANDOFF_SECRET`` (see robbo_personal_account backend).
         ("ROBBO_LK_HANDOFF_SECRET", ""),
         ("ROBBO_LK_FRONTEND_BASE", "http://localhost:3030"),
+        ("ROBBO_LK_BACKEND_BASE", "http://localhost:8080"),
     ]
 )
 
