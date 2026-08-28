@@ -5,6 +5,36 @@
 
     var DataDownload, DataDownloadCertificate, PendingInstructorTasks, ReportDownloads, statusAjaxError;
 
+    function getCsrfToken() {
+        var input = document.querySelector('input[name=csrfmiddlewaretoken]');
+        if (input && input.value) {
+            return input.value;
+        }
+        var meta = document.querySelector('meta[name=csrf-token]');
+        if (meta && meta.content) {
+            return meta.content;
+        }
+        return '';
+    }
+
+    function formatApiError(error, fallback) {
+        var message = fallback;
+        var parsed;
+
+        if (error && error.responseText) {
+            try {
+                parsed = JSON.parse(error.responseText);
+                message = parsed.developer_message || parsed.detail || parsed.message || message;
+                if (typeof message === 'object') {
+                    message = JSON.stringify(message);
+                }
+            } catch (parseError) {
+                message = error.responseText;
+            }
+        }
+        return message;
+    }
+
     statusAjaxError = function() {
         return window.InstructorDashboard.util.statusAjaxError.apply(this, arguments);
     };
@@ -128,7 +158,7 @@
                     url: url,
                     error: function(error) {
                         if (error.responseText) {
-                            errorMessage = JSON.parse(error.responseText);
+                            errorMessage = formatApiError(error, errorMessage);
                         }
                         dataDownloadObj.clear_display();
                         dataDownloadObj.$reports_request_response_error.text(errorMessage);
@@ -154,7 +184,7 @@
                     url: url,
                     error: function(error) {
                         if (error.responseText) {
-                            errorMessage = JSON.parse(error.responseText);
+                            errorMessage = formatApiError(error, errorMessage);
                         }
                         dataDownloadObj.clear_display();
                         dataDownloadObj.$reports_request_response_error.text(errorMessage);
@@ -180,7 +210,7 @@
                     url: url,
                     error: function(error) {
                         if (error.responseText) {
-                            errorMessage = JSON.parse(error.responseText);
+                            errorMessage = formatApiError(error, errorMessage);
                         }
                         dataDownloadObj.clear_display();
                         dataDownloadObj.$reports_request_response_error.text(errorMessage);
@@ -207,7 +237,7 @@
                     url: url,
                     error: function(error) {
                         if (error.responseText) {
-                            errorMessage = JSON.parse(error.responseText);
+                            errorMessage = formatApiError(error, errorMessage);
                         }
                         dataDownloadObj.$reports_request_response_error.text(errorMessage);
                         return dataDownloadObj.$reports_request_response_error.css({
@@ -238,11 +268,7 @@
                     url: url,
                     error: function(error) {
                         if (error.responseText) {
-                            try {
-                                errorMessage = JSON.parse(error.responseText);
-                            } catch (e) {
-                                errorMessage = error.responseText;
-                            }
+                            errorMessage = formatApiError(error, errorMessage);
                         }
                         dataDownloadObj.$reports_request_response_error.text(errorMessage);
                         return dataDownloadObj.$reports_request_response_error.css({
@@ -318,7 +344,10 @@
                     },
                     error: function(error) {
                         dataDownloadObj.$reports_request_response_error.text(
-                            JSON.parse(error.responseText)
+                            formatApiError(
+                                error,
+                                gettext('Error generating problem responses report. Please try again.')
+                            )
                         );
                         return dataDownloadObj.$reports_request_response_error.css({
                             display: 'block'
@@ -342,7 +371,7 @@
                     url: url,
                     error: function(error) {
                         if (error.responseText) {
-                            errorMessage = JSON.parse(error.responseText);
+                            errorMessage = formatApiError(error, errorMessage);
                         }
                         dataDownloadObj.$reports_request_response_error.text(errorMessage);
                         return dataDownloadObj.$reports_request_response_error.css({
@@ -389,7 +418,7 @@
                     url: url,
                     error: function(error) {
                         if (error.responseText) {
-                            errorMessage = JSON.parse(error.responseText);
+                            errorMessage = formatApiError(error, errorMessage);
                         } else if (e.target.name === 'calculate-grades-csv') {
                             errorMessage = gettext('Error generating grades. Please try again.');
                         } else if (e.target.name === 'problem-grade-report') {

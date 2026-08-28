@@ -9,23 +9,34 @@
     return;
   }
 
-  function getCookie(name) {
-    var cookieValue = null;
-    var cookies;
-    var i;
-    var cookie;
+  function getCsrfToken() {
+    var input = document.querySelector('input[name=csrfmiddlewaretoken]');
+    if (input && input.value) {
+      return input.value;
+    }
+    var meta = document.querySelector('meta[name=csrf-token]');
+    if (meta && meta.content) {
+      return meta.content;
+    }
+    return '';
+  }
 
-    if (document.cookie && document.cookie !== '') {
-      cookies = document.cookie.split(';');
-      for (i = 0; i < cookies.length; i += 1) {
-        cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
+  function formatApiError(error, fallback) {
+    var message = fallback;
+    var parsed;
+
+    if (error && error.responseText) {
+      try {
+        parsed = JSON.parse(error.responseText);
+        message = parsed.developer_message || parsed.detail || parsed.message || message;
+        if (typeof message === 'object') {
+          message = JSON.stringify(message);
         }
+      } catch (parseError) {
+        message = error.responseText;
       }
     }
-    return cookieValue;
+    return message;
   }
 
   function submitFeaturedEnroll(anchor) {
@@ -46,7 +57,7 @@
       credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'X-CSRFToken': getCookie('csrftoken') || ''
+        'X-CSRFToken': getCsrfToken()
       },
       body: new URLSearchParams({
         course_id: courseId,
@@ -161,7 +172,7 @@
       credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRFToken': getCookie('csrftoken') || ''
+        'X-CSRFToken': getCsrfToken()
       },
       body: JSON.stringify({
         stub_id: stubId

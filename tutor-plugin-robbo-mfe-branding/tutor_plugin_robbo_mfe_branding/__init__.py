@@ -115,11 +115,24 @@ _PATCH_ROBBO_DEFAULT_SITE_THEME = """
 DEFAULT_SITE_THEME = "robbo-theme"
 """
 
-# Share LMS session between LMS_HOST and apps.* MFE host (e.g. local.openedx.io ↔ apps.local.openedx.io).
+# Share LMS session between LMS_HOST and apps.* MFE host (e.g. skill.robbo.ru ↔ apps.skill.robbo.ru).
+# CSRF_COOKIE_SAMESITE=None is required for cross-site Learning MFE iframe POSTs to LMS chromeless views.
+# Do not enable CSRF_USE_SESSIONS here — it breaks the dual-cookie cleanup path on skill.
 _PATCH_MFE_CROSS_DOMAIN_SESSION = """
 {% if MFE_HOST and MFE_HOST != LMS_HOST %}
 SESSION_COOKIE_DOMAIN = ".{{ LMS_HOST }}"
 CSRF_COOKIE_DOMAIN = ".{{ LMS_HOST }}"
+CSRF_COOKIE_SAMESITE = "None"
+{% endif %}
+"""
+
+# Seamless cleanup of host-only csrftoken left after CSRF_COOKIE_DOMAIN migration (no mass logout).
+_PATCH_EXPIRE_LEGACY_CSRF_COOKIE = """
+{% if MFE_HOST and MFE_HOST != LMS_HOST %}
+ROBBO_LEGACY_CSRF_COOKIE_DOMAIN = "{{ LMS_HOST }}"
+_EXPIRE_LEGACY_CSRF_MW = "openedx.core.djangoapps.cors_csrf.expire_legacy_csrf.ExpireLegacyCsrfCookieMiddleware"
+if _EXPIRE_LEGACY_CSRF_MW not in MIDDLEWARE:
+    MIDDLEWARE.append(_EXPIRE_LEGACY_CSRF_MW)
 {% endif %}
 """
 
@@ -276,6 +289,8 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_REGISTRATION_ANTI_SPAM),
         ("openedx-lms-development-settings", _PATCH_MFE_CROSS_DOMAIN_SESSION),
         ("openedx-lms-production-settings", _PATCH_MFE_CROSS_DOMAIN_SESSION),
+        ("openedx-lms-development-settings", _PATCH_EXPIRE_LEGACY_CSRF_COOKIE),
+        ("openedx-lms-production-settings", _PATCH_EXPIRE_LEGACY_CSRF_COOKIE),
         ("openedx-lms-development-settings", _PATCH_ROBBO_DEFAULT_SITE_THEME),
         ("openedx-lms-production-settings", _PATCH_ROBBO_DEFAULT_SITE_THEME),
         ("openedx-cms-development-settings", _PATCH_ROBBO_DEFAULT_SITE_THEME),

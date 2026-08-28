@@ -5,10 +5,24 @@
     return $("meta[name='path_prefix']").attr('content');
   });
 
+  function getCsrfToken() {
+    var input = $('input[name=csrfmiddlewaretoken]');
+    if (input.length && input.val()) {
+      return input.val();
+    }
+    var meta = $('meta[name=csrf-token]');
+    if (meta.length && meta.attr('content')) {
+      return meta.attr('content');
+    }
+    return $.cookie('csrftoken') || '';
+  }
+
   $(function() {
     $.ajaxSetup({
-      headers: {
-        'X-CSRFToken': $.cookie('csrftoken')
+      beforeSend: function(xhr, settings) {
+        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+          xhr.setRequestHeader('X-CSRFToken', getCsrfToken());
+        }
       },
       dataType: 'json'
     });
@@ -22,7 +36,7 @@
     /*
     $("a[rel*=leanModal]").leanModal()
      */
-    $('#csrfmiddlewaretoken').attr('value', $.cookie('csrftoken'));
+    $('#csrfmiddlewaretoken').attr('value', getCsrfToken());
     new Calculator;
     new FeedbackForm;
     if ($('body').hasClass('courseware')) {
