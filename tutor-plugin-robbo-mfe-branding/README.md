@@ -1,16 +1,24 @@
-# Tutor plugin: Robbo MFE branding
+# Плагин Tutor: брендинг MFE Robbo
 
-Patches [tutor-mfe](https://github.com/overhangio/tutor-mfe) so MFEs get Robbo logos and Paragon theme CSS (light only) from the LMS config API, and **Indigo header/footer** are recolored to match LMS `robbo-theme` via `robbo-mfe-shell.css` injected at **`tutor images build mfe`** time.
+Патчит [tutor-mfe](https://github.com/overhangio/tutor-mfe), чтобы MFE получали
+логотипы Robbo и CSS темы Paragon (только light) из LMS config API, а
+**header/footer Indigo** перекрашивались под LMS `robbo-theme` через
+`robbo-mfe-shell.css`, внедряемый при **`tutor images build mfe`**.
 
-**Authoring (Studio):** installs local brand package `robbo-brand-openedx` as `@edx/brand` during the Authoring MFE image build (`$primary: #00af41`). Rebuild `mfe` after changing brand SCSS.
+**Authoring (Studio):** при сборке образа Authoring MFE ставит локальный brand-пакет
+`robbo-brand-openedx` как `@edx/brand` (`$primary: #00af41`). После правок brand SCSS
+пересоберите `mfe`.
 
-## Documentation
+## Документация
 
-- **[PRODUCTION.md](docs/PRODUCTION.md)** — блок **«Скопировать в чат Cursor»** для одношаговой настройки; справочник оператора (классы A/B/C, продакшен). Правило Cursor: [.cursor/rules/openedx-tutor-robbo.mdc](../.cursor/rules/openedx-tutor-robbo.mdc).
+- **[PRODUCTION.md](docs/PRODUCTION.md)** — блок **«Скопировать в чат Cursor»**
+  для одношаговой настройки; справочник оператора (классы A/B/C, продакшен).
+  Правило Cursor:
+  [.cursor/rules/openedx-tutor-robbo.mdc](../.cursor/rules/openedx-tutor-robbo.mdc).
 
-## Install
+## Установка
 
-From the `openedx-platform` repo root:
+Из корня репозитория `openedx-platform`:
 
 ```bash
 pip install -e ./tutor-plugin-robbo-mfe-branding
@@ -18,21 +26,29 @@ tutor plugins enable robbo-mfe-branding
 tutor config save
 ```
 
-Ensure `INDIGO_ENABLE_DARK_TOGGLE: false` is set in `config.yml` if you use tutor-indigo and want the theme toggle hidden on LMS/MFE.
+Если используете tutor-indigo и хотите скрыть переключатель темы на LMS/MFE,
+в `config.yml` задайте `INDIGO_ENABLE_DARK_TOGGLE: false`.
 
-Regenerate env, **rebuild the MFE image** (Authoring brand + shell CSS are baked in), restart:
+Перегенерируйте env, **пересоберите образ MFE** (brand Authoring + shell CSS
+запекаются), перезапустите:
 
 ```bash
 tutor config save
 tutor images build mfe
-tutor local launch   # or: tutor dev restart mfe
+tutor local launch   # или: tutor dev restart mfe
 ```
 
-Runtime-only changes (`MFE_CONFIG`, logos URLs) do not need an MFE rebuild; Authoring primary color and header/footer shell overrides do.
+Изменения только runtime (`MFE_CONFIG`, URL логотипов) не требуют пересборки MFE;
+цвет primary Authoring и overrides shell header/footer — требуют.
 
-## What it does
+## Что делает
 
-- **`mfe-dockerfile-post-npm-install-authoring`**: `COPY` + `npm install @edx/brand@file:…/robbo-brand-openedx` (green Paragon tokens for Studio)
-- **`mfe-lms-development-settings`**: `LOGO_*`, `FAVICON_URL` pointing at `http://{{ LMS_HOST }}:8000/static/robbo-theme/...`
-- **`mfe-lms-production-settings`**: same paths with `http(s)://{{ LMS_HOST }}` (no port)
-- **`mfe-lms-common-settings`**: `PARAGON_THEME_URLS` with only `light` (Paragon + `@openedx/brand-openedx` from jsDelivr, `$paragonVersion` / `$brandVersion` wildcards)
+- **`mfe-dockerfile-post-npm-install-authoring`**: `COPY` +
+  `npm install @edx/brand@file:…/robbo-brand-openedx` (зелёные токены Paragon для Studio)
+- **`mfe-lms-development-settings`**: `LOGO_*`, `FAVICON_URL` на
+  `http://{{ LMS_HOST }}:8000/static/robbo-theme/...`
+- **`mfe-lms-production-settings`**: те же пути с `http(s)://{{ LMS_HOST }}`
+  (без порта)
+- **`mfe-lms-common-settings`**: `PARAGON_THEME_URLS` только с `light`
+  (Paragon + `@openedx/brand-openedx` с jsDelivr, wildcard `$paragonVersion` /
+  `$brandVersion`)
