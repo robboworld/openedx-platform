@@ -1524,6 +1524,14 @@
 
 
 .instructor-dashboard-wrapper-2 section.idash-section#data_download_2 {
+  .course-interest-container {
+    .course-interest-data-display-table {
+      .slickgrid {
+        height: 400px;
+      }
+    }
+  }
+
     .data-download-grid-container {
         display:grid;
         grid-template-columns:repeat(auto-fit, minmax(20rem, 1fr));
@@ -1625,6 +1633,14 @@
   input {
     margin-bottom: 1em;
     line-height: 1.3em;
+  }
+
+  .course-interest-container {
+    .course-interest-data-display-table {
+      .slickgrid {
+        height: 400px;
+      }
+    }
   }
 
   .reports-download-container {

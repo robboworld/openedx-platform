@@ -20,6 +20,18 @@ from openedx.core.djangolib.markup import HTML, Text
 
  </div>
 
+<div class="course-interest-container action-type-container">
+  <hr>
+  <h3 class="hd hd-3">${_("Интерес к курсам каталога")}</h3>
+  <p>${_("Подписки с карточек «Сообщить об открытии» на странице /courses. Данные читаются из журнала LMS (all.log).")}</p>
+  <p>
+    <input type="button" name="list-course-interest" value="${_("Показать таблицу")}" data-endpoint="${ section_data['get_robbo_course_interest_table_url'] }">
+    <input type="button" name="list-course-interest-csv" value="${_("Скачать CSV")}" data-endpoint="${ section_data['get_robbo_course_interest_table_url'] }">
+  </p>
+  <div class="request-response-error msg msg-error copy course-interest-error"></div>
+  <div class="data-display-table course-interest-data-display-table" id="data-course-interest-table"></div>
+</div>
+
 %if settings.FEATURES.get('ENABLE_GRADE_DOWNLOADS'):
   <div class="reports-download-container action-type-container">
     <hr>

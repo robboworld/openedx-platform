@@ -34,6 +34,11 @@ urlpatterns = [
         api.GetRobboExtendedStudentsFeatures.as_view(),
         name='get_robbo_extended_students_features'
     ),
+    path(
+        'get_robbo_course_interest_table',
+        api.GetRobboCourseInterestTable.as_view(),
+        name='get_robbo_course_interest_table',
+    ),
     path('get_grading_config', api.GetGradingConfig.as_view(), name='get_grading_config'),
     path('get_students_who_may_enroll', api.GetStudentsWhoMayEnroll.as_view(), name='get_students_who_may_enroll'),
     path('get_anon_ids', api.GetAnonIds.as_view(), name='get_anon_ids'),

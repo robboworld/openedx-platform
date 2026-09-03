@@ -81,6 +81,10 @@ from lms.djangoapps.course_home_api.toggles import course_home_mfe_progress_tab_
 from lms.djangoapps.courseware.access import has_access
 from lms.djangoapps.courseware.courses import get_course_with_access
 from lms.djangoapps.courseware.models import StudentModule
+from lms.djangoapps.courseware.robbo_course_interest_report import (
+    course_interest_csv_response,
+    course_interest_table_payload,
+)
 from lms.djangoapps.discussion.django_comment_client.utils import (
     get_group_id_for_user,
     get_group_name,
@@ -1615,6 +1619,36 @@ class GetRobboExtendedStudentsFeatures(DeveloperErrorViewMixin, APIView):
         return JsonResponse({"status": success_status})
 
     def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
+        raise MethodNotAllowed('GET')
+
+
+@method_decorator(cache_control(no_cache=True, no_store=True, must_revalidate=True), name='dispatch')
+@method_decorator(transaction.non_atomic_requests, name='dispatch')
+class GetRobboCourseInterestTable(DeveloperErrorViewMixin, APIView):
+    """
+    Return catalog course-interest rows parsed from LMS application logs (Robbo).
+    """
+    permission_classes = (IsAuthenticated, permissions.InstructorPermission)
+    permission_name = permissions.CAN_RESEARCH
+
+    @method_decorator(ensure_csrf_cookie)
+    @method_decorator(transaction.non_atomic_requests)
+    def post(self, request, course_id):  # pylint: disable=unused-argument
+        course_key = CourseKey.from_string(course_id)
+        query_features, feature_names, rows = course_interest_table_payload()
+        return JsonResponse({
+            'course_id': str(course_key),
+            'students': rows,
+            'students_count': len(rows),
+            'queried_features': query_features,
+            'feature_names': feature_names,
+        })
+
+    @method_decorator(ensure_csrf_cookie)
+    @method_decorator(transaction.non_atomic_requests)
+    def get(self, request, course_id):  # pylint: disable=unused-argument
+        if request.GET.get('csv', 'false').lower() == 'true':
+            return course_interest_csv_response()
         raise MethodNotAllowed('GET')
 
 

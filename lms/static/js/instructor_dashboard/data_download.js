@@ -129,6 +129,8 @@
             this.$list_studs_btn = this.$section.find("input[name='list-profiles']");
             this.$list_studs_csv_btn = this.$section.find("input[name='list-profiles-csv']");
             this.$list_studs_robbo_csv_btn = this.$section.find("input[name='list-profiles-csv-robbo']");
+            this.$list_course_interest_btn = this.$section.find("input[name='list-course-interest']");
+            this.$list_course_interest_csv_btn = this.$section.find("input[name='list-course-interest-csv']");
             this.$proctored_exam_csv_btn = this.$section.find("input[name='proctored-exam-results-report']");
             this.$survey_results_csv_btn = this.$section.find("input[name='survey-results-report']");
             this.$list_may_enroll_csv_btn = this.$section.find("input[name='list-may-enroll-csv']");
@@ -144,6 +146,8 @@
             this.$download_request_response_error = this.$download.find('.request-response-error');
             this.$reports = this.$section.find('.reports-download-container');
             this.$download_display_table = this.$reports.find('.profile-data-display-table');
+            this.$course_interest_display_table = this.$section.find('.course-interest-data-display-table');
+            this.$course_interest_error = this.$section.find('.course-interest-error');
             this.$reports_request_response = this.$reports.find('.request-response');
             this.$reports_request_response_error = this.$reports.find('.request-response-error');
             this.report_downloads = new (ReportDownloads())(this.$section);
@@ -282,6 +286,58 @@
                         return dataDownloadObj.report_downloads.downloads_poller.start();
                     }
                 });
+            });
+            this.$list_course_interest_btn.click(function() {
+                var url = dataDownloadObj.$list_course_interest_btn.data('endpoint');
+                dataDownloadObj.clear_display();
+                dataDownloadObj.$course_interest_display_table.text(gettext('Loading'));
+                return $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: url,
+                    error: function() {
+                        dataDownloadObj.clear_display();
+                        dataDownloadObj.$course_interest_error.text(
+                            gettext('Error loading course interest table.')
+                        );
+                        return dataDownloadObj.$course_interest_error.css({
+                            display: 'block'
+                        });
+                    },
+                    success: function(data) {
+                        var $tablePlaceholder, columns, feature, gridData, options;
+                        dataDownloadObj.clear_display();
+                        options = {
+                            enableCellNavigation: true,
+                            enableColumnReorder: false,
+                            forceFitColumns: true,
+                            rowHeight: 35
+                        };
+                        columns = (function() {
+                            var i, len, ref, results;
+                            ref = data.queried_features;
+                            results = [];
+                            for (i = 0, len = ref.length; i < len; i++) {
+                                feature = ref[i];
+                                results.push({
+                                    id: feature,
+                                    field: feature,
+                                    name: data.feature_names[feature]
+                                });
+                            }
+                            return results;
+                        }());
+                        gridData = data.students;
+                        $tablePlaceholder = $('<div/>', {
+                            class: 'slickgrid'
+                        });
+                        dataDownloadObj.$course_interest_display_table.append($tablePlaceholder);
+                        return new window.Slick.Grid($tablePlaceholder, gridData, columns, options);
+                    }
+                });
+            });
+            this.$list_course_interest_csv_btn.click(function() {
+                location.href = dataDownloadObj.$list_course_interest_csv_btn.data('endpoint') + '?csv=true';
             });
             this.$list_studs_btn.click(function() {
                 var url = dataDownloadObj.$list_studs_btn.data('endpoint');
@@ -455,6 +511,8 @@
         InstructorDashboardDataDownload.prototype.clear_display = function() {
             this.$download_display_text.empty();
             this.$download_display_table.empty();
+            this.$course_interest_display_table.empty();
+            this.$course_interest_error.empty();
             this.$download_request_response_error.empty();
             this.$reports_request_response.empty();
             this.$reports_request_response_error.empty();

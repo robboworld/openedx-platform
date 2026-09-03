@@ -36,6 +36,10 @@
             this.$report_type_selector = $('.report-type');
             this.$selection_informations = $('.selectionInfo');
             this.$data_display_table = $('.data-display-table-holder');
+            this.$course_interest_btn = this.$section.find("input[name='list-course-interest']");
+            this.$course_interest_csv_btn = this.$section.find("input[name='list-course-interest-csv']");
+            this.$course_interest_table = this.$section.find('.course-interest-data-display-table');
+            this.$course_interest_error = this.$section.find('.course-interest-error');
             this.$downloadProblemReport = $('#download-problem-report');
             this.$tabSwitch = $('.data-download-nav .btn-link');
             this.$selectedSection = $('#' + this.$tabSwitch.first().attr('data-section'));
@@ -60,6 +64,8 @@
             this.clear_display = function() {
                 this.$download_display_text.empty();
                 this.$download_display_table.empty();
+                this.$course_interest_table.empty();
+                this.$course_interest_error.empty();
                 this.$download_request_response_error.empty();
                 this.$reports_request_response.empty();
                 this.$reports_request_response_error.empty();
@@ -161,6 +167,32 @@
                 dataDownloadObj.downloadCSV($(this), errorMessage, data);
             });
 
+            this.$course_interest_btn.click(function() {
+                var url = dataDownloadObj.$course_interest_btn.data('endpoint');
+                var errorMessage = gettext('Error loading course interest table.');
+                dataDownloadObj.clear_display();
+                dataDownloadObj.$course_interest_table.text(gettext('Loading data...'));
+                return $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: url,
+                    error: function(error) {
+                        dataDownloadObj.OnError(error, errorMessage);
+                    },
+                    success: function(data) {
+                        dataDownloadObj.clear_display();
+                        dataDownloadObj.buildDataTableInto(
+                            data,
+                            dataDownloadObj.$course_interest_table
+                        );
+                    }
+                });
+            });
+
+            this.$course_interest_csv_btn.click(function() {
+                location.href = dataDownloadObj.$course_interest_csv_btn.data('endpoint') + '?csv=true';
+            });
+
             /**
              * Call data endpoint and render success/error message on dashboard UI.
              */
@@ -202,8 +234,11 @@
              * render data table on dashboard UI with given data.
              */
             this.buildDataTable = function(data) {
+                dataDownloadObj.buildDataTableInto(data, dataDownloadObj.$download_display_table);
+            };
+
+            this.buildDataTableInto = function(data, $target) {
                 var $tablePlaceholder, columns, feature, gridData, options;
-                dataDownloadObj.clear_display();
                 options = {
                     enableCellNavigation: true,
                     enableColumnReorder: false,
@@ -228,7 +263,7 @@
                 $tablePlaceholder = $('<div/>', {
                     class: 'slickgrid'
                 });
-                dataDownloadObj.$download_display_table.append($tablePlaceholder);
+                $target.append($tablePlaceholder);
                 return new window.Slick.Grid($tablePlaceholder, gridData, columns, options);
             };
         }

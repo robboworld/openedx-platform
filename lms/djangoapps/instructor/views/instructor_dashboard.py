@@ -647,6 +647,9 @@ def _section_data_download(course, access):
         'get_robbo_extended_students_features_url': reverse(
             'get_robbo_extended_students_features', kwargs={'course_id': str(course_key)}
         ),
+        'get_robbo_course_interest_table_url': reverse(
+            'get_robbo_course_interest_table', kwargs={'course_id': str(course_key)}
+        ),
         'get_issued_certificates_url': reverse(
             'get_issued_certificates', kwargs={'course_id': str(course_key)}
         ),
