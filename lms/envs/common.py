@@ -5650,7 +5650,8 @@ ROBBO_CATALOG_FEATURED_COURSE_ID = None
 ROBBO_CATALOG_FEATURED_IMAGE = 'mcu.png'
 # Recipients for learner requests to be notified when a stub course opens.
 ROBBO_COURSE_INTEREST_RECIPIENTS = ['e.sovkov@robbo.ru']
-# Optional LMS log files used as a fallback for historic course-interest submissions.
+# Optional LMS log files for course-interest reports / Robbo CSV interest_* columns.
+# Empty → default to LOG_DIR/all.log and LOG_DIR/tracking.log when those files exist.
 ROBBO_COURSE_INTEREST_LOG_PATHS = []
 
 # Yandex Metrika: disabled by default. Tutor ``openedx-lms-development-settings`` forces off;

@@ -21,8 +21,10 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
+from eventtracking import tracker
 
 from lms.djangoapps.courseware.robbo_catalog import get_robbo_catalog_stubs
+from lms.djangoapps.courseware.robbo_course_interest_report import TRACKING_EVENT_NAME
 
 log = logging.getLogger('robbo.course_interest')
 _INTEREST_META_KEY = 'robbo_course_interest_titles'
@@ -208,6 +210,19 @@ def course_interest(request) -> JsonResponse:
         payload['learner']['full_name'],
         payload['learner']['company'],
         extra={'course_interest': payload},
+    )
+
+    # Structured tracking event so tracking.log can feed interest_* CSV columns.
+    tracker.emit(
+        TRACKING_EVENT_NAME,
+        {
+            'stub_id': payload['course']['stub_id'],
+            'course_title': payload['course']['title'],
+            'user_id': payload['learner']['user_id'],
+            'email': payload['learner']['email'],
+            'full_name': payload['learner']['full_name'],
+            'company': payload['learner']['company'],
+        },
     )
 
     try:

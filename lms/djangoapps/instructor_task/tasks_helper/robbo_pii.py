@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 import re
 from datetime import datetime
 from time import time
@@ -18,7 +17,6 @@ from typing import Dict, FrozenSet, List, Optional, Set
 
 from django.contrib.auth.models import User  # lint-amnesty, pylint: disable=imported-auth-user
 from django.core.exceptions import ObjectDoesNotExist
-from django.conf import settings
 from completion.exceptions import UnavailableCompletionData
 from completion.utilities import get_key_to_last_completed_block
 from pytz import UTC
@@ -28,6 +26,7 @@ from xmodule.modulestore.search import path_to_location
 
 from common.djangoapps.student.models import CourseEnrollment
 from lms.djangoapps.courseware.robbo_catalog import get_robbo_catalog_stubs
+from lms.djangoapps.courseware.robbo_course_interest_report import interest_titles_by_user_from_logs
 from lms.djangoapps.grades.course_grade_factory import CourseGradeFactory
 from lms.djangoapps.instructor_analytics.basic import learner_features_dict
 from lms.djangoapps.program_enrollments.api import fetch_program_enrollments_by_students
@@ -51,8 +50,6 @@ _TAIL_PROFILE_FEATURES: FrozenSet[str] = frozenset({
     'enrollment_mode',
     'country',
 })
-_USER_ID_RE = re.compile(r'user_id=(\d+)')
-_TITLE_RE = re.compile(r"course_title='((?:\\'|[^'])*)'")
 
 
 def _profile_meta(profile) -> Dict[str, object]:
@@ -75,34 +72,6 @@ def _interest_titles_from_profile(profile) -> Set[str]:
     if not isinstance(raw_titles, list):
         return set()
     return {str(title).strip() for title in raw_titles if title}
-
-
-def _interest_log_paths() -> List[str]:
-    configured = getattr(settings, 'ROBBO_COURSE_INTEREST_LOG_PATHS', [])
-    if isinstance(configured, str):
-        configured = [configured]
-    if not isinstance(configured, (list, tuple)):
-        return []
-    return [path for path in configured if path and os.path.isfile(path)]
-
-
-def _interest_titles_from_logs() -> Dict[int, Set[str]]:
-    by_user: Dict[int, Set[str]] = {}
-    for path in _interest_log_paths():
-        try:
-            with open(path, encoding='utf-8', errors='replace') as log_file:
-                for line in log_file:
-                    if 'course_interest submitted' not in line:
-                        continue
-                    user_match = _USER_ID_RE.search(line)
-                    title_match = _TITLE_RE.search(line)
-                    if user_match is None or title_match is None:
-                        continue
-                    title = title_match.group(1).replace("\\'", "'").strip()
-                    by_user.setdefault(int(user_match.group(1)), set()).add(title)
-        except OSError as exc:
-            TASK_LOG.warning('Robbo CSV: cannot read course interest log %s: %s', path, exc)
-    return by_user
 
 
 def _released_graded_test_percents(course_grade) -> List[float]:
@@ -378,7 +347,7 @@ def upload_robbo_extended_students_csv(_xblock_instance_args, _entry_id, course_
     external_map: Dict[int, object] = {}
     if 'external_user_key' in query_features and users:
         external_map = _batch_external_user_key_map(users)
-    interest_from_logs = _interest_titles_from_logs()
+    interest_from_logs = interest_titles_by_user_from_logs()
     stubs = get_robbo_catalog_stubs()
     course = get_course_by_id(course_id, depth=0)
 
