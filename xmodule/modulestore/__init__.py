@@ -1312,6 +1312,28 @@ class ModuleStoreWriteBase(ModuleStoreReadBase, ModuleStoreWrite):
             result[field.scope][field_name] = value
         return result
 
+    @staticmethod
+    def _overview_template_id(fields):
+        """
+        Choose localized course overview sample HTML by course/platform language.
+        """
+        language = None
+        if fields:
+            language = fields.get('language')
+        if not language:
+            try:
+                from django.conf import settings  # lint-amnesty, pylint: disable=import-outside-toplevel
+                language = (
+                    getattr(settings, 'DEFAULT_COURSE_LANGUAGE', None)
+                    or getattr(settings, 'LANGUAGE_CODE', 'en')
+                )
+            except Exception:  # lint-amnesty, pylint: disable=broad-except
+                language = 'en'
+        from xmodule.course_metadata_utils import is_russian_language  # lint-amnesty, pylint: disable=import-outside-toplevel
+        if is_russian_language(language):
+            return 'overview.ru.yaml'
+        return 'overview.yaml'
+
     def create_course(self, org, course, run, user_id, fields=None, runtime=None, **kwargs):  # lint-amnesty, pylint: disable=arguments-differ
         """
         Creates any necessary other things for the course as a side effect and doesn't return
@@ -1321,7 +1343,9 @@ class ModuleStoreWriteBase(ModuleStoreReadBase, ModuleStoreWrite):
         about_location = self.make_course_key(org, course, run).make_usage_key('about', 'overview')
 
         about_block = XBlock.load_class('about')
-        overview_template = about_block.get_template('overview.yaml')
+        overview_template = about_block.get_template(self._overview_template_id(fields))
+        if overview_template is None:
+            overview_template = about_block.get_template('overview.yaml')
         self.create_item(
             user_id,
             about_location.course_key,

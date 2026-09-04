@@ -25114,32 +25114,40 @@ msgstr ""
 "типа."
 
 #: cms/templates/studio_xblock_wrapper.html
-#, fuzzy
 msgid "Importing components"
-msgstr "Изменение компонентов"
+msgstr "Импорт компонентов"
 
 #: cms/templates/studio_xblock_wrapper.html
 msgid "Expand or Collapse"
 msgstr "Развернуть/свернуть"
 
 #: cms/templates/studio_xblock_wrapper.html
-#, fuzzy
 msgid "Select this problem"
-msgstr "Выбрать другой вид задания."
+msgstr "Выбрать это задание"
 
 #: cms/templates/studio_xblock_wrapper.html
-#, fuzzy
 msgid "Manage Tags"
-msgstr "Управление изображениями"
+msgstr "Управление тегами"
 
 #: cms/templates/studio_xblock_wrapper.html
-#, fuzzy
 msgid "Manage Access"
-msgstr "Управление изображениями"
+msgstr "Управление доступом"
 
 #: cms/templates/studio_xblock_wrapper.html
 msgid "Copy to Clipboard"
 msgstr "Копировать в буфер обмена"
+
+#: cms/templates/studio_xblock_wrapper.html
+msgid "Update available"
+msgstr "Доступно обновление"
+
+#: cms/templates/studio_xblock_wrapper.html
+msgid "Update available - click to sync"
+msgstr "Доступно обновление — нажмите, чтобы синхронизировать"
+
+#: cms/templates/studio_xblock_wrapper.html
+msgid "Components within a library referenced object cannot be edited"
+msgstr "Компоненты внутри объекта из библиотеки нельзя редактировать"
 
 #: cms/templates/studio_xblock_wrapper.html
 msgid "This block contains multiple components."

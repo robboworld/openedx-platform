@@ -1,0 +1,53 @@
+---
+metadata:
+    display_name: overview
+
+data: |
+    <section class="about">
+      <h2>О курсе</h2>
+      <p>Вставьте здесь подробное описание курса. Рекомендуемый объём — 150–400 слов.</p>
+
+      <p>Это второй абзац подробного описания. Добавьте столько абзацев, сколько нужно. Оформляйте каждый абзац тегами абзаца.</p>
+    </section>
+
+    <section class="prerequisites">
+      <h2>Требования</h2>
+      <p>Укажите, какие навыки и знания нужны студентам для прохождения этого курса.</p>
+    </section>
+
+    <section class="course-staff">
+      <h2>Преподаватели курса</h2>
+      <article class="teacher">
+        <div class="teacher-image">
+          <img src="/static/images/placeholder-faculty.png" align="left" alt="Фото преподавателя №1" />
+        </div>
+
+        <h3>Преподаватель №1</h3>
+        <p>Биография преподавателя / сотрудника №1</p>
+      </article>
+
+      <article class="teacher">
+        <div class="teacher-image">
+          <img src="/static/images/placeholder-faculty.png" align="left" alt="Фото преподавателя №2" />
+        </div>
+
+        <h3>Преподаватель №2</h3>
+        <p>Биография преподавателя / сотрудника №2</p>
+      </article>
+    </section>
+
+    <section class="faq">
+      <section class="responses">
+        <h2>Часто задаваемые вопросы</h2>
+        <article class="response">
+          <h3>Какой браузер лучше использовать?</h3>
+          <p>Платформа Open edX лучше всего работает в актуальных версиях Chrome, Edge, Firefox или Safari.</p>
+          <p>См. наш <a href="https://docs.openedx.org/en/latest/developers/references/developer_guide/testing/browsers.html">список поддерживаемых браузеров</a> для самой актуальной информации.</p>
+        </article>
+
+        <article class="response">
+          <h3>Вопрос №2</h3>
+          <p>Здесь будет отображаться ваш ответ.</p>
+        </article>
+      </section>
+    </section>

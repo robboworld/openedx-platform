@@ -1,0 +1,40 @@
+---
+metadata:
+    display_name: Выбор варианта с подсказками и обратной связью
+    markdown: |
+
+        You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Отредактируйте компонент и замените текст своим заданием.
+
+        >>Добавьте текст вопроса или условие. Это поле обязательно.||При необходимости добавьте подсказку или примечание к условию. <<
+
+        ( ) неверный ответ {{You can specify optional feedback like this, which appears after this answer is submitted.}}
+        (x) верный ответ
+        ( ) неверный ответ {{You can specify optional feedback for none, a subset, or all of the answers.}}
+
+        ||You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.||
+        ||If you add more than one hint, a different hint appears each time learners select the hint button.||
+
+hinted: true
+data:   |
+        <problem>
+            <multiplechoiceresponse>
+                <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Отредактируйте компонент и замените текст своим заданием.</p>
+                <label>Добавьте текст вопроса или условие. Это поле обязательно.</label>
+                <description>При необходимости добавьте подсказку или примечание к условию.</description>
+                <choicegroup>
+                    <choice correct="false">неверный ответ
+                        <choicehint>You can specify optional feedback like this, which appears after this answer is submitted.</choicehint>
+                    </choice>
+                    <choice correct="true">верный ответ
+                    </choice>
+                    <choice correct="false">неверный ответ
+                        <choicehint>You can specify optional feedback for none, a subset, or all of the answers.</choicehint>
+                    </choice>
+                </choicegroup>
+            </multiplechoiceresponse>
+
+            <demandhint>
+                <hint>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</hint>
+                <hint>If you add more than one hint, a different hint appears each time learners select the hint button.</hint>
+            </demandhint>
+        </problem>

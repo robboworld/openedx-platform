@@ -830,6 +830,11 @@ class ResourceTemplates:
             if not template_file.endswith('.yaml'):
                 log.warning("Skipping unknown template file %s", template_file)
                 continue
+            # Locale variants (e.g. multiplechoice.ru.yaml) are selected at create
+            # time from LANGUAGE_CODE and must not appear as separate Studio options.
+            stem = template_file[:-5]
+            if len(stem) > 3 and stem[-3] == '.' and stem[-2:].isalpha():
+                continue
 
             template = cls._load_template(os.path.join(dirpath, template_file), template_file)
             templates.append(template)
