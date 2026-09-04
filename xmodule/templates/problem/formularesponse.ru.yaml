@@ -1,0 +1,14 @@
+---
+metadata:
+    display_name: Ввод математического выражения
+    markdown: !!null
+data: |
+      <problem>
+          <formularesponse type="ci" samples="R_1,R_2,R_3@1,2,3:3,4,5#10" answer="R_1*R_2/R_3">
+              <p>You can use this template as a guide to the OLX markup to use for math expression problems. Edit this component to replace the example with your own assessment.</p>
+              <label>Добавьте текст вопроса или условие. Это поле обязательно. Example: Write an expression for the product of R_1, R_2, and the inverse of R_3.</label>
+              <description>При необходимости добавьте подсказку или примечание к условию. Example: To test this example, верный ответ is R_1*R_2/R_3</description>
+              <responseparam type="tolerance" default="0.00001"/>
+              <formulaequationinput size="40"/>
+          </formularesponse>
+      </problem>

@@ -6005,9 +6005,8 @@ msgstr "Действие необратимо."
 #: cms/static/js/views/course_info_update.js cms/static/js/views/list_item.js
 #: cms/static/js/views/show_textbook.js cms/static/js/views/tabs.js
 #: cms/static/js/views/utils/xblock_utils.js
-#, fuzzy
 msgid "Deleting"
-msgstr "Настройки"
+msgstr "Удаление"
 
 #: cms/static/js/certificates/views/signatory_editor.js
 msgid "Upload signature image."
@@ -7319,9 +7318,8 @@ msgid "Moving"
 msgstr "Удаление"
 
 #: cms/static/js/views/utils/xblock_utils.js
-#, fuzzy
 msgid "Deleting this {xblock_type} is permanent and cannot be undone."
-msgstr "Удаление %(item_display_name)s невозможно будет отменить."
+msgstr "Удаление этого {xblock_type} необратимо и не может быть отменено."
 
 #: cms/static/js/views/utils/xblock_utils.js
 msgid ""
@@ -7337,28 +7335,24 @@ msgstr "Удалить этот {xblock_type} (и необходимое усл�
 
 #: cms/static/js/views/utils/xblock_utils.js
 msgid "Yes, delete this {xblock_type}"
-msgstr "Да, удалите этот {xblock_type}"
+msgstr "Да, удалить этот {xblock_type}"
 
 #: cms/static/js/views/utils/xblock_utils.js
-#, fuzzy
 msgid "Delete this {xblock_type}?"
-msgstr "Удалить эту команду?"
+msgstr "Удалить этот {xblock_type}?"
 
 #: cms/static/js/views/utils/xblock_utils.js
-#, fuzzy
 msgid "section"
-msgstr "Раздел"
+msgstr "раздел"
 
 #: cms/static/js/views/utils/xblock_utils.js
-#, fuzzy
 msgid "subsection"
-msgstr "Подраздел"
+msgstr "подраздел"
 
 #: cms/static/js/views/utils/xblock_utils.js
 #: cms/templates/js/container-access.underscore
-#, fuzzy
 msgid "unit"
-msgstr "Все блоки"
+msgstr "блок"
 
 #: cms/static/js/views/validation.js
 msgid "You've made some changes"

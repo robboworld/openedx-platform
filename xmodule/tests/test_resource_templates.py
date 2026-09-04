@@ -23,6 +23,12 @@ class ResourceTemplatesTests(unittest.TestCase):
         got = {t['template_id'] for t in TestClass.templates()}
         assert expected == got
 
+    def test_locale_variant_templates_excluded_from_listing(self):
+        """Localized *.ru.yaml files are loadable but not listed as Studio options."""
+        ids = {t['template_id'] for t in TestClass.templates()}
+        assert 'announcement.ru.yaml' not in ids
+        assert TestClass.get_template('announcement.ru.yaml')['template_id'] == 'announcement.ru.yaml'
+
     def test_templates_no_suchdir(self):
         assert len(TestClass2.templates()) == 0
 
