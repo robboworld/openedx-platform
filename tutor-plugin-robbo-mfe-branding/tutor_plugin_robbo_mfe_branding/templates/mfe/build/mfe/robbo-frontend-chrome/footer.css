@@ -1,0 +1,209 @@
+/* Copyright (C) 2026 Robbo <https://robbo.ru> — Studio/Authoring RobboFooter styles (parity with LMS/MFE). */
+.wrapper.wrapper-footer.robbo-studio-footer-wrap,
+.wrapper-footer.robbo-studio-footer-wrap {
+  background: #ffffff;
+  border-top: 3px solid #00af41;
+  padding: clamp(28px, 4vw, 36px) 0;
+  box-shadow: none;
+  margin-top: auto;
+}
+
+.robbo-site-footer {
+  background: #ffffff;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.robbo-site-footer__inner {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 992px) {
+  .robbo-site-footer__inner {
+    padding: 0 28px;
+  }
+}
+
+.robbo-footer__main {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: clamp(20px, 4vw, 48px);
+  align-items: start;
+  width: 100%;
+}
+
+.robbo-footer__brand-col,
+.robbo-footer__col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+
+.robbo-footer__partner-col {
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.robbo-footer__heading {
+  margin: 0 0 12px;
+  color: #383838;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.robbo-footer__tagline,
+.robbo-footer__copyright {
+  margin: 0;
+  max-width: 22em;
+  color: #989898;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-size: clamp(11px, 1.1vw, 13px);
+  line-height: 1.45;
+}
+
+.robbo-footer__copyright {
+  font-size: clamp(11px, 1.1vw, 12px);
+}
+
+.robbo-footer__logo {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  padding: clamp(4px, 1.2vw, 6px) clamp(14px, 2.2vw, 21px) clamp(4px, 1.2vw, 6px) clamp(12px, 1.8vw, 15px);
+  box-sizing: border-box;
+  background: #00af41;
+  color: #ffffff;
+  font-size: clamp(14px, 2vw, 24px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+
+.robbo-footer__reg {
+  position: absolute;
+  top: clamp(4px, 0.8vw, 8px);
+  right: clamp(5px, 1vw, 10px);
+  font-size: clamp(7px, 0.85vw, 10px);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.robbo-footer__partner-link {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+}
+
+.robbo-footer__partner-link:focus-visible {
+  outline: 2px solid #00af41;
+  outline-offset: 3px;
+}
+
+.robbo-footer__partner-logo {
+  display: block;
+  width: auto;
+  height: clamp(56px, 6.5vw, 76px);
+  object-fit: contain;
+}
+
+.robbo-footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.robbo-footer__links a {
+  display: block;
+  color: #989898;
+  font-size: clamp(11px, 1.1vw, 13px);
+  line-height: 1.45;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  text-decoration: none;
+  word-break: break-word;
+}
+
+.robbo-footer__links a:hover,
+.robbo-footer__links a:focus,
+.robbo-footer__contacts-link:hover,
+.robbo-footer__contacts-link:focus {
+  color: #00af41;
+  text-decoration: underline;
+}
+
+.robbo-footer__contacts-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.robbo-footer__contacts-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.robbo-footer__contacts-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: #989898;
+}
+
+.robbo-footer__contacts-link {
+  min-width: 0;
+  color: #989898;
+  font-size: clamp(11px, 1.1vw, 13px);
+  line-height: 1.45;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 991.98px) {
+  .robbo-footer__main {
+    grid-template-columns: 1fr;
+    row-gap: 14px;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .robbo-footer__brand-col,
+  .robbo-footer__partner-col,
+  .robbo-footer__col {
+    align-items: center;
+    width: 100%;
+  }
+
+  .robbo-footer__partner-col {
+    justify-content: center;
+  }
+
+  .robbo-footer__contacts-item {
+    justify-content: center;
+  }
+}

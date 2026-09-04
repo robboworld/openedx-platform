@@ -33,4 +33,5 @@ mfe_logo_paths:
   white: "/static/robbo-theme/images/logo-mfe-white.svg"
 
 # Цвета шапки/футера для Indigo MFE см. tutor-plugin-robbo-mfe-branding/.../robbo-mfe-shell.css
-# (подключается при сборке образа mfe, не из этого файла).
+# (legacy). Runtime Paragon primary для Authoring: lms/static/css/paragon-brand-robbo.css
+# через MFE_CONFIG PARAGON_THEME_URLS.brandOverride.

@@ -1,36 +1,10 @@
 ## mako
 <%page expression_filter="h"/>
-<%!
-  from datetime import datetime
-%>
+<%namespace name='static' file='../static_content.html'/>
 <div class="wrapper-footer wrapper robbo-studio-footer-wrap">
   <footer class="robbo-site-footer" role="contentinfo">
     <div class="robbo-site-footer__inner">
-      <div class="robbo-footer__left">
-        <div class="robbo-footer__brand">
-          <span class="robbo-footer__logo" aria-label="РОББО">РОББО<sup class="robbo-footer__reg" aria-hidden="true">®</sup></span>
-        </div>
-        <p class="robbo-footer__copyright">© ООО «РОББО ТЕХНОЛОГИИ», ${datetime.now().year}</p>
-      </div>
-      <div class="robbo-footer__center">
-        <nav class="robbo-footer__nav" aria-label="Документы">
-          <ul class="robbo-footer__links">
-            <li>
-              <a href="https://edurobbo.ru/skill" target="_blank" rel="noopener noreferrer">Сведения об образовательной организации</a>
-            </li>
-            <li>
-              <a href="https://robbo.ru/wp-content/uploads/policy.pdf" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>
-            </li>
-            <li>
-              <a href="https://robbo.ru/wp-content/uploads/agree.pdf" target="_blank" rel="noopener noreferrer">Согласие на обработку персональных данных</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <div class="robbo-footer__contacts">
-        <p class="robbo-footer__contacts-title">Контактные данные:</p>
-        <p class="robbo-footer__contacts-line">Почта <a href="mailto:skill@robbo.ru">skill@robbo.ru</a></p>
-      </div>
+      <%include file="robbo_footer_inner.html" />
     </div>
   </footer>
 </div>

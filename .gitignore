@@ -126,6 +126,10 @@ cms/static/sass/*.css
 cms/static/sass/*.css.map
 cms/static/themed_sass/
 themes/**/css
+# Hand-authored Paragon brand override (served to MFEs via PARAGON_THEME_URLS)
+!themes/robbo-theme/lms/static/css/
+themes/robbo-theme/lms/static/css/**
+!themes/robbo-theme/lms/static/css/paragon-brand-robbo.css
 
 ### Logging artifacts
 log/

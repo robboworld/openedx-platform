@@ -1,0 +1,174 @@
+// Copyright (C) 2026 Robbo <https://robbo.ru>
+// SPDX-License-Identifier: AGPL-3.0-only
+// Classic CMS Studio header — same chrome as LMS `.header-container` (1600px).
+
+$robbo-cms-header-green: #00af41;
+$robbo-cms-header-wordmark: 30px;
+
+.wrapper-header {
+  background: $robbo-cms-header-green !important;
+  box-shadow: none !important;
+  border-bottom: none !important;
+  color: #fff;
+  // Full-bleed green bar; content aligned like LMS (not viewport edges)
+  padding: 0 !important;
+
+  .wrapper-l,
+  .wrapper-r {
+    background: transparent !important;
+    float: none !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  header.primary {
+    color: #fff;
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    box-sizing: border-box;
+    width: 100% !important;
+    max-width: 1600px !important; // LMS `.header-container`
+    min-width: 0 !important;
+    min-height: 75px;
+    margin: 0 auto !important;
+    padding: 6px 20px !important;
+
+    @media (min-width: 992px) {
+      padding: 6px 28px !important;
+    }
+  }
+
+  .wrapper-l {
+    display: flex !important;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    min-width: 0;
+  }
+
+  .wrapper-r {
+    display: flex !important;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: auto !important;
+    text-align: right;
+  }
+
+  .branding {
+    padding: 0 !important;
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+
+    .brand-link {
+      display: inline-flex;
+      align-items: flex-start;
+      text-decoration: none;
+      color: #fff !important;
+      line-height: 1.1;
+      font-family: $font-family-title, "ProximaNova", "Proxima Nova", Helvetica, Arial, sans-serif;
+    }
+
+    .header-logo-wordmark {
+      font-family: inherit;
+      font-size: $robbo-cms-header-wordmark;
+      font-weight: 700;
+      color: #fff !important;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+
+    .header-logo-reg {
+      font-size: 0.45em;
+      font-weight: 700;
+      vertical-align: super;
+      margin-left: 0.06em;
+      color: #fff !important;
+    }
+
+    .brand-image {
+      display: none;
+    }
+  }
+
+  .info-course {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .info-course,
+  .info-course a,
+  .info-course .course-org,
+  .info-course .course-number,
+  .info-course .course-title {
+    color: #fff !important;
+    border-right-color: rgba(255, 255, 255, 0.35) !important;
+  }
+
+  .nav-dd .title,
+  .nav-account .title,
+  .nav-course .title {
+    background: transparent !important;
+    border: 1px solid #fff !important;
+    border-radius: 999px !important;
+    box-shadow: none !important;
+    color: #fff !important;
+    padding: 6px 16px !important;
+    font-weight: 700 !important;
+    line-height: 1.35 !important;
+
+    .label,
+    .user-username,
+    .icon,
+    .fa,
+    .fa-caret-down {
+      color: #fff !important;
+      opacity: 1 !important;
+    }
+
+    &:hover,
+    &:active,
+    &.current,
+    &.active,
+    &.is-selected {
+      background: rgba(255, 255, 255, 0.12) !important;
+      border-color: #fff !important;
+      color: #fff !important;
+      box-shadow: none !important;
+    }
+  }
+
+  .nav-course a,
+  .nav-account a {
+    color: #fff !important;
+  }
+
+  .nav-account {
+    position: static !important;
+    padding: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .nav-course {
+    padding: 0 !important;
+  }
+
+  .nav-dd .nav-sub {
+    color: #383838;
+
+    a {
+      color: #383838 !important;
+    }
+  }
+}

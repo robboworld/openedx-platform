@@ -1,0 +1,7 @@
+{
+  "name": "@edx/brand",
+  "version": "1.0.0",
+  "description": "Robbo brand package for Open edX MFEs (Paragon SCSS tokens). Installed as @edx/brand at MFE build time.",
+  "license": "AGPL-3.0-only",
+  "author": "Robbo <https://robbo.ru>"
+}

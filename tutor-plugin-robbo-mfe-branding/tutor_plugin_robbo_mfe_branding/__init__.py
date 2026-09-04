@@ -5,7 +5,8 @@
 
 """
 Tutor plugin: Robbo MFE branding — MFE_CONFIG, Paragon URLs; trims tutor-indigo image
-injects for bind-mounted MFEs (brand, header/footer packages, footer slot, env imports).
+injects for bind-mounted MFEs (brand, header/footer packages, footer slot, env imports);
+installs Robbo ``@edx/brand`` and RobboFooter chrome for Authoring MFE at image build time.
 """
 from __future__ import annotations
 
@@ -16,6 +17,41 @@ from tutormfe.hooks import PLUGIN_SLOTS
 
 _PKG = "tutor_plugin_robbo_mfe_branding"
 
+# Authoring (Studio home / courses / libraries) is not in the bind-mount set; bake Robbo
+# Paragon tokens via local brand package in the MFE build context
+# (templates/mfe/build/mfe/robbo-brand-openedx → env after `tutor config save`).
+_PATCH_AUTHORING_ROBBO_BRAND = """
+COPY robbo-brand-openedx /openedx/robbo-brand-openedx
+RUN npm install '@edx/brand@file:/openedx/robbo-brand-openedx'
+"""
+
+# After full app COPY + env.config.jsx: put chrome under src/ so babel transpiles JSX
+# (node_modules is excluded from babel-loader).
+_PATCH_AUTHORING_ROBBO_CHROME_SRC = """
+COPY robbo-frontend-chrome /openedx/app/src/robbo-frontend-chrome
+"""
+
+_PATCH_AUTHORING_ROBBO_FOOTER_IMPORT = """
+const { RobboStudioHelpContent } = await import('./src/robbo-frontend-chrome');
+"""
+
+# Only replace Studio help buttons (docs + demo course) → Robbo support.
+_AUTHORING_STUDIO_HELP_CONTENT_SLOT = """
+            {
+                op: PLUGIN_OPERATIONS.Hide,
+                widgetId: 'default_contents',
+            },
+            {
+                op: PLUGIN_OPERATIONS.Insert,
+                widget: {
+                    id: 'robbo_studio_help_content',
+                    type: DIRECT_PLUGIN,
+                    priority: 1,
+                    RenderWidget: <RobboStudioHelpContent />,
+                },
+            },
+"""
+
 
 @hooks.Filters.ENV_TEMPLATE_ROOTS.add(priority=hooks.priorities.LOW)
 def _prepend_robbo_template_root(roots: list[str]) -> list[str]:
@@ -24,12 +60,14 @@ def _prepend_robbo_template_root(roots: list[str]) -> list[str]:
     deduped = [r for r in roots if r != robbo_templates]
     return [robbo_templates] + deduped
 
+# Runtime green primary for Authoring (and any MFE still using PARAGON_THEME_URLS).
+# Bind-mounted MFEs null this out and use bundled Robbo tokens instead.
 _PARAGON_THEME_URLS = """
 MFE_CONFIG["PARAGON_THEME_URLS"] = {
     "core": {
         "urls": {
             "default": "https://cdn.jsdelivr.net/npm/@openedx/paragon@$paragonVersion/dist/core.min.css",
-            "brandOverride": "https://cdn.jsdelivr.net/npm/@openedx/brand-openedx@$brandVersion/dist/core.min.css",
+            "brandOverride": "http://{{ LMS_HOST }}:8000/static/robbo-theme/css/paragon-brand-robbo.css",
         },
     },
     "defaults": {
@@ -39,7 +77,30 @@ MFE_CONFIG["PARAGON_THEME_URLS"] = {
         "light": {
             "urls": {
                 "default": "https://cdn.jsdelivr.net/npm/@openedx/paragon@$paragonVersion/dist/light.min.css",
-                "brandOverride": "https://cdn.jsdelivr.net/npm/@openedx/brand-openedx@$brandVersion/dist/light.min.css",
+                "brandOverride": "http://{{ LMS_HOST }}:8000/static/robbo-theme/css/paragon-brand-robbo.css",
+            },
+        },
+    },
+}
+"""
+
+# Production / local without :8000 — overrides brandOverride from common (dev) defaults.
+_PARAGON_THEME_URLS_PROD = """
+MFE_CONFIG["PARAGON_THEME_URLS"] = {
+    "core": {
+        "urls": {
+            "default": "https://cdn.jsdelivr.net/npm/@openedx/paragon@$paragonVersion/dist/core.min.css",
+            "brandOverride": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/static/robbo-theme/css/paragon-brand-robbo.css",
+        },
+    },
+    "defaults": {
+        "light": "light",
+    },
+    "variants": {
+        "light": {
+            "urls": {
+                "default": "https://cdn.jsdelivr.net/npm/@openedx/paragon@$paragonVersion/dist/light.min.css",
+                "brandOverride": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/static/robbo-theme/css/paragon-brand-robbo.css",
             },
         },
     },
@@ -47,10 +108,11 @@ MFE_CONFIG["PARAGON_THEME_URLS"] = {
 """
 
 _PATCH_MFE_DEV = """
-MFE_CONFIG["LOGO_URL"] = "http://{{ LMS_HOST }}:8000/static/robbo-theme/images/Vector.svg"
-MFE_CONFIG["LOGO_TRADEMARK_URL"] = "http://{{ LMS_HOST }}:8000/static/robbo-theme/images/Vector.svg"
-MFE_CONFIG["LOGO_WHITE_URL"] = "http://{{ LMS_HOST }}:8000/static/robbo-theme/images/logo-mfe-white.svg"
-MFE_CONFIG["FAVICON_URL"] = "http://{{ LMS_HOST }}:8000/favicon.ico"
+# Studio Authoring + other MFEs: Robbo wordmark badge (not the legacy envelope Vector.svg).
+MFE_CONFIG["LOGO_URL"] = "http://{{ LMS_HOST }}:8000/static/robbo-theme/images/logo-robbo.svg"
+MFE_CONFIG["LOGO_TRADEMARK_URL"] = "http://{{ LMS_HOST }}:8000/static/robbo-theme/images/logo-robbo.svg"
+MFE_CONFIG["LOGO_WHITE_URL"] = "http://{{ LMS_HOST }}:8000/static/robbo-theme/images/logo-robbo-white.svg"
+MFE_CONFIG["FAVICON_URL"] = "http://{{ LMS_HOST }}:8000/static/robbo-theme/images/favicon.ico"
 MFE_CONFIG["ENABLE_DYNAMIC_REGISTRATION_FIELDS"] = True
 MFE_CONFIG["MARKETING_EMAILS_OPT_IN"] = True
 MFE_CONFIG["TOS_AND_HONOR_CODE"] = "https://robbo.ru/wp-content/uploads/agree.pdf"
@@ -61,10 +123,10 @@ MFE_CONFIG["ROBBO_ANALYTICS_URL"] = "http://{{ LMS_HOST }}:8000/robbo/analytics/
 """
 
 _PATCH_MFE_PROD = """
-MFE_CONFIG["LOGO_URL"] = "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/static/robbo-theme/images/Vector.svg"
-MFE_CONFIG["LOGO_TRADEMARK_URL"] = "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/static/robbo-theme/images/Vector.svg"
-MFE_CONFIG["LOGO_WHITE_URL"] = "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/static/robbo-theme/images/logo-mfe-white.svg"
-MFE_CONFIG["FAVICON_URL"] = "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/favicon.ico"
+MFE_CONFIG["LOGO_URL"] = "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/static/robbo-theme/images/logo-robbo.svg"
+MFE_CONFIG["LOGO_TRADEMARK_URL"] = "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/static/robbo-theme/images/logo-robbo.svg"
+MFE_CONFIG["LOGO_WHITE_URL"] = "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/static/robbo-theme/images/logo-robbo-white.svg"
+MFE_CONFIG["FAVICON_URL"] = "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/static/robbo-theme/images/favicon.ico"
 MFE_CONFIG["ENABLE_DYNAMIC_REGISTRATION_FIELDS"] = True
 MFE_CONFIG["MARKETING_EMAILS_OPT_IN"] = True
 MFE_CONFIG["TOS_AND_HONOR_CODE"] = "https://robbo.ru/wp-content/uploads/agree.pdf"
@@ -345,6 +407,14 @@ def _drop_indigo_footer_slots_for_robbo_bindmounts(
     ]
 
 
+PLUGIN_SLOTS.add_item(
+    (
+        "authoring",
+        "org.openedx.frontend.layout.studio_footer_help-content.v1",
+        _AUTHORING_STUDIO_HELP_CONTENT_SLOT,
+    )
+)
+
 hooks.Filters.CONFIG_DEFAULTS.add_items(
     [
         ("ROBBO_YANDEX_METRIKA_COUNTER_ID", ""),
@@ -354,9 +424,13 @@ hooks.Filters.CONFIG_DEFAULTS.add_items(
 hooks.Filters.ENV_PATCHES.add_items(
     [
         ("mfe-dockerfile-base", _PATCH_MFE_DOCKERFILE_NPM_RESILIENCE),
+        ("mfe-dockerfile-post-npm-install-authoring", _PATCH_AUTHORING_ROBBO_BRAND),
+        ("mfe-dockerfile-pre-npm-build-authoring", _PATCH_AUTHORING_ROBBO_CHROME_SRC),
+        ("mfe-env-config-runtime-definitions-authoring", _PATCH_AUTHORING_ROBBO_FOOTER_IMPORT),
         ("mfe-lms-common-settings", _PARAGON_THEME_URLS),
         ("mfe-lms-development-settings", _PATCH_MFE_DEV),
         ("mfe-lms-production-settings", _PATCH_MFE_PROD),
+        ("mfe-lms-production-settings", _PARAGON_THEME_URLS_PROD),
         ("openedx-lms-development-settings", _PATCH_ROBBO_LMS_SERVER_CATALOG),
         ("openedx-lms-production-settings", _PATCH_ROBBO_LMS_SERVER_CATALOG),
         ("openedx-lms-development-settings", _PATCH_ROBBO_SUPPORT),
@@ -375,6 +449,8 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-cms-production-settings", _PATCH_ROBBO_DEFAULT_SITE_THEME),
         ("openedx-lms-development-settings", _PATCH_ROBBO_THEME_LOCALES),
         ("openedx-lms-production-settings", _PATCH_ROBBO_THEME_LOCALES),
+        ("openedx-cms-development-settings", _PATCH_ROBBO_THEME_LOCALES),
+        ("openedx-cms-production-settings", _PATCH_ROBBO_THEME_LOCALES),
         ("openedx-lms-development-settings", _PATCH_ROBBO_BINDMOUNT_MFES_SKIP_RUNTIME_PARAGON),
         ("openedx-lms-production-settings", _PATCH_ROBBO_BINDMOUNT_MFES_SKIP_RUNTIME_PARAGON),
         ("openedx-lms-development-settings", _PATCH_YANDEX_METRIKA_DEV_LMS),

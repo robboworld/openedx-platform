@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="40" viewBox="0 0 140 40" role="img" aria-label="ROBBO">
+  <!-- White wordmark on transparent background for dark MFE headers. -->
+  <text
+    x="68"
+    y="27"
+    text-anchor="middle"
+    font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+    font-weight="700"
+    font-size="20"
+    fill="#ffffff"
+    letter-spacing="0.08em"
+  >&#x0420;&#x041E;&#x0411;&#x0411;&#x041E;</text>
+  <text
+    x="128"
+    y="14"
+    text-anchor="middle"
+    font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+    font-weight="700"
+    font-size="9"
+    fill="#ffffff"
+  >&#174;</text>
+</svg>
