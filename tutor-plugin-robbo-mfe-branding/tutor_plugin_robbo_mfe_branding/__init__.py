@@ -239,6 +239,57 @@ def _patch_mfe_overrides_paragon_null() -> str:
 
 _PATCH_ROBBO_BINDMOUNT_MFES_SKIP_RUNTIME_PARAGON = _patch_mfe_overrides_paragon_null()
 
+# Harden npm against flaky registry.npmjs.org (ECONNRESET / EIDLETIMEOUT on weak links).
+# Applied once in the MFE `base` stage; inherited by every *-common / Indigo npm install.
+_PATCH_MFE_DOCKERFILE_NPM_RESILIENCE = """
+# Robbo: durable npm fetches (weak networks / intermittent registry resets).
+RUN npm config set fetch-retries 5 \\
+ && npm config set fetch-retry-mintimeout 20000 \\
+ && npm config set fetch-retry-maxtimeout 120000 \\
+ && npm config set fetch-timeout 300000 \\
+ && npm config set maxsockets 3
+"""
+
+
+def _wrap_dockerfile_npm_install_runs(content: str) -> str:
+    """
+    Wrap bare `RUN npm install …` in POSIX retries (no bash/`$((…))`).
+
+    Debian slim uses dash as `/bin/sh`; Dockerfile `$$` + arithmetic was parsed as
+    PID + `((…))` and failed with: Syntax error: "(" unexpected.
+    """
+    lines_out: list[str] = []
+    for line in content.splitlines():
+        stripped = line.strip()
+        already_wrapped = "sleep 20" in stripped or "npm install retry" in stripped
+        if (
+            stripped.startswith("RUN ")
+            and "npm install" in stripped
+            and not already_wrapped
+        ):
+            raw = stripped[len("RUN ") :].strip()
+            if not raw.startswith("npm install"):
+                lines_out.append(line)
+                continue
+            pkg = raw[len("npm install") :].strip().strip("'\"")
+            # Double quotes: safe inside `{ …; }` and for `@scope@^ver`.
+            cmd = f'npm install "{pkg}"'
+            lines_out.extend(
+                [
+                    f"RUN {cmd} \\",
+                    f' || {{ echo "npm install retry 1/4"; sleep 20; {cmd}; }} \\',
+                    f' || {{ echo "npm install retry 2/4"; sleep 40; {cmd}; }} \\',
+                    f' || {{ echo "npm install retry 3/4"; sleep 60; {cmd}; }} \\',
+                    f' || {{ echo "npm install retry 4/4"; sleep 80; {cmd}; }}',
+                ]
+            )
+        else:
+            lines_out.append(line)
+    text = "\n".join(lines_out)
+    if content.endswith("\n") and not text.endswith("\n"):
+        text += "\n"
+    return text
+
 
 @hooks.Filters.ENV_PATCHES.add(priority=hooks.priorities.LOW)
 def _drop_indigo_mfe_dockerfile_extras_for_robbo_bindmounts(
@@ -250,6 +301,32 @@ def _drop_indigo_mfe_dockerfile_extras_for_robbo_bindmounts(
     reference packages we no longer install.
     """
     return [p for p in patches if not _should_drop_indigo_env_patch(p[0], p[1])]
+
+
+@hooks.Filters.ENV_PATCHES.add(priority=hooks.priorities.LOW)
+def _harden_remaining_indigo_npm_install_runs(
+    patches: list[tuple[str, str]],
+) -> list[tuple[str, str]]:
+    """
+    For MFEs that still get Indigo post-npm RUNs (discussions, communications, …),
+    wrap each `npm install` in retries so a single ECONNRESET does not fail the image.
+    """
+    out: list[tuple[str, str]] = []
+    for name, content in patches:
+        app_id = _mfe_post_npm_install_app_id(name)
+        if (
+            app_id is not None
+            and app_id not in _ROBBO_BINDMOUNT_MFE_APP_IDS
+            and (
+                "indigo-brand-openedx" in content
+                or "indigo-frontend-component-footer" in content
+                or "indigo-frontend-component-header" in content
+            )
+        ):
+            out.append((name, _wrap_dockerfile_npm_install_runs(content)))
+        else:
+            out.append((name, content))
+    return out
 
 
 @PLUGIN_SLOTS.add(priority=hooks.priorities.LOW)
@@ -276,6 +353,7 @@ hooks.Filters.CONFIG_DEFAULTS.add_items(
 
 hooks.Filters.ENV_PATCHES.add_items(
     [
+        ("mfe-dockerfile-base", _PATCH_MFE_DOCKERFILE_NPM_RESILIENCE),
         ("mfe-lms-common-settings", _PARAGON_THEME_URLS),
         ("mfe-lms-development-settings", _PATCH_MFE_DEV),
         ("mfe-lms-production-settings", _PATCH_MFE_PROD),
