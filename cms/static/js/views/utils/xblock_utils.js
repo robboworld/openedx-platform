@@ -225,7 +225,8 @@ function($, _, gettext, ViewUtils, ModuleUtils, XBlockInfo, StringUtils) {
                 );
             },
             messageBody;
-        xblockType = xblockType || 'component'; // eslint-disable-line no-param-reassign
+        // Localize the fallback label; callers may pass an already-translated type.
+        xblockType = xblockType || gettext('component'); // eslint-disable-line no-param-reassign
         messageBody = StringUtils.interpolate(
             gettext('Deleting this {xblock_type} is permanent and cannot be undone.'),
             {xblock_type: xblockType},

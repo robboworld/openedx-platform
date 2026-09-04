@@ -572,27 +572,25 @@ body,
 
   position: relative;
   top: -7px;
+  color: $primary;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   .fa-pencil {
-    display: none;
+    display: inline-block;
+    font-size: $base-font-size;
+    line-height: 1;
   }
 
   &::before {
-    @extend %icon-position;
-
-    content: '';
-    position: absolute;
-    background-color: $black;
-    mask: url('#{$static-path}/images/pencil-icon.svg') center no-repeat;
+    content: none;
   }
 
   &:hover {
     background-color: $primary;
     border-color: $transparent;
-
-    &::before {
-      background-color: $white;
-    }
+    color: $white;
   }
 
   &:focus {
@@ -600,14 +598,12 @@ body,
     background-color: $transparent;
     box-shadow: inset 0 0 0 2px $primary;
     border-color: $transparent;
+    color: $primary;
 
     &:hover {
       color: $white;
       border-color: $transparent;
-
-      &::before {
-        background-color: $primary;
-      }
+      background-color: $primary;
     }
   }
 }
@@ -663,9 +659,21 @@ body,
     @extend %button-styles;
 
     position: relative;
+    color: $primary;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
     .fa-pencil {
-      display: none;
+      display: inline-block;
+      font-size: $base-font-size;
+      line-height: 1;
+    }
+
+    // Prefer Font Awesome pencil over CSS-mask SVG: the mask icon had no
+    // resting affordance (invisible until hover) in the unit iframe.
+    &::before {
+      content: none;
     }
 
     &.disabled-button {
@@ -675,22 +683,10 @@ body,
       border-color: $transparent
     }
 
-    &::before {
-      @extend %icon-position;
-
-      content: '';
-      position: absolute;
-      background-color: $black;
-      mask: url('#{$static-path}/images/pencil-icon.svg') center no-repeat;
-    }
-
     &:hover {
       background-color: $primary;
       border-color: $transparent;
-
-      &::before {
-        background-color: $white;
-      }
+      color: $white;
     }
 
     &:focus {
@@ -698,14 +694,12 @@ body,
       background-color: $transparent;
       box-shadow: inset 0 0 0 2px $primary;
       border-color: $transparent;
+      color: $primary;
 
       &:hover {
         color: $white;
         border-color: $transparent;
-
-        &::before {
-          background-color: $primary;
-        }
+        background-color: $primary;
       }
     }
   }

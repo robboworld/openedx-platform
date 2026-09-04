@@ -94,11 +94,43 @@ DEFAULT_GRADING_POLICY_RU = {
 }
 
 
+def is_russian_language(language=None):
+    """
+    Return True when the given (or platform default) language is Russian.
+    """
+    if not language:
+        try:
+            from django.conf import settings  # lint-amnesty, pylint: disable=import-outside-toplevel
+            language = getattr(settings, 'LANGUAGE_CODE', 'en')
+        except Exception:  # lint-amnesty, pylint: disable=broad-except
+            language = 'en'
+    return str(language).lower().startswith('ru')
+
+
+def localized_boilerplate_template_id(template_id, language=None):
+    """
+    Return a locale-suffixed boilerplate id (e.g. multiplechoice.ru.yaml).
+
+    Falls back to the original id when the language is not Russian or the id
+    is already locale-suffixed.
+    """
+    if not template_id or not is_russian_language(language):
+        return template_id
+
+    base = template_id
+    if base.endswith('.yaml'):
+        base = base[:-5]
+    # Already localized (e.g. overview.ru / multiplechoice.ru)
+    if len(base) > 3 and base[-3] == '.' and base[-2:].isalpha():
+        return template_id
+    return f'{base}.ru.yaml'
+
+
 def get_default_grading_policy(language=None):
     """
     Return the default grading policy for the given language code.
     """
-    if language and str(language).lower().startswith('ru'):
+    if is_russian_language(language):
         return DEFAULT_GRADING_POLICY_RU
     return DEFAULT_GRADING_POLICY
 

@@ -1329,7 +1329,8 @@ class ModuleStoreWriteBase(ModuleStoreReadBase, ModuleStoreWrite):
                 )
             except Exception:  # lint-amnesty, pylint: disable=broad-except
                 language = 'en'
-        if str(language).lower().startswith('ru'):
+        from xmodule.course_metadata_utils import is_russian_language  # lint-amnesty, pylint: disable=import-outside-toplevel
+        if is_russian_language(language):
             return 'overview.ru.yaml'
         return 'overview.yaml'
 

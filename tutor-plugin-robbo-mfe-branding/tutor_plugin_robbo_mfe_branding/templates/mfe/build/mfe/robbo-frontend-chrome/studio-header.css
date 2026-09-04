@@ -266,6 +266,26 @@
   border-radius: 999px !important;
   color: #fff !important;
   font-weight: 700 !important;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.studio-header .btn-outline-primary:not(#user-dropdown-menu):hover,
+.studio-header .btn-outline-primary:not(#user-dropdown-menu):focus,
+.studio-header .btn-outline-primary:not(#user-dropdown-menu):focus-visible,
+.studio-header .btn-outline-primary:not(#user-dropdown-menu)[aria-expanded="true"],
+.studio-header .dropdown > .btn:not(#user-dropdown-menu):hover,
+.studio-header .dropdown > .btn:not(#user-dropdown-menu):focus,
+.studio-header .dropdown > .btn:not(#user-dropdown-menu):focus-visible,
+.studio-header .dropdown.show > .btn:not(#user-dropdown-menu) {
+  background-color: rgba(0, 0, 0, 0.16) !important;
+  border-color: #fff !important;
+  color: #fff !important;
+}
+
+.studio-header .btn-outline-primary:not(#user-dropdown-menu):active,
+.studio-header .dropdown > .btn:not(#user-dropdown-menu):active {
+  background-color: rgba(0, 0, 0, 0.22) !important;
+  color: #fff !important;
 }
 
 .studio-header .dropdown-menu {
@@ -274,11 +294,39 @@
 
 .studio-header .dropdown-menu a,
 .studio-header .dropdown-menu .dropdown-item,
+.studio-header .dropdown-menu .pgn__dropdown-item,
 .studio-header .dropdown-menu button {
   color: #383838 !important;
-  background: transparent !important;
+  background-color: transparent !important;
   border: none !important;
   border-radius: 0 !important;
+  transition: background-color 150ms ease;
+}
+
+/* Paragon items use .pgn__dropdown-item; keep hover darker than default transparent. */
+.studio-header .dropdown-menu.show a:hover,
+.studio-header .dropdown-menu.show a:focus,
+.studio-header .dropdown-menu.show a:focus-visible,
+.studio-header .dropdown-menu.show .dropdown-item:hover,
+.studio-header .dropdown-menu.show .dropdown-item:focus,
+.studio-header .dropdown-menu.show .dropdown-item:focus-visible,
+.studio-header .dropdown-menu.show .pgn__dropdown-item:hover,
+.studio-header .dropdown-menu.show .pgn__dropdown-item:focus,
+.studio-header .dropdown-menu.show .pgn__dropdown-item:focus-visible,
+.studio-header .dropdown-menu.show button:hover,
+.studio-header .dropdown-menu.show button:focus,
+.studio-header .dropdown-menu.show button:focus-visible {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+  color: #1a1a1a !important;
+}
+
+.studio-header .dropdown-menu.show a:active,
+.studio-header .dropdown-menu.show .dropdown-item:active,
+.studio-header .dropdown-menu.show .pgn__dropdown-item:active,
+.studio-header .dropdown-menu.show button:active,
+.studio-header .dropdown-menu.show .dropdown-item.active,
+.studio-header .dropdown-menu.show .pgn__dropdown-item.active {
+  background-color: rgba(0, 0, 0, 0.16) !important;
 }
 
 @media (max-width: 767.98px) {
