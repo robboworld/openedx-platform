@@ -3,7 +3,7 @@
 <%namespace name='static' file='../static_content.html'/>
 
 <%!
-from urllib.parse import urljoin
+from urllib.parse import quote, urljoin
 
 from django.conf import settings
 from django.urls import reverse
@@ -34,6 +34,10 @@ displayname = get_enterprise_learner_generic_name(request) or username
         % if settings.ACCOUNT_MICROFRONTEND_URL:
         <div class="mobile-nav-item dropdown-item dropdown-nav-item"><a href="${settings.ACCOUNT_MICROFRONTEND_URL}" role="menuitem">${_("Account")}</a></div>
         % endif
+        % if getattr(settings, 'ROBBO_BFF_LOGOUT_URL', None):
+        <div class="mobile-nav-item dropdown-item dropdown-nav-item"><a href="${reverse('logout')}?redirect_url=${quote(settings.ROBBO_BFF_LOGOUT_URL, safe='')}" role="menuitem">${_("Sign Out")}</a></div>
+        % else:
         <div class="mobile-nav-item dropdown-item dropdown-nav-item"><a href="${reverse('logout')}?next=/" role="menuitem">${_("Sign Out")}</a></div>
+        % endif
     </div>
 </div>

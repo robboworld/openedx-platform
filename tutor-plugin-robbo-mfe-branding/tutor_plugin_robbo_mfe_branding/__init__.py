@@ -147,6 +147,42 @@ FEATURES["ENABLE_COURSE_DISCOVERY"] = False
 FEATURES["SKIP_INTERMEDIATE_LOGOUT_PAGE"] = False
 """
 
+# LK BFF OIDC: MFE_CONFIG + LMS logout → /auth/oidc/logout/lms (path-only; no nested query).
+# Enable by setting ROBBO_LK_API_URL in Tutor config.yml (see tutor/config.example.yml).
+_PATCH_ROBBO_LK_BFF = """
+{% if ROBBO_LK_API_URL %}
+from urllib.parse import quote, urlparse
+
+_lk_api = {{ ROBBO_LK_API_URL | tojson }}
+_lk_fe = {{ ROBBO_LK_FRONTEND_URL | tojson }}
+_lk_home = _lk_fe.rstrip("/") + "/home"
+MFE_CONFIG["ROBBO_LK_URL"] = _lk_fe
+MFE_CONFIG["ROBBO_LK_SSO_URL"] = (
+    _lk_api.rstrip("/") + "/auth/oidc/start"
+    + "?return_to=" + quote(_lk_home, safe="")
+    + "&prompt=none"
+)
+MFE_CONFIG["ROBBO_BFF_SSO_START"] = _lk_api.rstrip("/") + "/auth/oidc/start?prompt=none"
+ROBBO_BFF_LOGOUT_URL = _lk_api.rstrip("/") + "/auth/oidc/logout/lms"
+MFE_CONFIG["ROBBO_BFF_LOGOUT_URL"] = ROBBO_BFF_LOGOUT_URL
+MFE_CONFIG["LOGOUT_URL"] = (
+    "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}/logout?redirect_url="
+    + quote(ROBBO_BFF_LOGOUT_URL, safe="")
+)
+FEATURES["SKIP_INTERMEDIATE_LOGOUT_PAGE"] = True
+_bff_clear = _lk_api.rstrip("/") + "/auth/oidc/logout/clear"
+if _bff_clear not in IDA_LOGOUT_URI_LIST:
+    IDA_LOGOUT_URI_LIST.append(_bff_clear)
+for _robbo_origin in (_lk_api, _lk_fe{% if ROBBO_RS_URL %}, {{ ROBBO_RS_URL | tojson }}{% endif %}):
+    _parsed = urlparse(_robbo_origin)
+    if not _parsed.hostname:
+        continue
+    _hostport = _parsed.hostname + ((":" + str(_parsed.port)) if _parsed.port else "")
+    if _hostport and _hostport not in LOGIN_REDIRECT_WHITELIST:
+        LOGIN_REDIRECT_WHITELIST.append(_hostport)
+{% endif %}
+"""
+
 # Robbo support: Authn / activation copy, help links (configuration_helpers in login & emails).
 _PATCH_ROBBO_SUPPORT = """
 SUPPORT_SITE_LINK = "https://support.robbo.world/"
@@ -434,6 +470,9 @@ PLUGIN_SLOTS.add_item(
 hooks.Filters.CONFIG_DEFAULTS.add_items(
     [
         ("ROBBO_YANDEX_METRIKA_COUNTER_ID", ""),
+        ("ROBBO_LK_API_URL", ""),
+        ("ROBBO_LK_FRONTEND_URL", "http://localhost:3030"),
+        ("ROBBO_RS_URL", ""),
     ]
 )
 
@@ -473,6 +512,8 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_BINDMOUNT_MFES_SKIP_RUNTIME_PARAGON),
         ("openedx-lms-development-settings", _PATCH_YANDEX_METRIKA_DEV_LMS),
         ("openedx-lms-production-settings", _PATCH_YANDEX_METRIKA_PROD_LMS),
+        ("openedx-lms-development-settings", _PATCH_ROBBO_LK_BFF),
+        ("openedx-lms-production-settings", _PATCH_ROBBO_LK_BFF),
         ("openedx-dockerfile-post-python-requirements", _PATCH_OPENEDX_ROBBO_XBLOCKS),
         ("caddyfile", _PATCH_CADDYFILE_SCRATCH),
     ]

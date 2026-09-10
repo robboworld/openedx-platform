@@ -8,6 +8,7 @@ import json
 
 from django.conf import settings
 %>
+<%namespace name='static' file='static_content.html'/>
 % if getattr(settings, 'ENABLE_YANDEX_METRIKA', False) and getattr(settings, 'YANDEX_METRIKA_COUNTER_ID', None):
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
@@ -35,3 +36,9 @@ window.__ROBBO_YANDEX_METRIKA__ = ${json.dumps({
     ),
 }) | n};
 </script>
+% if user.is_authenticated and getattr(settings, 'MFE_CONFIG', {}).get('ROBBO_BFF_SSO_START'):
+<script type="text/javascript">
+window.__ROBBO_BFF_SSO_START__ = ${json.dumps(settings.MFE_CONFIG.get('ROBBO_BFF_SSO_START')) | n};
+</script>
+<script type="text/javascript" src="${static.url('js/robbo-bff-bridge.js')}"></script>
+% endif

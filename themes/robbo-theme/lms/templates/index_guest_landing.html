@@ -87,6 +87,13 @@ guest_landing_tagline = f'{guest_landing_host} - образовательная 
               <a class="robbo-guest-hero__btn robbo-guest-hero__btn--primary" href="#courses">Смотреть курсы</a>
               <a class="robbo-guest-hero__btn robbo-guest-hero__btn--secondary"
                 href="${reverse('register_user') | h}">Регистрация</a>
+              % if getattr(settings, 'MFE_CONFIG', {}).get('ROBBO_LK_URL'):
+                <a class="robbo-guest-hero__btn robbo-guest-hero__btn--secondary robbo-guest-hero__btn--lk"
+                  href="${settings.MFE_CONFIG['ROBBO_LK_URL'] | h}">Личный кабинет</a>
+              % elif getattr(settings, 'MFE_CONFIG', {}).get('ROBBO_LK_SSO_URL'):
+                <a class="robbo-guest-hero__btn robbo-guest-hero__btn--secondary robbo-guest-hero__btn--lk"
+                  href="${settings.MFE_CONFIG['ROBBO_LK_SSO_URL'] | h}">Личный кабинет</a>
+              % endif
             </div>
           </div>
           % if robbo_about is not UNDEFINED:
