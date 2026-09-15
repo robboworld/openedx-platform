@@ -5672,9 +5672,9 @@ ROBBO_COURSE_INTEREST_RECIPIENTS = ['e.sovkov@robbo.ru']
 # Optional LMS log files used as a fallback for historic course-interest submissions.
 ROBBO_COURSE_INTEREST_LOG_PATHS = []
 
-# Guest landing: migration banner — only on online.robbo.ru (not dev/stage hosts).
+# Guest landing: migration banner — prod LMS host only (set in live Tutor settings).
 ROBBO_GUEST_MIGRATION_BANNER_HOSTS = (
-    'online.robbo.ru',
+    'lms.example.com',
 )
 
 # Yandex Metrika: disabled by default. Tutor ``openedx-lms-development-settings`` forces off;
