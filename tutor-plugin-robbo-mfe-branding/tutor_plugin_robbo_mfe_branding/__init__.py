@@ -148,9 +148,9 @@ FEATURES["SKIP_INTERMEDIATE_LOGOUT_PAGE"] = False
 """
 
 # LK BFF OIDC: MFE_CONFIG + LMS logout → /auth/oidc/logout/lms (path-only; no nested query).
-# Enable by setting ROBBO_LK_API_URL in Tutor config.yml (see tutor/config.example.yml).
+# Enable by setting ROBBO_LK_API_URL and ROBBO_LK_FRONTEND_URL (see tutor/config.example.yml).
 _PATCH_ROBBO_LK_BFF = """
-{% if ROBBO_LK_API_URL %}
+{% if ROBBO_LK_API_URL and ROBBO_LK_FRONTEND_URL %}
 from urllib.parse import quote, urlparse
 
 _lk_api = {{ ROBBO_LK_API_URL | tojson }}
@@ -250,6 +250,41 @@ scratch-srv.robbo.world{$default_site_port} {
 scratch-gui.robbo.world{$default_site_port} {
     import proxy "scratch-gui-new:5001"
 }
+"""
+
+# Local Tutor (ENABLE_HTTPS=false): MFE URLs on LMS_HOST, not apps.* — avoids browser
+# HTTPS-Only upgrading http://apps.local… to https://… (connection refused on :443).
+_PATCH_LOCAL_MFE_ON_LMS_HOST = """
+{% if not ENABLE_HTTPS %}
+_robbo_mfe_origin = "http://{{ LMS_HOST }}"
+LEARNING_MICROFRONTEND_URL = _robbo_mfe_origin + "/learning"
+MFE_CONFIG["LEARNING_BASE_URL"] = LEARNING_MICROFRONTEND_URL
+LEARNER_HOME_MICROFRONTEND_URL = _robbo_mfe_origin + "/learner-dashboard/"
+AUTHN_MICROFRONTEND_URL = _robbo_mfe_origin + "/authn"
+AUTHN_MICROFRONTEND_DOMAIN = "{{ LMS_HOST }}/authn"
+ACCOUNT_MICROFRONTEND_URL = _robbo_mfe_origin + "/account/"
+MFE_CONFIG["ACCOUNT_SETTINGS_URL"] = ACCOUNT_MICROFRONTEND_URL
+MFE_CONFIG["COURSE_AUTHORING_MICROFRONTEND_URL"] = _robbo_mfe_origin + "/authoring"
+DISCUSSIONS_MICROFRONTEND_URL = _robbo_mfe_origin + "/discussions"
+MFE_CONFIG["DISCUSSIONS_MFE_BASE_URL"] = DISCUSSIONS_MICROFRONTEND_URL
+WRITABLE_GRADEBOOK_URL = _robbo_mfe_origin + "/gradebook"
+ORA_GRADING_MICROFRONTEND_URL = _robbo_mfe_origin + "/ora-grading"
+PROFILE_MICROFRONTEND_URL = _robbo_mfe_origin + "/profile/u/"
+MFE_CONFIG["ACCOUNT_PROFILE_URL"] = _robbo_mfe_origin + "/profile"
+COMMUNICATIONS_MICROFRONTEND_URL = _robbo_mfe_origin + "/communications"
+MFE_CONFIG["BASE_URL"] = _robbo_mfe_origin
+{% endif %}
+"""
+
+# CMS /home/ redirects to COURSE_AUTHORING_MICROFRONTEND_URL — must match LMS_HOST locally.
+_PATCH_LOCAL_AUTHORING_MFE_ON_LMS_HOST_CMS = """
+{% if not ENABLE_HTTPS %}
+_robbo_mfe_origin = "http://{{ LMS_HOST }}"
+COURSE_AUTHORING_MICROFRONTEND_URL = _robbo_mfe_origin + "/authoring"
+LOGIN_REDIRECT_WHITELIST.append("{{ LMS_HOST }}")
+CORS_ORIGIN_WHITELIST.append(_robbo_mfe_origin)
+CSRF_TRUSTED_ORIGINS.append(_robbo_mfe_origin)
+{% endif %}
 """
 
 _PATCH_ROBBO_THEME_LOCALES = """
@@ -517,5 +552,8 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_LK_BFF),
         ("openedx-dockerfile-post-python-requirements", _PATCH_OPENEDX_ROBBO_XBLOCKS),
         ("caddyfile", _PATCH_CADDYFILE_SCRATCH),
+        ("mfe-lms-production-settings", _PATCH_LOCAL_MFE_ON_LMS_HOST),
+        ("openedx-cms-production-settings", _PATCH_LOCAL_AUTHORING_MFE_ON_LMS_HOST_CMS),
+        ("openedx-cms-development-settings", _PATCH_LOCAL_AUTHORING_MFE_ON_LMS_HOST_CMS),
     ]
 )

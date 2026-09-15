@@ -2,6 +2,9 @@
 <%page expression_filter="h"/>
 <%!
   from datetime import datetime
+  from django.conf import settings
+  from django.urls import reverse
+  from django.utils.translation import gettext as _
 %>
 <%namespace name='static' file='static_content.html'/>
 <div class="robbo-footer__main">
@@ -19,6 +22,22 @@
       </a>
     </div>
   </div>
+  % if getattr(settings, 'MFE_CONFIG', {}).get('ROBBO_LK_SSO_URL'):
+  <nav class="robbo-footer__col robbo-footer__nav-col" aria-label="${_('Site sections')}">
+    <h2 class="robbo-footer__heading">${_("Sections")}</h2>
+    <ul class="robbo-footer__links">
+      <li>
+        <a href="${reverse('dashboard')}">${_("My Courses")}</a>
+      </li>
+      <li>
+        <a href="${reverse('courses')}">${_("Explore Courses")}</a>
+      </li>
+      <li>
+        <a href="${settings.MFE_CONFIG['ROBBO_LK_SSO_URL']}">${_("Личный кабинет")}</a>
+      </li>
+    </ul>
+  </nav>
+  % endif
   <nav class="robbo-footer__col" aria-label="Документы">
     <h2 class="robbo-footer__heading">Документы</h2>
     <ul class="robbo-footer__links">
