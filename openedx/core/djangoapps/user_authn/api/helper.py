@@ -66,6 +66,9 @@ class RegistrationFieldsContext(APIView):
         self._fields_setting = copy.deepcopy(configuration_helpers.get_value('REGISTRATION_EXTRA_FIELDS'))
         if not self._fields_setting:
             self._fields_setting = copy.deepcopy(settings.REGISTRATION_EXTRA_FIELDS)
+        # Robbo: DOB not collected on Authn registration (ignore stale site config).
+        for _dob_key in ('date_of_birth', 'year_of_birth'):
+            self._fields_setting[_dob_key] = 'hidden'
 
         ordered_extra_fields = self._get_field_order()
 

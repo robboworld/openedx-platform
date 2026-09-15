@@ -440,6 +440,9 @@ class RegistrationFormFactory:
         self._extra_fields_setting = copy.deepcopy(configuration_helpers.get_value('REGISTRATION_EXTRA_FIELDS'))
         if not self._extra_fields_setting:
             self._extra_fields_setting = copy.deepcopy(settings.REGISTRATION_EXTRA_FIELDS)
+        # Robbo: DOB not collected on Authn registration (ignore stale site config).
+        for _dob_key in ('date_of_birth', 'year_of_birth'):
+            self._extra_fields_setting[_dob_key] = 'hidden'
         self._extra_fields_setting["honor_code"] = self._extra_fields_setting.get("honor_code", "required")
 
         if settings.MARKETING_EMAILS_OPT_IN:
