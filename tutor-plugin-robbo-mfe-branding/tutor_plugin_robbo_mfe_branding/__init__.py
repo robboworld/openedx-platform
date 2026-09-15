@@ -210,6 +210,7 @@ try:
 except NameError:
     REGISTRATION_EXTRA_FIELDS = {}
 REGISTRATION_EXTRA_FIELDS['company'] = 'hidden'
+REGISTRATION_EXTRA_FIELDS['date_of_birth'] = 'hidden'
 """
 
 # Robbo default locale for LMS/CMS (see also tutor config LANGUAGE_CODE).
