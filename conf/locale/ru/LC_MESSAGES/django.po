@@ -344,9 +344,10 @@ msgstr ""
 #. numerical amount in that currency. Adjust this display as needed for your
 #. language.
 #: common/djangoapps/course_modes/models.py
+#: lms/templates/course_modes/track_selection.html
 #, python-brace-format
 msgid "{currency_symbol}{price}"
-msgstr "{price}{currency_symbol}"
+msgstr "{price} {currency_symbol}"
 
 #. #-#-#-#-#  django-partial.po (0.1a)  #-#-#-#-#
 #. Translators: This refers to the cost of the course. In this case, the
@@ -1455,7 +1456,7 @@ msgstr[3] "%(num)d букв"
 #, python-format
 msgid "This password must contain at least %(min_numeric)d number."
 msgid_plural "This password must contain at least %(min_numeric)d numbers."
-msgstr[0] "Этот пароль должен содержать как минимум номер %(min_numeric)d."
+msgstr[0] "Этот пароль должен содержать не менее %(min_numeric)d цифры."
 msgstr[1] "Этот пароль должен содержать не менее %(min_numeric)d цифр."
 msgstr[2] "Этот пароль должен содержать не менее %(min_numeric)d цифр."
 msgstr[3] "Этот пароль должен содержать не менее %(min_numeric)d цифр."
@@ -1473,10 +1474,10 @@ msgstr[3] "Ваш пароль должен содержать {length_instructi
 #, python-format
 msgid "%(num)d number"
 msgid_plural "%(num)d numbers"
-msgstr[0] "%(num)d номер"
-msgstr[1] "%(num)d номера"
-msgstr[2] "%(num)d номера"
-msgstr[3] "%(num)d номера"
+msgstr[0] "%(num)d цифра"
+msgstr[1] "%(num)d цифры"
+msgstr[2] "%(num)d цифр"
+msgstr[3] "%(num)d цифр"
 
 #: common/djangoapps/util/password_policy_validators.py
 #, python-format
@@ -2948,13 +2949,13 @@ msgid "Disabled"
 msgstr "К использованию"
 
 #: lms/djangoapps/course_home_api/outline/serializers.py
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "({number} Question)"
 msgid_plural "({number} Questions)"
-msgstr[0] "Скрыть вопрос"
-msgstr[1] "Скрыть вопрос"
-msgstr[2] "Скрыть вопрос"
-msgstr[3] "Скрыть вопрос"
+msgstr[0] "({number} вопрос)"
+msgstr[1] "({number} вопроса)"
+msgstr[2] "({number} вопросов)"
+msgstr[3] "({number} вопросов)"
 
 #: lms/djangoapps/course_home_api/outline/views.py
 #, fuzzy, python-brace-format
@@ -6656,7 +6657,7 @@ msgstr ""
 #: openedx/core/djangoapps/ace_common/templates/ace_common/edx_ace/common/upsell_cta.txt
 #: lms/templates/course_modes/track_selection.html
 msgid "Upgrade Now"
-msgstr "Изменить статус слушателя"
+msgstr "Перейти к оплате"
 
 #: openedx/core/djangoapps/api_admin/admin.py
 #, python-brace-format
@@ -9670,11 +9671,9 @@ msgid "Try again (unlimited attempts)"
 msgstr "Попробуйте еще раз (неограниченное количество попыток)"
 
 #: openedx/features/personalized_learner_schedules/call_to_action.py
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "You have used {attempts} of unlimited attempts for this problem."
-msgstr ""
-"Вы ещё не закончили ознакомление с системой оценивания для того, чтобы "
-"оценить эту задачу."
+msgstr "Вы использовали {attempts} попыток (без ограничения) для этой задачи."
 
 #: themes/red-theme/lms/templates/ace_common/edx_ace/common/base_body.html
 #: cms/templates/widgets/header.html
@@ -9707,9 +9706,8 @@ msgid "Cannot rescore problems with possible file submissions"
 msgstr "Не удалось скорректировать оценки за задания с прикреплёнными файлами"
 
 #: xmodule/capa/capa_problem.py
-#, fuzzy
 msgid "Question {}"
-msgstr "Вопрос"
+msgstr "Вопрос {}"
 
 #: xmodule/capa/capa_problem.py xmodule/capa_block.py
 msgid "Incorrect"
@@ -10485,7 +10483,7 @@ msgstr ""
 #, python-brace-format
 msgid "Incorrect ({progress} point)"
 msgid_plural "Incorrect ({progress} points)"
-msgstr[0] "Неверно (пункт {progress})"
+msgstr[0] "Неверно (баллов {progress})"
 msgstr[1] "Неверно ({progress} баллов)"
 msgstr[2] "Неверно ({progress} баллов)"
 msgstr[3] "Неверно ({progress} баллов)"
@@ -10784,11 +10782,9 @@ msgstr ""
 "доступен калькулятор на странице курса."
 
 #: xmodule/course_block.py
-#, fuzzy
 msgid "Enter the name of the course as it should appear in the course list."
 msgstr ""
-"Введите названия дополнительных модулей, которые будут использованы в вашем "
-"курсе."
+"Введите название курса так, как оно должно отображаться в списке курсов."
 
 #: xmodule/course_block.py
 msgid "Course Display Name"
@@ -10902,14 +10898,12 @@ msgid "Course Is New"
 msgstr "Курс новый"
 
 #: xmodule/course_block.py
-#, fuzzy
 msgid ""
 "Enter true or false. If true, the course appears in the list of new courses,"
 " and a New! badge temporarily appears next to the course image."
 msgstr ""
-"Введите, правда или неправда. Если это правда, любые основные моменты, "
-"связанные с содержанием в курсе, будут сообщаться учащимся по их расписанию."
-" "
+"Введите true или false. Если значение true, курс отображается в списке "
+"новых курсов, а рядом с изображением курса временно появляется значок New!"
 
 #: xmodule/course_block.py
 msgid "Mobile Course Available"
@@ -11305,13 +11299,12 @@ msgid "Allow Public Wiki Access"
 msgstr "Общий доступ к вики"
 
 #: xmodule/course_block.py
-#, fuzzy
 msgid ""
 "Enter true or false. If true, students can view the course wiki even if "
 "they're not enrolled in the course."
 msgstr ""
-"Введите true или false.  Если введено значение true, слушателям будет "
-"доступен калькулятор на странице курса."
+"Введите true или false. Если значение true, студенты могут просматривать "
+"вики курса, даже если они не записаны на курс."
 
 #: xmodule/course_block.py
 msgid "Invitation Only"
@@ -11432,16 +11425,15 @@ msgstr "Настройка команд"
 msgid ""
 "Configure team sets, limit team sizes, and set visibility settings using "
 "JSON. See <a target=\"&#95;blank\" "
-"href=\"https://edx.readthedocs.io/projects/edx-partner-course-"
-"staff/en/latest/course_features/teams/teams_setup.html#enable-and-configure-"
-"teams\">teams configuration documentation</a> for help and examples."
+"href=\"https://docs.openedx.org/en/latest/educators/references/"
+"advanced_features/teams_configuration_options.html>teams "
+"configuration documentation</a> for help and examples."
 msgstr ""
 "Настраивайте наборы команд, ограничивайте размеры команд и устанавливайте "
 "параметры видимости с помощью JSON. См. <a target=\"&#95;blank\" "
-"href=\"https://edx.readthedocs.io/projects/edx-partner-course-"
-"staff/en/latest/course_features/teams/teams_setup.html#enable-and-configure-"
-"teams\">документацию по настройке команд</a> для получения справки и "
-"примеров."
+"href=\"https://docs.openedx.org/en/latest/educators/references/"
+"advanced_features/teams_configuration_options.html>документацию по "
+"настройке команд</a> для получения справки и примеров."
 
 #: xmodule/course_block.py
 msgid "Enable Proctored Exams"
@@ -17187,6 +17179,7 @@ msgid "Explore all courses"
 msgstr "Просмотреть курсы"
 
 #: lms/templates/course_modes/fbe.html lms/templates/course_modes/unfbe.html
+#: themes/robbo-theme/lms/templates/course_modes/unfbe.html
 msgid ""
 "Showcase a {link_start}verified certificate{link_end} of completion on your "
 "resumé to advance your career"
@@ -17194,6 +17187,14 @@ msgstr ""
 "Продемонстрируйте в своем резюме подтвержденный {link_start} "
 "сертификат{link_end} об окончании обучения, чтобы продвинуться по карьерной "
 "лестнице."
+
+#: themes/robbo-theme/lms/templates/course_modes/unfbe.html
+msgid ""
+"Showcase a {start_bold}verified certificate{end_bold} of completion on your "
+"resumé to advance your career"
+msgstr ""
+"Укажите в резюме {start_bold}подтверждённый сертификат{end_bold} об окончании "
+"курса — это поможет в карьерном росте."
 
 #: lms/templates/course_modes/fbe.html
 msgid ""
@@ -17204,9 +17205,8 @@ msgstr ""
 "оцениваемые, так и неоцененные задания, пока курс работает."
 
 #: lms/templates/course_modes/fbe.html
-#, fuzzy
 msgid "Show more"
-msgstr "Показать заметки"
+msgstr "Показать ещё"
 
 #: lms/templates/course_modes/fbe.html
 msgid ""
@@ -17217,11 +17217,8 @@ msgstr ""
 "после его окончания"
 
 #: lms/templates/course_modes/fbe.html
-#, fuzzy
 msgid "{link_start}Learn more{link_end} about course access"
-msgstr ""
-"Перейдите к {link_start}панели управления{link_end}, чтобы просмотреть свои "
-"курсы."
+msgstr "{link_start}Подробнее{link_end} о доступе к курсу"
 
 #: lms/templates/course_modes/fbe.html lms/templates/course_modes/unfbe.html
 msgid ""
@@ -17256,33 +17253,28 @@ msgid "Access expires and all progress will be lost"
 msgstr "Срок доступа истекает, и весь прогресс будет потерян."
 
 #: lms/templates/course_modes/track_selection.html
-#, fuzzy
 msgid "Enroll In {course_name} | Upgrade Now"
-msgstr "Записаться на курс {course_name}"
+msgstr "Запись на курс {course_name}"
 
 #: lms/templates/course_modes/track_selection.html
-#, fuzzy
 msgid "Choose a path for your course in"
-msgstr "Гайки и болты вашего курса"
+msgstr "Выберите формат обучения на курсе"
 
 #: lms/templates/course_modes/track_selection.html
-#, fuzzy
 msgid "Earn a certificate"
-msgstr "Распечатать сертификат"
+msgstr "Сертификат об окончании"
 
 #: lms/templates/course_modes/track_selection.html
 msgid ""
 "Studies show that those who choose this option are  {start_bold}more engaged"
 " and motivated{end_bold} to complete their courses"
 msgstr ""
-"Исследования показывают, что те, кто выбирает этот вариант, "
-"{start_bold}более заинтересованы и мотивированы{end_bold} на завершение "
-"курсов."
+"Те, кто выбирает этот вариант, {start_bold}более заинтересованы и "
+"мотивированы{end_bold} на завершение курсов."
 
 #: lms/templates/course_modes/track_selection.html
-#, fuzzy
 msgid "Access this course"
-msgstr "Просмотреть курс как:"
+msgstr "Бесплатный доступ"
 
 #: lms/templates/course_modes/unfbe.html
 msgid "Get access to the course material, including videos and readings"
