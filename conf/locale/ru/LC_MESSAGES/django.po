@@ -1456,7 +1456,7 @@ msgstr[3] "%(num)d букв"
 #, python-format
 msgid "This password must contain at least %(min_numeric)d number."
 msgid_plural "This password must contain at least %(min_numeric)d numbers."
-msgstr[0] "Этот пароль должен содержать как минимум номер %(min_numeric)d."
+msgstr[0] "Этот пароль должен содержать не менее %(min_numeric)d цифры."
 msgstr[1] "Этот пароль должен содержать не менее %(min_numeric)d цифр."
 msgstr[2] "Этот пароль должен содержать не менее %(min_numeric)d цифр."
 msgstr[3] "Этот пароль должен содержать не менее %(min_numeric)d цифр."
@@ -1474,10 +1474,10 @@ msgstr[3] "Ваш пароль должен содержать {length_instructi
 #, python-format
 msgid "%(num)d number"
 msgid_plural "%(num)d numbers"
-msgstr[0] "%(num)d номер"
-msgstr[1] "%(num)d номера"
-msgstr[2] "%(num)d номера"
-msgstr[3] "%(num)d номера"
+msgstr[0] "%(num)d цифра"
+msgstr[1] "%(num)d цифры"
+msgstr[2] "%(num)d цифр"
+msgstr[3] "%(num)d цифр"
 
 #: common/djangoapps/util/password_policy_validators.py
 #, python-format
@@ -2949,13 +2949,13 @@ msgid "Disabled"
 msgstr "К использованию"
 
 #: lms/djangoapps/course_home_api/outline/serializers.py
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "({number} Question)"
 msgid_plural "({number} Questions)"
-msgstr[0] "Скрыть вопрос"
-msgstr[1] "Скрыть вопрос"
-msgstr[2] "Скрыть вопрос"
-msgstr[3] "Скрыть вопрос"
+msgstr[0] "({number} вопрос)"
+msgstr[1] "({number} вопроса)"
+msgstr[2] "({number} вопросов)"
+msgstr[3] "({number} вопросов)"
 
 #: lms/djangoapps/course_home_api/outline/views.py
 #, fuzzy, python-brace-format
@@ -9671,11 +9671,9 @@ msgid "Try again (unlimited attempts)"
 msgstr "Попробуйте еще раз (неограниченное количество попыток)"
 
 #: openedx/features/personalized_learner_schedules/call_to_action.py
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "You have used {attempts} of unlimited attempts for this problem."
-msgstr ""
-"Вы ещё не закончили ознакомление с системой оценивания для того, чтобы "
-"оценить эту задачу."
+msgstr "Вы использовали {attempts} попыток (без ограничения) для этой задачи."
 
 #: themes/red-theme/lms/templates/ace_common/edx_ace/common/base_body.html
 #: cms/templates/widgets/header.html
@@ -9708,9 +9706,8 @@ msgid "Cannot rescore problems with possible file submissions"
 msgstr "Не удалось скорректировать оценки за задания с прикреплёнными файлами"
 
 #: xmodule/capa/capa_problem.py
-#, fuzzy
 msgid "Question {}"
-msgstr "Вопрос"
+msgstr "Вопрос {}"
 
 #: xmodule/capa/capa_problem.py xmodule/capa_block.py
 msgid "Incorrect"
@@ -10486,7 +10483,7 @@ msgstr ""
 #, python-brace-format
 msgid "Incorrect ({progress} point)"
 msgid_plural "Incorrect ({progress} points)"
-msgstr[0] "Неверно (пункт {progress})"
+msgstr[0] "Неверно (баллов {progress})"
 msgstr[1] "Неверно ({progress} баллов)"
 msgstr[2] "Неверно ({progress} баллов)"
 msgstr[3] "Неверно ({progress} баллов)"
