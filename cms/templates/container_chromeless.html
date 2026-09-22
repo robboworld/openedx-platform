@@ -17,6 +17,10 @@ from django.utils.translation import gettext as _
 
 from cms.djangoapps.contentstore.config.waffle import CUSTOM_RELATIVE_DATES
 from cms.djangoapps.contentstore.helpers import xblock_type_display_name
+from cms.djangoapps.contentstore.robbo_ora_i18n import (
+    ROBBO_ORA_INLINE_CSS,
+    get_robbo_ora_runtime_catalog,
+)
 from lms.djangoapps.branding import api as branding_api
 from openedx.core.djangoapps.util.user_messages import PageLevelMessages
 from openedx.core.djangolib.js_utils import (
@@ -67,6 +71,13 @@ from openedx.core.release import RELEASE_LINE
         % endif
 
         <script type="text/javascript" src="${static.url(jsi18n_path)}"></script>
+        <script type="text/javascript">
+        (function () {
+            if (typeof django !== 'undefined' && django.catalog) {
+                Object.assign(django.catalog, ${dump_js_escaped_json(get_robbo_ora_runtime_catalog()) | n});
+            }
+        }());
+        </script>
         % if settings.DEBUG:
         ## Provides a fallback for gettext functions in development environment
         <script type="text/javascript" src="${static.url('js/src/gettext_fallback.js')}"></script>
@@ -86,6 +97,7 @@ from openedx.core.release import RELEASE_LINE
         % endif
 
         <%static:css group='${self.attr.course_unit_mfe_iframe_css}'/>
+        <style type="text/css">${ROBBO_ORA_INLINE_CSS}</style>
 
         <%include file="widgets/segment-io.html" />
 

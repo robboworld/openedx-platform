@@ -11,8 +11,10 @@ Accept-Language so Django translations and anonymous caches stay on the
 instance language (``en`` on ``robbo/courses``, ``ru`` on ``robbo/online``).
 """
 from django.conf import settings
+from django.utils import translation
 from django.utils.deprecation import MiddlewareMixin
 
+from openedx.core.djangoapps.lang_pref import LANGUAGE_HEADER
 from openedx.core.djangoapps.lang_pref import helpers as lang_pref_helpers
 
 
@@ -22,17 +24,21 @@ def _forced_language():
 
 class RobboForceRussianLanguageMiddleware(MiddlewareMixin):
     """
-    Keep LMS responses on the platform language regardless of browser cookies.
+    Keep LMS/CMS responses on the platform language regardless of browser cookies.
 
     Class name kept for Tutor patch compatibility; language comes from
     ``ROBBO_FORCED_LANGUAGE`` or ``LANGUAGE_CODE`` (English on courses).
 
-    Inserted at the start of ``MIDDLEWARE`` so ``process_response`` runs last
-    and wins over ``LanguagePreferenceMiddleware``.
+    Appended to ``MIDDLEWARE`` so ``process_request`` runs after
+    ``LocaleMiddleware`` and ``DarkLangMiddleware`` (released langs may be
+    English-only). ``process_response`` still runs last and wins on cookies.
     """
 
     def process_request(self, request):
-        request.COOKIES[settings.LANGUAGE_COOKIE_NAME] = _forced_language()
+        lang = _forced_language()
+        request.COOKIES[settings.LANGUAGE_COOKIE_NAME] = lang
+        request.META[LANGUAGE_HEADER] = lang
+        translation.activate(lang)
 
     def process_response(self, request, response):
         lang_pref_helpers.set_language_cookie(request, response, _forced_language())

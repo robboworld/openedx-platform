@@ -1,0 +1,186 @@
+// Robbo brand styling for Open Response Assessment in Studio unit iframe.
+// Tokens: docs/design/robbo-brand-guidelines.md
+
+.openassessment {
+  color: #383838;
+  font-family: 'ProximaNova', 'Proxima Nova', Helvetica, Arial, sans-serif;
+
+  .openassessment__steps__step {
+    border-color: #d9e8df;
+    background: #fff;
+  }
+
+  .openassessment__steps__step.is--in-progress {
+    border-color: #00af41;
+
+    .step__status__value {
+      background: #00af41 !important;
+      color: #fff;
+
+      .copy,
+      .icon {
+        color: #fff !important;
+      }
+    }
+  }
+
+  .openassessment__steps .openassessment__steps__step .step__header .step__title .step__counter:before,
+  .openassessment__steps .openassessment__steps__step .step__header .step__title .step__label,
+  .openassessment__steps__step .step__instruction,
+  .submission__answer__part__prompt__copy {
+    color: #383838;
+  }
+
+  .openassessment__steps .openassessment__steps__step .step__header .step__deadline,
+  .step--response .response__submission__actions .response__submission__label,
+  .step--response .response__submission__content .response__submission__label {
+    color: #989898;
+  }
+
+  .step--response .response__submission {
+    background: #e8f8ef;
+  }
+
+  .submission__answer__part__prompt {
+    background: #f7fbf8;
+    border-color: #00af41;
+  }
+
+  .submission__answer__part__text__value,
+  .submission__answer__part__text textarea {
+    color: #383838;
+    border-color: #00af41;
+  }
+
+  .list--actions .action--submit,
+  .openassessment_student_info_form .action--submit-username {
+    background: #00af41 !important;
+    border-color: #00af41 !important;
+    color: #fff !important;
+  }
+
+  .list--actions .action--submit:hover,
+  .openassessment_student_info_form .action--submit-username:hover {
+    background: #007a2e !important;
+    border-color: #007a2e !important;
+  }
+
+  .response__submission__label {
+    color: #383838 !important;
+
+    .save__submission__label {
+      color: #383838 !important;
+    }
+
+    .save__submission__icon.fa-check-circle-o {
+      color: #00af41 !important;
+    }
+
+    .save__submission__icon.fa-refresh {
+      color: #989898 !important;
+    }
+
+    .save__submission__icon.fa-exclamation-circle {
+      color: #c23c2a !important;
+    }
+  }
+
+  .step__message.message--waiting {
+    background: #e8f8ef;
+  }
+
+  .message--complete,
+  .step--student-training .message--correct {
+    background: #e8f8ef;
+    border-color: #00af41;
+  }
+
+  .message--incomplete,
+  .step--student-training .message--incorrect {
+    background: #fff9eb;
+  }
+
+  .submission__answer__part__prompt__copy a,
+  .message .message__content a {
+    color: #00af41;
+
+    &:hover {
+      color: #007a2e;
+    }
+  }
+
+  .robbo-ora-file-picker {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.5rem 0;
+  }
+
+  .robbo-ora-file-picker__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .robbo-ora-file-picker__button {
+    cursor: pointer;
+    margin: 0;
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    box-sizing: border-box;
+    background: #00af41 !important;
+    border: 1px solid #00af41 !important;
+    color: #fff !important;
+    padding: 0.5rem 1rem !important;
+    height: auto !important;
+    min-height: 0 !important;
+    line-height: 1.25;
+    font-size: 0.875rem;
+    font-weight: normal;
+
+    &:hover,
+    &:focus {
+      background: #007a2e !important;
+      border-color: #007a2e !important;
+      color: #fff !important;
+    }
+  }
+
+  .robbo-ora-file-picker__status {
+    color: #383838;
+    font-size: 0.875rem;
+  }
+
+  .step--response button.file__upload.action--upload {
+    display: inline-block !important;
+    box-sizing: border-box !important;
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem !important;
+    height: auto !important;
+    min-height: 0 !important;
+    line-height: 1.25 !important;
+    background: #00af41 !important;
+    border: 1px solid #00af41 !important;
+    color: #fff !important;
+    font-size: 0.875rem !important;
+    font-weight: normal !important;
+
+    &:hover {
+      background: #007a2e !important;
+      border-color: #007a2e !important;
+    }
+  }
+}
+
+.open-response-assessment-block .ora-summary-title {
+  color: #00af41 !important;
+}

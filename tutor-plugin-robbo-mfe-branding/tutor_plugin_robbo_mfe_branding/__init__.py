@@ -186,8 +186,7 @@ ROBBO_FORCED_LANGUAGE = 'en'
 # Force platform language for all LMS requests (overrides stale language cookies).
 # On ``robbo/courses`` this is always English via LANGUAGE_CODE / ROBBO_FORCED_LANGUAGE.
 _PATCH_ROBBO_FORCE_RUSSIAN_LANGUAGE = """
-MIDDLEWARE.insert(
-    0,
+MIDDLEWARE.append(
     'lms.djangoapps.robbo_lang.middleware.RobboForceRussianLanguageMiddleware',
 )
 """
@@ -507,8 +506,12 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_LMS_SERVER_CATALOG),
         ("openedx-lms-development-settings", _PATCH_ROBBO_LMS_LANGUAGE),
         ("openedx-lms-production-settings", _PATCH_ROBBO_LMS_LANGUAGE),
+        ("openedx-cms-development-settings", _PATCH_ROBBO_LMS_LANGUAGE),
+        ("openedx-cms-production-settings", _PATCH_ROBBO_LMS_LANGUAGE),
         ("openedx-lms-development-settings", _PATCH_ROBBO_FORCE_RUSSIAN_LANGUAGE),
         ("openedx-lms-production-settings", _PATCH_ROBBO_FORCE_RUSSIAN_LANGUAGE),
+        ("openedx-cms-development-settings", _PATCH_ROBBO_FORCE_RUSSIAN_LANGUAGE),
+        ("openedx-cms-production-settings", _PATCH_ROBBO_FORCE_RUSSIAN_LANGUAGE),
         ("openedx-lms-development-settings", _PATCH_ROBBO_LK_HANDOFF),
         ("openedx-lms-production-settings", _PATCH_ROBBO_LK_HANDOFF),
         ("openedx-lms-development-settings", _PATCH_ROBBO_SUPPORT),
