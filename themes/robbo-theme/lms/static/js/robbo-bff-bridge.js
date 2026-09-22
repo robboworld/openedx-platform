@@ -11,9 +11,15 @@
     return;
   }
 
+  // Learning MFE embeds courseware via /xblock/ iframes; silent SSO here logs the user out.
+  if (window !== window.top) {
+    return;
+  }
+
   var path = window.location.pathname || '';
   if (
     path.indexOf('/oauth2/') !== -1 ||
+    path.indexOf('/xblock/') !== -1 ||
     path.indexOf('/login') === 0 ||
     path.indexOf('/logout') === 0
   ) {
