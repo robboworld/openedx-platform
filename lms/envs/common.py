@@ -1428,7 +1428,7 @@ AUTHENTICATION_BACKENDS = [
     'bridgekeeper.backends.RulePermissionBackend',
 ]
 
-STUDENT_FILEUPLOAD_MAX_SIZE = 4 * 1000 * 1000  # 4 MB
+STUDENT_FILEUPLOAD_MAX_SIZE = 5 * 1000 * 1000  # 5 MB
 MAX_FILEUPLOADS_PER_INPUT = 20
 
 # Set request limits for maximum size of a request body and maximum number of GET/POST parameters. (>=Django 1.10)
@@ -3240,6 +3240,7 @@ INSTALLED_APPS = [
     'openedx.core.djangoapps.cors_csrf',
 
     'lms.djangoapps.commerce.apps.CommerceConfig',
+    'lms.djangoapps.robbo_ora.apps.RobboOraConfig',
 
     # Credit courses
     'openedx.core.djangoapps.credit.apps.CreditConfig',

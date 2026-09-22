@@ -172,6 +172,21 @@ REGISTRATION_MIN_COMPLETION_SECONDS = 5
 """
 
 # Robbo theme translations override stock LMS labels while keeping stock gettext keys.
+
+# Authn MFE: company field off (see docs/production.md). Overrides stale site config defaults.
+_PATCH_ROBBO_REGISTRATION_FIELDS = """
+try:
+    REGISTRATION_EXTRA_FIELDS = dict(REGISTRATION_EXTRA_FIELDS)
+except NameError:
+    REGISTRATION_EXTRA_FIELDS = {}
+REGISTRATION_EXTRA_FIELDS['company'] = 'hidden'
+REGISTRATION_EXTRA_FIELDS['date_of_birth'] = 'hidden'
+"""
+
+# Robbo default locale for LMS/CMS (see also tutor config LANGUAGE_CODE).
+_PATCH_ROBBO_LMS_LANGUAGE = """
+LANGUAGE_CODE = 'ru'
+"""
 # tutor-indigo init assigns SiteTheme "indigo" for LMS_HOST; force default comprehensive theme.
 _PATCH_ROBBO_DEFAULT_SITE_THEME = """
 DEFAULT_SITE_THEME = "robbo-theme"
@@ -468,6 +483,12 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("mfe-lms-production-settings", _PARAGON_THEME_URLS_PROD),
         ("openedx-lms-development-settings", _PATCH_ROBBO_LMS_SERVER_CATALOG),
         ("openedx-lms-production-settings", _PATCH_ROBBO_LMS_SERVER_CATALOG),
+        ("openedx-lms-development-settings", _PATCH_ROBBO_LMS_LANGUAGE),
+        ("openedx-lms-production-settings", _PATCH_ROBBO_LMS_LANGUAGE),
+        ("openedx-cms-development-settings", _PATCH_ROBBO_LMS_LANGUAGE),
+        ("openedx-cms-production-settings", _PATCH_ROBBO_LMS_LANGUAGE),
+        ("openedx-lms-development-settings", _PATCH_ROBBO_REGISTRATION_FIELDS),
+        ("openedx-lms-production-settings", _PATCH_ROBBO_REGISTRATION_FIELDS),
         ("openedx-lms-development-settings", _PATCH_ROBBO_SUPPORT),
         ("openedx-lms-production-settings", _PATCH_ROBBO_SUPPORT),
         ("openedx-lms-development-settings", _PATCH_ROBBO_EMAIL_CONFIRMATION),

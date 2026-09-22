@@ -113,8 +113,14 @@ def localized_boilerplate_template_id(template_id, language=None):
 
     Falls back to the original id when the language is not Russian or the id
     is already locale-suffixed.
+
+    Only YAML problem/course boilerplates use this suffix scheme. Other xblocks
+    (e.g. openassessment templates like ``peer-assessment``) must keep their
+    original ids.
     """
     if not template_id or not is_russian_language(language):
+        return template_id
+    if not template_id.endswith('.yaml'):
         return template_id
 
     base = template_id
