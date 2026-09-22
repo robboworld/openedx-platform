@@ -2,10 +2,14 @@
 <%inherit file="/main.html" />
 <%namespace name='static' file='/static_content.html'/>
 <%!
+from cms.djangoapps.contentstore.robbo_ora_i18n import (
+    ROBBO_ORA_INLINE_CSS,
+    get_robbo_ora_runtime_catalog,
+)
 from django.utils.translation import gettext as _
 
 from openedx.core.djangolib.markup import HTML
-from openedx.core.djangolib.js_utils import js_escaped_string
+from openedx.core.djangolib.js_utils import dump_js_escaped_json, js_escaped_string
 
 %>
 <%def name="course_name()">
@@ -43,6 +47,17 @@ ${static.get_page_title_breadcrumbs(course_name())}
 <script type="text/javascript" src="${static.url('js/src/tooltip_manager.js')}" async></script>
 
 <link href="${static.url('css/vendor/jquery.autocomplete.css')}" rel="preload" type="text/css" as="style">
+
+<script type="text/javascript">
+(function () {
+    if (typeof django !== 'undefined') {
+        django.catalog = django.catalog || {};
+        Object.assign(django.catalog, ${dump_js_escaped_json(get_robbo_ora_runtime_catalog()) | n});
+    }
+}());
+</script>
+<style type="text/css">${ROBBO_ORA_INLINE_CSS}</style>
+
   ${HTML(fragment.head_html())}
 
 % if is_learning_mfe:
@@ -75,6 +90,15 @@ ${static.get_page_title_breadcrumbs(course_name())}
   % endif
 
 ${HTML(fragment.foot_html())}
+
+<script type="text/javascript">
+(function () {
+    if (typeof django !== 'undefined') {
+        django.catalog = django.catalog || {};
+        Object.assign(django.catalog, ${dump_js_escaped_json(get_robbo_ora_runtime_catalog()) | n});
+    }
+}());
+</script>
 
 </%block>
 

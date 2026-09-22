@@ -1663,7 +1663,6 @@ def _xblock_type_and_display_name(xblock):
     """
     Returns a string representation of the xblock's type and display name
     """
-    return _('{section_or_subsection} "{display_name}"').format(
-        section_or_subsection=xblock_type_display_name(xblock),
-        display_name=xblock.display_name_with_default,
-    )
+    from ..robbo_release_info import xblock_release_source_label  # lint-amnesty, pylint: disable=import-outside-toplevel
+
+    return xblock_release_source_label(xblock)

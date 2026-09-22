@@ -1279,14 +1279,6 @@ msgid "April"
 msgstr "апреля"
 
 #. Translators: this is a month name that will be used when displaying
-#. dates, as in "May 10, 2014". It is used for the %B directive in
-#. date-time formats. See http://strftime.org for details.
-#: common/djangoapps/util/date_utils.py
-msgctxt "month name"
-msgid "May"
-msgstr "мая"
-
-#. Translators: this is a month name that will be used when displaying
 #. dates, as in "June 10, 2014". It is used for the %B directive in
 #. date-time formats. See http://strftime.org for details.
 #: common/djangoapps/util/date_utils.py
@@ -13418,14 +13410,13 @@ msgstr "Вертикальный"
 
 #: cms/djangoapps/contentstore/helpers.py cms/templates/course_outline.html
 #: lms/templates/ccx/schedule.html lms/templates/seq_block.html
-#, fuzzy
 msgid "Section"
-msgstr "Новый раздел"
+msgstr "Раздел"
 
 #: cms/djangoapps/contentstore/helpers.py lms/templates/ccx/schedule.html
 #, fuzzy
 msgid "Subsection"
-msgstr "Новый раздел"
+msgstr "Подраздел"
 
 #: cms/djangoapps/contentstore/management/commands/git_export.py
 msgid ""
@@ -13762,7 +13753,7 @@ msgstr "Пустой"
 
 #: cms/djangoapps/contentstore/views/component.py
 msgid "Peer Assessment Only"
-msgstr "Только коллегиальная оценка"
+msgstr "Только взаимная оценка"
 
 #: cms/djangoapps/contentstore/views/course.py
 msgid "Course has been successfully reindexed."
@@ -16695,12 +16686,6 @@ msgid ""
 msgstr ""
 "Если этот вариант {em_start}отмечен{em_end}, пользователи будут получать "
 "уведомления по электронной почте."
-
-#: lms/templates/ccx/enrollment.html
-#: lms/templates/instructor/instructor_dashboard_2/membership.html
-msgctxt "someone"
-msgid "Enroll"
-msgstr "Внести в список"
 
 #: lms/templates/ccx/enrollment.html
 msgid "Student List Management"
@@ -26889,3 +26874,1542 @@ msgstr "Нажмите кнопку «Начать экзамен под кон�
 #: openedx/core/djangoapps/user_api/accounts/__init__.py
 msgid "This email is already associated with an existing account"
 msgstr "Аккаунт с этой почтой уже зарегистрирован"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Demo the new Grading Experience"
+msgstr "Демо нового интерфейса оценивания"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"When enabled, learners who have received at least 30% of the required "
+"\"Graded By\" peer reviews and who have waited longer than 7 days for a peer "
+"review will be assigned a peer review grade using available peer reviews."
+msgstr ""
+"Если включено, учащимся, получившим не менее 30%% требуемых взаимных оценок "
+"«Graded By» и ожидавшим более 7 дней, выставляется оценка на основе "
+"доступных взаимных проверок."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                                      You are currently on Team %(team_name)s. Since you were on Team %(previous_team_name)s\n"
+"                                      when they submitted a response to this assignment, you are seeing Team %(previous_team_name)s’s\n"
+"                                      response and will receive the same grade for this assignment as your former teammates.\n"
+"                                      You will not be part of Team %(team_name)s’s submission for this assignment and will not\n"
+"                                      receive a grade for their submission.\n"
+"                                  "
+msgstr ""
+"\n"
+"                                      Сейчас вы в команде %(team_name)s. Поскольку на момент отправки вы были в команде %(previous_team_name)s,\n"
+"                                      вы видите ответ команды %(previous_team_name)s и получите ту же оценку, что и бывшие однокоманщники.\n"
+"                                      Вы не участвуете в отправке команды %(team_name)s и не получите оценку за их работу.\n"
+"                                  "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Self Assessment Only"
+msgstr "Только самооценка"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Staff Assessment Only"
+msgstr "Только оценка персоналом"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Self Assessment to Peer Assessment"
+msgstr "Самооценка и взаимная оценка"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Self Assessment to Staff Assessment"
+msgstr "Самооценка и оценка персоналом"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Criterion {number}: {label}"
+msgstr "Критерий {number}: {label}"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Points {number}"
+msgstr "Баллы {number}"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Median Score {number}"
+msgstr "Медианный балл {number}"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Feedback {number}"
+msgstr "Отзыв {number}"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Item ID"
+msgstr "ID элемента"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Submission ID"
+msgstr "ID ответа"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Anonymized Student ID"
+msgstr "Анонимный ID учащегося"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Assessment ID"
+msgstr "ID оценки"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Assessment Scored Date"
+msgstr "Дата выставления оценки"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Assessment Scored Time"
+msgstr "Время выставления оценки"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Assessment Type"
+msgstr "Тип оценки"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Anonymous Scorer Id"
+msgstr "Анонимный ID оценивающего"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Assessment Score Earned"
+msgstr "Набранные баллы"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Assessment Scored At"
+msgstr "Оценка выставлена"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Date/Time Final Score Given"
+msgstr "Дата и время итоговой оценки"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Final Score Earned"
+msgstr "Итоговый набранный балл"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Final Score Possible"
+msgstr "Максимальный итоговый балл"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Feedback Statements Selected"
+msgstr "Выбранные формулировки отзыва"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Feedback on Assessment"
+msgstr "Отзыв по оценке"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Response Files"
+msgstr "Файлы ответа"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "No description provided."
+msgstr "Описание не указано."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Open Response Assessments allow you to configure single or multiple steps in a rubric based open response problem. Learners submit a response and then go through an assessment process."
+msgstr ""
+"Задания с развёрнутым ответом позволяют настроить один или несколько шагов оценивания по рубрике. Учащиеся отправляют ответ и проходят процесс оценки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Response Editor"
+msgstr "Редактор ответа"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Select which editor learners will use to include a text based response to this problem's prompt."
+msgstr ""
+"Выберите редактор, в котором учащиеся будут вводить текстовый ответ на вопрос задания."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Allow Multiple Files"
+msgstr "Разрешить несколько файлов"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Specify whether learners can upload more than one file. This has no effect if File Uploads Response is disabled."
+msgstr ""
+"Укажите, могут ли учащиеся загрузить более одного файла. Не действует, если загрузка файлов отключена."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Specify whether learners can submit files along with their text responses."
+msgstr "Укажите, могут ли учащиеся отправлять файлы вместе с текстовым ответом."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"To add more file extensions, select Custom File Types and enter the full list of acceptable file extensions."
+msgstr ""
+"Чтобы добавить расширения файлов, выберите «Пользовательские типы файлов» и укажите полный список допустимых расширений."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid " (Disabled)"
+msgstr " (отключено)"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Specify the number of top scoring responses to display after the learner has submitted a response. Valid numbers are 0 to 100."
+msgstr ""
+"Укажите, сколько лучших ответов показывать после отправки ответа учащимся. Допустимые значения: от 0 до 100."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "When Teams Enabled is set to true, Top Responses will be disabled."
+msgstr "Если включены команды, раздел «Лучшие ответы» будет отключён."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Teams Enabled"
+msgstr "Команды включены"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Specify whether team submissions are allowed for this response."
+msgstr "Укажите, разрешена ли командная сдача для этого задания."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Select Team-Set"
+msgstr "Выберите набор команд"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Show Rubric During Response"
+msgstr "Показывать рубрику при ответе"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Specify whether learners can see the rubric while they are working on their response."
+msgstr "Укажите, могут ли учащиеся видеть рубрику во время работы над ответом."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Select one of the options above. This describes whether or not the reviewer will have to provide criterion option feedback."
+msgstr ""
+"Выберите один из вариантов выше. Он определяет, нужно ли оценивающему оставлять отзыв по критериям."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Assessment steps"
+msgstr "Шаги оценивания"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Peer Assessment allows students to provide feedback to other students and also receive feedback from other students."
+msgstr ""
+"Взаимная оценка позволяет учащимся оценивать работы друг друга и получать оценки от однокурсников."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Configuration: For this step to be configured you must specify the number of peer reviews a student must complete."
+msgstr ""
+"Настройка: для этого шага укажите, сколько работ однокурсников должен проверить каждый учащийся."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "View Options & Configuration"
+msgstr "Параметры и настройка"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Specify the number of peer assessments that each learner must complete. Valid numbers are 1 to 99."
+msgstr ""
+"Укажите, сколько взаимных оценок должен выполнить каждый учащийся. Допустимые значения: от 1 до 99."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Specify the number of learners that each response must be assessed by. Valid numbers are 1 to 99."
+msgstr ""
+"Укажите, сколькими учащимися должна быть оценена каждая работа. Допустимые значения: от 1 до 99."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Enable Flexible Peer Grade Averaging"
+msgstr "Гибкое усреднение взаимных оценок"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"When enabled, learners who have received at least 30%% of the required peer grades will receive a provisional grade based on the median of the grades they have received."
+msgstr ""
+"Если включено, учащиеся, получившие не менее 30%% требуемых взаимных оценок, получат предварительную оценку по медиане уже полученных оценок."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"This feature is being enabled by the course-level setting. It can be found under the Open Response Assessment Settings page."
+msgstr ""
+"Эта функция включается на уровне курса в настройках заданий с развёрнутым ответом."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Peer Assessment Deadlines"
+msgstr "Сроки взаимной оценки"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "The date and time when learners can begin assessing peer responses."
+msgstr "Дата и время, когда учащиеся могут начать оценивать ответы однокурсников."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "The date and time when all peer assessments must be complete."
+msgstr "Дата и время, к которому должны быть завершены все взаимные оценки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Deadlines Configuration"
+msgstr "Настройка сроков"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Select a deadline configuration option"
+msgstr "Выберите способ настройки сроков"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid " NEW"
+msgstr " НОВОЕ"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Configure deadlines manually"
+msgstr "Настроить сроки вручную"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Match deadlines to the subsection due date"
+msgstr "Привязать сроки к дате сдачи подраздела"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Match deadlines to the course end date"
+msgstr "Привязать сроки к дате окончания курса"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Learn more about open response date settings"
+msgstr "Подробнее о настройке сроков для развёрнутого ответа"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Self Assessment asks learners to grade their own submissions against the rubric."
+msgstr "На шаге самооценки учащиеся оценивают свои ответы по рубрике."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Self Assessment Deadlines"
+msgstr "Сроки самооценки"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "The date and time when learners can begin assessing their responses."
+msgstr "Дата и время, когда учащиеся могут начать оценивать свои ответы."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "The date and time when all self assessments must be complete."
+msgstr "Дата и время, к которому должны быть завершены все самооценки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Staff Assessment gates sets the final grade for students if enabled with other steps, though it can also be used as the only assessment step."
+msgstr ""
+"Оценка персоналом определяет итоговую оценку, если включена вместе с другими шагами; также может быть единственным шагом оценивания."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Learner Training is used to help students practice grading a simulated peer submission in order to train them to grade their peers."
+msgstr ""
+"Обучение учащихся помогает потренироваться в оценивании примеров работ перед взаимной проверкой."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Configuration: For this step to be fully configured you must provide one or more graded sample responses."
+msgstr ""
+"Настройка: для этого шага добавьте один или несколько примеров работ с эталонной оценкой."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "View / Add Sample Responses"
+msgstr "Просмотр и добавление примеров ответов"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Clone Rubric"
+msgstr "Клонировать рубрику"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"To clone a rubric from an existing published or unpublished draft, you can search by the Block ID. Note that this will overwrite the current rubric."
+msgstr ""
+"Чтобы клонировать рубрику из существующего блока, найдите его по Block ID. Текущая рубрика будет заменена."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Block ID For this ORA:"
+msgstr "Block ID этого задания:"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Block ID"
+msgstr "Block ID"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "No other Open Response Assessments found in course"
+msgstr "В курсе не найдено других заданий с развёрнутым ответом"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Clone"
+msgstr "Клонировать"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Rubric Successfully Cloned from Block ID: "
+msgstr "Рубрика успешно клонирована из Block ID: "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                      %(assessment_title)s - %(points)s point\n"
+"                  \n"
+"               "
+msgstr ""
+"\n"
+"                      %(assessment_title)s — %(points)s балл\n"
+"                  \n"
+"               "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Waiting Step Details"
+msgstr "Детали шага ожидания"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Waiting Step details view is unavailable. This item is not configured for peer assessments."
+msgstr ""
+"Просмотр деталей шага ожидания недоступен: задание не настроено для взаимной оценки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Your team’s submission has been cancelled. Your team will receive a grade of zero unless course staff resets your attempt."
+msgstr ""
+"Ответ вашей команды отменён. Команда получит нулевую оценку, если команда курса не сбросит попытку."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Your submission has been cancelled. You will receive a grade of zero unless course staff resets your attempt."
+msgstr ""
+"Ваш ответ отменён. Вы получите нулевую оценку, если команда курса не сбросит вашу попытку."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Team membership is required to view this assignment"
+msgstr "Для просмотра этого задания нужно состоять в команде"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"            This is a team assignment for team-set \"%(teamset_name)s\".\n"
+"            You are currently not on any team in this team-set.\n"
+"            "
+msgstr ""
+"\n"
+"            Это командное задание для набора команд «%(teamset_name)s».\n"
+"            Сейчас вы не состоите ни в одной команде этого набора.\n"
+"            "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Files that were uploaded by your teammates:"
+msgstr "Файлы, загруженные участниками вашей команды:"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Files that were uploaded by you:"
+msgstr "Файлы, загруженные вами:"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"            <span id=\"oa_step_deadline_peer\" class=\"date ora-datetime\" data-datetime=\"%(start_date)s\" data-string=\"available {date} (in %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"            "
+msgstr ""
+"\n"
+"            <span id=\"oa_step_deadline_peer\" class=\"date ora-datetime\" data-datetime=\"%(start_date)s\" data-string=\"доступно {date} (через %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"            "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"            <span id=\"oa_step_deadline_peer\" class=\"date ora-datetime\" data-datetime=\"%(due_date)s\" data-string=\"due {date} (in %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"            "
+msgstr ""
+"\n"
+"            <span id=\"oa_step_deadline_peer\" class=\"date ora-datetime\" data-datetime=\"%(due_date)s\" data-string=\"сдать до {date} (через %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"            "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                    In Progress (%(review_number)s of %(num_must_grade)s)\n"
+"                "
+msgstr ""
+"\n"
+"                    Выполняется (%(review_number)s из %(num_must_grade)s)\n"
+"                "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Your Team's Response"
+msgstr "Ответ вашей команды"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"            <span id=\"oa_step_deadline_response\" class=\"date ora-datetime\" data-datetime=\"%(start_date)s\" data-string=\"available {date} (in %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"            "
+msgstr ""
+"\n"
+"            <span id=\"oa_step_deadline_response\" class=\"date ora-datetime\" data-datetime=\"%(start_date)s\" data-string=\"доступно {date} (через %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"            "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"            <span id=\"oa_step_deadline_response\" class=\"date ora-datetime\" data-datetime=\"%(due_date)s\" data-string=\"due {date} (in %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"            "
+msgstr ""
+"\n"
+"            <span id=\"oa_step_deadline_response\" class=\"date ora-datetime\" data-datetime=\"%(due_date)s\" data-string=\"сдать до {date} (через %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"            "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Enter your team's response to the prompt."
+msgstr "Введите ответ вашей команды на вопрос задания."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                        Your work will save automatically and you can return to complete your team's response at any time before the due date\n"
+"                      "
+msgstr ""
+"\n"
+"                        Работа сохраняется автоматически. Вы можете вернуться и завершить ответ команды в любое время до срока сдачи\n"
+"                      "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                        Your work will save automatically and you can return to complete your team's response at any time.\n"
+"                      "
+msgstr ""
+"\n"
+"                        Работа сохраняется автоматически. Вы можете вернуться и завершить ответ команды в любое время.\n"
+"                      "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "After you submit a response on behalf of your team, it cannot be edited."
+msgstr "После отправки ответа от имени команды его нельзя изменить."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Your work will save automatically and you can return to complete your response at any time before the subsection due date "
+msgstr ""
+"Работа сохраняется автоматически. Вы можете вернуться и завершить ответ в любое время до срока сдачи подраздела "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Your work will save automatically and you can return to complete your response at any time before the course ends "
+msgstr ""
+"Работа сохраняется автоматически. Вы можете вернуться и завершить ответ в любое время до окончания курса "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Your work will save automatically and you can return to complete your response at any time before the due date "
+msgstr ""
+"Работа сохраняется автоматически. Вы можете вернуться и завершить ответ в любое время до срока сдачи "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Your work will save automatically and you can return to complete your response at any time."
+msgstr ""
+"Работа сохраняется автоматически. Вы можете вернуться и завершить ответ в любое время."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "After you submit your response, you cannot edit it"
+msgstr "После того, как вы отправите свой ответ на проверку, вы не сможете его изменить"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "What will this assignment be graded on?"
+msgstr "По каким критериям оценивается это задание?"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "You are on team "
+msgstr "Вы в команде "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Team Members: "
+msgstr "Участники команды: "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                                              %(team_members_with_external_submissions)s\n"
+"                                        "
+msgstr ""
+"\n"
+"                                              %(team_members_with_external_submissions)s\n"
+"                                        "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Team Response "
+msgstr "Ответ команды "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Your Response "
+msgstr "Ваш ответ "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "(Required)"
+msgstr "(обязательно)"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                                              Teams should designate one team member to submit a response on behalf of the entire team.\n"
+"                                            "
+msgstr ""
+"\n"
+"                                              Команда должна назначить одного участника, который отправит ответ от имени всей команды.\n"
+"                                            "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                                      You are currently on Team %(team_name)s. Since you were on Team %(previous_team_name)s when the team submitted a response, you cannot submit a new response for this assignment.\n"
+"                                    "
+msgstr ""
+"\n"
+"                                      Сейчас вы в команде %(team_name)s. Поскольку на момент отправки ответа вы были в команде %(previous_team_name)s, вы не можете отправить новый ответ для этого задания.\n"
+"                                    "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Status of Your Response"
+msgstr "Статус вашего ответа"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "File Uploads "
+msgstr "Загрузка файлов "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                                  Upload files and review files uploaded by you and your teammates.\n"
+"                                "
+msgstr ""
+"\n"
+"                                  Загружайте файлы и просматривайте файлы, загруженные вами и участниками команды.\n"
+"                                "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "We could not delete files"
+msgstr "Не удалось удалить файлы"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Select one or more files to upload for this submission."
+msgstr "Выберите один или несколько файлов для этой отправки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Supported file types: "
+msgstr "Поддерживаемые типы файлов: "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "This is a team submission."
+msgstr "Это командная отправка."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"One team member should submit a response with the team’s shared files and a text response on behalf of the entire team."
+msgstr ""
+"Один участник команды должен отправить ответ с общими файлами команды и текстовым ответом от имени всей команды."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"One team member should submit a response with the team’s shared files on behalf of the entire team."
+msgstr ""
+"Один участник команды должен отправить ответ с общими файлами команды от имени всей команды."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "One team member should submit a text response on behalf of the entire team."
+msgstr ""
+"Один участник команды должен отправить текстовый ответ от имени всей команды."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "One team member should submit on behalf of the entire team."
+msgstr "Один участник команды должен отправить ответ от имени всей команды."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                  Learn more about team assignments here: (<a target=\"_blank\" href=\"https://support.edx.org/hc/en-us/articles/360004808113-Team-Assignments-Overview\">Team Assignments Overview</a>)\n"
+"                "
+msgstr ""
+"\n"
+"                  Подробнее о командных заданиях: (<a target=\"_blank\" href=\"https://support.edx.org/hc/en-us/articles/360004808113-Team-Assignments-Overview\">обзор командных заданий</a>)\n"
+"                "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                            You joined Team %(team_name)s after they submitted a response for this assignment. You cannot submit a new response.\n"
+"                          "
+msgstr ""
+"\n"
+"                            Вы присоединились к команде %(team_name)s после отправки ответа на это задание. Вы не можете отправить новый ответ.\n"
+"                          "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"               <span id=\"oa_step_deadline_self\" class=\"date ora-datetime\" data-datetime=\"%(start_date)s\" data-string=\"available {date} (in %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"               "
+msgstr ""
+"\n"
+"               <span id=\"oa_step_deadline_self\" class=\"date ora-datetime\" data-datetime=\"%(start_date)s\" data-string=\"доступно {date} (через %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"               "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"               <span id=\"oa_step_deadline_self\" class=\"date ora-datetime\" data-datetime=\"%(due_date)s\" data-string=\"due {date} (in %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"               "
+msgstr ""
+"\n"
+"               <span id=\"oa_step_deadline_self\" class=\"date ora-datetime\" data-datetime=\"%(due_date)s\" data-string=\"сдать до {date} (через %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"               "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Manage Team Responses"
+msgstr "Управление ответами команд"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "View ORA in Studio"
+msgstr "Открыть задание в Studio"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Manage Teams"
+msgstr "Управление командами"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Enter a team member's username or edX email"
+msgstr "Введите имя пользователя или email участника команды"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Give this team a grade using the problem's rubric."
+msgstr "Выставьте команде оценку по рубрике задания."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                                        Response for: %(team_name)s with %(team_usernames)s\n"
+"                                     "
+msgstr ""
+"\n"
+"                                        Ответ команды %(team_name)s (%(team_usernames)s)\n"
+"                                     "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "The teams's response to the prompt above"
+msgstr "Ответ команды на вопрос выше"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Override this team's current grade using the problem's rubric."
+msgstr "Переопределите текущую оценку команды по рубрике задания."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Team Response"
+msgstr "Ответ команды"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "The team's response to the prompt above"
+msgstr "Ответ команды на вопрос выше"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                    Viewing learner: %(learner)s\n"
+"                "
+msgstr ""
+"\n"
+"                    Просмотр учащегося: %(learner)s\n"
+"                "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                    Viewing team: %(team)s\n"
+"                "
+msgstr ""
+"\n"
+"                    Просмотр команды: %(team)s\n"
+"                "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Team's Response"
+msgstr "Ответ команды"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Staff Assessment for this Team"
+msgstr "Оценка персоналом для этой команды"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Team's Final Grade"
+msgstr "Итоговая оценка команды"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                                        %(assessment_label)s - %(points)s point\n"
+"                 "
+msgstr ""
+"\n"
+"                                        %(assessment_label)s — %(points)s балл\n"
+"                 "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"The team’s submission has been removed from grading. The team receives a grade of zero unless you decide to remove the submission from grading."
+msgstr ""
+"Ответ команды исключён из оценивания. Команда получит нулевую оценку, если вы не вернёте работу в оценивание."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Submit Team Grade Override"
+msgstr "Применить переопределение оценки команды"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Unable to perform grade override"
+msgstr "Не удалось переопределить оценку"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Grades are frozen. Grades are automatically frozen 30 days after the course end date."
+msgstr ""
+"Оценки зафиксированы. Они автоматически фиксируются через 30 дней после окончания курса."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"This submission has been cancelled and cannot recieve a grade. Refer to documentation for how to delete a submission."
+msgstr ""
+"Эта отправка отменена, оценку выставить нельзя. См. документацию по удалению отправки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Remove Team Submission from Grading"
+msgstr "Исключить ответ команды из оценивания"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Removing a team's submission cannot be undone and should be done with caution."
+msgstr "Исключение ответа команды нельзя отменить. Действуйте осторожно."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                      In Progress (%(current_progress_num)s of %(training_available_num)s)\n"
+"      "
+msgstr ""
+"\n"
+"                      Выполняется (%(current_progress_num)s из %(training_available_num)s)\n"
+"      "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"            <span id=\"oa_step_deadline\" class=\"date ora-datetime\" data-datetime=\"%(start_date)s\" data-string=\"available {date} (in %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"            "
+msgstr ""
+"\n"
+"            <span id=\"oa_step_deadline\" class=\"date ora-datetime\" data-datetime=\"%(start_date)s\" data-string=\"доступно {date} (через %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"            "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"            <span id=\"oa_step_deadline\" class=\"date ora-datetime\" data-datetime=\"%(due_date)s\" data-string=\"due {date} (in %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"            "
+msgstr ""
+"\n"
+"            <span id=\"oa_step_deadline\" class=\"date ora-datetime\" data-datetime=\"%(due_date)s\" data-string=\"сдать до {date} (через %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"            "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "The grade for this problem is determined by your Staff Grade."
+msgstr "Итоговая оценка за это задание определяется оценкой персонала."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"The grade for this problem is determined by the median score of your Peer Assessments."
+msgstr "Итоговая оценка за это задание определяется медианой ваших взаимных оценок."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "The grade for this problem is determined by your Self Assessment."
+msgstr "Итоговая оценка за это задание определяется вашей самооценкой."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"You have successfully completed this problem and received a {earned_points}/{total_points}."
+msgstr "Вы успешно выполнили задание и получили {earned_points}/{total_points}."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"You have not yet received all necessary peer reviews to determine your final grade."
+msgstr "Вы ещё не получили все необходимые взаимные оценки для итоговой оценки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "You must specify a block id from which to copy a rubric."
+msgstr "Укажите block id, из которого нужно скопировать рубрику."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Invalid block id."
+msgstr "Некорректный block id."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "No Open Response Assessment found in {course_id} with block id {block_id}"
+msgstr ""
+"В курсе {course_id} не найдено задание с развёрнутым ответом с block id {block_id}"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Complete/Overwritten"
+msgstr "Завершено/переопределено"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Not applicable"
+msgstr "Не применимо"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Not submitted"
+msgstr "Не отправлено"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Submitted"
+msgstr "Отправлено"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Submission not found"
+msgstr "Отправка не найдена"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Submission for team assignment has no associated team submission"
+msgstr "Для командного задания нет связанной командной отправки"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Error: Text Response and File Upload Response cannot both be disabled"
+msgstr "Ошибка: нельзя отключить и текстовый ответ, и загрузку файлов одновременно"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Error: When Text Response is disabled, File Upload Response must be Required"
+msgstr ""
+"Ошибка: если текстовый ответ отключён, загрузка файлов должна быть обязательной"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Error: When File Upload Response is disabled, Text Response must be Required"
+msgstr ""
+"Ошибка: если загрузка файлов отключена, текстовый ответ должен быть обязательным"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Open Response Assessments allow you to configure single or multiple steps in a rubric based open response assessment sequence. The steps available below can be enabled, disable, and ordered for a flexible set of pedagogical needs."
+msgstr ""
+"Задания с развёрнутым ответом позволяют настроить один или несколько шагов оценивания по рубрике. Ниже можно включать, отключать и упорядочивать шаги под ваши педагогические задачи."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Specify whether learners can upload more than one file. This has no effect if File Uploads Response is set to None. This is automatically set to True for Team Assignments. "
+msgstr ""
+"Укажите, могут ли учащиеся загрузить более одного файла. Не действует, если загрузка файлов отключена. Для командных заданий всегда включено."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"To add more file extensions, select Custom File Types and enter the full list of acceptable file extensions to be included."
+msgstr ""
+"Чтобы добавить расширения, выберите «Пользовательские типы файлов» и укажите полный список допустимых расширений."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Specify the number of top scoring responses to display after the learner has submitted a response. Valid numbers are 0 to 99. If the number is 0, the Top Responses section does not appear to learners."
+msgstr ""
+"Укажите, сколько лучших ответов показывать после отправки. Допустимые значения: 0–99. При 0 раздел «Лучшие ответы» не отображается."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Select one of the options above. This describes whether or not the reviewer will have to provide criterion feedback."
+msgstr ""
+"Выберите один из вариантов выше — нужно ли оценивающему оставлять отзыв по критериям."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Peer Assessment allows students to provide feedback to other students and also receive feedback from others in their final grade. Often, though not always, this step is preceded by Self Assessment or Learner Training steps."
+msgstr ""
+"Взаимная оценка позволяет учащимся оценивать работы друг друга и учитывает эти оценки в итоговом балле. Часто этот шаг предваряют самооценка или обучение учащихся."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Configuration: For this step to be configured you must specify the number of peer reviews a student will be assessed with, and the number of peer a student must grade. Additional options can be specified."
+msgstr ""
+"Настройка: укажите, сколько взаимных оценок получит каждый учащийся и сколько работ он должен проверить. Доступны дополнительные параметры."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "When enabled, learners who have received at least 30%% of the required \\\\"
+msgstr ""
+"Если включено, учащиеся, получившие не менее 30%% требуемых взаимных оценок, "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"This feature is being enabled by the course-level setting. It can be found under the Open Response Assessment Settings card on the Pages & Resources studio page."
+msgstr ""
+"Функция включается на уровне курса в карточке настроек заданий с развёрнутым ответом на странице «Страницы и ресурсы» Studio."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Staff Assessment gates sets the final grade for students if enabled with other steps, though it can also be used as a standalone step."
+msgstr ""
+"Оценка персоналом определяет итоговую оценку вместе с другими шагами или может быть единственным шагом оценивания."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Learner Training is used to help students practice grading a simulated peer submission in order to train them on the rubric and ensure learner's understand the rubric for either Self or Peer Assessment steps."
+msgstr ""
+"Обучение учащихся помогает потренироваться в оценивании примеров работ по рубрике перед самооценкой или взаимной оценкой."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Configuration: For this step to be fully configured you must provide one or more graded sample responses. Learners must then match this instructor score to advance and are provided feedback when their score doesn't match the sample response."
+msgstr ""
+"Настройка: добавьте один или несколько примеров с эталонной оценкой. Учащиеся должны совпасть с оценкой преподавателя, чтобы перейти дальше; при расхождении они получают подсказку."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"To clone a rubric from an existing published or unpublished draft, you can search by the Block ID. Note that cloning is one-way, meaning changes made after cloning will only affect the rubric being modified, and will not modify any rubric it was cloned from."
+msgstr ""
+"Чтобы клонировать рубрику из существующего блока, найдите его по Block ID. Клонирование одностороннее: изменения после клонирования затрагивают только новую рубрику."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                      %(assessment_title)s - %(points)s point\n"
+"                  \n"
+"                      %(assessment_title)s - %(points)s points\n"
+"                  "
+msgstr ""
+"\n"
+"                      %(assessment_title)s — %(points)s балл\n"
+"                  \n"
+"                      %(assessment_title)s — %(points)s баллов\n"
+"                  "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Your team’s submission has been cancelled. Your team will receive a grade of zero unless course staff resets your assessment to allow the team to resubmit a response."
+msgstr ""
+"Ответ команды отменён. Команда получит нулевую оценку, если команда курса не сбросит попытку для повторной отправки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Your submission has been cancelled. You will receive a grade of zero unless course staff resets your assessment to allow you to resubmit a response."
+msgstr ""
+"Ваш ответ отменён. Вы получите нулевую оценку, если команда курса не сбросит вашу попытку для повторной отправки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"            This is a team assignment for team-set \"%(teamset_name)s\".\n"
+"            You are currently not on a team in team-set \"%(teamset_name)s\".\n"
+"            You must be on a team in team-set \"%(teamset_name)s\" to access this team assignment.\n"
+"            "
+msgstr ""
+"\n"
+"            Это командное задание для набора команд «%(teamset_name)s».\n"
+"            Сейчас вы не состоите в команде этого набора.\n"
+"            Чтобы выполнить задание, нужно быть в команде набора «%(teamset_name)s».\n"
+"            "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                                              %(team_members_with_external_submissions)s\n"
+"                                              have/has already submitted a response to this assignment with another team,\n"
+"                                              and will not be a part of your team's submission or assignment grade.\n"
+"                                          "
+msgstr ""
+"\n"
+"                                              %(team_members_with_external_submissions)s\n"
+"                                              уже отправили ответ на это задание в составе другой команды\n"
+"                                              и не участвуют в отправке и оценке вашей команды.\n"
+"                                          "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                                              Teams should designate one team member to submit a response on behalf of the\n"
+"                                              entire team.  All team members can use this space to work on draft responses,\n"
+"                                              but you will not be able to see your teammates' drafts made in this space, so\n"
+"                                              please coordinate with them to decide on the final response the designated team\n"
+"                                              member should submit.\n"
+"                                          "
+msgstr ""
+"\n"
+"                                              Назначьте одного участника, который отправит ответ от имени команды.\n"
+"                                              Все могут работать над черновиком здесь,\n"
+"                                              но черновики однокоманщников не видны — согласуйте финальный вариант перед отправкой.\n"
+"                                          "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                                      You are currently on Team %(team_name)s. Since you were on Team %(previous_team_name)s\n"
+"                                      when they submitted a response to this assignment, you are seeing Team %(previous_team_name)s’s\n"
+"                                      response and will receive the same grade for this assignment as your former teammates. You will not be part of Team %(team_name)s’s submission for this assignment and will not\n"
+"                                      receive a grade for their submission.\n"
+"                                  "
+msgstr ""
+"\n"
+"                                      Сейчас вы в команде %(team_name)s. Поскольку на момент отправки вы были в команде %(previous_team_name)s,\n"
+"                                      вы видите ответ команды %(previous_team_name)s и получите ту же оценку, что и бывшие однокоманщники.\n"
+"                                      Вы не участвуете в отправке команды %(team_name)s и не получите оценку за их работу.\n"
+"                                  "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                                  Upload files and review files uploaded by you and your teammates below. Be sure to add\n"
+"                                  descriptions to your files to help your teammates identify them.\n"
+"                              "
+msgstr ""
+"\n"
+"                                  Загружайте файлы и просматривайте файлы команды ниже. Добавляйте описания,\n"
+"                                  чтобы однокоманщникам было проще их найти.\n"
+"                              "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                  Learn more about team assignments here: (<a target=\"_blank\" href=\"https://support.edx.org/hc/en-us/articles/360000191067-Submit-your-response#h_01FVD8SXM9E5H2DNAG87X25ZHR\">link</a>)\n"
+"                  "
+msgstr ""
+"\n"
+"                  Подробнее о командных заданиях: (<a target=\"_blank\" href=\"https://support.edx.org/hc/en-us/articles/360000191067-Submit-your-response#h_01FVD8SXM9E5H2DNAG87X25ZHR\">ссылка</a>)\n"
+"                  "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                            You joined Team %(team_name)s after they submitted a response for this assignment\n"
+"                            and you will not receive a grade for their response. You have also not previously submitted\n"
+"                            a response to this assignment with another team. Please contact course staff to discuss your\n"
+"                            options for this assignment.\n"
+"                        "
+msgstr ""
+"\n"
+"                            Вы присоединились к команде %(team_name)s после отправки ответа\n"
+"                            и не получите оценку за эту работу. Ранее вы тоже не отправляли ответ с другой командой.\n"
+"                            Свяжитесь с командой курса, чтобы обсудить варианты.\n"
+"                        "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"               <span id=\"oa_step_deadline_self\" class=\"date ora-datetime\" data-datetime=\"%(start_date)s\" data-string=\"available {date} (in %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"           "
+msgstr ""
+"\n"
+"               <span id=\"oa_step_deadline_self\" class=\"date ora-datetime\" data-datetime=\"%(start_date)s\" data-string=\"доступно {date} (через %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"           "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"               <span id=\"oa_step_deadline_self\" class=\"date ora-datetime\" data-datetime=\"%(due_date)s\" data-string=\"due {date} (in %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"           "
+msgstr ""
+"\n"
+"               <span id=\"oa_step_deadline_self\" class=\"date ora-datetime\" data-datetime=\"%(due_date)s\" data-string=\"сдать до {date} (через %(time_until)s)\" data-timezone=\"%(user_timezone)s\" data-language=\"%(user_language)s\"></span>\n"
+"           "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                                        Response for: %(team_name)s with %(team_usernames)s\n"
+"                                    "
+msgstr ""
+"\n"
+"                                        Ответ команды %(team_name)s (%(team_usernames)s)\n"
+"                                    "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                                        %(assessment_label)s - %(points)s point\n"
+"                                    \n"
+"                                        %(assessment_label)s - %(points)s points\n"
+"                                    "
+msgstr ""
+"\n"
+"                                        %(assessment_label)s — %(points)s балл\n"
+"                                    \n"
+"                                        %(assessment_label)s — %(points)s баллов\n"
+"                                    "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"The team’s submission has been removed from grading. The team receives a grade of zero unless you delete the a team member’s state for the problem to allow the team to resubmit a response."
+msgstr ""
+"Ответ команды исключён из оценивания. Команда получит нулевую оценку, если не сбросить состояние участника для повторной отправки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"This submission has been cancelled and cannot recieve a grade. Refer to documentation for how to delete the learner’s state for this problem to allow them to resubmit."
+msgstr ""
+"Эта отправка отменена, оценку выставить нельзя. См. документацию по сбросу состояния учащегося для повторной отправки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"\n"
+"                      In Progress (%(current_progress_num)s of %(training_available_num)s)\n"
+"                  "
+msgstr ""
+"\n"
+"                      Выполняется (%(current_progress_num)s из %(training_available_num)s)\n"
+"                  "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"The team’s submission has been removed from grading. The team receives a grade of zero unless you delete a team member’s state for the problem to allow the team to resubmit a response."
+msgstr ""
+"Ответ команды исключён из оценивания. Команда получит нулевую оценку, если не сбросить состояние участника для повторной отправки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Response not started."
+msgstr "Ответ не начат."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Not Started"
+msgstr "Не начато"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Not Completed"
+msgstr "Не завершено"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Not Available"
+msgstr "Недоступно"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Waiting for Assessments"
+msgstr "Ожидание оценок"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Instructions Unavailable"
+msgstr "Инструкции недоступны"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Draft saved!"
+msgstr "Черновик сохранён!"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Prompt"
+msgstr "Вопрос"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Rubric"
+msgstr "Оценивание"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Display Name "
+msgstr "Отображаемое имя "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Text Response"
+msgstr "Текстовый ответ"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Specify whether learners must include a text based response to this problem's prompt."
+msgstr "Укажите, обязан ли учащийся дать текстовый ответ на вопрос задания."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "File Uploads Response"
+msgstr "Загрузка файлов в ответе"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Specify whether learners are able to upload files as a part of their response."
+msgstr "Укажите, могут ли учащиеся загружать файлы как часть ответа."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "False"
+msgstr "Нет"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "True"
+msgstr "Да"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Maximum File Uploads"
+msgstr "Максимум загружаемых файлов"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Specify the maximum number of files a learner can upload. Valid numbers are 1 to 20."
+msgstr ""
+"Укажите максимальное число файлов, которые может загрузить учащийся. Допустимые значения: от 1 до 20."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "File Upload Types"
+msgstr "Типы загружаемых файлов"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "PDF or Image Files"
+msgstr "PDF или изображения"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Image Files"
+msgstr "Изображения"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Custom File Types"
+msgstr "Пользовательские типы файлов"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "File Types"
+msgstr "Типы файлов"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Allow LaTeX Responses"
+msgstr "Разрешить ответы с LaTeX"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Specify whether learners can write LaTeX formatted strings"
+msgstr "Укажите, могут ли учащиеся использовать формулы LaTeX."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Top Responses"
+msgstr "Лучшие ответы"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Allow Learner Resubmissions"
+msgstr "Разрешить повторную отправку"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Set to TRUE to allow learners to resubmit ungraded work. Set to FALSE if resubmissions are not allowed."
+msgstr ""
+"«Да» — учащийся может отправить ответ повторно, пока работа не оценена. «Нет» — повторная отправка запрещена."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Resubmission Grace Period"
+msgstr "Период для повторной отправки"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Specify the maximum period during which resubmissions are allowed. If left blank, learners will be able to reset their submission as long as it has not been graded. The grace period starts once the learner has submitted their response."
+msgstr ""
+"Максимальный срок, в течение которого разрешена повторная отправка. Если пусто, учащийся может сбросить ответ, пока он не оценён. Отсчёт начинается после первой отправки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Add Prompt"
+msgstr "Добавить вопрос"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Add Criterion"
+msgstr "Добавить критерий"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Add Option"
+msgstr "Добавить вариант"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Criterion"
+msgstr "Критерий"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Criterion Name"
+msgstr "Название критерия"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Criterion Prompt"
+msgstr "Описание критерия"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Option"
+msgstr "Вариант"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Option Name"
+msgstr "Название варианта"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Option Points"
+msgstr "Баллы варианта"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Option Explanation"
+msgstr "Пояснение к варианту"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Feedback for This Criterion"
+msgstr "Отзыв по этому критерию"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Feedback for This Response"
+msgstr "Отзыв по этому ответу"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Default Feedback Text"
+msgstr "Текст отзыва по умолчанию"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Feedback Instructions"
+msgstr "Инструкции к отзыву"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "points"
+msgstr "баллов"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Optional"
+msgstr "Необязательно"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Step: Self Assessment"
+msgstr "Шаг: самооценка"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Step: Peer Assessment"
+msgstr "Шаг: взаимная оценка"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Step: Staff Assessment"
+msgstr "Шаг: оценка персоналом"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Step: Learner Training"
+msgstr "Шаг: обучение учащихся"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Must Grade"
+msgstr "Нужно оценить"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Graded By"
+msgstr "Кем оценивается"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Mean"
+msgstr "Среднее"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Median (default)"
+msgstr "Медиана (по умолчанию)"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Grading strategy for the peer assessment"
+msgstr "Стратегия оценивания при взаимной проверке"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Select the preferred grading strategy for the peer assessment. By default, the median across all peer reviews is used to calculate the final grade. If you select the mean, the average of all peer reviews will be used."
+msgstr ""
+"Выберите способ расчёта итоговой оценки при взаимной проверке. По умолчанию используется медиана всех оценок. При выборе «Среднее» используется среднее арифметическое."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Add Sample Response"
+msgstr "Добавить пример ответа"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Scored Response"
+msgstr "Оценённый ответ"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Response Score"
+msgstr "Балл ответа"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Response"
+msgstr "Ответ"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Start Time"
+msgstr "Время начала"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Due Time"
+msgstr "Время сдачи"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Response Start Date"
+msgstr "Дата начала ответа"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Response Start Time"
+msgstr "Время начала ответа"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Response Due Date"
+msgstr "Срок сдачи ответа"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Response Due Time"
+msgstr "Время сдачи ответа"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "The date and time when learners can begin submitting responses."
+msgstr "Дата и время, когда учащиеся могут начать отправлять ответы."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "The date and time when learners can no longer submit responses."
+msgstr "Дата и время, после которого отправка ответов недоступна."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Rubrics are made up of criteria, which usually contain one or more options. Each option has a point value. This template contains two sample criteria and their options. Replace the sample text with your own text. For more information, see the ORA documentation."
+msgstr ""
+"Рубрика состоит из критериев, у каждого — один или несколько вариантов с баллами. В шаблоне два примера критериев — замените их своими. Подробнее — в документации ORA."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Prompts. Replace the sample text with your own text. For more information, see the ORA documentation."
+msgstr ""
+"Вопросы задания. Замените пример своим текстом. Подробнее — в документации ORA."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Encourage learners to provide feedback on the response they have graded. You can replace the sample text with your own."
+msgstr ""
+"Предложите учащимся оставлять развёрнутый отзыв по проверенной работе. Текст-пример можно заменить."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Enter feedback text that learners will see before they enter their own feedback. Use this text to show learners a good example peer assessment."
+msgstr ""
+"Текст, который учащиеся увидят перед своим отзывом. Используйте его как пример хорошей взаимной оценки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "You cannot delete a criterion after the assignment has been released."
+msgstr "Нельзя удалить критерий после публикации задания."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "You cannot delete a prompt after the assignment has been released."
+msgstr "Нельзя удалить вопрос после публикации задания."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"When enabled, learners who have received at least 30% of the required peer grades will receive a provisional grade based on the median of the grades they have received."
+msgstr ""
+"Если включено, учащиеся с не менее 30%% требуемых взаимных оценок получают предварительную оценку по медиане уже полученных оценок."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Error updating XBlock configuration"
+msgstr "Ошибка при сохранении настроек задания"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Validation error: {error}"
+msgstr "Ошибка проверки: {error}"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Waiting for a Staff Grade"
+msgstr "Ожидание оценки персоналом"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Waiting for peer reviews"
+msgstr "Ожидание взаимных оценок"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Staff Grade"
+msgstr "Оценка персоналом"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Check back later to see if a course staff member has assessed your response. You will receive your grade after the assessment is complete."
+msgstr ""
+"Загляните позже: возможно, сотрудник курса уже оценит ваш ответ. Оценка появится после завершения проверки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "You Must Complete the Steps Above to View Your Grade"
+msgstr "Завершите шаги выше, чтобы увидеть оценку"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Although a course staff member has assessed your response, you will receive your grade only after you have completed all the required steps of this problem."
+msgstr ""
+"Сотрудник курса уже оценил ваш ответ, но оценка появится только после выполнения всех обязательных шагов задания."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "The submission is waiting for assessments."
+msgstr "Ответ ожидает оценок."

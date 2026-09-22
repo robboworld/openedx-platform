@@ -12247,3 +12247,291 @@ msgstr ""
 #: cms/templates/js/video/transcripts/messages/transcripts-use-existing.underscore
 msgid "Use Current Transcript"
 msgstr "Использовать субтитры"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Demo the new Grading Experience"
+msgstr "Демо нового интерфейса оценивания"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Please check your internet connection."
+msgstr "Проверьте подключение к интернету."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Multiple teams returned for course"
+msgstr "Для курса найдено несколько команд"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Could not load teams information."
+msgstr "Не удалось загрузить информацию о командах."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "User lookup failed"
+msgstr "Не удалось найти пользователя"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Error when looking up username"
+msgstr "Ошибка при поиске имени пользователя"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Failed to clone rubric"
+msgstr "Не удалось клонировать рубрику"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "View and grade responses"
+msgstr "Просмотр и оценка ответов"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Staff Grader"
+msgstr "Оценивание персоналом"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "There is still file upload in progress. Please wait until it is finished."
+msgstr "Файл ещё загружается. Дождитесь завершения загрузки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Cannot submit empty response even everything is optional."
+msgstr "Нельзя отправить пустой ответ, даже если все поля необязательны."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Please upload a file."
+msgstr "Загрузите файл."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Please provide a response."
+msgstr "Введите ответ."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "No files selected for upload."
+msgstr "Файлы для загрузки не выбраны."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Please provide a description for each file you are uploading."
+msgstr "Укажите описание для каждого загружаемого файла."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Your file has been deleted or path has been changed: "
+msgstr "Файл удалён или путь изменён: "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Saving draft"
+msgstr "Сохранение черновика"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Saving draft..."
+msgstr "Сохранение черновика..."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Draft saved!"
+msgstr "Черновик сохранён!"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Confirm Submit Response"
+msgstr "Подтвердите отправку ответа"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Individual file size must be {max_files_mb}MB or less."
+msgstr "Размер каждого файла не должен превышать {max_files_mb} МБ."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"File upload failed: unsupported file type. Only the supported file types can be uploaded. If you have questions, contact your course team."
+msgstr ""
+"Не удалось загрузить файл: неподдерживаемый тип. Можно загружать только разрешённые типы файлов. По вопросам обратитесь к команде курса."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "The maximum number files that can be saved is "
+msgstr "Максимальное число сохраняемых файлов: "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Confirm Delete Uploaded File"
+msgstr "Подтвердите удаление загруженного файла"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Are you sure you want to delete the following file? It cannot be restored.\n"
+"File: "
+msgstr ""
+"Удалить этот файл? Восстановить его будет нельзя.\n"
+"Файл: "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"This grade will be applied to all members of the team. Do you want to continue?"
+msgstr "Эта оценка будет применена ко всем участникам команды. Продолжить?"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Confirm Grade Team Submission"
+msgstr "Подтвердите оценку командной работы"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Refresh"
+msgstr "Обновить"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Peers Assessed"
+msgstr "Оценено однокурсников"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Peer Responses Received"
+msgstr "Получено взаимных оценок"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Time Spent On Current Step"
+msgstr "Время на текущем шаге"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Staff assessment"
+msgstr "Оценка персоналом"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Grade Status"
+msgstr "Статус оценки"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"The \"{name}\" problem is configured to require a minimum of {min_grades} peer grades, and asks to review {min_reviews} peer responses."
+msgstr ""
+"Задание «{name}» требует минимум {min_grades} взаимных оценок и проверки {min_reviews} ответов однокурсников."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"There are currently {stuck_learners} learners in the waiting state, meaning they have not yet met all requirements to receive a grade."
+msgstr ""
+"Сейчас {stuck_learners} учащихся в состоянии ожидания: они ещё не выполнили все условия для получения оценки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"However, {overwritten_count} of these students have received a grade through the staff grade override tool."
+msgstr ""
+"При этом {overwritten_count} из них уже получили оценку через инструмент переопределения оценки персоналом."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Error while fetching student data."
+msgstr "Ошибка при загрузке данных учащихся."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Problem cloning rubric"
+msgstr "Ошибка при клонировании рубрики"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"You have added a criterion. You will need to select an option for the criterion in the Learner Training step."
+msgstr ""
+"Вы добавили критерий. На шаге обучения учащихся нужно выбрать для него вариант оценки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Save Unsuccessful"
+msgstr "Не удалось сохранить"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Errors detected on the following tabs: "
+msgstr "Ошибки на вкладках: "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"This ORA has already been released. Changes will only affect learners making new submissions. Existing submissions will not be affected."
+msgstr ""
+"Это задание уже опубликовано. Изменения затронут только новые отправки; существующие не изменятся."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "error count: "
+msgstr "количество ошибок: "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"File upload failed: unsupported file type. Only the supported file types can be uploaded. If you have questions, please reach out to the course team."
+msgstr ""
+"Не удалось загрузить файл: неподдерживаемый тип. Можно загружать только разрешённые типы. По вопросам обратитесь к команде курса."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"The \"{name}\" problem is configured to require a minimum of {min_grades} peer grades, and asks to review {min_graded} peers."
+msgstr ""
+"Задание «{name}» требует минимум {min_grades} взаимных оценок и проверки {min_graded} однокурсников."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"There are currently {stuck_learners} learners in the waiting state, meaning they have not yet met all requirements for Peer Assessment. "
+msgstr ""
+"Сейчас {stuck_learners} учащихся в ожидании: они ещё не выполнили все условия взаимной оценки. "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"However, {overwritten_count} of these students have received a grade through the staff grade override tool already."
+msgstr ""
+"При этом {overwritten_count} из них уже получили оценку через инструмент переопределения оценки персоналом."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"You have added a criterion. You will need to select an option for the criterion in the Learner Training step. To do this, click the Assessment Steps tab."
+msgstr ""
+"Вы добавили критерий. На вкладке «Шаги оценивания» в шаге обучения учащихся выберите для него вариант."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"This ORA has already been released. Changes will only affect learners making new submissions. Existing submissions will not be modified by this change."
+msgstr ""
+"Это задание уже опубликовано. Изменения затронут только новые отправки; существующие не изменятся."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Not Selected"
+msgstr "Не выбрано"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Unnamed Option"
+msgstr "Вариант без названия"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "This problem could not be saved."
+msgstr "Не удалось сохранить задание."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Time must be in the format dd:hh:mm. The days must be between 00 and 99, the hours between 00 and 23, and the minutes between 00 and 59."
+msgstr ""
+"Время должно быть в формате дд:чч:мм. Дни — 00–99, часы — 00–23, минуты — 00–59."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "File types can not be empty."
+msgstr "Список типов файлов не может быть пустым."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "The following file types are not allowed: "
+msgstr "Следующие типы файлов не разрешены: "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Criterion Added"
+msgstr "Критерий добавлен"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Option Deleted"
+msgstr "Вариант удалён"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Criterion Deleted"
+msgstr "Критерий удалён"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Changes to steps that are not selected as part of the assignment will not be saved."
+msgstr "Изменения в шагах, не включённых в задание, не сохранятся."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Response not started."
+msgstr "Ответ не начат."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Not Started"
+msgstr "Не начато"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Not Completed"
+msgstr "Не завершено"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Waiting for a Staff Grade"
+msgstr "Ожидание оценки персоналом"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Staff Grade"
+msgstr "Оценка персоналом"

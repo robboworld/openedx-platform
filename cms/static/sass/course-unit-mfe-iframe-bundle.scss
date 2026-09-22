@@ -5,6 +5,8 @@
 @import 'build-v1'; // shared app style assets/rendering
 @import 'cms/theme/variables-v1';
 @import 'elements/course-unit-mfe-iframe';
+@import 'elements/robbo-openassessment-iframe';
+@import 'elements/kinescope-iframe';
 
 html {
   body {
@@ -922,9 +924,14 @@ select {
 
     .setting-help,
     .ti.wrapper-comp-settings .list-input.settings-list .setting-help {
-      color: $border-color;
+      color: #000;
       font-size: 14px;
       line-height: $base-font-size;
+    }
+
+    .openassessment_description,
+    .openassessment_tab_instructions {
+      color: #000;
     }
   }
 

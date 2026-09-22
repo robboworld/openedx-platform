@@ -21,6 +21,7 @@ from xmodule.course_metadata_utils import (
     has_course_ended,
     has_course_started,
     is_enrollment_open,
+    localized_boilerplate_template_id,
     number_for_course_location
 )
 from xmodule.modulestore.tests.utils import (
@@ -32,6 +33,17 @@ from xmodule.modulestore.tests.utils import (
 _TODAY = datetime.now(utc)
 _LAST_WEEK = _TODAY - timedelta(days=7)
 _NEXT_WEEK = _TODAY + timedelta(days=7)
+
+
+class LocalizedBoilerplateTemplateIdTest(TestCase):
+    """localized_boilerplate_template_id must not break non-YAML xblock templates."""
+
+    def test_yaml_templates_get_ru_suffix(self):
+        assert localized_boilerplate_template_id('multiplechoice.yaml', 'ru') == 'multiplechoice.ru.yaml'
+
+    def test_non_yaml_templates_unchanged(self):
+        assert localized_boilerplate_template_id('staff-assessment', 'ru') == 'staff-assessment'
+        assert localized_boilerplate_template_id('peer-assessment', 'ru') == 'peer-assessment'
 
 
 @pytest.mark.django_db

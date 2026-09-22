@@ -16,6 +16,21 @@ from openedx.core.toggles import ENTRANCE_EXAMS
 
 from .xblock_helpers import usage_key_with_run
 from ..helpers import GRADER_TYPES, remove_entrance_exam_graders, xblock_type_display_name
+from ..robbo_ora_defaults import apply_russian_ora_defaults
+
+
+def _template_data_is_valid(template):
+    """
+    Return False when a boilerplate exists but does not carry usable defaults.
+
+    ORA templates must include rubric_assessments; a missing value breaks Studio.
+    """
+    if not template:
+        return False
+    data = template.get('data')
+    if isinstance(data, dict) and 'rubric_assessments' in data:
+        return data.get('rubric_assessments') is not None
+    return True
 
 
 def _load_create_template(block_class, template_id):
@@ -30,8 +45,10 @@ def _load_create_template(block_class, template_id):
     if is_russian_language():
         localized_id = localized_boilerplate_template_id(template_id)
         if localized_id != template_id:
-            template = block_class.get_template(localized_id)
-            used_localized = template is not None
+            candidate = block_class.get_template(localized_id)
+            if _template_data_is_valid(candidate):
+                template = candidate
+                used_localized = True
     if template is None:
         template = block_class.get_template(template_id)
     return template, used_localized
@@ -108,6 +125,10 @@ def create_xblock(parent_locator, user, category, display_name, boilerplate=None
             runtime=parent.runtime,
             position=child_position,
         )
+
+        if category == 'openassessment' and is_russian_language():
+            created_block = apply_russian_ora_defaults(created_block)
+            store.update_item(created_block, user.id)
 
         # Entrance Exams: Grader assignment
         if ENTRANCE_EXAMS.is_enabled():
