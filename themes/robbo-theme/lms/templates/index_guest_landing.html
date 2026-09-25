@@ -7,19 +7,6 @@ from django.utils.translation import gettext as _
 from django.urls import reverse
 from mako.runtime import UNDEFINED
 
-def _robbo_normalize_host(host):
-    if not host:
-        return ''
-    return host.split(':')[0].strip().lower()
-
-def _robbo_show_guest_migration_banner(request):
-    """Show migration banner only on configured prod LMS host."""
-    allowed_hosts = getattr(settings, 'ROBBO_GUEST_MIGRATION_BANNER_HOSTS', ())
-    if not allowed_hosts:
-        return False
-    current_host = _robbo_normalize_host(request.get_host())
-    allowed = {_robbo_normalize_host(host) for host in allowed_hosts}
-    return current_host in allowed
 %>
 <%
 guest_landing_host = request.get_host().split(':')[0]
@@ -55,14 +42,6 @@ guest_landing_tagline = f'{guest_landing_host} - образовательная 
           </div>
         </div>
       </header>
-      % if _robbo_show_guest_migration_banner(request):
-        <div class="robbo-guest-domain-banner" role="status" aria-live="polite">
-          <p class="robbo-guest-domain-banner__inner">
-            <span class="robbo-guest-domain-banner__label">Мы переехали на новый домен</span>
-            <span class="robbo-guest-domain-banner__domain">lms.example.com</span>
-          </p>
-        </div>
-      % endif
     </div>
     <script src="${static.url('js/guest-landing-topbar.js')}"></script>
 
