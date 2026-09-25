@@ -1,6 +1,5 @@
-// Kinescope XBlock preview in Studio unit iframe.
-// Static assets from pip-installed xblocks need collectstatic; these rules keep
-// a correct 16:9 embed when /static/.../kinescope.css is missing after hotfix install.
+// Kinescope XBlock in LMS courseware and Learning MFE unit iframe.
+// Fallback when /static/xblock/resources/.../kinescope.css is missing (before collectstatic).
 
 .kinescope_block {
   box-sizing: border-box;
