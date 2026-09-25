@@ -6354,11 +6354,11 @@ msgstr "или"
 
 #: cms/static/js/models/xblock_validation.js
 msgid "This unit has validation issues."
-msgstr "У этого устройства проблемы с проверкой."
+msgstr "В этом юните есть ошибки."
 
 #: cms/static/js/models/xblock_validation.js
 msgid "This component has validation issues."
-msgstr "У этого компонента есть проблемы с проверкой."
+msgstr "В этом компоненте есть ошибки."
 
 #: cms/static/js/views/active_video_upload.js cms/static/js/views/assets.js
 msgid "Your file could not be uploaded"
