@@ -132,6 +132,46 @@ msgstr "Обсуждение"
 msgid "Video"
 msgstr "Видео"
 
+#: kinescope xblock (create_xblock / xblock_type_display_name)
+msgid "Kinescope"
+msgstr "Kinescope"
+
+msgid "This component has validation issues."
+msgstr "В этом компоненте есть ошибки."
+
+msgid "This unit has validation issues."
+msgstr "В этом юните есть ошибки."
+
+msgid "Video Link/URL"
+msgstr "Ссылка на видео"
+
+msgid "Video link copied from Kinescope dashboard."
+msgstr "Ссылка на видео из кабинета Kinescope."
+
+msgid "Video Link is mandatory"
+msgstr "Укажите ссылку на видео"
+
+msgid "Provided Kinescope Video URL is invalid"
+msgstr "Некорректная ссылка на видео Kinescope"
+
+msgid "Show caption above video"
+msgstr "Показывать подпись над видео"
+
+msgid "Video has no caption unless this option is enabled."
+msgstr "У видео нет подписи, пока эта настройка выключена."
+
+msgid "Caption text"
+msgstr "Текст подписи"
+
+msgid "Caption shown above the video when enabled."
+msgstr "Текст подписи над видео (если включено)."
+
+msgid "Enabled"
+msgstr "Включено"
+
+msgid "Disabled"
+msgstr "Выключено"
+
 #: cms/djangoapps/contentstore/views/component.py xmodule/capa_block.py
 msgid "Blank Problem"
 msgstr "Пустая проблема"

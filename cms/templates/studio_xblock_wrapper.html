@@ -21,9 +21,18 @@ xblock_url = xblock_studio_url(xblock)
 show_inline = xblock.has_children and not xblock_url
 section_class = "level-nesting" if show_inline else "level-element"
 label = determine_label(xblock.display_name_with_default, xblock.scope_ids.block_type)
-messages = xblock.validate().to_json()
-has_not_configured_message = messages.get('summary',{}).get('type', None) == 'not-configured'
 block_is_unit = is_unit(xblock)
+messages = xblock.validate().to_json()
+if not messages.get('empty'):
+    summary = dict(messages.get('summary') or {})
+    if not summary.get('text'):
+        summary['text'] = (
+            _("This unit has validation issues.")
+            if block_is_unit
+            else _("This component has validation issues.")
+        )
+        messages['summary'] = summary
+has_not_configured_message = messages.get('summary',{}).get('type', None) == 'not-configured'
 
 upstream_info = UpstreamLink.try_get_for_block(xblock, log_error=False)
 %>

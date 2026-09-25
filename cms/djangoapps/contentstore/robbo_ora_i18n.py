@@ -31,6 +31,9 @@ ROBBO_ORA_RU_STRINGS = {
         "Перед загрузкой учащийся должен указать краткое описание каждого файла. Это требование встроено "
         "в задание с развёрнутым ответом и не отключается в этих настройках."
     ),
+    "Learners may leave file descriptions empty; a dash is saved when no description is provided.": (
+        "Описание файла можно не заполнять — при пустом поле сохранится «-»."
+    ),
     "File Uploads Response": "Загрузка файлов в ответе",
     "Specify whether learners are able to upload files as a part of their response.": (
         "Укажите, могут ли учащиеся загружать файлы как часть ответа."
@@ -187,6 +190,8 @@ def patch_ora_xblock_i18n():
 
 # JS gettext() in ORA iframe (djangojs.js may be en or missing entries).
 ROBBO_ORA_JS_CATALOG = {
+    "This component has validation issues.": "В этом компоненте есть ошибки.",
+    "This unit has validation issues.": "В этом юните есть ошибки.",
     "Saving draft": "Сохранение черновика",
     "Saving draft...": "Сохранение черновика...",
     "Draft saved!": "Черновик сохранён!",
@@ -256,10 +261,13 @@ ROBBO_ORA_JS_CATALOG = {
     "If you leave this page without saving or submitting your response, you will lose any work you have done on the response.": (
         "Если вы покинете страницу без сохранения или отправки ответа, введённый текст будет потерян."
     ),
-    # File upload UI (client-side)
-    "Describe {filename} (required):": "Описание «{filename}» (обязательно):",
+    # File upload UI (client-side). ORA builds labels from gettext('Describe ')+name+gettext('(required):');
+    # we remap "(required):" to optional because file descriptions are not required for Robbo.
+    "Describe {filename} (required):": "Описание «{filename}» (необязательно):",
+    "Describe {filename} (optional):": "Описание «{filename}» (необязательно):",
     "Describe ": "Описание ",
-    "(required):": "(обязательно):",
+    "(required):": "(необязательно):",
+    "(optional):": "(необязательно):",
     "Thumbnail view of ": "Миниатюра ",
     "Individual file size must be {max_files_mb}MB or less.": (
         "Размер каждого файла не должен превышать {max_files_mb} МБ."
@@ -390,10 +398,13 @@ ROBBO_ORA_INLINE_CSS = """
 .open-response-assessment-block .ora-summary-title {
   color: #00af41 !important;
 }
-.openassessment .robbo-ora-upload-limit {
+.openassessment .robbo-ora-upload-limit,
+.wrapper--openassessment .robbo-ora-upload-limit,
+.step--response .robbo-ora-upload-limit {
   margin: 0.25rem 0 0.75rem;
   color: #383838;
-  font-size: 0.875rem;
+  font-size: 1.125rem;
+  line-height: 1.4;
 }
 """
 
@@ -460,24 +471,105 @@ ROBBO_ORA_FILE_PICKER_CSS = """
 }
 """
 
-ROBBO_ORA_INLINE_CSS = ROBBO_ORA_INLINE_CSS + ROBBO_ORA_FILE_PICKER_CSS + """
-.openassessment .step--response button.file__upload.action--upload {
-  display: inline-block !important;
+ROBBO_ORA_RESPONSE_STEP_CSS = """
+.wrapper--openassessment .step--response button.file__upload,
+.wrapper--openassessment .step--response button.action--upload,
+.openassessment .step--response button.file__upload,
+.openassessment .step--response button.action--upload,
+.step--response button.file__upload,
+.step--response button.action--upload,
+.step--response button.file__upload.action--upload {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   box-sizing: border-box !important;
-  margin-top: 0.5rem;
-  padding: 0.5rem 1rem !important;
+  margin-top: 0.9rem;
+  padding: 1.2rem 2.7rem !important;
+  min-width: 0 !important;
+  width: auto !important;
+  min-height: 3.6rem !important;
   height: auto !important;
-  min-height: 0 !important;
-  line-height: 1.25 !important;
-  background: #00af41 !important;
-  border: 1px solid #00af41 !important;
+  line-height: 1.3 !important;
+  text-align: center !important;
   color: #fff !important;
-  font-size: 0.875rem !important;
-  font-weight: normal !important;
+  font-size: 1.35rem !important;
+  font-weight: 600 !important;
   vertical-align: middle;
+  float: right !important;
+  clear: right !important;
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
 }
-.openassessment .step--response button.file__upload.action--upload:hover {
+.wrapper--openassessment .step--response button.file__upload.robbo-ora-upload-btn--ready,
+.wrapper--openassessment .step--response button.action--upload.robbo-ora-upload-btn--ready,
+.openassessment .step--response button.file__upload.robbo-ora-upload-btn--ready,
+.openassessment .step--response button.action--upload.robbo-ora-upload-btn--ready,
+.step--response button.file__upload.robbo-ora-upload-btn--ready,
+.step--response button.action--upload.robbo-ora-upload-btn--ready,
+.step--response button.file__upload.action--upload.robbo-ora-upload-btn--ready {
+  background: #00af41 !important;
+  border-color: #00af41 !important;
+  cursor: pointer;
+  opacity: 1 !important;
+}
+.wrapper--openassessment .step--response button.file__upload.robbo-ora-upload-btn--ready:hover,
+.wrapper--openassessment .step--response button.action--upload.robbo-ora-upload-btn--ready:hover,
+.openassessment .step--response button.file__upload.robbo-ora-upload-btn--ready:hover,
+.openassessment .step--response button.action--upload.robbo-ora-upload-btn--ready:hover,
+.step--response button.file__upload.robbo-ora-upload-btn--ready:hover,
+.step--response button.action--upload.robbo-ora-upload-btn--ready:hover,
+.step--response button.file__upload.action--upload.robbo-ora-upload-btn--ready:hover {
   background: #007a2e !important;
   border-color: #007a2e !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(0, 122, 46, 0.35);
+}
+.wrapper--openassessment .step--response button.file__upload.robbo-ora-upload-btn--ready:active,
+.wrapper--openassessment .step--response button.action--upload.robbo-ora-upload-btn--ready:active,
+.openassessment .step--response button.file__upload.robbo-ora-upload-btn--ready:active,
+.openassessment .step--response button.action--upload.robbo-ora-upload-btn--ready:active,
+.step--response button.file__upload.robbo-ora-upload-btn--ready:active,
+.step--response button.action--upload.robbo-ora-upload-btn--ready:active,
+.step--response button.file__upload.action--upload.robbo-ora-upload-btn--ready:active {
+  background: #006625 !important;
+  border-color: #006625 !important;
+  transform: translateY(1px);
+  box-shadow: 0 1px 4px rgba(0, 122, 46, 0.25);
+}
+.wrapper--openassessment .step--response button.file__upload:disabled,
+.wrapper--openassessment .step--response button.action--upload:disabled,
+.openassessment .step--response button.file__upload:disabled,
+.openassessment .step--response button.action--upload:disabled,
+.step--response button.file__upload:disabled,
+.step--response button.action--upload:disabled,
+.step--response button.file__upload.action--upload:disabled,
+.wrapper--openassessment .step--response button.file__upload.is--disabled,
+.wrapper--openassessment .step--response button.action--upload.is--disabled,
+.openassessment .step--response button.file__upload.is--disabled,
+.openassessment .step--response button.action--upload.is--disabled,
+.step--response button.file__upload.is--disabled,
+.step--response button.action--upload.is--disabled,
+.step--response button.file__upload.action--upload.is--disabled,
+.wrapper--openassessment .step--response button.file__upload.robbo-ora-upload-btn--disabled,
+.wrapper--openassessment .step--response button.action--upload.robbo-ora-upload-btn--disabled,
+.openassessment .step--response button.file__upload.robbo-ora-upload-btn--disabled,
+.openassessment .step--response button.action--upload.robbo-ora-upload-btn--disabled,
+.step--response button.file__upload.robbo-ora-upload-btn--disabled,
+.step--response button.action--upload.robbo-ora-upload-btn--disabled,
+.step--response button.file__upload.action--upload.robbo-ora-upload-btn--disabled {
+  opacity: 0.55 !important;
+  cursor: not-allowed !important;
+  background: #9cbfab !important;
+  border-color: #9cbfab !important;
+  color: #fff !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 """
+
+ROBBO_ORA_INLINE_CSS = (
+    ROBBO_ORA_INLINE_CSS + ROBBO_ORA_FILE_PICKER_CSS + ROBBO_ORA_RESPONSE_STEP_CSS
+)

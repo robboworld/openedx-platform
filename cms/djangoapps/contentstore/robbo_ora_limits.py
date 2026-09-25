@@ -123,8 +123,7 @@ def patch_ora_studio_editor():
             'Maximum size per file: %(max_mb)s MB.'
         ] % {'max_mb': max_upload_mb}
         context['file_upload_description_help'] = catalog[
-            'Learners must enter a short description for each file before uploading. '
-            'This requirement is built into Open Response Assessment and cannot be turned off in these settings.'
+            'Learners may leave file descriptions empty; a dash is saved when no description is provided.'
         ]
         return context
 
@@ -222,17 +221,17 @@ def _wrap_ora_learner_fragment(original_view, max_bytes, max_mb, patch_js_path):
     from django.utils import translation
 
     def wrapped_view(self, context=None):
+        from .robbo_ora_i18n import ROBBO_ORA_RESPONSE_STEP_CSS
+
         translation.activate('ru')
         fragment = original_view(self, context)
         inline = (
             f'<script>window.ROBBO_ORA_MAX_FILE_BYTES={max_bytes};'
             f'window.ROBBO_ORA_MAX_FILE_MB={max_mb};</script>'
+            f'<style type="text/css">{ROBBO_ORA_RESPONSE_STEP_CSS}</style>'
         )
         fragment.content = inline + fragment.content
-        if patch_js_path.is_file():
-            fragment.add_javascript(patch_js_path.read_text(encoding='utf-8'))
-        else:
-            fragment.add_javascript_url(staticfiles_storage.url('js/robbo-ora-lms-patch.js'))
+        fragment.add_javascript_url(staticfiles_storage.url('js/robbo-ora-lms-patch.js'))
         return fragment
 
     return wrapped_view
@@ -259,20 +258,15 @@ def patch_ora_student_view():
     original_render_assessment = OpenAssessmentBlock.render_assessment
 
     def render_assessment(self, path, context_dict=None):
-        """Render ORA step HTML with Russian locale and file-picker styles."""
+        """Render ORA step HTML with Russian locale and response-step styles."""
         from django.utils import translation
 
-        from .robbo_ora_i18n import ROBBO_ORA_FILE_PICKER_CSS
+        from .robbo_ora_i18n import ROBBO_ORA_RESPONSE_STEP_CSS
 
         translation.activate('ru')
         response = original_render_assessment(self, path, context_dict)
-        if (
-            path
-            and 'legacy/response/oa_response' in path
-            and ROBBO_ORA_FILE_PICKER_CSS
-            and 'robbo-ora-file-picker' in response.text
-        ):
-            styled = f'<style type="text/css">{ROBBO_ORA_FILE_PICKER_CSS}</style>{response.text}'
+        if path and 'legacy/response/oa_response' in path and ROBBO_ORA_RESPONSE_STEP_CSS:
+            styled = f'<style type="text/css">{ROBBO_ORA_RESPONSE_STEP_CSS}</style>{response.text}'
             charset = response.charset or 'utf-8'
             return Response(
                 body=styled.encode(charset),
