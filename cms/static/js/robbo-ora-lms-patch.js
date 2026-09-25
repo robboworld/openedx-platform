@@ -1,149 +1,49 @@
 /**
- * Robbo ORA LMS: upload size limit, i18n fixes, and upload UI hints.
+ * Robbo ORA LMS: upload limit, i18n, optional file descriptions.
+ * DOM/event-based — does not rely on OpenAssessment.ResponseView (removed in newer edx-ora2).
  */
 (function () {
   'use strict';
 
+  if (window.RobboOraUploadPatch && window.RobboOraUploadPatch.installed) {
+    if (typeof window.RobboOraUploadPatch.refresh === 'function') {
+      window.RobboOraUploadPatch.refresh();
+    }
+    return;
+  }
+
+  var DEFAULT_FILE_DESCRIPTION = '-';
+
+  var FALLBACK_CATALOG = {
+    'Upload file': 'Загрузить файл',
+    'Upload files': 'Загрузить файлы',
+    'Delete File': 'Удалить файл',
+    'Supported file types: ': 'Поддерживаемые типы файлов: ',
+    'Maximum file size: %(max_mb)s MB.': 'Максимальный размер файла: %(max_mb)s МБ.',
+    'Describe {filename} (optional):': 'Описание «{filename}» (необязательно):',
+    'Individual file size must be {max_files_mb}MB or less.': (
+      'Размер каждого файла не должен превышать {max_files_mb} МБ.'
+    ),
+    'Upload failed. Check that the file is within the size limit and try again.': (
+      'Не удалось загрузить файл. Проверьте размер файла и попробуйте снова.'
+    ),
+    'Please provide a description for each file you are uploading.': (
+      'Укажите описание для каждого загружаемого файла.'
+    ),
+  };
+
   function gettext(msg) {
     if (typeof django !== 'undefined' && django.gettext) {
-      return django.gettext(msg);
+      var translated = django.gettext(msg);
+      if (translated && translated !== msg) {
+        return translated;
+      }
     }
-    return msg;
+    return FALLBACK_CATALOG[msg] || msg;
   }
 
-  function applyUploadLimit() {
-    if (!window.OpenAssessment || !window.OpenAssessment.ResponseView) {
-      return false;
-    }
-
-    var ResponseView = window.OpenAssessment.ResponseView;
-    if (window.ROBBO_ORA_MAX_FILE_BYTES) {
-      ResponseView.MAX_FILE_SIZE = window.ROBBO_ORA_MAX_FILE_BYTES;
-      ResponseView.MAX_FILES_MB = window.ROBBO_ORA_MAX_FILE_MB;
-    }
-
-    var proto = ResponseView.prototype;
-    if (!proto._robboUploadPatched) {
-      var originalUpdateDescriptions = proto.updateFilesDescriptionsFields;
-      proto.updateFilesDescriptionsFields = function (files, descriptions, uploadType) {
-        originalUpdateDescriptions.call(this, files, descriptions, uploadType);
-        $(this.element).find('.files__descriptions .submission__file__description__label').each(function (index) {
-          var name = files[index] && files[index].name ? files[index].name : '';
-          $(this).text(
-            gettext('Describe {filename} (required):').replace('{filename}', name)
-          );
-        });
-      };
-      var originalInstallHandlers = proto.installHandlers;
-      proto.installHandlers = function () {
-        originalInstallHandlers.call(this);
-        refreshUploadUi();
-      };
-      proto._robboUploadPatched = true;
-    }
-
-    if (window.OpenAssessment.BaseView && !OpenAssessment.BaseView.prototype._robboUploadErrorPatched) {
-      var originalToggleError = OpenAssessment.BaseView.prototype.toggleActionError;
-      OpenAssessment.BaseView.prototype.toggleActionError = function (type, message) {
-        if (type === 'upload' && (!message || message === 'error')) {
-          message = gettext(
-            'Upload failed. Check that the file is within the size limit and try again.'
-          );
-        } else if (message) {
-          message = gettext(message);
-        }
-        return originalToggleError.call(this, type, message);
-      };
-      OpenAssessment.BaseView.prototype._robboUploadErrorPatched = true;
-    }
-
-    return true;
-  }
-
-  function bindFilePickerTriggers() {
-    document.querySelectorAll('[data-robbo-file-trigger]').forEach(function (button) {
-      if (button.dataset.robboTriggerBound) {
-        return;
-      }
-      button.dataset.robboTriggerBound = '1';
-      button.addEventListener('click', function () {
-        var inputId = button.getAttribute('data-robbo-file-trigger');
-        var input = inputId && document.getElementById(inputId);
-        if (input) {
-          input.click();
-        }
-      });
-    });
-  }
-
-  function bindFilePickerStatus(input) {
-    if (input.dataset.robboStatusBound) {
-      return;
-    }
-    input.dataset.robboStatusBound = '1';
-    input.addEventListener('change', function () {
-      var picker = input.closest('.robbo-ora-file-picker');
-      var status = picker && picker.querySelector('.robbo-ora-file-picker__status');
-      if (!status) {
-        return;
-      }
-      var emptyLabel = status.getAttribute('data-robbo-empty-label')
-        || gettext(input.hasAttribute('multiple') ? 'No files chosen' : 'No file chosen');
-      if (!input.files || input.files.length === 0) {
-        status.textContent = emptyLabel;
-        return;
-      }
-      if (input.files.length === 1) {
-        status.textContent = input.files[0].name;
-        return;
-      }
-      status.textContent = gettext('%(count)s files selected').replace(
-        '%(count)s',
-        String(input.files.length)
-      );
-    });
-  }
-
-  function enhanceNativeFileInputs() {
-    document.querySelectorAll('input.submission__answer__upload.file--upload').forEach(function (input) {
-      if (input.closest('.robbo-ora-file-picker')) {
-        bindFilePickerStatus(input);
-        return;
-      }
-      if (input.dataset.robboFileEnhanced) {
-        return;
-      }
-      input.dataset.robboFileEnhanced = '1';
-
-      var multiple = input.hasAttribute('multiple');
-      var chooseLabel = gettext(multiple ? 'Choose files' : 'Choose file');
-      var emptyLabel = gettext(multiple ? 'No files chosen' : 'No file chosen');
-
-      var wrap = document.createElement('div');
-      wrap.className = 'robbo-ora-file-picker';
-      input.parentNode.insertBefore(wrap, input);
-      wrap.appendChild(input);
-      input.classList.add('robbo-ora-file-picker__input');
-
-      if (!input.id) {
-        input.id = 'robbo_ora_file_' + Math.random().toString(36).slice(2, 10);
-      }
-
-      var pickerButton = document.createElement('label');
-      pickerButton.className = 'robbo-ora-file-picker__button action action--upload';
-      pickerButton.htmlFor = input.id;
-      pickerButton.setAttribute('for', input.id);
-      pickerButton.textContent = chooseLabel;
-      wrap.appendChild(pickerButton);
-
-      var status = document.createElement('span');
-      status.className = 'robbo-ora-file-picker__status';
-      status.textContent = emptyLabel;
-      wrap.appendChild(status);
-
-      status.setAttribute('data-robbo-empty-label', emptyLabel);
-      bindFilePickerStatus(input);
-    });
+  function trim(value) {
+    return (value || '').replace(/^\s+|\s+$/g, '');
   }
 
   function setTranslatedText(node, msgid) {
@@ -153,29 +53,199 @@
     }
   }
 
-  function translateUploadControls() {
-    document.querySelectorAll('button.file__upload.action--upload').forEach(function (btn) {
-      if (btn.dataset.robboTranslated) {
+  function findStepRoot(node) {
+    return node && node.closest ? node.closest('.step--response, .openassessment') : null;
+  }
+
+  function showUploadError(stepRoot, message) {
+    if (!stepRoot) {
+      return;
+    }
+    var errorBox = stepRoot.querySelector('.upload__error');
+    if (!errorBox) {
+      return;
+    }
+    var content = errorBox.querySelector('.message__content');
+    if (content) {
+      content.innerHTML = '<p>' + message + '</p>';
+    }
+    errorBox.classList.add('has--error');
+    var focusTarget = errorBox.querySelector('.message');
+    if (focusTarget) {
+      focusTarget.focus();
+    }
+  }
+
+  function clearUploadError(stepRoot) {
+    if (!stepRoot) {
+      return;
+    }
+    var errorBox = stepRoot.querySelector('.upload__error');
+    if (!errorBox) {
+      return;
+    }
+    var content = errorBox.querySelector('.message__content');
+    if (content) {
+      content.innerHTML = '';
+    }
+    errorBox.classList.remove('has--error');
+  }
+
+  function applyDefaultFileDescriptions(stepRoot) {
+    if (!stepRoot) {
+      return;
+    }
+    stepRoot.querySelectorAll('.file__description').forEach(function (textarea) {
+      if (!trim(textarea.value)) {
+        textarea.value = DEFAULT_FILE_DESCRIPTION;
+      }
+    });
+  }
+
+  function normalizeUploadedFileDisplay(stepRoot) {
+    var scope = stepRoot || document;
+
+    scope.querySelectorAll('a.submission__answer__file.submission--file').forEach(function (link) {
+      var text = trim(link.textContent);
+      var placeholderMatch = text.match(/^-\s+\((.+)\)$/);
+      if (placeholderMatch) {
+        link.textContent = placeholderMatch[1];
         return;
       }
-      var label = btn.getAttribute('data-robbo-upload-label') || btn.textContent.trim();
-      if (label === 'Upload file' || label === 'Upload files' || label === 'Загрузить файл' || label === 'Загрузить файлы') {
-        btn.setAttribute('data-robbo-upload-label', label);
-        var key = label.indexOf('files') !== -1 || label.indexOf('файлы') !== -1 ? 'Upload files' : 'Upload file';
-        setTranslatedText(btn, key);
-        btn.dataset.robboTranslated = '1';
+      if (text === '-') {
+        var href = link.getAttribute('href') || '';
+        var hrefName = href.split('/').pop();
+        if (hrefName) {
+          link.textContent = hrefName;
+        }
       }
     });
 
-    document.querySelectorAll('button.delete__uploaded__file').forEach(function (btn) {
+    scope.querySelectorAll('.submission__file__description__label').forEach(function (label) {
+      var text = trim(label.textContent);
+      if (text === '-' || text === '-:' || text === '—' || text === '—:') {
+        label.style.display = 'none';
+      }
+    });
+  }
+
+  function findUploadButton(stepEl) {
+    return stepEl.querySelector('button.file__upload, button.action--upload');
+  }
+
+  function findFileInput(stepEl) {
+    return stepEl.querySelector(
+      'input.submission__answer__upload, input.file--upload, input[type="file"].submission__answer__upload'
+    );
+  }
+
+  function applyUploadButtonPresentation(btn, enabled) {
+    btn.classList.add('robbo-ora-upload-btn');
+    btn.classList.toggle('robbo-ora-upload-btn--ready', enabled);
+    btn.classList.toggle('robbo-ora-upload-btn--disabled', !enabled);
+
+    btn.style.setProperty('display', 'inline-flex', 'important');
+    btn.style.setProperty('align-items', 'center', 'important');
+    btn.style.setProperty('justify-content', 'center', 'important');
+    btn.style.setProperty('box-sizing', 'border-box', 'important');
+    btn.style.setProperty('margin-top', '0.9rem', 'important');
+    btn.style.setProperty('padding', '1.2rem 2.7rem', 'important');
+    btn.style.setProperty('min-height', '3.6rem', 'important');
+    btn.style.setProperty('height', 'auto', 'important');
+    btn.style.setProperty('min-width', '0', 'important');
+    btn.style.setProperty('width', 'auto', 'important');
+    btn.style.setProperty('max-width', 'none', 'important');
+    btn.style.setProperty('line-height', '1.3', 'important');
+    btn.style.setProperty('text-align', 'center', 'important');
+    btn.style.setProperty('font-size', '1.35rem', 'important');
+    btn.style.setProperty('font-weight', '600', 'important');
+    btn.style.setProperty('border-radius', '0', 'important');
+    btn.style.setProperty('float', 'right', 'important');
+    btn.style.setProperty('clear', 'right', 'important');
+    btn.style.setProperty('margin-left', 'auto', 'important');
+    btn.style.setProperty('margin-right', '0', 'important');
+    btn.style.removeProperty('background');
+    btn.style.removeProperty('border');
+    btn.style.removeProperty('border-color');
+    btn.style.removeProperty('box-shadow');
+    btn.style.removeProperty('transform');
+  }
+
+  function syncUploadButtonState(stepRoot) {
+    var scope = stepRoot || document;
+
+    scope.querySelectorAll('.step--response').forEach(function (stepEl) {
+      var input = findFileInput(stepEl);
+      var btn = findUploadButton(stepEl);
+      if (!btn) {
+        return;
+      }
+      var hasFiles = !!(input && input.files && input.files.length > 0);
+      btn.disabled = !hasFiles;
+      btn.setAttribute('aria-disabled', hasFiles ? 'false' : 'true');
+      btn.classList.toggle('is--disabled', !hasFiles);
+      applyUploadButtonPresentation(btn, hasFiles);
+    });
+  }
+
+  function translateDescriptionLabels(stepRoot) {
+    var scope = stepRoot || document;
+
+    scope.querySelectorAll('.submission__file__description__label').forEach(function (label) {
+      var text = trim(label.textContent);
+      if (
+        text.indexOf('(optional)') !== -1
+        || text.indexOf('(необязательно)') !== -1
+      ) {
+        return;
+      }
+
+      var match = text.match(/^(?:Describe|Описание)\s+(.+?)\s+\((?:required|обязательно)\):?$/i);
+      if (!match) {
+        return;
+      }
+
+      var optionalLabel = gettext('Describe {filename} (optional):').replace(
+        '{filename}',
+        match[1]
+      );
+      if (label.textContent !== optionalLabel) {
+        label.textContent = optionalLabel;
+      }
+    });
+  }
+
+  function translateUploadControls(root) {
+    var scope = root || document;
+
+    scope.querySelectorAll('button.file__upload, button.action--upload').forEach(function (btn) {
+      if (!btn.classList.contains('file__upload') && !btn.classList.contains('action--upload')) {
+        return;
+      }
       if (btn.dataset.robboTranslated) {
         return;
       }
-      setTranslatedText(btn, 'Delete File');
+      var label = btn.getAttribute('data-robbo-upload-label') || trim(btn.textContent);
+      if (
+        label === 'Upload file' || label === 'Upload files'
+        || label === 'Загрузить файл' || label === 'Загрузить файлы'
+      ) {
+        btn.setAttribute('data-robbo-upload-label', label);
+        var key = label.indexOf('files') !== -1 || label.indexOf('файлы') !== -1
+          ? 'Upload files' : 'Upload file';
+        setTranslatedText(btn, key);
+      }
       btn.dataset.robboTranslated = '1';
     });
 
-    document.querySelectorAll('.step--response .field > div').forEach(function (div) {
+    scope.querySelectorAll('button.delete__uploaded__file').forEach(function (btn) {
+      var label = trim(btn.textContent);
+      if (label === 'Delete File' || label === 'Удалить файл') {
+        setTranslatedText(btn, 'Delete File');
+      }
+    });
+
+    scope.querySelectorAll('.step--response .field > div').forEach(function (div) {
       if (div.dataset.robboTranslated) {
         return;
       }
@@ -189,36 +259,19 @@
       }
     });
 
-    document.querySelectorAll('label.sr[for^="submission_answer_upload"]').forEach(function (label) {
-      if (label.dataset.robboTranslated) {
-        return;
-      }
-      var original = label.getAttribute('data-robbo-upload-label') || label.textContent.trim();
-      label.setAttribute('data-robbo-upload-label', original);
-      setTranslatedText(label, original);
-      label.dataset.robboTranslated = '1';
-    });
-
-    document.querySelectorAll('.submission__answer__part__text__title').forEach(function (title) {
-      if (title.dataset.robboTranslated) {
-        return;
-      }
-      var original = title.getAttribute('data-robbo-upload-label') || title.textContent.trim();
-      title.setAttribute('data-robbo-upload-label', original);
-      setTranslatedText(title, original);
-      title.dataset.robboTranslated = '1';
-    });
+    translateDescriptionLabels(scope);
   }
 
-  function injectUploadLimitHint() {
+  function injectUploadLimitHint(root) {
     if (!window.ROBBO_ORA_MAX_FILE_MB) {
       return;
     }
+    var scope = root || document;
     var hintText = gettext('Maximum file size: %(max_mb)s MB.').replace(
       '%(max_mb)s',
       String(window.ROBBO_ORA_MAX_FILE_MB)
     );
-    document.querySelectorAll('.submission__upload__files__title').forEach(function (title) {
+    scope.querySelectorAll('.submission__upload__files__title').forEach(function (title) {
       var parent = title.parentNode;
       if (!parent) {
         return;
@@ -229,77 +282,244 @@
         hint.className = 'robbo-ora-upload-limit';
         parent.insertBefore(hint, title.nextSibling);
       }
+      hint.style.setProperty('font-size', '1.125rem', 'important');
+      hint.style.setProperty('line-height', '1.4', 'important');
       if (hint.textContent !== hintText) {
         hint.textContent = hintText;
       }
     });
   }
 
-  var refreshUploadUiQueued = false;
-  var refreshUploadUiRunning = false;
-
-  function refreshUploadUi() {
-    if (refreshUploadUiRunning) {
-      return;
-    }
-    refreshUploadUiRunning = true;
-    try {
-      enhanceNativeFileInputs();
-      bindFilePickerTriggers();
-      injectUploadLimitHint();
-      translateUploadControls();
-    } finally {
-      refreshUploadUiRunning = false;
-    }
+  function refreshUploadUi(root) {
+    injectUploadLimitHint(root);
+    translateUploadControls(root);
+    syncUploadButtonState(root);
   }
 
-  function scheduleRefreshUploadUi() {
+  var refreshUploadUiQueued = false;
+
+  function scheduleRefreshUploadUi(root) {
     if (refreshUploadUiQueued) {
       return;
     }
     refreshUploadUiQueued = true;
     window.requestAnimationFrame(function () {
       refreshUploadUiQueued = false;
-      refreshUploadUi();
+      refreshUploadUi(root);
     });
   }
 
-  function boot() {
-    if (!applyUploadLimit()) {
-      var tries = 0;
-      var timer = window.setInterval(function () {
-        if (applyUploadLimit() || ++tries > 50) {
-          window.clearInterval(timer);
-        }
-      }, 100);
+  function validateSelectedFiles(input) {
+    var maxBytes = window.ROBBO_ORA_MAX_FILE_BYTES;
+    if (!maxBytes || !input.files || !input.files.length) {
+      return true;
     }
+    var stepRoot = findStepRoot(input);
+    for (var i = 0; i < input.files.length; i++) {
+      if (input.files[i].size > maxBytes) {
+        var maxMb = window.ROBBO_ORA_MAX_FILE_MB || Math.round(maxBytes / (1000 * 1000));
+        showUploadError(
+          stepRoot,
+          gettext('Individual file size must be {max_files_mb}MB or less.').replace(
+            '{max_files_mb}',
+            String(maxMb)
+          )
+        );
+        input.value = '';
+        return false;
+      }
+    }
+    clearUploadError(stepRoot);
+    return true;
+  }
+
+  function onUploadButtonClick(event) {
+    var btn = event.target.closest('button.file__upload, button.action--upload');
+    if (!btn) {
+      return;
+    }
+    if (btn.disabled || btn.classList.contains('is--disabled')) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      return;
+    }
+    var stepRoot = findStepRoot(btn);
+    applyDefaultFileDescriptions(stepRoot);
+  }
+
+  function handleFileInputSelected(input) {
+    if (!input) {
+      return;
+    }
+    if (!validateSelectedFiles(input)) {
+      syncUploadButtonState(findStepRoot(input));
+      return;
+    }
+    var stepRoot = findStepRoot(input);
+    syncUploadButtonState(stepRoot);
+    window.setTimeout(function () {
+      translateDescriptionLabels(stepRoot);
+      syncUploadButtonState(stepRoot);
+    }, 0);
+  }
+
+  function bindFileInputHandlers(root) {
+    var scope = root || document;
+    if (scope.robboOraFileInputBound) {
+      return;
+    }
+    scope.robboOraFileInputBound = true;
+    scope.addEventListener('change', onFileInputChange, true);
+  }
+
+  function wrapOpenAssessmentBlock() {
+    var original = window.OpenAssessmentBlock;
+    if (!original || original._robboOraWrapped) {
+      return !!original;
+    }
+    window.OpenAssessmentBlock = function (runtime, element, data) {
+      original(runtime, element, data);
+      bindFileInputHandlers(element);
+      window.setTimeout(function () {
+        scheduleRefreshUploadUi(element);
+      }, 0);
+      window.setTimeout(function () {
+        scheduleRefreshUploadUi(element);
+      }, 500);
+    };
+    window.OpenAssessmentBlock._robboOraWrapped = true;
+    return true;
+  }
+
+  function onFileInputChange(event) {
+    var input = event.target;
+    if (!input.matches('input.submission__answer__upload, input.file--upload, input[type="file"]')) {
+      return;
+    }
+    handleFileInputSelected(input);
+  }
+
+  function patchSaveFilesDescriptionsPayload(options) {
+    var url = options && options.url ? String(options.url) : '';
+    if (url.indexOf('save_files_descriptions') === -1 || !options.data) {
+      return;
+    }
+    try {
+      var payload = JSON.parse(options.data);
+      if (!payload.fileMetadata || !payload.fileMetadata.length) {
+        return;
+      }
+      payload.fileMetadata.forEach(function (entry) {
+        if (!trim(entry.description)) {
+          entry.description = DEFAULT_FILE_DESCRIPTION;
+        }
+      });
+      options.data = JSON.stringify(payload);
+    } catch (error) {
+      // Keep the original request if the payload is not JSON.
+    }
+  }
+
+  function onAjaxSuccess(event, xhr, settings) {
+    var url = settings && settings.url ? String(settings.url) : '';
+    if (url.indexOf('download_url') !== -1 || url.indexOf('save_files_descriptions') !== -1) {
+      scheduleRefreshUploadUi();
+    }
+    if (url.indexOf('download_url') !== -1) {
+      normalizeUploadedFileDisplay();
+    }
+  }
+
+  function shouldRefreshForNode(node) {
+    if (!node || node.nodeType !== 1) {
+      return false;
+    }
+    if (node.matches(
+      '.openassessment, .openassessment__steps, .step--response, .submission__upload__files__title, '
+      + 'input.submission__answer__upload, input.file--upload, button.file__upload, button.action--upload, '
+      + 'button.delete__uploaded__file, .submission__answer__file__block, .submission__answer__files, '
+      + '.files__descriptions, .submission__file__description__label'
+    )) {
+      return true;
+    }
+    return !!(node.querySelector && node.querySelector(
+      '.step--response, button.file__upload, button.action--upload, button.delete__uploaded__file, '
+      + '.file__description, .submission__file__description__label, input.submission__answer__upload, '
+      + 'input.file--upload'
+    ));
+  }
+
+  var booted = false;
+  var domObserver = null;
+
+  function boot() {
+    if (booted) {
+      refreshUploadUi();
+      return;
+    }
+    booted = true;
+
+    document.addEventListener('click', onUploadButtonClick, true);
+    bindFileInputHandlers(document);
+
+    if (typeof window.jQuery !== 'undefined') {
+      window.jQuery.ajaxPrefilter(patchSaveFilesDescriptionsPayload);
+      window.jQuery(document).ajaxSuccess(onAjaxSuccess);
+      window.jQuery(document).on(
+        'change.robboOraUpload',
+        'input.submission__answer__upload, input.file--upload, input[type=file]',
+        function () {
+          handleFileInputSelected(this);
+        }
+      );
+    }
+
+    wrapOpenAssessmentBlock();
+    var wrapAttempts = 0;
+    var wrapTimer = window.setInterval(function () {
+      if (wrapOpenAssessmentBlock() || ++wrapAttempts > 80) {
+        window.clearInterval(wrapTimer);
+      }
+    }, 250);
+
     refreshUploadUi();
-    if (typeof MutationObserver !== 'undefined') {
-      var observer = new MutationObserver(function (mutations) {
+
+    if (typeof MutationObserver !== 'undefined' && !domObserver) {
+      domObserver = new MutationObserver(function (mutations) {
         var shouldRefresh = mutations.some(function (mutation) {
-          if (mutation.type !== 'childList') {
+          if (mutation.type !== 'childList' || !mutation.addedNodes.length) {
             return false;
           }
-          var nodes = Array.prototype.slice.call(mutation.addedNodes || []);
-          return nodes.some(function (node) {
-            return node.nodeType === 1 && (
-              node.matches && (
-                node.matches('.step--response, .submission__upload__files__title, input.submission__answer__upload')
-                || (node.querySelector && node.querySelector('.step--response, input.submission__answer__upload'))
-              )
-            );
-          });
+          return Array.prototype.some.call(mutation.addedNodes, shouldRefreshForNode);
         });
         if (shouldRefresh) {
           scheduleRefreshUploadUi();
+          mutations.forEach(function (mutation) {
+            Array.prototype.forEach.call(mutation.addedNodes, function (node) {
+              if (shouldRefreshForNode(node)) {
+                syncUploadButtonState(node.nodeType === 1 ? node : document);
+              }
+            });
+          });
         }
       });
-      var root = document.querySelector('.openassessment__steps');
-      if (root) {
-        observer.observe(root, { childList: true, subtree: true });
-      }
+      domObserver.observe(document.documentElement, { childList: true, subtree: true });
     }
+
+    var pollAttempts = 0;
+    var pollTimer = window.setInterval(function () {
+      refreshUploadUi();
+      pollAttempts += 1;
+      if (pollAttempts > 40 || document.querySelector('button.file__upload, button.action--upload')) {
+        window.clearInterval(pollTimer);
+      }
+    }, 250);
   }
+
+  window.RobboOraUploadPatch = {
+    installed: true,
+    refresh: refreshUploadUi,
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);

@@ -81,6 +81,7 @@ ${static.get_page_title_breadcrumbs(course_name())}
   <script type="text/javascript" src="${static.url('js/vendor/flot/jquery.flot.js')}" async></script>
 
   <%static:js group='courseware'/>
+  <script type="text/javascript" src="${static.url('js/robbo-ora-lms-patch.js')}"></script>
 
   % if enable_mathjax:
     <%include file="/mathjax_include.html" args="disable_fast_preview=True"/>

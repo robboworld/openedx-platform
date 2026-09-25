@@ -124,6 +124,7 @@ from openedx.core.release import RELEASE_LINE
         <a class="nav-skip" href="#main">${_("Skip to main content")}</a>
 
         <%static:js group='base_vendor'/>
+        <script type="text/javascript" src="${static.url('js/robbo-ora-lms-patch.js')}"></script>
 
         <%static:webpack entry="commons"/>
 
