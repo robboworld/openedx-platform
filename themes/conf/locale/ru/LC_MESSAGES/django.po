@@ -51,3 +51,49 @@ msgstr "РОББО Studio"
 #: cms/envs/common.py
 msgid "Studio"
 msgstr "Studio"
+
+# Robbo theme EN msgid → RU
+msgid "Personal account"
+msgstr "Личный кабинет"
+
+msgid "Confirm your email to start learning"
+msgstr "Подтвердите email, чтобы начать обучение"
+
+msgid "Learner, you earned a certificate!"
+msgstr "Слушатель, вы получили сертификат!"
+
+msgid "Personal data processing policy"
+msgstr "Политика обработки персональных данных"
+
+msgid "Consent to personal data processing"
+msgstr "Согласие на обработку персональных данных"
+
+msgid "C E R T I F I C A T E   O F   C O U R S E   C O M P L E T I O N"
+msgstr "С Е Р Т И Ф И К А Т   О   П Р О Х О Ж Д Е Н И И    К У Р С А"
+
+msgid "Issued to certify that"
+msgstr "Выдан в подтверждение того, что"
+
+msgid "has successfully completed the course “{course_name}”"
+msgstr "успешно прошел (-ла) курс «{course_name}»"
+
+msgid "Chair"
+msgstr "Председатель"
+
+msgid "of the Organizing Committee"
+msgstr "Организационного комитета"
+
+msgid "Issued:"
+msgstr "Выдан:"
+
+msgid "Sending..."
+msgstr "Отправляем..."
+
+msgid "Submitting your request."
+msgstr "Отправляем заявку."
+
+msgid "Subscribed"
+msgstr "Вы подписаны"
+
+msgid "Could not submit your request. Please try again."
+msgstr "Не удалось отправить заявку. Попробуйте ещё раз."

@@ -34,20 +34,20 @@
 
           if not user.is_authenticated:
               top_body = Text(
-                  'Чтобы получить полный доступ к каталогу, {signin} или {register}.'
+                  _('For full catalog access, {signin} or {register}.')
               ).format(
                   signin=HTML(
-                      '<a class="robbo-courses-catalog__account-banner-link" href="{u}">войдите</a>'
-                  ).format(u=signin_url),
+                      '<a class="robbo-courses-catalog__account-banner-link" href="{u}">{label}</a>'
+                  ).format(u=signin_url, label=_('sign in')),
                   register=HTML(
-                      '<a class="robbo-courses-catalog__account-banner-link" href="{u}">зарегистрируйтесь</a>'
-                  ).format(u=register_url),
+                      '<a class="robbo-courses-catalog__account-banner-link" href="{u}">{label}</a>'
+                  ).format(u=register_url, label=_('register')),
               )
               return {
                   'mode': 'anonymous',
-                  'top_title': 'Войдите или зарегистрируйтесь',
+                  'top_title': _('Sign in or register'),
                   'top_body': top_body,
-                  'featured_line': 'Для полного доступа к курсу войдите в учётную запись.',
+                  'featured_line': _('Sign in to get full access to the course.'),
               }
 
           platform_name = configuration_helpers.get_value('platform_name', settings.PLATFORM_NAME)
@@ -58,9 +58,11 @@
               or settings.SUPPORT_SITE_LINK
           )
           top_body = Text(
-              'Проверьте почту {email_start}{email}{email_end} — мы отправили ссылку для активации '
-              'учётной записи «{platform}». Если письма нет, загляните в «Спам» или '
-              '{link_start}напишите в поддержку{link_end}.'
+              _(
+                  'Check your inbox {email_start}{email}{email_end} — we sent an activation link '
+                  'for your «{platform}» account. If you do not see the email, check Spam or '
+                  '{link_start}contact support{link_end}.'
+              )
           ).format(
               email_start=HTML('<strong>'),
               email_end=HTML('</strong>'),
@@ -74,9 +76,9 @@
           )
           return {
               'mode': 'inactive',
-              'top_title': 'Активируйте свою учётную запись!',
+              'top_title': _('Activate your account!'),
               'top_body': top_body,
-              'featured_line': 'Требуется активация для полного доступа',
+              'featured_line': _('Activation required for full access'),
           }
 
   def _inline_hero():
@@ -271,6 +273,13 @@
   data-login-url="${reverse('signin_user')}"
   data-dashboard-url="${reverse('dashboard')}"
   data-authenticated="${'true' if request.user.is_authenticated else 'false'}"
+  data-course-interest-url="${reverse('robbo_course_interest')}"
+  data-i18n-interest-loading-label="${_('Sending...')}"
+  data-i18n-interest-loading-message="${_('Submitting your request.')}"
+  data-i18n-interest-success-label="${_('Subscribed')}"
+  data-i18n-interest-success-message="${_('We will email you when the course opens.')}"
+  data-i18n-interest-error-fallback="${_('Could not submit your request. Please try again.')}"
+  data-i18n-interest-default-label="${_('Notify me when it opens')}"
 >
   <div class="robbo-courses-catalog__wrap">
     % if robbo_account['mode'] != 'none':

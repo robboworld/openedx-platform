@@ -4,14 +4,14 @@
 <%!
 from django.utils.translation import gettext as _
 %>
-<%block name="pagetitle">${_("Ошибка оплаты")}</%block>
+<%block name="pagetitle">${_("Payment error")}</%block>
 
 <%block name="bodyextra">
 <section class="robbo-payments-page container">
   <div class="robbo-payments-card">
-    <h1 class="robbo-payments-title">${_("Не удалось оформить оплату")}</h1>
+    <h1 class="robbo-payments-title">${_("Could not start payment")}</h1>
     <p class="robbo-payments-error-inline">${error_message | h}</p>
-    <a class="btn btn-secondary robbo-payments-submit" href="/dashboard">${_("Вернуться в кабинет")}</a>
+    <a class="btn btn-secondary robbo-payments-submit" href="/dashboard">${_("Back to dashboard")}</a>
   </div>
 </section>
 </%block>

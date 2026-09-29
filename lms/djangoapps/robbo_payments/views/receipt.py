@@ -42,10 +42,10 @@ def receipt(request):
 
     course_outline_url = get_learning_mfe_home_url(order.course_key, 'home')
     status_messages = {
-        OrderStatus.PAID: _('Оплата прошла успешно. Полный доступ к курсу активирован.'),
-        OrderStatus.PENDING: _('Платёж ещё обрабатывается. Обновите страницу через минуту.'),
-        OrderStatus.CANCELED: _('Оплата отменена.'),
-        OrderStatus.FAILED: _('Оплата не выполнена.'),
+        OrderStatus.PAID: _('Payment successful. Full course access is now active.'),
+        OrderStatus.PENDING: _('Payment is still processing. Refresh the page in a minute.'),
+        OrderStatus.CANCELED: _('Payment was canceled.'),
+        OrderStatus.FAILED: _('Payment failed.'),
     }
 
     return render_to_response('robbo_payments/receipt.html', {

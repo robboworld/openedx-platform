@@ -61,7 +61,7 @@ def basket_add(request):
 
     if not sku or not course_run_key:
         return render_to_response('robbo_payments/error.html', {
-            'error_message': _('Не указаны данные курса или продукта для оплаты.'),
+            'error_message': _('Course or product details are missing for checkout.'),
         })
 
     try:
@@ -69,13 +69,13 @@ def basket_add(request):
     except CatalogError as exc:
         log.warning('Checkout catalog error for user=%s: %s', request.user.id, exc)
         return render_to_response('robbo_payments/error.html', {
-            'error_message': _('Этот продукт недоступен для покупки.'),
+            'error_message': _('This product is not available for purchase.'),
         })
 
     enrollment = CourseEnrollment.get_enrollment(request.user, product.course_key)
     if enrollment is None or not enrollment.is_active:
         return render_to_response('robbo_payments/error.html', {
-            'error_message': _('Сначала нужно записаться на курс, чтобы оформить полный доступ.'),
+            'error_message': _('Enroll in the course before purchasing full access.'),
         })
 
     if enrollment.mode == CourseMode.VERIFIED:
@@ -83,7 +83,7 @@ def basket_add(request):
 
     if enrollment.mode not in (CourseMode.AUDIT, CourseMode.HONOR):
         return render_to_response('robbo_payments/error.html', {
-            'error_message': _('Эту запись нельзя перевести на полный доступ.'),
+            'error_message': _('This enrollment cannot be upgraded to full access.'),
         })
 
     if request.method == 'GET':
@@ -97,7 +97,7 @@ def basket_add(request):
 
     if not is_yookassa_configured():
         return render_to_response('robbo_payments/error.html', {
-            'error_message': _('Платёжный сервис не настроен. Обратитесь в поддержку.'),
+            'error_message': _('Payment service is not configured. Contact support.'),
         })
 
     order = Order.objects.create(
@@ -109,7 +109,7 @@ def basket_add(request):
         idempotency_key=new_idempotency_key(),
     )
 
-    description = _('Полный доступ: {course_name}').format(course_name=product.course_name)
+    description = _('Full access: {course_name}').format(course_name=product.course_name)
     try:
         confirmation_url = create_redirect_payment(
             order,
@@ -120,7 +120,7 @@ def basket_add(request):
     except (YooKassaNotConfigured, YooKassaPaymentError):
         order.delete()
         return render_to_response('robbo_payments/error.html', {
-            'error_message': _('Не удалось начать оплату. Попробуйте позже.'),
+            'error_message': _('Could not start payment. Please try again later.'),
         })
 
     return redirect(confirmation_url)

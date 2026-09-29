@@ -4,21 +4,21 @@
 <%!
 from django.utils.translation import gettext as _
 %>
-<%block name="pagetitle">${_("Квитанция об оплате")}</%block>
+<%block name="pagetitle">${_("Payment receipt")}</%block>
 
 <%block name="bodyextra">
 <section class="robbo-payments-page container">
   <div class="robbo-payments-card">
-    <h1 class="robbo-payments-title">${_("Квитанция об оплате")}</h1>
+    <h1 class="robbo-payments-title">${_("Payment receipt")}</h1>
     <p class="robbo-payments-status">${status_message | h}</p>
 
     <dl class="robbo-payments-summary">
       <div class="robbo-payments-summary__row">
-        <dt>${_("Номер заказа")}</dt>
+        <dt>${_("Order number")}</dt>
         <dd>${order.order_number | h}</dd>
       </div>
       <div class="robbo-payments-summary__row">
-        <dt>${_("Сумма")}</dt>
+        <dt>${_("Amount")}</dt>
         <dd>${order.amount} ${order.currency | h}</dd>
       </div>
     </dl>
@@ -26,7 +26,7 @@ from django.utils.translation import gettext as _
     % if is_paid:
     <div class="robbo-payments-actions">
       <a class="btn btn-primary robbo-payments-receipt-btn" href="${course_outline_url | h}">
-        ${_("Перейти в содержание курса")}
+        ${_("Go to course content")}
       </a>
     </div>
     % endif

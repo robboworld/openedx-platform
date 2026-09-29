@@ -3,23 +3,22 @@
 <%namespace name='static' file='../static_content.html'/>
 <%!
 from django.utils.translation import gettext as _
-from django.utils.translation import ngettext
 %>
-<%block name="pagetitle">${_("Оплата")}</%block>
+<%block name="pagetitle">${_("Payment")}</%block>
 
 <%block name="bodyextra">
 <section class="robbo-payments-page container">
   <div class="robbo-payments-card">
-    <h1 class="robbo-payments-title">${_("Оформление полного доступа")}</h1>
+    <h1 class="robbo-payments-title">${_("Purchase full access")}</h1>
     <p class="robbo-payments-course-name">${product.course_name | h}</p>
 
     <dl class="robbo-payments-summary">
       <div class="robbo-payments-summary__row">
-        <dt>${_("Продукт")}</dt>
-        <dd>${_("Полный доступ к курсу")}</dd>
+        <dt>${_("Product")}</dt>
+        <dd>${_("Full course access")}</dd>
       </div>
       <div class="robbo-payments-summary__row robbo-payments-summary__row--total">
-        <dt>${_("Итого")}</dt>
+        <dt>${_("Total")}</dt>
         <dd>${product.amount} ${product.currency}</dd>
       </div>
     </dl>
@@ -30,11 +29,11 @@ from django.utils.translation import ngettext
       <input type="hidden" name="sku" value="${sku | h}">
       <input type="hidden" name="course_run_key" value="${course_run_key | h}">
       <button type="submit" class="btn btn-primary robbo-payments-submit">
-        ${_("Оплатить через ЮKassa")}
+        ${_("Pay with YooKassa")}
       </button>
     </form>
     % else:
-    <p class="robbo-payments-error-inline">${_("Платёжный сервис временно недоступен.")}</p>
+    <p class="robbo-payments-error-inline">${_("The payment service is temporarily unavailable.")}</p>
     % endif
   </div>
 </section>

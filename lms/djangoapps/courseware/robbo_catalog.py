@@ -262,88 +262,80 @@ def get_robbo_catalog_stubs() -> List[Dict[str, Any]]:
     return [
         {
             'id': 'mcu-advanced',
-            'title': 'Российские микроконтроллеры: продвинутый уровень',
-            'description': (
-                'Углублённое изучение архитектуры отечественных микросхем и создание сложных систем '
-                'автоматизации на их основе. Мастерство разработки устройств с учётом специфики '
-                'локальных компонентов.'
+            'title': _('Russian microcontrollers: advanced level'),
+            'description': _(
+                'In-depth study of domestic chip architecture and building complex automation '
+                'systems on top of it. Device development skills tailored to local components.'
             ),
             'image': 'mcu.png',
             'notify_label': 'Сообщить об открытии',
         },
         {
             'id': 'postgres',
-            'title': 'PostgreSQL: работа с базами данных',
-            'description': (
-                'Освоение принципов проектирования реляционных баз данных и написания сложных '
-                'запросов для управления большими массивами информации. Практика администрирования и '
-                'оптимизации производительности в среде PostgreSQL.'
+            'title': _('PostgreSQL: working with databases'),
+            'description': _(
+                'Relational database design and advanced queries for large datasets. '
+                'Administration and performance tuning in PostgreSQL.'
             ),
             'image': 'featured-mcu.png',
             'notify_label': 'Сообщить об открытии',
         },
         {
             'id': 'freecad',
-            'title': 'Проектирование в FreeCAD',
-            'description': (
-                'Изучение инструментов параметрического 3D-моделирования для создания точных '
-                'инженерных деталей и сборных конструкций. Подготовка технической документации и '
-                'моделей для производства в открытом ПО.'
+            'title': _('Design in FreeCAD'),
+            'description': _(
+                'Parametric 3D modeling for precise parts and assemblies. Technical documentation '
+                'and production-ready models in open-source CAD.'
             ),
             'image': 'stub-freecad.png',
             'notify_label': 'Сообщить об открытии',
         },
         {
             'id': 'linux-admin',
-            'title': 'Системное администрирование Linux',
-            'description': (
-                'Настройка и поддержка серверных решений на базе ОС Linux, включая управление '
-                'правами доступа и сетевую безопасность. Навыки работы в терминале и автоматизации '
-                'задач для обеспечения стабильной ИТ-инфраструктуры.'
+            'title': _('Linux system administration'),
+            'description': _(
+                'Deploy and maintain Linux servers: access control and network security. '
+                'Shell and automation skills for reliable IT infrastructure.'
             ),
             'image': 'stub-linux.png',
             'notify_label': 'Сообщить об открытии',
         },
         {
             'id': 'manipulators',
-            'title': 'Программирование промышленных манипуляторов',
-            'description': (
-                'Разработка алгоритмов движения и логики работы роботизированных рук для '
-                'автоматизации производственных линий. Изучение интерфейсов взаимодействия и систем '
-                'машинного зрения в робототехнике.'
+            'title': _('Industrial manipulator programming'),
+            'description': _(
+                'Motion algorithms and control logic for robotic arms on production lines. '
+                'Interfaces and machine vision in robotics.'
             ),
             'image': 'stub-manipulators.png',
             'notify_label': 'Сообщить об открытии',
         },
         {
             'id': 'ai-production',
-            'title': 'Применение ИИ в производственных процессах',
-            'description': (
-                'Внедрение нейросетей и алгоритмов анализа данных для прогнозирования износа '
-                'оборудования и оптимизации выпуска продукции. Использование технологий машинного '
-                'обучения для повышения эффективности предприятия.'
+            'title': _('AI in manufacturing processes'),
+            'description': _(
+                'Neural networks and analytics to predict equipment wear and optimize output. '
+                'Machine learning to improve plant efficiency.'
             ),
             'image': 'stub-ai.png',
             'notify_label': 'Сообщить об открытии',
         },
         {
             'id': 'python',
-            'title': 'Программирование на Python',
-            'description': (
-                'Создание прикладного ПО и скриптов на одном из самых популярных языков мира для '
-                'решения широкого спектра технических задач. От основ синтаксиса до разработки '
-                'инструментов обработки данных и интеграции сервисов.'
+            'title': _('Python programming'),
+            'description': _(
+                'Application software and scripts in a widely used language for engineering tasks. '
+                'From syntax basics to data tooling and service integration.'
             ),
             'image': 'stub-python.png',
             'notify_label': 'Сообщить об открытии',
         },
         {
             'id': 'industrial-controllers',
-            'title': 'Отечественные промышленные контроллеры',
-            'description': (
-                'Изучение принципов работы и программирования локальных ПЛК для управления '
-                'индустриальными объектами в рамках импортозамещения. Практические навыки создания '
-                'надёжных систем промышленной автоматизации (АСУ ТП).'
+            'title': _('Domestic industrial controllers'),
+            'description': _(
+                'How local PLCs work and how to program them for industrial plants. '
+                'Practical skills for reliable process automation (ICS/SCADA).'
             ),
             'image': 'stub-industrial.png',
             'notify_label': 'Сообщить об открытии',
@@ -634,9 +626,9 @@ def build_robbo_catalog_featured(
         short = get_course_excerpt_from_overview(course)
     short = _normalize_catalog_course_description(short)
     if not short:
-        short = (
-            'Практический курс по российским микроконтроллерам: архитектура, локализация и '
-            'портирование сценариев с открытой и проприетарной периферией.'
+        short = _(
+            'Hands-on course on Russian microcontrollers: architecture, localization, and '
+            'porting scenarios from open and proprietary peripherals.'
         )
 
     cta_url = course_home_url(course.id)

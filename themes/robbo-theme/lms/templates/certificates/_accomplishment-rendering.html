@@ -30,16 +30,16 @@ cert_mode = course_mode or ''
             <div class="wrapper-statement-and-signatories-top">
                 <div style="margin-bottom: 30px !important; margin-left:13.3% !important; margin-right: 13.3% !important;" class="accomplishment-statement-left">
 
-                    <p style="white-space: pre; max-width: 100% !important;" class="accomplishment-type-label hd-3-s"> С Е Р Т И Ф И К А Т   О   П Р О Х О Ж Д Е Н И И    К У Р С А</p>
+                    <p style="white-space: pre; max-width: 100% !important;" class="accomplishment-type-label hd-3-s">${_("C E R T I F I C A T E   O F   C O U R S E   C O M P L E T I O N")}</p>
 
                     <p class="accomplishment-statement-lead">
-                        <p style="text-align: left; line-height: 1.0 !important;" class="accomplishment-summary copy copy-lead-middle"> Выдан в подтверждение того, что</p>
+                        <p style="text-align: left; line-height: 1.0 !important;" class="accomplishment-summary copy copy-lead-middle">${_("Issued to certify that")}</p>
 
                         <strong class="accomplishment-recipient emphasized hd-1-emphasized ">${accomplishment_copy_name}</strong>
                     </p>
                     <p style="border-bottom: 2px dotted gray; margin-bottom: 30px !important;" class="accomplishment-summary copy copy-lead">&nbsp;</p>
 
-                    <p style="line-height: 1.35 !important; margin-bottom: 25px !important;" class="accomplishment-statement-detail copy copy-lead-middle">успешно прошел (-ла) курс «${accomplishment_copy_course_name}»</p>
+                    <p style="line-height: 1.35 !important; margin-bottom: 25px !important;" class="accomplishment-statement-detail copy copy-lead-middle">${_("has successfully completed the course “{course_name}”").format(course_name=accomplishment_copy_course_name)}</p>
                 </div>
             </div>
 
@@ -62,8 +62,8 @@ cert_mode = course_mode or ''
                                         <div class="signatory-simple robbo-koa-cert__sign-block">
                                            <img class="signatory-signature robbo-koa-cert__signature" src="${static.url(signatory['signature_image_path'])}" alt="${signatory['name']}">
                                             <div class="signatory-name robbo-koa-cert__role">
-                                               <h4 class="signatory-name hd-5-middle name-part">Председатель</h4>
-                                               <h4 class="signatory-name hd-5-middle name-part">Организационного комитета</h4>
+                                               <h4 class="signatory-name hd-5-middle name-part">${_("Chair")}</h4>
+                                               <h4 class="signatory-name hd-5-middle name-part">${_("of the Organizing Committee")}</h4>
                                                <h4 class="signatory-name hd-5-middle-name name-part">Павел Фролов</h4>
                                              </div>
                                         </div>
@@ -101,7 +101,7 @@ cert_mode = course_mode or ''
 
                     <li class="wrapper-organization">
                         <div class="organization-right print-right robbo-koa-cert__issued">
-                             <span class="robbo-koa-cert__issued-line">Выдан: ${certificate_created_date}</span>
+                             <span class="robbo-koa-cert__issued-line">${_("Issued:")} ${certificate_created_date}</span>
                         </div>
                     </li>
 
