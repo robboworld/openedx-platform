@@ -10,14 +10,18 @@
     <li id="openassessment_submission_text_response_wrapper" class="field comp-setting-entry">
         <div class="wrapper-comp-setting">
             <label for="openassessment_submission_text_response" class="setting-label">{% trans "Text Response"%}</label>
-            <select id="openassessment_submission_text_response" class="input setting-input" name="text response">
+            <select id="openassessment_submission_text_response" class="input setting-input" name="text response" data-robbo-ora-ui-lang="{{ robbo_ora_ui_language }}">
                 {% for option_key, option_name in necessity_options.items %}
-                <option value="{{ option_key }}" {% if option_key == text_response %} selected="true" {% endif %}>{{ option_name }}</option>
+                <option value="{{ option_key }}" {% if option_key == text_response %} selected="true" {% endif %}>{% if robbo_ora_ui_language|slice:":2" == "ru" %}{% if option_key == "required" %}Обязательно{% elif option_key == "optional" %}Необязательно{% else %}Нет{% endif %}{% else %}{% if option_key == "required" %}Required{% elif option_key == "optional" %}Optional{% else %}None{% endif %}{% endif %}</option>
                 {% endfor %}
             </select>
         </div>
         <p class="setting-help">
             {% trans "Specify whether learners must include a text based response to this problem's prompt." %}
+        </p>
+        <p id="robbo_ora_text_response_necessity_hint"
+           class="setting-help robbo-ora-necessity-hint{% if file_upload_response %} is--hidden{% else %} is--visible{% endif %}">
+            {% trans "To make the text response optional, enable file uploads below (required or optional)." %}
         </p>
     </li>
     <li id="openassessment_submission_text_response_editor_wrapper" class="field comp-setting-entry">
@@ -36,9 +40,9 @@
     <li id="openassessment_submission_file_wrapper" class="field comp-setting-entry">
         <div class="wrapper-comp-setting">
             <label for="openassessment_submission_file_upload_response" class="setting-label">{% trans "File Uploads Response"%}</label>
-            <select id="openassessment_submission_file_upload_response" class="input setting-input" name="text response">
+            <select id="openassessment_submission_file_upload_response" class="input setting-input" name="text response" data-robbo-ora-ui-lang="{{ robbo_ora_ui_language }}">
                 {% for option_key, option_name in necessity_options.items %}
-                <option value="{{ option_key }}" {% if option_key == file_upload_response %} selected="true" {% endif %}>{{ option_name }}</option>
+                <option value="{{ option_key }}" {% if option_key == file_upload_response %} selected="true" {% endif %}>{% if robbo_ora_ui_language|slice:":2" == "ru" %}{% if option_key == "required" %}Обязательно{% elif option_key == "optional" %}Необязательно{% else %}Нет{% endif %}{% else %}{% if option_key == "required" %}Required{% elif option_key == "optional" %}Optional{% else %}None{% endif %}{% endif %}</option>
                 {% endfor %}
             </select>
         </div>

@@ -32,6 +32,17 @@
     ),
   };
 
+  function isRussianUi() {
+    var lang = (document.documentElement && document.documentElement.lang) || '';
+    if (lang.toLowerCase().indexOf('ru') === 0) {
+      return true;
+    }
+    if (typeof django !== 'undefined' && django.getLanguage) {
+      return String(django.getLanguage() || '').toLowerCase().indexOf('ru') === 0;
+    }
+    return false;
+  }
+
   function gettext(msg) {
     if (typeof django !== 'undefined' && django.gettext) {
       var translated = django.gettext(msg);
@@ -39,7 +50,10 @@
         return translated;
       }
     }
-    return FALLBACK_CATALOG[msg] || msg;
+    if (isRussianUi() && FALLBACK_CATALOG[msg]) {
+      return FALLBACK_CATALOG[msg];
+    }
+    return msg;
   }
 
   function trim(value) {

@@ -6,8 +6,11 @@
 from pathlib import Path
 
 from django.conf import settings
+from django.utils import translation
 from voluptuous import Optional, Schema
 from xblock.fields import Integer, Scope
+
+from xmodule.course_metadata_utils import is_russian_language
 
 ROBBO_ORA_DEFAULT_MAX_FILES_COUNT = getattr(settings, 'ROBBO_ORA_DEFAULT_MAX_FILES_COUNT', 1)
 ROBBO_ORA_MAX_FILES_COUNT_CAP = getattr(settings, 'ROBBO_ORA_MAX_FILES_COUNT_CAP', 20)
@@ -33,7 +36,61 @@ _STUDIO_HINT_CSS = """
 #openassessment-editor .tip.setting-help {
     color: #000 !important;
 }
+#openassessment_validation_alert.covered {
+    display: none !important;
+}
+#openassessment_validation_alert:not(.covered) {
+    display: block !important;
+}
+#openassessment-editor .robbo-ora-necessity-hint {
+    color: #8f2f1f !important;
+    font-weight: 600;
+    margin-top: 0.5em;
+}
+#openassessment-editor .robbo-ora-necessity-hint.is--visible {
+    display: block !important;
+}
+#openassessment-editor .robbo-ora-necessity-hint.is--hidden {
+    display: none !important;
+}
 </style>
+"""
+
+# ORA {% include %} uses django.template.loader, not studio_mixin.get_template.
+_NECESSITY_LABELS_INLINE_JS = """
+<script type="text/javascript">
+(function () {
+  var EN = { required: 'Required', optional: 'Optional', '': 'None' };
+  var RU = { required: 'Обязательно', optional: 'Необязательно', '': 'Нет' };
+  function syncNecessityLabels() {
+    ['openassessment_submission_text_response', 'openassessment_submission_file_upload_response'].forEach(
+      function (id) {
+        var el = document.getElementById(id);
+        if (!el) {
+          return;
+        }
+        var lang = (el.getAttribute('data-robbo-ora-ui-lang') || '').toLowerCase();
+        var labels = lang.indexOf('ru') === 0 ? RU : EN;
+        Array.prototype.forEach.call(el.options, function (opt) {
+          if (Object.prototype.hasOwnProperty.call(labels, opt.value)) {
+            opt.textContent = labels[opt.value];
+          }
+        });
+      },
+    );
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncNecessityLabels);
+  } else {
+    syncNecessityLabels();
+  }
+  var editor = document.getElementById('openassessment-editor');
+  if (editor && !editor._robboNecessityLabelSync) {
+    editor._robboNecessityLabelSync = true;
+    new MutationObserver(syncNecessityLabels).observe(editor, { childList: true, subtree: true });
+  }
+})();
+</script>
 """
 
 
@@ -92,13 +149,13 @@ def patch_ora_studio_editor():
     from openassessment.xblock.openassessmentblock import OpenAssessmentBlock
     from openassessment.xblock.utils import schema as schema_module
     from django.contrib.staticfiles.storage import staticfiles_storage
-    from django.template import engines
     from django.template.loader import get_template as django_get_template
 
     if getattr(OpenAssessmentBlock, '_robbo_studio_editor_patched', False):
         return
 
     patch_ora_runtime_limits()
+    _patch_ora_template_loader()
 
     schema_dict = dict(schema_module.EDITOR_UPDATE_SCHEMA.schema)
     schema_dict[Optional('max_files_count')] = int
@@ -110,21 +167,30 @@ def patch_ora_studio_editor():
     original_editor_context = OpenAssessmentBlock.editor_context
 
     def editor_context(self):
-        from .robbo_ora_defaults import localized_necessity_options
-        from .robbo_ora_i18n import get_robbo_ora_runtime_catalog
+        from .robbo_ora_defaults import (
+            ROBBO_ORA_NECESSITY_OPTIONS_EN,
+            ROBBO_ORA_NECESSITY_OPTIONS_RU,
+        )
+        from .robbo_ora_i18n import effective_ora_ui_language, robbo_ora_catalog_message
 
         context = original_editor_context(self)
         context['max_files_count'] = _effective_max_files_count(self)
         max_upload_mb = _robbo_ora_max_file_upload_bytes() // (1000 * 1000)
         context['max_upload_mb'] = max_upload_mb
-        context['necessity_options'] = localized_necessity_options()
-        catalog = get_robbo_ora_runtime_catalog()
-        context['file_upload_max_size_help'] = catalog[
-            'Maximum size per file: %(max_mb)s MB.'
-        ] % {'max_mb': max_upload_mb}
-        context['file_upload_description_help'] = catalog[
+        ui_lang = effective_ora_ui_language()
+        context['robbo_ora_ui_language'] = ui_lang
+        context['robbo_ora_studio_english'] = not is_russian_language(ui_lang)
+        if is_russian_language(ui_lang):
+            context['necessity_options'] = dict(ROBBO_ORA_NECESSITY_OPTIONS_RU)
+        else:
+            context['necessity_options'] = dict(ROBBO_ORA_NECESSITY_OPTIONS_EN)
+        context['file_upload_max_size_help'] = robbo_ora_catalog_message(
+            'Maximum size per file: %(max_mb)s MB.',
+            max_mb=max_upload_mb,
+        )
+        context['file_upload_description_help'] = robbo_ora_catalog_message(
             'Learners may leave file descriptions empty; a dash is saved when no description is provided.'
-        ]
+        )
         return context
 
     OpenAssessmentBlock.editor_context = editor_context
@@ -143,35 +209,36 @@ def patch_ora_studio_editor():
         raw_count = payload.pop('max_files_count', None)
         result = original_update(self, payload, suffix=suffix)
         if result.get('success') and raw_count is not None:
+            try:
+                count = int(raw_count)
+            except (TypeError, ValueError):
+                count = ROBBO_ORA_DEFAULT_MAX_FILES_COUNT
             self.max_files_count = max(
-                1, min(int(raw_count), ROBBO_ORA_MAX_FILES_COUNT_CAP),
+                1, min(count, ROBBO_ORA_MAX_FILES_COUNT_CAP),
             )
         return result
 
     OpenAssessmentBlock.update_editor_context = XBlock.json_handler(_robbo_update_editor_context)
 
-    original_get_template = studio_mixin_module.get_template
-
     def get_template(template_name, using=None):
-        override_path = {
-            'legacy/edit/oa_edit_basic_settings_list.html': _TEMPLATE_OVERRIDE,
-            'legacy/edit/oa_edit_criterion.html': _CRITERION_TEMPLATE_OVERRIDE,
-        }.get(template_name)
-        if override_path and override_path.is_file():
-            engine = engines['django']
-            return engine.from_string(override_path.read_text(encoding='utf-8'))
-        return original_get_template(template_name, using=using)
+        return django_get_template(template_name, using=using)
 
     studio_mixin_module.get_template = get_template
 
     original_studio_view = OpenAssessmentBlock.studio_view
 
     def studio_view(self, context=None):
-        from django.utils import translation
+        from .robbo_ora_i18n import effective_ora_ui_language
 
-        translation.activate('ru')
+        ui_lang = effective_ora_ui_language()
+        if is_russian_language(ui_lang):
+            translation.activate('ru')
+        elif ui_lang:
+            translation.activate(ui_lang)
         fragment = original_studio_view(self, context)
-        fragment.content = _STUDIO_HINT_CSS + fragment.content
+        fragment.content = (
+            _STUDIO_HINT_CSS + fragment.content + _NECESSITY_LABELS_INLINE_JS
+        )
         fragment.add_javascript_url(staticfiles_storage.url('js/robbo-ora-studio-patch.js'))
         return fragment
 
@@ -194,8 +261,16 @@ def _robbo_ora_template_override(template_name):
     return None
 
 
+def _robbo_ora_settings_list_template():
+    if not _TEMPLATE_OVERRIDE.is_file():
+        return None
+    from django.template import engines
+
+    return engines['django'].from_string(_TEMPLATE_OVERRIDE.read_text(encoding='utf-8'))
+
+
 def _patch_ora_template_loader():
-    """Override ORA templates for render_assessment and {% include %}."""
+    """Override ORA templates for Studio {% include %} and LMS render_assessment."""
     import django.template.loader as template_loader
     import openassessment.xblock.openassessmentblock as oa_block_module
 
@@ -205,9 +280,23 @@ def _patch_ora_template_loader():
     original_get_template = template_loader.get_template
 
     def robbo_get_template(template_name, using=None):
-        override = _robbo_ora_template_override(template_name)
-        if override is not None:
-            return override
+        if template_name == 'legacy/edit/oa_edit_basic_settings_list.html':
+            settings_tpl = _robbo_ora_settings_list_template()
+            if settings_tpl is not None:
+                return settings_tpl
+        from .robbo_ora_i18n import effective_ora_ui_language
+
+        ui_lang = effective_ora_ui_language()
+        if is_russian_language(ui_lang):
+            override = _robbo_ora_template_override(template_name)
+            if override is not None:
+                return override
+            if template_name == 'legacy/edit/oa_edit_criterion.html' and _CRITERION_TEMPLATE_OVERRIDE.is_file():
+                from django.template import engines
+
+                return engines['django'].from_string(
+                    _CRITERION_TEMPLATE_OVERRIDE.read_text(encoding='utf-8'),
+                )
         return original_get_template(template_name, using=using)
 
     template_loader.get_template = robbo_get_template
@@ -216,14 +305,14 @@ def _patch_ora_template_loader():
 
 
 def _wrap_ora_learner_fragment(original_view, max_bytes, max_mb, patch_js_path):
-    """Inject upload limit, JS patch, and Russian locale into LMS/Studio ORA shell."""
+    """Inject upload limit, JS patch, and optional Russian locale into LMS/Studio ORA shell."""
     from django.contrib.staticfiles.storage import staticfiles_storage
-    from django.utils import translation
 
     def wrapped_view(self, context=None):
         from .robbo_ora_i18n import ROBBO_ORA_RESPONSE_STEP_CSS
 
-        translation.activate('ru')
+        if is_russian_language(translation.get_language()):
+            translation.activate('ru')
         fragment = original_view(self, context)
         inline = (
             f'<script>window.ROBBO_ORA_MAX_FILE_BYTES={max_bytes};'
@@ -258,12 +347,11 @@ def patch_ora_student_view():
     original_render_assessment = OpenAssessmentBlock.render_assessment
 
     def render_assessment(self, path, context_dict=None):
-        """Render ORA step HTML with Russian locale and response-step styles."""
-        from django.utils import translation
-
+        """Render ORA step HTML with response-step styles (Russian locale when active)."""
         from .robbo_ora_i18n import ROBBO_ORA_RESPONSE_STEP_CSS
 
-        translation.activate('ru')
+        if is_russian_language(translation.get_language()):
+            translation.activate('ru')
         response = original_render_assessment(self, path, context_dict)
         if path and 'legacy/response/oa_response' in path and ROBBO_ORA_RESPONSE_STEP_CSS:
             styled = f'<style type="text/css">{ROBBO_ORA_RESPONSE_STEP_CSS}</style>{response.text}'
