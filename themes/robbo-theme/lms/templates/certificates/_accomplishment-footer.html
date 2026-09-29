@@ -1,4 +1,7 @@
 <%page expression_filter="h"/>
+<%!
+from django.utils.translation import gettext as _
+%>
 <div class="wrapper-footer">
 
     <footer class="footer-app" role="contentinfo" id="company-info">
@@ -8,10 +11,10 @@
         <nav class="footer-app-nav">
             <ul class="list list-legal">
                 <li class="nav-item">
-                    <a class="action btn btn-small btn-link" href="https://robbo.ru/wp-content/uploads/policy.pdf" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>
+                    <a class="action btn btn-small btn-link" href="https://robbo.ru/wp-content/uploads/policy.pdf" target="_blank" rel="noopener noreferrer">${_("Personal data processing policy")}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="action btn btn-small btn-link" href="https://robbo.ru/wp-content/uploads/agree.pdf" target="_blank" rel="noopener noreferrer">Согласие на обработку персональных данных</a>
+                    <a class="action btn btn-small btn-link" href="https://robbo.ru/wp-content/uploads/agree.pdf" target="_blank" rel="noopener noreferrer">${_("Consent to personal data processing")}</a>
                 </li>
             </ul>
         </nav>
