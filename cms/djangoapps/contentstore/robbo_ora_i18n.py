@@ -5,6 +5,43 @@
 
 """Russian overrides for edx-ora2 strings rendered via XBlockI18nService."""
 
+from django.conf import settings
+from django.utils import translation
+
+from xmodule.course_metadata_utils import is_russian_language
+
+
+def effective_ora_ui_language():
+    """
+    Language for ORA Studio/LMS UI strings.
+
+    Prefer ``request.LANGUAGE_CODE`` (LocaleMiddleware + Robbo language middleware)
+    over ``translation.get_language()`` so Authoring iframe matches the HTTP request.
+    """
+    try:
+        from crum import get_current_request
+
+        request = get_current_request()
+        if request is not None:
+            lang = getattr(request, 'LANGUAGE_CODE', None)
+            if lang:
+                return str(lang)
+    except Exception:  # pylint: disable=broad-except
+        pass
+    lang = translation.get_language()
+    if lang:
+        return str(lang)
+    forced = getattr(settings, 'ROBBO_FORCED_LANGUAGE', None)
+    if forced:
+        return str(forced)
+    return str(getattr(settings, 'LANGUAGE_CODE', 'en'))
+
+
+def robbo_ora_russian_active():
+    """True when the active ORA UI language is Russian."""
+    return is_russian_language(effective_ora_ui_language())
+
+
 ROBBO_ORA_RU_STRINGS = {
     # Response / draft status (server render + XBlock translate)
     "Status of Your Response": "Статус вашего ответа",
@@ -153,6 +190,10 @@ class _RobboOraTranslatorWrapper:
         self._inner = inner
 
     def _translate(self, msgid):
+        if not robbo_ora_russian_active():
+            if hasattr(self._inner, 'gettext'):
+                return self._inner.gettext(msgid)
+            return self._inner.ugettext(msgid)
         translated = get_robbo_ora_runtime_catalog().get(msgid)
         if translated is not None:
             return translated
@@ -295,14 +336,33 @@ ROBBO_ORA_JS_CATALOG = {
 
 def get_robbo_ora_runtime_catalog():
     """Merged ORA catalog for XBlock translate, Django {% trans %}, and JS gettext."""
+    if not robbo_ora_russian_active():
+        return {}
     return {**ROBBO_ORA_RU_STRINGS, **ROBBO_ORA_JS_CATALOG}
+
+
+def robbo_ora_catalog_message(msgid, **kwargs):
+    """
+    Studio/LMS string: Russian override when active, else Django gettext (EN msgid).
+
+    Applies printf-style ``kwargs`` when provided (e.g. max_mb=5).
+    """
+    from django.utils.translation import gettext as _
+
+    text = get_robbo_ora_runtime_catalog().get(msgid, _(msgid))
+    if kwargs:
+        return text % kwargs
+    return text
 
 
 def patch_robbo_ora_django_catalog():
     """Merge Robbo ORA strings into Django's Russian gettext catalog."""
+    if not is_russian_language():
+        return
+
     from django.utils.translation import trans_real
 
-    merged = get_robbo_ora_runtime_catalog()
+    merged = {**ROBBO_ORA_RU_STRINGS, **ROBBO_ORA_JS_CATALOG}
     try:
         catalog = trans_real.translation('ru')
         # TranslationCatalog.update(dict) raises on Django 4.x; assign entries directly.

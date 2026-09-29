@@ -5,7 +5,7 @@ Russian defaults for Open Response Assessment (edx-ora2) in Robbo Studio.
 
 import copy
 
-from xmodule.course_metadata_utils import is_russian_language
+from cms.djangoapps.contentstore.robbo_ora_i18n import robbo_ora_russian_active
 
 ROBBO_ORA_DEFAULT_TITLE = "Задание с развёрнутым ответом"
 
@@ -119,6 +119,12 @@ ROBBO_ORA_DEFAULT_RUBRIC_CRITERIA = [
     },
 ]
 
+ROBBO_ORA_NECESSITY_OPTIONS_EN = {
+    'required': 'Required',
+    'optional': 'Optional',
+    '': 'None',
+}
+
 ROBBO_ORA_NECESSITY_OPTIONS_RU = {
     'required': 'Обязательно',
     'optional': 'Необязательно',
@@ -138,17 +144,16 @@ def localized_ora_rubric_criteria():
 
 def localized_necessity_options():
     """Return necessity dropdown labels for the Studio settings editor."""
-    if is_russian_language():
+    if robbo_ora_russian_active():
         return dict(ROBBO_ORA_NECESSITY_OPTIONS_RU)
-    from openassessment.xblock.studio_mixin import StudioMixin
-    return StudioMixin.NECESSITY_OPTIONS
+    return dict(ROBBO_ORA_NECESSITY_OPTIONS_EN)
 
 
 def apply_russian_ora_defaults(block):
     """
     Replace upstream English sample content on newly created ORA blocks.
     """
-    if not is_russian_language():
+    if not robbo_ora_russian_active():
         return block
     if getattr(block, 'category', None) != 'openassessment':
         return block
@@ -208,7 +213,7 @@ def should_replace_ora_rubric(criteria):
 
 def apply_russian_ora_content(block):
     """Apply Russian defaults to an existing block when upstream samples are detected."""
-    if not is_russian_language() or getattr(block, 'category', None) != 'openassessment':
+    if not robbo_ora_russian_active() or getattr(block, 'category', None) != 'openassessment':
         return block
 
     if should_replace_ora_prompt(block.prompts):
