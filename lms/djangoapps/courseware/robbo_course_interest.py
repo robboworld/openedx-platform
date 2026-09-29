@@ -20,6 +20,7 @@ from django.core.mail import send_mail
 from django.db import transaction
 from django.http import JsonResponse
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 from eventtracking import tracker
 
@@ -193,11 +194,11 @@ def course_interest(request) -> JsonResponse:
     stub_id = data.get('stub_id')
 
     if not isinstance(stub_id, str) or not stub_id.strip():
-        return _json_error('Не указан курс для подписки.', status=400)
+        return _json_error(_('No course was specified for the subscription.'), status=400)
 
     stub = _get_stub(stub_id.strip())
     if stub is None:
-        return _json_error('Неизвестный курс для подписки.', status=400)
+        return _json_error(_('Unknown course for subscription.'), status=400)
 
     payload = build_course_interest_payload(request, stub)
 
@@ -253,5 +254,5 @@ def course_interest(request) -> JsonResponse:
     return JsonResponse({
         'ok': True,
         'status': 'subscribed',
-        'message': 'Мы сообщим на вашу почту, когда курс откроется.',
+        'message': _('We will email you when the course opens.'),
     })

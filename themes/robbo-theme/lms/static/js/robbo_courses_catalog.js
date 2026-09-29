@@ -113,7 +113,9 @@
     var status = getStatus(btn);
     var labelNode = btn.querySelector('.robbo-courses-catalog__stub-notify-label');
     var card = getCard(btn);
-    var defaultLabel = btn.getAttribute('data-default-label') || 'Сообщить об открытии';
+    var defaultLabel = btn.getAttribute('data-default-label')
+      || root.getAttribute('data-i18n-interest-default-label')
+      || 'Notify me when it opens';
 
     btn.classList.remove('is-loading', 'is-success', 'is-error');
     if (card) {
@@ -165,7 +167,12 @@
       return;
     }
 
-    setButtonState(btn, 'loading', 'Отправляем...', 'Отправляем заявку.');
+    setButtonState(
+      btn,
+      'loading',
+      root.getAttribute('data-i18n-interest-loading-label') || 'Sending...',
+      root.getAttribute('data-i18n-interest-loading-message') || 'Submitting your request.'
+    );
 
     fetch(endpoint, {
       method: 'POST',
@@ -182,7 +189,11 @@
         return {};
       }).then(function (data) {
         if (!response.ok || !data.ok) {
-          throw new Error(data.message || 'Не удалось отправить заявку. Попробуйте ещё раз.');
+          throw new Error(
+            data.message
+            || root.getAttribute('data-i18n-interest-error-fallback')
+            || 'Could not submit your request. Please try again.'
+          );
         }
         return data;
       });
@@ -190,8 +201,8 @@
       setButtonState(
         btn,
         'success',
-        'Вы подписаны',
-        data.message || 'Мы сообщим на вашу почту, когда курс откроется.'
+        root.getAttribute('data-i18n-interest-success-label') || 'Subscribed',
+        data.message || root.getAttribute('data-i18n-interest-success-message') || ''
       );
       if (shouldClearQuery) {
         clearNotifyQuery();
@@ -201,7 +212,9 @@
         btn,
         'error',
         null,
-        err.message || 'Не удалось отправить заявку. Попробуйте ещё раз.'
+        err.message
+        || root.getAttribute('data-i18n-interest-error-fallback')
+        || 'Could not submit your request. Please try again.'
       );
     });
   }
