@@ -126,11 +126,11 @@ export function RobboFooter() {
               <ul className="robbo-footer__contacts-list">
                 <li className="robbo-footer__contacts-item">
                   <span className="robbo-footer__contacts-icon" aria-hidden="true"><MailIcon /></span>
-                  <a className="robbo-footer__contacts-link" href="mailto:info@robbo.ru">info@robbo.ru</a>
+                  <a className="robbo-footer__contacts-link" href="mailto:info@robbo.world">info@robbo.world</a>
                 </li>
                 <li className="robbo-footer__contacts-item">
                   <span className="robbo-footer__contacts-icon" aria-hidden="true"><GlobeIcon /></span>
-                  <a className="robbo-footer__contacts-link" href="https://robbo.ru" target="_blank" rel="noopener noreferrer">robbo.ru</a>
+                  <a className="robbo-footer__contacts-link" href="https://robbo.world" target="_blank" rel="noopener noreferrer">robbo.world</a>
                 </li>
                 <li className="robbo-footer__contacts-item">
                   <span className="robbo-footer__contacts-icon" aria-hidden="true"><SupportIcon /></span>
