@@ -256,6 +256,25 @@
                               {% endblocktrans %}
                             {% endif %}
                             <li class="field">
+                                <div class="robbo-ora-upload-rules">
+                                  <div class="robbo-ora-upload-rule robbo-ora-upload-types">{% trans "Supported file types: " %}{{ white_listed_file_types|join:", "}}</div>
+                                  {% if robbo_max_files_count %}
+                                    <div class="robbo-ora-upload-rule robbo-ora-upload-count">{% blocktrans with max_files=robbo_max_files_count %}Maximum number of files: {{ max_files }}.{% endblocktrans %}</div>
+                                  {% endif %}
+                                  {% if robbo_file_size_limits %}
+                                    <div class="robbo-ora-upload-rule robbo-ora-upload-limit">
+                                      {% trans "Maximum file size:" %}
+                                      {# div/span, not ul/li: LMS theme rules add list indents (see robbo-ora-studio.mdc) #}
+                                      <div class="robbo-ora-size-list">
+                                        {% for ext, mb in robbo_file_size_limits %}
+                                          <span class="robbo-ora-size-list__item">{% blocktrans %}{{ ext }} — up to {{ mb }} MB{% endblocktrans %}</span>
+                                        {% endfor %}
+                                      </div>
+                                    </div>
+                                  {% elif robbo_max_file_mb %}
+                                    <div class="robbo-ora-upload-rule robbo-ora-upload-limit">{% blocktrans with max_mb=robbo_max_file_mb %}Maximum file size: {{ max_mb }} MB.{% endblocktrans %}</div>
+                                  {% endif %}
+                                </div>
                                 <div class="upload__error">
                                     <div class="message message--inline message--error message--error-server" tabindex="-1">
                                         <h5 class="message__title">{% trans "We could not upload files" %}</h5>
@@ -270,29 +289,38 @@
                                 </div>
 
                                 <label class="sr" for="submission_answer_upload_{{ xblock_id }}">
-                                  {% if allow_multiple_files %}
+                                  {% if robbo_multiple_files %}
                                       {% trans "Select one or more files to upload for this submission." %}
                                   {% else %}
                                       {% trans "Select a file to upload for this submission." %}
                                   {% endif %}
                                 </label>
-                                <div>
-                                  {% trans "Supported file types: " %}{{ white_listed_file_types|join:", "}}
+                                {# Robbo: native file input text follows the browser locale; a styled label gives a Russian button. #}
+                                <div class="robbo-ora-file-picker">
+                                  <input type="file" class="submission__answer__upload file--upload robbo-ora-file-picker__input" id="submission_answer_upload_{{ xblock_id }}" {% if robbo_multiple_files %}multiple=""{% endif %} accept="{{white_listed_file_types|join:", "}}" {% if robbo_max_files_count %}data-robbo-max-files="{{ robbo_max_files_count }}"{% endif %} {% if robbo_file_size_limits %}data-robbo-size-limits="{{ robbo_file_size_limits_json }}"{% endif %}>
+                                  <label class="robbo-ora-file-picker__button" for="submission_answer_upload_{{ xblock_id }}" aria-hidden="true">
+                                    {% if robbo_multiple_files %}{% trans "Choose files" %}{% else %}{% trans "Choose file" %}{% endif %}
+                                  </label>
+                                  <span class="robbo-ora-file-picker__status" aria-live="polite"
+                                        data-robbo-empty-label="{% if robbo_multiple_files %}{% trans "No files chosen" %}{% else %}{% trans "No file chosen" %}{% endif %}">
+                                    {% if robbo_multiple_files %}{% trans "No files chosen" %}{% else %}{% trans "No file chosen" %}{% endif %}
+                                  </span>
                                 </div>
-                                <input type="file" class="submission__answer__upload file--upload" id="submission_answer_upload_{{ xblock_id }}" {% if allow_multiple_files %}multiple=""{% endif %} accept="{{white_listed_file_types|join:", "}}">
-                                <button type="submit" class="file__upload action action--upload is--disabled" disabled aria-disabled="true">
-                                  <span class="icon fa fa-spinner fa-spin is--hidden" aria-hidden="true"></span>
-                                  {% if allow_multiple_files %}
-                                      {% trans "Upload files" %}
-                                  {% else %}
-                                      {% trans "Upload file" %}
-                                  {% endif %}
-                                </button>
                                 <div class="files__descriptions"></div>
+                                <div class="robbo-ora-upload-actions">
+                                  <button type="submit" class="file__upload action action--upload is--disabled" disabled aria-disabled="true">
+                                    <span class="icon fa fa-spinner fa-spin is--hidden" aria-hidden="true"></span>
+                                    {% if robbo_multiple_files %}
+                                        {% trans "Upload files" %}
+                                    {% else %}
+                                        {% trans "Upload file" %}
+                                    {% endif %}
+                                  </button>
+                                </div>
                             </li>
                           {% endif %}
                           <li class="field">
-                          {% include "legacy/oa_uploaded_file.html" with file_upload_type=file_upload_type file_urls=file_urls class_prefix="submission__answer" including_template="response" xblock_id=xblock_id %}
+                          {% include robbo_uploaded_file_template|default:"legacy/oa_uploaded_file.html" with file_upload_type=file_upload_type file_urls=file_urls class_prefix="submission__answer" including_template="response" xblock_id=xblock_id %}
                           </li>
                           <li class="field">
                             {% include "legacy/oa_team_uploaded_files.html" with file_upload_type=file_upload_type team_file_urls=team_file_urls class_prefix="submission__team__answer" including_template="response" xblock_id=xblock_id %}

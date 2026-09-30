@@ -213,6 +213,19 @@ if _EXPIRE_LEGACY_CSRF_MW not in MIDDLEWARE:
 {% endif %}
 """
 
+# ORA uploads go straight to LMS (filesystem backend: PUT /openassessment/fileupload/...). Tutor caps LMS request
+# bodies at 4 MB, which blocks the per-extension "Larger file sizes" option (up to 50 MB per file, see
+# cms/djangoapps/contentstore/robbo_ora_limits.py ROBBO_ORA_LARGE_FILE_MB_CAP). Raise the cap for that path only;
+# `handle` with a longer path wins over Tutor's `handle_path /*`. ORA PUTs the raw file (no multipart), and both
+# Caddy and ORA count 1 MB = 1000**2 bytes, so 50MB matches the cap exactly.
+_PATCH_CADDYFILE_LMS_ORA_UPLOADS = """
+handle /openassessment/fileupload/* {
+    request_body {
+        max_size 50MB
+    }
+}
+"""
+
 # Local Tutor (ENABLE_HTTPS=false): MFE URLs on LMS_HOST, not apps.* — avoids browser
 # HTTPS-Only upgrading http://apps.local… to https://… (connection refused on :443).
 _PATCH_LOCAL_MFE_ON_LMS_HOST = """
@@ -279,7 +292,7 @@ YANDEX_METRIKA_COUNTER_ID = {{ ROBBO_YANDEX_METRIKA_COUNTER_ID }}
 # override package.json from the mount. Drop those Dockerfile patches for these apps so
 # the image matches `tutor dev`. Runtime Paragon CDN is also disabled (see below).
 _ROBBO_BINDMOUNT_MFE_APP_IDS: frozenset[str] = frozenset(
-    ("authn", "account", "profile", "learning", "learner-dashboard")
+    ("authn", "account", "profile", "learning", "learner-dashboard", "discussions")
 )
 
 _POST_NPM_INSTALL_PREFIX = "mfe-dockerfile-post-npm-install-"
@@ -475,6 +488,8 @@ hooks.Filters.ENV_PATCHES.add_items(
     [
         ("mfe-dockerfile-base", _PATCH_MFE_DOCKERFILE_NPM_RESILIENCE),
         ("mfe-dockerfile-post-npm-install-authoring", _PATCH_AUTHORING_ROBBO_BRAND),
+        # Discussions: Indigo brand is dropped (bind-mount list) — bake Robbo Paragon tokens instead.
+        ("mfe-dockerfile-post-npm-install-discussions", _PATCH_AUTHORING_ROBBO_BRAND),
         ("mfe-dockerfile-pre-npm-build-authoring", _PATCH_AUTHORING_ROBBO_CHROME_SRC),
         ("mfe-env-config-runtime-definitions-authoring", _PATCH_AUTHORING_ROBBO_FOOTER_IMPORT),
         ("mfe-lms-common-settings", _PARAGON_THEME_URLS),
@@ -511,6 +526,7 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_BINDMOUNT_MFES_SKIP_RUNTIME_PARAGON),
         ("openedx-lms-development-settings", _PATCH_YANDEX_METRIKA_DEV_LMS),
         ("openedx-lms-production-settings", _PATCH_YANDEX_METRIKA_PROD_LMS),
+        ("caddyfile-lms", _PATCH_CADDYFILE_LMS_ORA_UPLOADS),
         ("mfe-lms-production-settings", _PATCH_LOCAL_MFE_ON_LMS_HOST),
         ("openedx-cms-production-settings", _PATCH_LOCAL_AUTHORING_MFE_ON_LMS_HOST_CMS),
         ("openedx-cms-development-settings", _PATCH_LOCAL_AUTHORING_MFE_ON_LMS_HOST_CMS),
