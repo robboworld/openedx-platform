@@ -17,11 +17,19 @@ alwaysApply: true
 
 ## Sass после правок SCSS
 
-После правок `.scss` в `openedx-platform` — пересобрать стили (если доступен `tutor`):
+После правок `.scss` в `openedx-platform` — пересобрать стили (если доступен `tutor`).
 
-```bash
-tutor dev exec lms bash -lc 'cd /openedx/edx-platform && npm run compile-sass-dev' 2>&1
-```
+Режим Tutor: `docker ps --format '{{.Names}}' | grep -m1 -o '^tutor_\(dev\|local\)'` (эталон — **local**, переключение — `scripts/switch-tutor-mode.sh`).
+
+| Режим | Команда |
+|-------|---------|
+| `tutor local` + `ROBBO_LIVE_DEV=true` | ничего — пересобирает сервис `watch-robbo-sass` |
+| `tutor local` (базовый профиль) | `tutor local exec lms bash -lc 'cd /openedx/edx-platform && npm run compile-sass-dev && ./manage.py lms collectstatic --noinput'`; для CMS-стилей — ещё `tutor local exec cms bash -lc 'cd /openedx/edx-platform && ./manage.py cms collectstatic --noinput'` |
+| `tutor dev` | `tutor dev exec lms bash -lc 'cd /openedx/edx-platform && npm run compile-sass-dev'` |
+
+В `tutor local` uWSGI отдаёт `/static` из `/openedx/staticfiles` внутри контейнера, поэтому без `collectstatic` новый CSS в браузер не попадёт (и пропадёт при пересоздании контейнера — для постоянного результата нужна сборка образа).
+
+После правок Python в смонтированном checkout — `robbo-openedx-stack/scripts/robbo-reload-openedx.sh` (в базовом `tutor local` делает `tutor local restart lms cms`; `touch wsgi.py` там не работает).
 
 Это не правка конфигурации Tutor. Если `tutor` недоступен — кратко описать, что нужно пользователю.
 

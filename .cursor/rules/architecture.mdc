@@ -23,11 +23,11 @@ alwaysApply: false
 | Шаблоны | `lms/templates/**` | `cms/templates/**` |
 | Sass/CSS | `lms/static/sass/**`, `css/**` | `cms/static/sass/**`, `css/**` |
 
-После правок SCSS — `tutor dev exec lms` + `npm run compile-sass-dev` (см. `openedx-tutor-robbo.mdc`).
+После правок SCSS — `npm run compile-sass-dev` в контейнере LMS, в `tutor local` ещё `collectstatic` (команды по режиму — `openedx-tutor-robbo.mdc`).
 
 Тёмная тема: `lms/static/js/dark-theme.js` (cookie `indigo-toggle-dark`, класс `indigo-dark-theme`); возможно дублирование с tutor-indigo в образе.
 
-## Tutor dev: mounts
+## Tutor mounts (local и dev)
 
 Bind-mount **всего** checkout → `/openedx/edx-platform` на `lms`/`cms`. Symlink meta-repo: `repos/edx-platform` → `repos/openedx-platform` (basename `edx-platform`). Тема отдельно → `/openedx/themes/robbo-theme`. Подробности: `robbo-openedx-stack/tutor/mounts.md`.
 
@@ -43,7 +43,7 @@ Shell CSS / Dockerfile-патчи через `robbo-mfe-branding` сняты с 
 - **MFE UI** — `robbo-openedx-stack/repos/mfe-overrides/frontend-app-*` через `tutor mounts add`
 - **`robbo-mfe-branding`** — только минимальный `MFE_CONFIG` (`LOGO_*`, `PARAGON_THEME_URLS`). Не возвращать `robbo-mfe-shell.css`, `PLUGIN_SLOTS` footer/header, MFE Dockerfile-патчи без отдельного решения.
 
-Список overrides: `frontend-app-learner-dashboard`, `-learning`, `-authn`, `-profile`, `-account`, `-authoring` (ветка `robbo-teak`). Authoring UI — mount/`authoring` или образ `mfe` (`:2001`); для bundled-сборки зелёный Paragon primary приходит через `robbo-brand-openedx` в `robbo-mfe-branding`.
+Список overrides: `frontend-app-learner-dashboard`, `-learning`, `-authn`, `-profile`, `-account`, `-authoring`; ветка — по профилю meta-repo (`robbo/online` | `robbo/skill` | `robbo/courses`, см. `robbo-openedx-stack/.cursor/rules/changelog-and-commits.mdc`). Authoring UI — mount/`authoring` или образ `mfe` (`:2001`); для bundled-сборки зелёный Paragon primary приходит через `robbo-brand-openedx` в `robbo-mfe-branding`.
 
 Tutor mount: папка `frontend-app-APPNAME` → dev: `/openedx/app`; build: `APPNAME-src`. Имя папки = upstream repo name.
 
