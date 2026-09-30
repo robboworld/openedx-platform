@@ -34,7 +34,7 @@ Comprehensive theme (ветка от Indigo): светлые поверхнос�
 
 Типичные оверрайды: `header/*`, `footer.html`, `index.html`, `static_templates/*`, `courseware/*`, `discovery/*`; в Studio — в т.ч. `cms/templates/widgets/footer.html`.
 
-После правок **SCSS** нужна пересборка CSS (см. `openedx-tutor-robbo.mdc`: при доступном Tutor — `tutor dev exec lms` и `npm run compile-sass-dev` в `/openedx/edx-platform`).
+После правок **SCSS** — `npm run compile-sass-dev` в контейнере LMS, в `tutor local` ещё `collectstatic` (команды по режиму — `openedx-tutor-robbo.mdc`).
 
 ## JavaScript и тёмная тема
 

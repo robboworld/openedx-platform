@@ -24,13 +24,20 @@ alwaysApply: true
 
 ### Сборка Sass после правок SCSS (разрешённый вызов Tutor)
 
-- Если в задаче затрагивались файлы **`.scss` / Sass** в `openedx-platform` (темы, `lms/static/sass`, CMS и т.д.), после правок **выполни пересборку стилей** сам (не ограничивайся подсказкой пользователю), если в окружении доступен `tutor`:
+- Если в задаче затрагивались файлы **`.scss` / Sass** в `openedx-platform` (темы, `lms/static/sass`, CMS и т.д.), после правок **выполни пересборку стилей** сам (не ограничивайся подсказкой пользователю), если в окружении доступен `tutor`.
 
-```bash
-tutor dev exec lms bash -lc 'cd /openedx/edx-platform && npm run compile-sass-dev' 2>&1
-```
+Режим Tutor: `docker ps --format '{{.Names}}' | grep -m1 -o '^tutor_\(dev\|local\)'` (эталон — **local**, переключение — `scripts/switch-tutor-mode.sh`).
 
-- Это **не** правка конфигурации Tutor: однократный `tutor dev exec` в контейнер LMS с рабочим каталогом платформы в контейнере (`/openedx/edx-platform`).
+| Режим | Команда |
+|-------|---------|
+| `tutor local` | `tutor local exec lms bash -lc 'cd /openedx/edx-platform && npm run compile-sass-dev && ./manage.py lms collectstatic --noinput'`; для CMS-стилей — ещё `tutor local exec cms bash -lc 'cd /openedx/edx-platform && ./manage.py cms collectstatic --noinput'` |
+| `tutor dev` | `tutor dev exec lms bash -lc 'cd /openedx/edx-platform && npm run compile-sass-dev'` |
+
+В `tutor local` uWSGI отдаёт `/static` из `/openedx/staticfiles` внутри контейнера, поэтому без `collectstatic` новый CSS в браузер не попадёт (и пропадёт при пересоздании контейнера — для постоянного результата нужна сборка образа).
+
+После правок Python в смонтированном checkout — `tutor local restart lms cms` (`touch wsgi.py` в `tutor local` не работает).
+
+- Это **не** правка конфигурации Tutor: однократный `tutor local exec` / `tutor dev exec` в контейнер LMS с рабочим каталогом платформы в контейнере (`/openedx/edx-platform`).
 - Если `tutor` недоступен или команда падает (окружение не поднято), кратко опиши ошибку и что нужно пользователю для сборки.
 
 ## Текущая архитектура Robbo и MFE
