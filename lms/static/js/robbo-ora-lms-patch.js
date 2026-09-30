@@ -1,6 +1,8 @@
 /**
- * Robbo ORA LMS: upload limit, i18n, optional file descriptions.
+ * Robbo ORA (LMS + Studio preview): upload limits, Russian file picker, i18n, optional file descriptions.
  * DOM/event-based — does not rely on OpenAssessment.ResponseView (removed in newer edx-ora2).
+ * Presentation lives in ROBBO_ORA_RESPONSE_STEP_CSS (robbo_ora_i18n.py); this script only toggles
+ * classes, text and disabled state.
  */
 (function () {
   'use strict';
@@ -30,6 +32,20 @@
     'Please provide a description for each file you are uploading.': (
       'Укажите описание для каждого загружаемого файла.'
     ),
+    '%(count)s files selected': 'Выбрано файлов: %(count)s',
+    'Too many files: the limit is {max}. Already uploaded: {saved}, selected: {selected}. Choose no more than {left}.': (
+      'Слишком много файлов: можно прикрепить не более {max}. Уже загружено: {saved}, выбрано: {selected}. '
+      + 'Выберите не больше {left}.'
+    ),
+    'You have already uploaded the maximum number of files ({max}). To add another one, delete an uploaded file.': (
+      'Уже загружено максимальное количество файлов ({max}). Чтобы добавить новый, удалите один из загруженных.'
+    ),
+    'The file "{name}" is larger than {mb} MB, the limit for .{ext} files.': (
+      'Файл «{name}» больше {mb} МБ — это ограничение для файлов .{ext}.'
+    ),
+    'File limit reached ({max}). To add another file, delete an uploaded one.': (
+      'Достигнут лимит файлов ({max}). Чтобы добавить новый, удалите один из загруженных.'
+    ),
   };
 
   function isRussianUi() {
@@ -41,6 +57,12 @@
       return String(django.getLanguage() || '').toLowerCase().indexOf('ru') === 0;
     }
     return false;
+  }
+
+  function format(template, values) {
+    return Object.keys(values).reduce(function (text, key) {
+      return text.split('{' + key + '}').join(String(values[key]));
+    }, template);
   }
 
   function gettext(msg) {
@@ -68,7 +90,7 @@
   }
 
   function findStepRoot(node) {
-    return node && node.closest ? node.closest('.step--response, .openassessment') : null;
+    return node && node.closest ? node.closest('.step--response') || node.closest('.openassessment') : null;
   }
 
   function showUploadError(stepRoot, message) {
@@ -81,28 +103,15 @@
     }
     var content = errorBox.querySelector('.message__content');
     if (content) {
-      content.innerHTML = '<p>' + message + '</p>';
+      var paragraph = document.createElement('p');
+      paragraph.textContent = message;
+      content.replaceChildren(paragraph);
     }
     errorBox.classList.add('has--error');
     var focusTarget = errorBox.querySelector('.message');
     if (focusTarget) {
       focusTarget.focus();
     }
-  }
-
-  function clearUploadError(stepRoot) {
-    if (!stepRoot) {
-      return;
-    }
-    var errorBox = stepRoot.querySelector('.upload__error');
-    if (!errorBox) {
-      return;
-    }
-    var content = errorBox.querySelector('.message__content');
-    if (content) {
-      content.innerHTML = '';
-    }
-    errorBox.classList.remove('has--error');
   }
 
   function applyDefaultFileDescriptions(stepRoot) {
@@ -153,52 +162,75 @@
     );
   }
 
-  function applyUploadButtonPresentation(btn, enabled) {
-    btn.classList.add('robbo-ora-upload-btn');
-    btn.classList.toggle('robbo-ora-upload-btn--ready', enabled);
-    btn.classList.toggle('robbo-ora-upload-btn--disabled', !enabled);
+  function getMaxFiles(stepEl) {
+    var input = findFileInput(stepEl);
+    var max = input ? parseInt(input.getAttribute('data-robbo-max-files'), 10) : NaN;
+    return max > 0 ? max : null;
+  }
 
-    btn.style.setProperty('display', 'inline-flex', 'important');
-    btn.style.setProperty('align-items', 'center', 'important');
-    btn.style.setProperty('justify-content', 'center', 'important');
-    btn.style.setProperty('box-sizing', 'border-box', 'important');
-    btn.style.setProperty('margin-top', '0.9rem', 'important');
-    btn.style.setProperty('padding', '1.2rem 2.7rem', 'important');
-    btn.style.setProperty('min-height', '3.6rem', 'important');
-    btn.style.setProperty('height', 'auto', 'important');
-    btn.style.setProperty('min-width', '0', 'important');
-    btn.style.setProperty('width', 'auto', 'important');
-    btn.style.setProperty('max-width', 'none', 'important');
-    btn.style.setProperty('line-height', '1.3', 'important');
-    btn.style.setProperty('text-align', 'center', 'important');
-    btn.style.setProperty('font-size', '1.35rem', 'important');
-    btn.style.setProperty('font-weight', '600', 'important');
-    btn.style.setProperty('border-radius', '0', 'important');
-    btn.style.setProperty('float', 'right', 'important');
-    btn.style.setProperty('clear', 'right', 'important');
-    btn.style.setProperty('margin-left', 'auto', 'important');
-    btn.style.setProperty('margin-right', '0', 'important');
-    btn.style.removeProperty('background');
-    btn.style.removeProperty('border');
-    btn.style.removeProperty('border-color');
-    btn.style.removeProperty('box-shadow');
-    btn.style.removeProperty('transform');
+  function getSavedFileCount(stepEl) {
+    // Same rule as edx-ora2 getSavedFileCount(false): deleted files leave an empty block.
+    return Array.prototype.filter.call(
+      stepEl.querySelectorAll('.submission__answer__file__block'),
+      function (block) { return block.children.length > 0 || trim(block.textContent) !== ''; }
+    ).length;
+  }
+
+  function isLimitReached(stepEl) {
+    var max = getMaxFiles(stepEl);
+    return max !== null && getSavedFileCount(stepEl) >= max;
+  }
+
+  function updatePickerStatus(stepEl) {
+    var input = findFileInput(stepEl);
+    var status = stepEl.querySelector('.robbo-ora-file-picker__status');
+    if (!input || !status) {
+      return;
+    }
+    var limitReached = isLimitReached(stepEl);
+    var text;
+    if (limitReached) {
+      text = format(gettext('File limit reached ({max}). To add another file, delete an uploaded one.'), {
+        max: getMaxFiles(stepEl),
+      });
+    } else if (input.files && input.files.length === 1) {
+      text = input.files[0].name;
+    } else if (input.files && input.files.length > 1) {
+      text = gettext('%(count)s files selected').replace('%(count)s', String(input.files.length));
+    } else {
+      text = status.getAttribute('data-robbo-empty-label') || trim(status.textContent);
+    }
+    status.classList.toggle('is--limit-reached', limitReached);
+    status.title = text;
+    if (status.textContent !== text) {
+      status.textContent = text;
+    }
   }
 
   function syncUploadButtonState(stepRoot) {
     var scope = stepRoot || document;
+    var steps = scope.matches && scope.matches('.step--response')
+      ? [scope] : scope.querySelectorAll('.step--response');
 
-    scope.querySelectorAll('.step--response').forEach(function (stepEl) {
+    Array.prototype.forEach.call(steps, function (stepEl) {
       var input = findFileInput(stepEl);
       var btn = findUploadButton(stepEl);
+      var limitReached = isLimitReached(stepEl);
+      if (input) {
+        if (limitReached && input.files && input.files.length) {
+          input.value = '';
+        }
+        input.disabled = limitReached;
+      }
+      updatePickerStatus(stepEl);
       if (!btn) {
         return;
       }
       var hasFiles = !!(input && input.files && input.files.length > 0);
-      btn.disabled = !hasFiles;
-      btn.setAttribute('aria-disabled', hasFiles ? 'false' : 'true');
-      btn.classList.toggle('is--disabled', !hasFiles);
-      applyUploadButtonPresentation(btn, hasFiles);
+      var enabled = hasFiles && !limitReached;
+      btn.disabled = !enabled;
+      btn.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+      btn.classList.toggle('is--disabled', !enabled);
     });
   }
 
@@ -276,36 +308,7 @@
     translateDescriptionLabels(scope);
   }
 
-  function injectUploadLimitHint(root) {
-    if (!window.ROBBO_ORA_MAX_FILE_MB) {
-      return;
-    }
-    var scope = root || document;
-    var hintText = gettext('Maximum file size: %(max_mb)s MB.').replace(
-      '%(max_mb)s',
-      String(window.ROBBO_ORA_MAX_FILE_MB)
-    );
-    scope.querySelectorAll('.submission__upload__files__title').forEach(function (title) {
-      var parent = title.parentNode;
-      if (!parent) {
-        return;
-      }
-      var hint = parent.querySelector('.robbo-ora-upload-limit');
-      if (!hint) {
-        hint = document.createElement('p');
-        hint.className = 'robbo-ora-upload-limit';
-        parent.insertBefore(hint, title.nextSibling);
-      }
-      hint.style.setProperty('font-size', '1.125rem', 'important');
-      hint.style.setProperty('line-height', '1.4', 'important');
-      if (hint.textContent !== hintText) {
-        hint.textContent = hintText;
-      }
-    });
-  }
-
   function refreshUploadUi(root) {
-    injectUploadLimitHint(root);
     translateUploadControls(root);
     syncUploadButtonState(root);
   }
@@ -323,27 +326,61 @@
     });
   }
 
+  function rejectSelection(input, stepRoot, message) {
+    showUploadError(stepRoot, message);
+    input.value = '';
+    var descriptions = stepRoot && stepRoot.querySelector('.files__descriptions');
+    if (descriptions) {
+      descriptions.replaceChildren();
+    }
+    return false;
+  }
+
   function validateSelectedFiles(input) {
-    var maxBytes = window.ROBBO_ORA_MAX_FILE_BYTES;
-    if (!maxBytes || !input.files || !input.files.length) {
+    var stepRoot = findStepRoot(input);
+    if (!input.files || !input.files.length) {
       return true;
     }
-    var stepRoot = findStepRoot(input);
+    // Per-extension limits ("Larger file sizes" in Studio) win over the global 5 MB default.
+    var sizeLimits = null;
+    try {
+      sizeLimits = JSON.parse(input.getAttribute('data-robbo-size-limits') || 'null');
+    } catch (error) {
+      sizeLimits = null;
+    }
+    var maxBytes = window.ROBBO_ORA_MAX_FILE_BYTES;
     for (var i = 0; i < input.files.length; i++) {
-      if (input.files[i].size > maxBytes) {
+      var file = input.files[i];
+      var ext = (file.name.split('.').pop() || '').toLowerCase();
+      if (sizeLimits && sizeLimits[ext]) {
+        if (file.size > sizeLimits[ext] * 1000 * 1000) {
+          return rejectSelection(input, stepRoot, format(gettext(
+            'The file "{name}" is larger than {mb} MB, the limit for .{ext} files.'
+          ), { name: file.name, mb: sizeLimits[ext], ext: ext }));
+        }
+      } else if (maxBytes && file.size > maxBytes) {
         var maxMb = window.ROBBO_ORA_MAX_FILE_MB || Math.round(maxBytes / (1000 * 1000));
-        showUploadError(
-          stepRoot,
-          gettext('Individual file size must be {max_files_mb}MB or less.').replace(
-            '{max_files_mb}',
-            String(maxMb)
-          )
-        );
-        input.value = '';
-        return false;
+        return rejectSelection(input, stepRoot, gettext(
+          'Individual file size must be {max_files_mb}MB or less.'
+        ).replace('{max_files_mb}', String(maxMb)));
       }
     }
-    clearUploadError(stepRoot);
+    var max = stepRoot ? getMaxFiles(stepRoot) : null;
+    if (max !== null) {
+      var saved = getSavedFileCount(stepRoot);
+      var selected = input.files.length;
+      if (saved >= max) {
+        return rejectSelection(input, stepRoot, format(gettext(
+          'You have already uploaded the maximum number of files ({max}). To add another one, delete an uploaded file.'
+        ), { max: max }));
+      }
+      if (saved + selected > max) {
+        return rejectSelection(input, stepRoot, format(gettext(
+          'Too many files: the limit is {max}. Already uploaded: {saved}, selected: {selected}. Choose no more than {left}.'
+        ), { max: max, saved: saved, selected: selected, left: max - saved }));
+      }
+    }
+    // edx-ora2 may still have reported a problem of its own (e.g. unsupported type) — keep it.
     return true;
   }
 
@@ -365,11 +402,11 @@
     if (!input) {
       return;
     }
+    var stepRoot = findStepRoot(input);
     if (!validateSelectedFiles(input)) {
-      syncUploadButtonState(findStepRoot(input));
+      syncUploadButtonState(stepRoot);
       return;
     }
-    var stepRoot = findStepRoot(input);
     syncUploadButtonState(stepRoot);
     window.setTimeout(function () {
       translateDescriptionLabels(stepRoot);
@@ -383,7 +420,9 @@
       return;
     }
     scope.robboOraFileInputBound = true;
-    scope.addEventListener('change', onFileInputChange, true);
+    // Bubble phase: edx-ora2 binds its change handler on the input itself, so it runs first and
+    // our validation has the last word on the error box and the upload button.
+    scope.addEventListener('change', onFileInputChange, false);
   }
 
   function wrapOpenAssessmentBlock() {
@@ -407,9 +446,10 @@
 
   function onFileInputChange(event) {
     var input = event.target;
-    if (!input.matches('input.submission__answer__upload, input.file--upload, input[type="file"]')) {
+    if (event.robboOraHandled || !input.matches('input.submission__answer__upload, input.file--upload')) {
       return;
     }
+    event.robboOraHandled = true;
     handleFileInputSelected(input);
   }
 
@@ -436,7 +476,11 @@
 
   function onAjaxSuccess(event, xhr, settings) {
     var url = settings && settings.url ? String(settings.url) : '';
-    if (url.indexOf('download_url') !== -1 || url.indexOf('save_files_descriptions') !== -1) {
+    if (
+      url.indexOf('download_url') !== -1
+      || url.indexOf('save_files_descriptions') !== -1
+      || url.indexOf('remove_uploaded_file') !== -1
+    ) {
       scheduleRefreshUploadUi();
     }
     if (url.indexOf('download_url') !== -1) {
@@ -479,13 +523,10 @@
     if (typeof window.jQuery !== 'undefined') {
       window.jQuery.ajaxPrefilter(patchSaveFilesDescriptionsPayload);
       window.jQuery(document).ajaxSuccess(onAjaxSuccess);
-      window.jQuery(document).on(
-        'change.robboOraUpload',
-        'input.submission__answer__upload, input.file--upload, input[type=file]',
-        function () {
-          handleFileInputSelected(this);
-        }
-      );
+      // Failed uploads reset the input via jQuery .val(null) without a change event.
+      window.jQuery(document).ajaxComplete(function () {
+        scheduleRefreshUploadUi();
+      });
     }
 
     wrapOpenAssessmentBlock();

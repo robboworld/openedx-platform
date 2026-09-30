@@ -62,12 +62,14 @@
             <p class="setting-help">{% trans "Specify whether learners can upload more than one file. This has no effect if File Uploads Response is set to None. This is automatically set to True for Team Assignments. "%}</p>
             <div class="wrapper-comp-setting">
                 <label for="openassessment_max_files_editor" class="setting-label">{% trans "Maximum File Uploads" %}</label>
+                {# text + inputmode: type=number gets edx-ora2's gradient/inset-shadow styling unlike other fields; 1–20 is clamped in JS and on save #}
                 <input id="openassessment_max_files_editor"
                        class="input setting-input"
-                       type="number"
-                       value="{{ max_files_count }}"
-                       min="1"
-                       max="20" />
+                       type="text"
+                       inputmode="numeric"
+                       pattern="[0-9]*"
+                       maxlength="2"
+                       value="{{ max_files_count }}" />
             </div>
             <p class="setting-help">{% trans "Specify the maximum number of files a learner can upload. Valid numbers are 1 to 20." %}</p>
             <div class="wrapper-comp-setting">
@@ -99,6 +101,27 @@
                 <p class="setting-help warning-banner extension-warning {% if file_upload_type == "custom" %}is--hidden{% endif %}">
                     {% trans "To add more file extensions, select Custom File Types and enter the full list of acceptable file extensions to be included." %}
                 </p>
+            </div>
+            {# Robbo: per-extension size limits; rows are built by robbo-ora-studio-patch.js from the selected file types. #}
+            <div id="robbo_ora_large_files_wrapper" class="robbo-ora-large-files"
+                 data-default-mb="{{ robbo_default_file_mb }}"
+                 data-cap-mb="{{ robbo_large_file_mb_cap }}"
+                 data-limits="{{ robbo_file_size_limits_json }}"
+                 data-presets="{{ robbo_preset_extensions_json }}">
+                <div class="wrapper-comp-setting robbo-ora-large-files__toggle">
+                    <input type="checkbox" id="robbo_ora_large_files_toggle" class="robbo-ora-large-files__checkbox"
+                           {% if robbo_large_files %}checked{% endif %}
+                           aria-controls="robbo_ora_size_limits" />
+                    <label for="robbo_ora_large_files_toggle" class="setting-label">{% trans "Larger file sizes" %}</label>
+                </div>
+                <p class="setting-help">
+                    {% blocktrans with default_mb=robbo_default_file_mb cap_mb=robbo_large_file_mb_cap %}Default is {{ default_mb }} MB, maximum is {{ cap_mb }} MB per file.{% endblocktrans %}
+                </p>
+                <div id="robbo_ora_size_limits" class="robbo-ora-size-limits {% if not robbo_large_files %}is--hidden{% endif %}">
+                    <p class="setting-label robbo-ora-size-limits__title">{% trans "Maximum file size by type" %}</p>
+                    <ul class="robbo-ora-size-limits__list" aria-label="{% trans "Maximum file size by type" %}"></ul>
+                    <p class="setting-help robbo-ora-size-limits__empty is--hidden">{% trans "Select file types above to set their size limits." %}</p>
+                </div>
             </div>
         </div>
     </li>

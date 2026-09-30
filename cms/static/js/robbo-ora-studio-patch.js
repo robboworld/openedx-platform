@@ -1,5 +1,6 @@
 /**
- * Robbo patch: max_files_count on save, necessity rules, RU select labels.
+ * Robbo patch for the ORA Studio editor: max_files_count on save, necessity rules, RU select
+ * labels, and per-extension size limits ("Larger file sizes").
  */
 (function () {
   'use strict';
@@ -273,6 +274,174 @@
     return msg;
   }
 
+  // --- "Larger file sizes" option: per-extension size limit rows in the editor ---
+
+  var SIZE_UNIT_FALLBACK = {
+    MB: 'МБ',
+  };
+
+  function tSizeUnit(msg) {
+    if (typeof window.gettext === 'function') {
+      var translated = window.gettext(msg);
+      if (translated && translated !== msg) {
+        return translated;
+      }
+    }
+    return SIZE_UNIT_FALLBACK[msg] || msg;
+  }
+
+  function readJsonAttr(el, name, fallback) {
+    try {
+      return JSON.parse(el.getAttribute(name) || '') || fallback;
+    } catch (error) {
+      return fallback;
+    }
+  }
+
+  function normalizeExtension(value) {
+    return String(value || '').trim().replace(/^\.+/, '').toLowerCase();
+  }
+
+  function selectedExtensions(wrapper) {
+    var typeSelect = document.getElementById('openassessment_submission_upload_selector');
+    var type = typeSelect ? typeSelect.value : '';
+    var presets = readJsonAttr(wrapper, 'data-presets', {});
+    var list = presets[type];
+    if (!list) {
+      var custom = document.getElementById('openassessment_submission_white_listed_file_types');
+      list = custom ? custom.value.split(',') : [];
+    }
+    var seen = {};
+    return list.map(normalizeExtension).filter(function (ext) {
+      if (!ext || seen[ext]) {
+        return false;
+      }
+      seen[ext] = true;
+      return true;
+    });
+  }
+
+  function clampMb(wrapper, value) {
+    var cap = parseInt(wrapper.getAttribute('data-cap-mb'), 10) || 50;
+    var mb = parseInt(value, 10);
+    if (Number.isNaN(mb)) {
+      return null;
+    }
+    return Math.max(1, Math.min(cap, mb));
+  }
+
+  function renderSizeRows(wrapper) {
+    var list = wrapper.querySelector('.robbo-ora-size-limits__list');
+    var empty = wrapper.querySelector('.robbo-ora-size-limits__empty');
+    if (!list) {
+      return;
+    }
+    var defaultMb = parseInt(wrapper.getAttribute('data-default-mb'), 10) || 5;
+    var limits = wrapper._robboLimits;
+    var extensions = selectedExtensions(wrapper);
+    list.replaceChildren();
+    extensions.forEach(function (ext) {
+      var id = 'robbo_ora_size_limit_' + ext.replace(/[^a-z0-9_-]/g, '_');
+      var row = document.createElement('li');
+      row.className = 'robbo-ora-size-limits__row';
+      var label = document.createElement('label');
+      label.setAttribute('for', id);
+      label.textContent = '.' + ext;
+      var input = document.createElement('input');
+      input.id = id;
+      input.type = 'text';
+      input.className = 'input setting-input';
+      input.setAttribute('inputmode', 'numeric');
+      input.setAttribute('maxlength', '2');
+      input.setAttribute('data-extension', ext);
+      input.value = String(limits[ext] || defaultMb);
+      var unit = document.createElement('span');
+      unit.textContent = tSizeUnit('MB');
+      row.appendChild(label);
+      row.appendChild(input);
+      row.appendChild(unit);
+      list.appendChild(row);
+    });
+    if (empty) {
+      empty.classList.toggle('is--hidden', extensions.length > 0);
+    }
+  }
+
+  function syncSizeVisibility(wrapper) {
+    var toggle = wrapper.querySelector('#robbo_ora_large_files_toggle');
+    var panel = wrapper.querySelector('.robbo-ora-size-limits');
+    if (toggle && panel) {
+      panel.classList.toggle('is--hidden', !toggle.checked);
+      toggle.setAttribute('aria-expanded', toggle.checked ? 'true' : 'false');
+    }
+  }
+
+  function initLargeFiles() {
+    var wrapper = document.getElementById('robbo_ora_large_files_wrapper');
+    if (!wrapper || wrapper._robboInit) {
+      return;
+    }
+    wrapper._robboInit = true;
+    wrapper._robboLimits = readJsonAttr(wrapper, 'data-limits', {});
+    renderSizeRows(wrapper);
+    syncSizeVisibility(wrapper);
+
+    wrapper.addEventListener('change', function (event) {
+      if (event.target.id === 'robbo_ora_large_files_toggle') {
+        syncSizeVisibility(wrapper);
+      }
+    });
+    wrapper.addEventListener('input', function (event) {
+      var input = event.target;
+      var ext = input.getAttribute && input.getAttribute('data-extension');
+      if (!ext) {
+        return;
+      }
+      input.value = input.value.replace(/[^0-9]/g, '');
+      var mb = clampMb(wrapper, input.value);
+      input.classList.toggle('is--invalid', mb === null || String(mb) !== input.value);
+      if (mb !== null) {
+        wrapper._robboLimits[ext] = mb;
+      }
+    });
+    wrapper.addEventListener('focusout', function (event) {
+      var input = event.target;
+      var ext = input.getAttribute && input.getAttribute('data-extension');
+      if (!ext) {
+        return;
+      }
+      var mb = clampMb(wrapper, input.value) || parseInt(wrapper.getAttribute('data-default-mb'), 10) || 5;
+      input.value = String(mb);
+      input.classList.remove('is--invalid');
+      wrapper._robboLimits[ext] = mb;
+    });
+    // Rebuild the rows when the author switches the upload type or edits the custom list.
+    ['openassessment_submission_upload_selector', 'openassessment_submission_white_listed_file_types']
+      .forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('change', function () { renderSizeRows(wrapper); });
+          el.addEventListener('input', function () { renderSizeRows(wrapper); });
+        }
+      });
+  }
+
+  function readSizeSettings() {
+    var wrapper = document.getElementById('robbo_ora_large_files_wrapper');
+    if (!wrapper) {
+      return null;
+    }
+    var toggle = wrapper.querySelector('#robbo_ora_large_files_toggle');
+    var limits = {};
+    wrapper.querySelectorAll('input[data-extension]').forEach(function (input) {
+      var mb = clampMb(wrapper, input.value);
+      if (mb !== null) {
+        limits[input.getAttribute('data-extension')] = mb;
+      }
+    });
+    return { enabled: !!(toggle && toggle.checked), limits: limits };
+  }
+
   function installAjaxHooks() {
     if (!window.jQuery || window.jQuery._robboOraAjaxHooks) {
       return;
@@ -290,6 +459,12 @@
         var maxFiles = readMaxFilesCount();
         if (maxFiles !== null) {
           payload.max_files_count = maxFiles;
+        }
+        // edx-ora2 bundles ServerClient inside webpack (no global), so extend the save request itself.
+        var sizeSettings = readSizeSettings();
+        if (sizeSettings) {
+          payload.robbo_large_files = sizeSettings.enabled;
+          payload.robbo_file_size_limits = sizeSettings.limits;
         }
         options.data = JSON.stringify(payload);
       } catch (e) {
@@ -324,6 +499,7 @@
           syncNecessityOptionLabels();
           installNecessityFieldListeners();
           updateNecessityHintVisibility();
+          initLargeFiles();
         });
         observer.observe(editor, { childList: true, subtree: true });
         editor._robboLabelObserver = observer;
@@ -332,6 +508,7 @@
     syncNecessityOptionLabels();
     installNecessityFieldListeners();
     updateNecessityHintVisibility();
+    initLargeFiles();
     return true;
   }
 
