@@ -65,7 +65,7 @@ from openedx.core.djangolib.js_utils import dump_js_escaped_json
 from openedx.core.lib.course_tabs import CourseTabPluginManager
 from organizations.models import Organization
 from xmodule.contentstore.content import StaticContent  # lint-amnesty, pylint: disable=wrong-import-order
-from xmodule.course_block import CourseBlock, CourseFields  # lint-amnesty, pylint: disable=wrong-import-order
+from xmodule.course_block import CATALOG_VISIBILITY_NONE, CourseBlock, CourseFields  # lint-amnesty, pylint: disable=wrong-import-order
 from xmodule.error_block import ErrorBlock  # lint-amnesty, pylint: disable=wrong-import-order
 from xmodule.modulestore import EdxJSONEncoder  # lint-amnesty, pylint: disable=wrong-import-order
 from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
@@ -989,6 +989,11 @@ def create_new_course_in_store(store, user, org, number, run, fields):
         'language': getattr(settings, 'DEFAULT_COURSE_LANGUAGE', 'en'),
         'cert_html_view_enabled': True,
     })
+
+    # Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
+    # New courses start hidden (no catalog, no about page); the team opens them in Advanced Settings.
+    # Stored explicitly so existing courses keep the platform default ("both"). Reruns copy the source.
+    fields.setdefault('catalog_visibility', CATALOG_VISIBILITY_NONE)
 
     with modulestore().default_store(store):
         # Creating the course raises DuplicateCourseError if an existing course with this org/name is found
