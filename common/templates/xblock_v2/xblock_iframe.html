@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 
 <!-- Set the height of the iframe to 100% of the viewport height to avoid an extra scrollbar -->
 <html style="height: 100vh;">
@@ -187,7 +188,8 @@
   <!-- This must appear after all mathjax-config blocks, so it is after the imports from the other templates.
        It can't be run through static.url because MathJax uses crazy url introspection to do lazy loading of
        MathJax extension libraries -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_SVG"></script>
+  {# Robbo: self-hosted copy (common/static/js/vendor/mathjax-2.7.5) — the jsdelivr CDN is a render-blocking script on every unit and is slow/unreachable for our learners. Unhashed URL on purpose: MathJax finds its root (and lazy-loaded config/jax/extensions) by the `MathJax.js` name in its own src. #}
+  <script type="text/javascript" src="{% get_static_prefix %}js/vendor/mathjax-2.7.5/MathJax.js?config=TeX-MML-AM_SVG"></script>
   <!-- fragment head -->
   {{ fragment.head_html | safe }}
 </head>

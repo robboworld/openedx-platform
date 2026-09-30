@@ -137,7 +137,11 @@
             'jquery_extend_patch': 'js/src/jquery_extend_patch',
 
             // externally hosted files
-            mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_SVG&delayStartupUntil=configured', // eslint-disable-line max-len
+            // Robbo: self-hosted MathJax (see common/static/js/vendor/mathjax-2.7.5); absolute URL keeps RequireJS
+            // from resolving it against baseUrl twice and keeps the unhashed `MathJax.js` name MathJax relies on.
+            // `typeof window` guard: r.js evaluates this file outside a browser (build.js maps mathjax to empty:).
+            mathjax: (typeof window !== 'undefined' ? window.baseUrl : '/static/studio/')
+                + 'js/vendor/mathjax-2.7.5/MathJax.js?config=TeX-MML-AM_SVG&delayStartupUntil=configured',
             'youtube': [
                 // youtube URL does not end in '.js'. We add '?noext' to the path so
                 // that require.js adds the '.js' to the query component of the URL,
