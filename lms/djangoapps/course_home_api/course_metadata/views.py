@@ -22,12 +22,12 @@ from lms.djangoapps.course_api.api import course_detail
 from lms.djangoapps.course_goals.models import UserActivity
 from lms.djangoapps.course_home_api.course_metadata.serializers import CourseHomeMetadataSerializer
 from lms.djangoapps.courseware.access import has_access, has_cms_access
+from lms.djangoapps.courseware.access_response import CourseAboutOnlyAccessError
 from lms.djangoapps.courseware.context_processor import user_timezone_locale_prefs
 from lms.djangoapps.courseware.courses import check_course_access
-from lms.djangoapps.courseware.courseware_access_exception import CoursewareAccessException
 from lms.djangoapps.courseware.masquerade import setup_masquerade
 from lms.djangoapps.courseware.tabs import get_course_tab_list
-from openedx.core.djangoapps.content.course_overviews.api import get_course_overview_or_404
+from xmodule.course_block import CATALOG_VISIBILITY_ABOUT  # lint-amnesty, pylint: disable=wrong-import-order
 
 
 @method_decorator(transaction.non_atomic_requests, name='dispatch')
@@ -85,17 +85,7 @@ class CourseHomeMetadataView(RetrieveAPIView):
         original_user_is_global_staff = self.request.user.is_staff
         original_user_is_staff = has_access(request.user, 'staff', course_key).has_access
 
-        # Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
-        # Enrolled learners must load course home even when the course about page is hidden
-        # (catalog_visibility=none, archived runs, etc.).
-        try:
-            course = course_detail(request, request.user.username, course_key)
-        except CoursewareAccessException:
-            enrollment = CourseEnrollment.get_enrollment(request.user, course_key_string)
-            if enrollment and enrollment.is_active:
-                course = get_course_overview_or_404(course_key)
-            else:
-                raise
+        course = course_detail(request, request.user.username, course_key)
 
         # We must compute course load access *before* setting up masquerading,
         # else course staff (who are not enrolled) will not be able view
@@ -108,6 +98,15 @@ class CourseHomeMetadataView(RetrieveAPIView):
             check_if_authenticated=True,
             apply_enterprise_checks=True,
         )
+        # Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
+        # catalog_visibility "about": users who are not enrolled get only the about page
+        # (the learning MFE redirects on this error code instead of showing course tabs).
+        if (
+            not load_access.has_access
+            and load_access.error_code in ('enrollment_required', 'authentication_required')
+            and course.catalog_visibility == CATALOG_VISIBILITY_ABOUT
+        ):
+            load_access = CourseAboutOnlyAccessError()
 
         _, request.user = setup_masquerade(
             request,
