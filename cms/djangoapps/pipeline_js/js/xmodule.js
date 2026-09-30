@@ -18,7 +18,8 @@ define(
         window._ = _;
 
         $script(
-            'https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js'
+            // Robbo: self-hosted MathJax instead of the jsdelivr CDN.
+            window.baseUrl + 'js/vendor/mathjax-2.7.5/MathJax.js'
             + '?config=TeX-MML-AM_SVG&delayStartupUntil=configured',
             'mathjax',
             function() {

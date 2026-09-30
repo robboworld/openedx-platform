@@ -51,6 +51,7 @@ if (typeof MathJax === 'undefined') {
             explorer: true
         }
     };
-    vendorScript.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_HTMLorMML';
+    // Robbo: self-hosted MathJax; SVG output like the rest of the platform (the local copy ships SVG only).
+    vendorScript.src = window.baseUrl + 'js/vendor/mathjax-2.7.5/MathJax.js?config=TeX-MML-AM_SVG';
     document.body.appendChild(vendorScript);
 }

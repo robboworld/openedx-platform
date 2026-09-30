@@ -24,4 +24,8 @@ $font-family-title: 'ProximaNova', 'Proxima Nova', Helvetica, Arial, sans-serif;
 $font-family-sans-serif: 'ProximaNova', 'Proxima Nova', Helvetica, Arial, sans-serif;
 
 // Initialize the Open edX Bootstrap theme
-@import 'edx-bootstrap/sass/open-edx/theme';
+// edx-bootstrap `open-edx/theme` = functions + variables + `../fonts`; the last one is
+// @import url(fonts.googleapis.com) — render-blocking and often unreachable (10 s+ stalls of Studio
+// unit iframe and LMS). Import the first two only; Open Sans is served locally via @font-face.
+@import 'bootstrap/scss/functions';
+@import 'edx-bootstrap/sass/open-edx/variables';
