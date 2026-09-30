@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Part of the Robbo Open edX distribution. See NOTICE at repository root.
 //
-// Static page /about: company info and project history timeline.
+// Static page /about: company info, achievements list and project history timeline.
 
 // Single document scroll: `.window-wrap` flex + `min-height: 0` on `#content` nests a second
 // scrollbar when the timeline is long; same class of fix as guest landing (`_guest-landing.scss`).
@@ -53,6 +53,7 @@ body.robbo-about:not(.robbo-guest-landing-page) {
     --robbo-about-timeline-year-w: 5.5rem;
     --robbo-about-timeline-gap: clamp(0.75rem, 2vw, 1.25rem);
     --robbo-about-timeline-divider: #e5e7eb;
+    --robbo-about-marker-size: 0.625rem;
 
     align-items: center;
     box-sizing: border-box;
@@ -143,6 +144,45 @@ body.robbo-about:not(.robbo-guest-landing-page) {
     margin: 0;
     min-width: 0;
     overflow-wrap: anywhere;
+}
+
+// Achievements: same rhythm and dividers as the timeline; a green dot replaces the year column.
+.robbo-about-page__achievements {
+    display: flex;
+    flex-direction: column;
+    gap: var(--robbo-about-timeline-gap);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.robbo-about-page__achievement {
+    border-bottom: 1px solid var(--robbo-about-timeline-divider);
+    color: var(--robbo-about-text);
+    display: grid;
+    font-size: var(--robbo-about-body-fs);
+    gap: 1rem;
+    grid-template-columns: var(--robbo-about-marker-size) minmax(0, 1fr);
+    line-height: var(--robbo-about-line-height);
+    margin: 0;
+    overflow-wrap: anywhere;
+    padding: 0 0 var(--robbo-about-timeline-gap);
+
+    // Centre the dot on the first text line.
+    &::before {
+        background: var(--robbo-about-accent);
+        border-radius: 50%;
+        content: "";
+        height: var(--robbo-about-marker-size);
+        margin-top: calc((var(--robbo-about-line-height) * 1em - var(--robbo-about-marker-size)) / 2);
+        width: var(--robbo-about-marker-size);
+    }
+
+    &:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
 }
 
 // Legacy `.container.about` in `_extras.scss` adds extra padding — reset for Robbo page.
