@@ -44,7 +44,7 @@ from lms.djangoapps.courseware.toggles import course_is_invitation_only
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from openedx.features.course_duration_limits.access import check_course_expired
 from common.djangoapps.student import auth
-from common.djangoapps.student.models import CourseEnrollmentAllowed
+from common.djangoapps.student.models import CourseEnrollment, CourseEnrollmentAllowed
 from common.djangoapps.student.roles import (
     CourseBetaTesterRole,
     CourseCcxCoachRole,
@@ -430,10 +430,14 @@ def _has_access_course(user, action, courselike):
         In this case we use the catalog_visibility property on the course block
         but also allow course staff to see this.
         """
+        # Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
+        # Enrolled learners keep the about page and every API gated by it (course_detail,
+        # course home metadata, courseware meta) even when catalog_visibility is "none".
         return (
             _has_catalog_visibility(courselike, CATALOG_VISIBILITY_CATALOG_AND_ABOUT)
             or _has_catalog_visibility(courselike, CATALOG_VISIBILITY_ABOUT)
             or _has_staff_access_to_block(user, courselike, courselike.id)
+            or _has_active_enrollment(user, courselike.id)
         )
 
     checkers = {
@@ -883,6 +887,16 @@ def _has_catalog_visibility(course, visibility_type):
     Returns whether the given course has the given visibility type
     """
     return ACCESS_GRANTED if course.catalog_visibility == visibility_type else ACCESS_DENIED
+
+
+def _has_active_enrollment(user, course_key):
+    """
+    Returns whether the user has an active enrollment in the course (Robbo).
+    """
+    # Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
+    if user.is_authenticated and CourseEnrollment.is_enrolled(user, course_key):
+        return ACCESS_GRANTED
+    return ACCESS_DENIED
 
 
 def _is_block_mobile_available(block):

@@ -632,6 +632,19 @@ class AccessTestCase(LoginEnrollmentTestCase, ModuleStoreTestCase, MilestonesTes
         assert access._has_access_course(staff, 'see_in_catalog', course)
         assert access._has_access_course(staff, 'see_about_page', course)
 
+    # Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
+    def test__catalog_visibility_none_enrolled_learner(self):
+        """
+        Enrolled learners keep the about page when catalog_visibility is "none", but not the catalog.
+        """
+        user = UserFactory.create()
+        course = CourseOverviewFactory.create(catalog_visibility=CATALOG_VISIBILITY_NONE)
+        assert not access._has_access_course(user, 'see_about_page', course)
+
+        CourseEnrollmentFactory(user=user, course_id=course.id)
+        assert access._has_access_course(user, 'see_about_page', course)
+        assert not access._has_access_course(user, 'see_in_catalog', course)
+
     @patch.dict("django.conf.settings.FEATURES", {'ENABLE_PREREQUISITE_COURSES': True, 'MILESTONES_APP': True})
     def test_access_on_course_with_pre_requisites(self):
         """
