@@ -254,6 +254,19 @@ class EnrollmentRequiredAccessError(AccessError):
         super().__init__(error_code, developer_message, user_message)
 
 
+# Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
+class CourseAboutOnlyAccessError(AccessError):
+    """
+    Access denied: the course is published with catalog_visibility "about", so users who are not
+    enrolled are sent to the course about page instead of the course home.
+    """
+    def __init__(self):
+        error_code = "course_about_only"
+        developer_message = "Course is only available through its about page to users who are not enrolled"
+        user_message = _("You must be enrolled in the course")
+        super().__init__(error_code, developer_message, user_message)
+
+
 class IncorrectActiveEnterpriseAccessError(AccessError):
     """
     Access denied because the user must login with correct enterprise.

@@ -22,10 +22,12 @@ from lms.djangoapps.course_api.api import course_detail
 from lms.djangoapps.course_goals.models import UserActivity
 from lms.djangoapps.course_home_api.course_metadata.serializers import CourseHomeMetadataSerializer
 from lms.djangoapps.courseware.access import has_access, has_cms_access
+from lms.djangoapps.courseware.access_response import CourseAboutOnlyAccessError
 from lms.djangoapps.courseware.context_processor import user_timezone_locale_prefs
 from lms.djangoapps.courseware.courses import check_course_access
 from lms.djangoapps.courseware.masquerade import setup_masquerade
 from lms.djangoapps.courseware.tabs import get_course_tab_list
+from xmodule.course_block import CATALOG_VISIBILITY_ABOUT  # lint-amnesty, pylint: disable=wrong-import-order
 
 
 @method_decorator(transaction.non_atomic_requests, name='dispatch')
@@ -96,6 +98,15 @@ class CourseHomeMetadataView(RetrieveAPIView):
             check_if_authenticated=True,
             apply_enterprise_checks=True,
         )
+        # Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
+        # catalog_visibility "about": users who are not enrolled get only the about page
+        # (the learning MFE redirects on this error code instead of showing course tabs).
+        if (
+            not load_access.has_access
+            and load_access.error_code in ('enrollment_required', 'authentication_required')
+            and course.catalog_visibility == CATALOG_VISIBILITY_ABOUT
+        ):
+            load_access = CourseAboutOnlyAccessError()
 
         _, request.user = setup_masquerade(
             request,
