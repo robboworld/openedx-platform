@@ -51,6 +51,11 @@ while read -r -d $'\0' src_file ; do
     fi
 done < <(find "$node_modules/@edx/studio-frontend/dist" -type f -print0)
 
+# Robbo: studio-frontend CSS starts with @import url(fonts.googleapis.com/...), which is render-blocking
+# and often unreachable from our networks (Studio iframes stall for 10 s+). Open Sans is served locally.
+log "Removing Google Fonts @import from studio-frontend CSS..."
+log_and_run sed -i -E 's#@import url\((["'"'"']?)https://fonts\.googleapis\.com/[^)]*\);?##' "$vendor_css"/*.css
+
 log "Copying certain JS modules from node_modules into vendor directory..."
 log_and_run cp --force \
     "$node_modules/backbone.paginator/lib/backbone.paginator.js" \

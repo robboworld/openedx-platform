@@ -1,3 +1,6 @@
 // Default bootstrap theming
 
-@import 'edx-bootstrap/sass/open-edx/theme';
+// Robbo: edx-bootstrap `open-edx/theme` minus its `../fonts` partial, which is a render-blocking
+// @import url(fonts.googleapis.com) (10 s+ stalls when Google is slow/unreachable). Open Sans is local.
+@import 'bootstrap/scss/functions';
+@import 'edx-bootstrap/sass/open-edx/variables';
