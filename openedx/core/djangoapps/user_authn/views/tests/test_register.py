@@ -299,7 +299,7 @@ class RegistrationViewValidationErrorTest(
             }
         )
 
-        # testing for http/https (too few words)
+        # testing for http/https
         response = self.client.post(self.url, {
             "email": "bob@example.com",
             "name": "http://",
@@ -312,7 +312,7 @@ class RegistrationViewValidationErrorTest(
         self.assertDictEqual(
             response_json,
             {
-                "name": [{"user_message": 'Full name must contain three words separated by spaces.'}],
+                "name": [{"user_message": 'Enter a valid name'}],
                 "error_code": "validation-error"
             }
         )

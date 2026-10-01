@@ -102,21 +102,12 @@ def contains_url(value):
     return bool(regex)
 
 
-def name_has_three_words(name):
-    """True when full name is exactly three non-empty words separated by whitespace."""
-    if not name or not str(name).strip():
-        return False
-    return len(str(name).strip().split()) == 3
-
-
 def validate_name(name):
     """
     Verifies a Full_Name is valid, raises a ValidationError otherwise.
     Args:
         name (unicode): The name to validate.
     """
-    if not name_has_three_words(name):
-        raise forms.ValidationError(_('Full name must contain three words separated by spaces.'))
     if contains_html(name):
         raise forms.ValidationError(_('Full Name cannot contain the following characters: < >'))
     if contains_url(name):
