@@ -1949,13 +1949,12 @@ TIME_ZONE = 'UTC'
 LANGUAGE_CODE = 'en'  # Robbo courses instance default locale (online keeps 'ru')
 
 # edx-ace transactional email default when ``personalize(..., language=None)`` (see ace_common.message).
-# Override via Site configuration key ACE_EMAIL_DEFAULT_LANGUAGE if needed.
-ACE_EMAIL_DEFAULT_LANGUAGE = 'ru'
+# Read from Django settings only (not Site configuration). courses: English instance.
+ACE_EMAIL_DEFAULT_LANGUAGE = 'en'
 
 # Account activation email language for all recipients (ignores user language preference).
-# Set to e.g. 'ru' so activation mail is always fully translated for that locale.
-# Override via Site configuration key ACTIVATION_EMAIL_LANGUAGE if needed.
-ACTIVATION_EMAIL_LANGUAGE = 'ru'
+# Read from Django settings only (not Site configuration). courses: English instance.
+ACTIVATION_EMAIL_LANGUAGE = 'en'
 # these languages display right to left
 LANGUAGES_BIDI = ("he", "ar", "fa", "ur", "fa-ir", "rtl")
 

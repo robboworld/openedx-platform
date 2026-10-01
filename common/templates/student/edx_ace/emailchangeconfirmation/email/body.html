@@ -1,4 +1,5 @@
 {% extends 'ace_common/edx_ace/common/base_body.html' %}
+{% load i18n %}
 
 {% load static %}
 {% block content %}
@@ -7,18 +8,18 @@
         <td>
             <h1>
                 {% filter force_escape %}
-                Подтверждение смены email — {{ platform_name }}
+                {% blocktrans %}Email Change Confirmation for {{ platform_name }}{% endblocktrans %}
                 {% endfilter %}
             </h1>
             <p>
                 {% filter force_escape %}
-                Это подтверждение того, что вы сменили email учётной записи {{ platform_name }} с {{ old_email }} на {{ new_email }}. Если это были не вы, срочно свяжитесь с нами:
+                {% blocktrans %}This is to confirm that you changed the e-mail associated with {{ platform_name }} from {{ old_email }} to {{ new_email }}. If you did not make this request, please contact us immediately. Contact information is listed at:{% endblocktrans %}
                 {% endfilter %}
             </p>
             <p><a href="{{ contact_link|escape }}">{{ contact_link|escape }}</a></p>
             <p>
                 {% filter force_escape %}
-                Мы храним историю прежних адресов — при ошибочном запросе сможем разобраться.
+                {% blocktrans %}We keep a log of old e-mails, so if this request was unintentional, we can investigate.{% endblocktrans %}
                 {% endfilter %}
             </p>
         </td>

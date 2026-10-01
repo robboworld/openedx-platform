@@ -4,7 +4,7 @@
 {% get_current_language as LANGUAGE_CODE %}
 <title lang="{{ LANGUAGE_CODE|default:"ru" }}">
   {% block title %}
-  {% filter force_escape %}{{ platform_name }} — электронное письмо{% endfilter %}
+  {% filter force_escape %}{% blocktrans %}{{ platform_name }} Email{% endblocktrans %}{% endfilter %}
   {% endblock %}
 </title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -51,7 +51,7 @@
       .paddingtop_10 {padding-top: 10px !important;}
     }
 
-    /* Robbo: единая типографика основного блока ACE (клиенты с поддержкой <style>) */
+    /* Robbo: shared typography for the ACE main block (clients that support <style>) */
     .main h1 {
       margin: 0 0 18px 0;
       padding: 0;

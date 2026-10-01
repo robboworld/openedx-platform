@@ -1,1 +1,4 @@
-{% autoescape off %}Создание пароля на {{ platform_name }}{% endautoescape %}
+{% load i18n %}
+{% autoescape off %}
+{% blocktrans trimmed %}Password creation on {{ platform_name }}{% endblocktrans %}
+{% endautoescape %}

@@ -1,22 +1,24 @@
 {% extends 'ace_common/edx_ace/common/base_body.html' %}
+{% load i18n %}
 
 {% load static %}
 {% block content %}
 <table width="100%" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse;">
     <tr>
         <td>
-            <h1>Пароль успешно изменён</h1>
+            <h1>{% trans "Password reset success" as tmsg %}{{ tmsg | force_escape }}</h1>
             <p>
                 {% filter force_escape %}
-                Здравствуйте, {{ name }}!
+                {% blocktrans %}Hello {{ name }},{% endblocktrans %}
                 {% endfilter %}
             </p>
             <p>
                 {% filter force_escape %}
-                Подтверждаем: пароль для учётной записи {{ platform_name }} успешно изменён. Войдите в систему с новым паролем.
+                {% blocktrans %}This is to confirm that you have successfully changed your password associated with {{ platform_name }} account. Please sign-in to your account.{% endblocktrans %}
                 {% endfilter %}
             </p>
-            {% include "ace_common/edx_ace/common/return_to_course_cta.html" with course_cta_text="Войти" course_cta_url=login_link %}
+            {% trans "Sign in" as course_cta_text %}
+            {% include "ace_common/edx_ace/common/return_to_course_cta.html" with course_cta_text=course_cta_text course_cta_url=login_link %}
         </td>
     </tr>
 </table>

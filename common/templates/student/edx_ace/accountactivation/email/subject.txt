@@ -1,1 +1,4 @@
-{% autoescape off %}Требуется действие: активируйте учётную запись {{ platform_name }}{% endautoescape %}
+{% load i18n %}
+{% autoescape off %}
+{% blocktrans trimmed %}Action Required: Activate your {{ platform_name }} account{% endblocktrans %}
+{% endautoescape %}
