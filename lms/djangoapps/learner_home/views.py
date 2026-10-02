@@ -4,12 +4,14 @@ Views for Learner Home
 Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
+import hashlib
 import logging
 from collections import OrderedDict
 
 from completion.exceptions import UnavailableCompletionData
 from completion.utilities import get_key_to_last_completed_block
 from django.conf import settings
+from django.core.cache import cache
 from django.urls import reverse
 from edx_django_utils import monitoring as monitoring_utils
 from edx_django_utils.monitoring import function_trace
@@ -259,8 +261,24 @@ def get_org_block_and_allow_lists():
     return get_org_black_and_whitelist_for_site()
 
 
-def _resolve_resume_block_title(block_key):
-    """Return display name for the resume block, or None if unavailable."""
+RESUME_BLOCK_TITLE_CACHE_TTL = 24 * 60 * 60
+
+
+def _resolve_resume_block_title(block_key, course_modified=None):
+    """
+    Return display name for the resume block, or None if unavailable.
+
+    Cached per block and course publish time: a modulestore read per enrollment
+    was a noticeable part of the dashboard load.
+    """
+    stamp = course_modified.isoformat() if course_modified else "-"
+    cache_key = "robbo:resume_block_title:v1:" + hashlib.md5(
+        f"{block_key}|{stamp}".encode("utf-8")
+    ).hexdigest()
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached or None
+
     try:
         from xmodule.modulestore.django import modulestore  # pylint: disable=import-outside-toplevel
 
@@ -271,7 +289,9 @@ def _resolve_resume_block_title(block_key):
     title = getattr(block, "display_name_with_default", None) or getattr(
         block, "display_name", None
     )
-    return str(title) if title else None
+    title = str(title) if title else ""
+    cache.set(cache_key, title, RESUME_BLOCK_TITLE_CACHE_TTL)
+    return title or None
 
 
 @function_trace("get_resume_data_for_course_enrollments")
@@ -294,7 +314,9 @@ def get_resume_data_for_course_enrollments(user, course_enrollments):
                     "jump_to",
                     kwargs={"course_id": enrollment.course_id, "location": block_key},
                 )
-                block_title = _resolve_resume_block_title(block_key)
+                block_title = _resolve_resume_block_title(
+                    block_key, getattr(enrollment.course_overview, "modified", None)
+                )
                 if block_title:
                     resume_block_titles[enrollment.course_id] = block_title
         except UnavailableCompletionData:
@@ -314,37 +336,15 @@ def get_resume_urls_for_course_enrollments(user, course_enrollments):
 
 @function_trace("get_course_progress")
 def get_course_progress(user, course_enrollments):
-    """Unit completion summary for enrolled courses."""
-    from lms.djangoapps.courseware.courses import (  # pylint: disable=import-outside-toplevel
-        get_course_blocks_completion_summary,
+    """Unit completion summary for enrolled courses (cached, see robbo_course_progress)."""
+    from lms.djangoapps.courseware.robbo_course_progress import (  # pylint: disable=import-outside-toplevel
+        get_courses_progress,
     )
 
-    course_progress = {}
-
-    for enrollment in course_enrollments:
-        try:
-            summary = get_course_blocks_completion_summary(
-                enrollment.course_id, user
-            )
-            complete = int(summary.get("complete_count") or 0)
-            incomplete = int(summary.get("incomplete_count") or 0)
-            total = complete + incomplete
-            if total <= 0:
-                continue
-            percent = min(100, max(0, round(100 * complete / total)))
-            course_progress[enrollment.course_id] = {
-                "completed": complete,
-                "total": total,
-                "percent": percent,
-            }
-        except Exception as ex:  # pylint: disable=broad-except
-            logger.debug(
-                "Unable to load course progress for %s: %s",
-                enrollment.course_id,
-                ex,
-            )
-
-    return course_progress
+    progress = get_courses_progress(
+        user, [enrollment.course_overview for enrollment in course_enrollments]
+    )
+    return {course_key: value for course_key, value in progress.items() if value}
 
 
 def _get_courses_with_unmet_prerequisites(user, course_enrollments):

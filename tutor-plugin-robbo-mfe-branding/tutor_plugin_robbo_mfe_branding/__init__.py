@@ -515,6 +515,13 @@ PLUGIN_SLOTS.add_item(
     )
 )
 
+# Catalog and learner dashboard cards load course images; thumbnails are off upstream, so cards
+# pulled the originals (up to 1.6 MB). Idempotent; see the management command docstring.
+hooks.Filters.CLI_DO_INIT_TASKS.add_item(
+    ("lms", "./manage.py lms robbo_enable_course_thumbnails"),
+    priority=hooks.priorities.LOW,
+)
+
 hooks.Filters.CONFIG_DEFAULTS.add_items(
     [
         ("ROBBO_YANDEX_METRIKA_COUNTER_ID", ""),

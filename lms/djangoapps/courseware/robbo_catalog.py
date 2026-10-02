@@ -29,10 +29,12 @@ Slug → source assets (replace files under ``images/catalog/`` when refreshing 
 """
 from __future__ import annotations
 
+import hashlib
 from typing import Any, Dict, List, Optional
 from urllib.parse import urlencode
 
 from django.conf import settings
+from django.core.cache import cache
 from django.urls import reverse
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
@@ -407,10 +409,24 @@ def build_robbo_catalog_course_cards(
     """
     Catalog grid cards for courses visible on /courses (same list as ``get_courses`` in the view).
     """
+    from lms.djangoapps.courseware.robbo_course_progress import get_courses_progress  # pylint: disable=import-outside-toplevel
     from openedx.features.course_experience import course_home_url  # pylint: disable=import-outside-toplevel
 
     cards: List[Dict[str, Any]] = []
     user = getattr(request, 'user', None) if request else None
+    is_active_user = user is not None and user.is_authenticated and user.is_active
+
+    enrolled_ids = set()
+    progress_by_course: Dict[Any, Optional[Dict[str, int]]] = {}
+    if is_active_user and courses_list:
+        enrolled_ids = set(
+            CourseEnrollment.objects.filter(
+                user=user, is_active=True, course_id__in=[course.id for course in courses_list],
+            ).values_list('course_id', flat=True)
+        )
+        progress_by_course = get_courses_progress(
+            user, [course for course in courses_list if course.id in enrolled_ids]
+        )
 
     for course in courses_list:
         title = course.display_name_with_default
@@ -437,13 +453,13 @@ def build_robbo_catalog_course_cards(
         }
         card.update(_course_card_meta(course))
 
-        if user is not None and user.is_authenticated and user.is_active:
-            if CourseEnrollment.is_enrolled(user, course.id):
+        if is_active_user:
+            if course.id in enrolled_ids:
                 card['is_enrolled'] = True
                 card['cta_label'] = 'Продолжить обучение'
-                progress_percent = _enrolled_course_progress_percent(user, course.id)
-                if progress_percent is not None and progress_percent > 0:
-                    card['progress_percent'] = progress_percent
+                progress = progress_by_course.get(course.id)
+                if progress and progress['percent'] > 0:
+                    card['progress_percent'] = progress['percent']
             else:
                 card['cta_enroll'] = True
                 card['change_enrollment_url'] = reverse('change_enrollment')
@@ -588,24 +604,6 @@ def _course_card_meta(course) -> Dict[str, str]:
     return meta
 
 
-def _enrolled_course_progress_percent(user, course_key) -> Optional[int]:
-    """Unit completion percent for enrolled learners; None if unavailable or no countable units."""
-    try:
-        from lms.djangoapps.courseware.courses import get_course_blocks_completion_summary  # pylint: disable=import-outside-toplevel
-
-        summary = get_course_blocks_completion_summary(course_key, user)
-    except Exception:  # pylint: disable=broad-except
-        return None
-
-    complete = int(summary.get('complete_count') or 0)
-    incomplete = int(summary.get('incomplete_count') or 0)
-    total = complete + incomplete
-    if total <= 0:
-        return None
-
-    return min(100, max(0, round(100 * complete / total)))
-
-
 def build_robbo_catalog_featured(
     request,
     courses_list: list,
@@ -655,16 +653,31 @@ def build_robbo_catalog_featured(
     return featured
 
 
+CATALOG_EXCERPT_CACHE_TTL = 24 * 60 * 60
+
+
 def get_course_excerpt_from_overview(course) -> str:
-    """Use overview HTML from CourseDetails if set."""
+    """
+    Use overview HTML from the course About page if set.
+
+    Reads only the ``overview`` About item (``CourseDetails.fetch`` loads the whole course and
+    ~13 About items) and caches the snippet until the course is republished.
+    """
+    modified = getattr(course, 'modified', None)
+    cache_key = 'robbo:catalog_excerpt:v1:' + hashlib.md5(
+        f'{course.id}|{modified.isoformat() if modified else "-"}'.encode('utf-8')
+    ).hexdigest()
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
     try:
-        key = course.id
-        details = CourseDetails.fetch(key)
+        overview = CourseDetails.fetch_about_attribute(course.id, 'overview')
     except Exception:  # pylint: disable=broad-except
         return ''
-    if not details or not details.overview:
-        return ''
-    return _html_to_snippet(str(details.overview), max_len=500)
+    snippet = _html_to_snippet(str(overview), max_len=500) if overview else ''
+    cache.set(cache_key, snippet, CATALOG_EXCERPT_CACHE_TTL)
+    return snippet
 
 
 def _html_to_snippet(html: str, max_len: int) -> str:
