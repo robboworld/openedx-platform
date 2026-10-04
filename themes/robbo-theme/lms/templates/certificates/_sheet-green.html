@@ -1,0 +1,88 @@
+## Copyright (C) 2026 Robbo <https://robbo.ru>
+## SPDX-License-Identifier: AGPL-3.0-only
+## Part of the Robbo Open edX distribution. See NOTICE at repository root.
+##
+## "Green" certificate sheet: background traced from the designer PDF
+## (images/certificates/robbo-green-cert-bg.svg, text removed), live text on top.
+## Enabled per course: Advanced Settings → Certificate Web/HTML View Overrides →
+##   {"robbo_sheet": "green", "robbo_course_hours": "72"}
+## The sheet is English by design (the word CERTIFICATE is part of the artwork),
+## so its copy is intentionally not passed through gettext.
+<%page expression_filter="h"/>
+<%
+course_hours = str(context.get('robbo_course_hours') or '').strip()
+created_on = context.get('certificate_created_on')
+issued_on = created_on.strftime('%-d %B %Y') if created_on else certificate_created_date
+%>
+
+<main class="accomplishment accomplishment-main">
+    <div class="wrapper-accomplishment-rendering">
+        <div class="robbo-green-cert">
+            <h1 class="sr-only">Certificate</h1>
+
+            <p class="robbo-green-cert__lead">is awarded to</p>
+
+            <div class="robbo-green-cert__name-box">
+                <strong class="robbo-green-cert__name" data-robbo-fit="1">${accomplishment_copy_name}</strong>
+            </div>
+            <span class="robbo-green-cert__rule robbo-green-cert__rule--name" aria-hidden="true"></span>
+
+            <p class="robbo-green-cert__phrase">for successfully completing the course</p>
+
+            <div class="robbo-green-cert__course-box">
+                <p class="robbo-green-cert__course" data-robbo-fit="3">${accomplishment_copy_course_name}</p>
+            </div>
+
+            % if course_hours:
+            <p class="robbo-green-cert__hours">(${course_hours} hours)</p>
+            % endif
+
+            <p class="robbo-green-cert__date">${issued_on}</p>
+            <span class="robbo-green-cert__rule robbo-green-cert__rule--date" aria-hidden="true"></span>
+
+            <p class="robbo-green-cert__signatory">
+                <span>The Head of the ROBBO FINLAND Oy</span>
+                <span>Maria Hakkarainen</span>
+            </p>
+        </div>
+    </div>
+</main>
+
+<script>
+  // Shrink long names / course titles so they stay inside their box
+  // (data-robbo-fit = max number of lines; the box height is a limit too).
+  // The result is a scale factor (--robbo-fit), not a size: the stylesheet applies
+  // it to the screen size (cqw) and to the print size (mm), so it is measured once
+  // on screen and stays correct on paper.
+  (function () {
+    function fit() {
+      document.querySelectorAll('.robbo-green-cert [data-robbo-fit]').forEach(function (el) {
+        el.style.removeProperty('--robbo-fit');
+        var maxLines = parseInt(el.getAttribute('data-robbo-fit'), 10) || 1;
+        var box = el.parentElement;
+        var scale = 1;
+        var overflows = function () {
+          var lineHeight = parseFloat(getComputedStyle(el).lineHeight);
+          return el.scrollWidth > el.clientWidth + 1
+            || (lineHeight && el.offsetHeight > lineHeight * maxLines + 1)
+            || el.offsetHeight > box.clientHeight + 1;
+        };
+        while (scale > 0.5 && overflows()) {
+          scale = Math.round((scale - 0.02) * 100) / 100;
+          el.style.setProperty('--robbo-fit', scale);
+        }
+      });
+    }
+    var run = function () { (document.fonts ? document.fonts.ready : Promise.resolve()).then(fit); };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', run);
+    } else {
+      run();
+    }
+    window.addEventListener('load', fit);
+    window.addEventListener('resize', fit);
+    if (document.fonts && document.fonts.addEventListener) {
+      document.fonts.addEventListener('loadingdone', fit);
+    }
+  })();
+</script>

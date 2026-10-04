@@ -124,6 +124,8 @@ def _update_certificate_context(context, course, course_overview, user_certifica
     # Robbo cert sheet: creation date, day-first (e.g. "3 июля 2026")
     created = getattr(user_certificate, 'created_date', None) or getattr(user_certificate, 'created', None) or date
     context['certificate_created_date'] = strftime_localized(created, '%-d %B %Y')
+    # Robbo: raw value for sheets that format the date themselves (e.g. English "green" sheet)
+    context['certificate_created_on'] = created
 
     # Translators:  This text represents the verification of the certificate
     context['document_meta_description'] = _('This is a valid {platform_name} certificate for {user_name}, '

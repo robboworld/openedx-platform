@@ -8,7 +8,12 @@
 # overridden in robbo-certificate.css (.robbo-koa-cert).
 course_mode_class = course_mode if course_mode else ''
 cert_mode = course_mode or ''
+# Robbo: per-course sheet from Advanced Settings → Certificate Web/HTML View Overrides
+robbo_sheet = context.get('robbo_sheet') or ''
 %>
+% if robbo_sheet == 'green':
+<%include file="_sheet-green.html" />
+% else:
 
 <main class="accomplishment accomplishment-main">
 
@@ -110,3 +115,4 @@ cert_mode = course_mode or ''
         </div>
     </div>
 </main>
+% endif

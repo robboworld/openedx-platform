@@ -1,0 +1,228 @@
+// Copyright (C) 2026 Robbo <https://robbo.ru>
+// SPDX-License-Identifier: AGPL-3.0-only
+// Part of the Robbo Open edX distribution. See NOTICE at repository root.
+//
+// "Green" certificate sheet (templates/certificates/_sheet-green.html).
+// Background = designer PDF without text; live text is positioned on top.
+// Coordinates come from the PDF (870.236 × 623.622 pt): left/top in % of the sheet.
+// Font sizes: cqw (% of sheet width) on screen, so the layout scales with the sheet;
+// fixed mm in print — browsers resolve cqw inconsistently when paginating
+// (text got clipped), and the printed sheet has a fixed width anyway.
+// Long name / course title: the template script sets --robbo-fit (< 1) to shrink them.
+
+$green-sheet-w: 870.236;
+$green-sheet-h: 623.622;
+$green-sheet-ink: #1d1d1b;
+// Line box = PDF text bbox height, so `top` matches the PDF yMin
+$green-sheet-bbox-line: 1.205;
+// Printed sheet: A4 landscape with the default 8 mm margins (page area 281 × 194 mm),
+// fitted by height with 1 mm spare
+$green-sheet-print-h: 193mm;
+$green-sheet-print-w: $green-sheet-print-h * $green-sheet-w / $green-sheet-h;
+
+// PDF point → cqw / % helpers
+@function gs-size($pt) {
+  @return $pt / $green-sheet-w * 100 * 1cqw;
+}
+
+@function gs-print-size($pt) {
+  @return $pt * $green-sheet-print-w / $green-sheet-w;
+}
+
+// Screen size in cqw + print size in mm; $fit — may be shrunk by the template script
+@mixin gs-font($pt, $fit: false) {
+  @if $fit {
+    font-size: calc(#{gs-size($pt)} * var(--robbo-fit, 1));
+  } @else {
+    font-size: gs-size($pt);
+  }
+
+  @media print {
+    @if $fit {
+      font-size: calc(#{gs-print-size($pt)} * var(--robbo-fit, 1));
+    } @else {
+      font-size: gs-print-size($pt);
+    }
+  }
+}
+
+@function gs-x($pt) {
+  @return percentage($pt / $green-sheet-w);
+}
+
+@function gs-y($pt) {
+  @return percentage($pt / $green-sheet-h);
+}
+
+@font-face {
+  font-family: 'RobboCertProxima';
+  src: url('../fonts/ProximaNova-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'RobboCertProxima';
+  src: url('../fonts/ProximaNova-Extrabold.woff') format('woff');
+  font-weight: 800;
+  font-style: normal;
+  font-display: block;
+}
+
+.robbo-green-cert {
+  position: relative;
+  container-type: inline-size;
+  width: 100%;
+  max-width: 1100px;
+  aspect-ratio: #{$green-sheet-w} / #{$green-sheet-h};
+  margin: 2rem auto;
+  overflow: hidden;
+  background: #fff url('../images/certificates/robbo-green-cert-bg.svg') center / 100% 100% no-repeat;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .12);
+  color: $green-sheet-ink;
+  font-family: 'RobboCertProxima', 'ProximaNova', Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+
+  p {
+    margin: 0;
+  }
+
+  // Centered single-line text across the sheet
+  &__lead,
+  &__phrase,
+  &__hours,
+  &__date {
+    position: absolute;
+    left: 0;
+    right: 0;
+    text-align: center;
+    line-height: $green-sheet-bbox-line;
+    white-space: nowrap;
+  }
+
+  &__lead {
+    top: gs-y(231.07);
+    @include gs-font(18);
+    font-weight: 800;
+  }
+
+  &__name-box,
+  &__course-box {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+
+  &__name-box {
+    top: gs-y(255);
+    left: gs-x(113.42);
+    width: gs-x(643.4);
+    height: gs-y(33);
+    align-items: flex-end;
+  }
+
+  &__name {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    @include gs-font(26, true);
+    font-weight: 800;
+    line-height: $green-sheet-bbox-line;
+    white-space: nowrap;
+  }
+
+  // A filled strip, not a border on an empty box: some browsers dropped the
+  // zero-height border when printing. Fill prints like the sheet background
+  // (print-color-adjust is inherited from the sheet).
+  &__rule {
+    position: absolute;
+    height: 1px;
+    background: $green-sheet-ink;
+
+    @media print {
+      height: .3mm;
+    }
+  }
+
+  &__rule--name {
+    top: gs-y(291.5);
+    left: gs-x(113.42);
+    width: gs-x(643.4);
+  }
+
+  &__phrase {
+    top: gs-y(330.66);
+    @include gs-font(17.6);
+  }
+
+  &__course-box {
+    top: gs-y(358);
+    // Narrow like the designer layout, so long titles wrap into two lines
+    left: gs-x(205.1);
+    width: gs-x(460);
+    height: gs-y(60);
+    align-items: flex-start;
+  }
+
+  &__course {
+    max-width: 100%;
+    overflow: hidden;
+    @include gs-font(24, true);
+    font-weight: 800;
+    line-height: 1.125;
+    overflow-wrap: anywhere;
+  }
+
+  &__hours {
+    top: gs-y(422.19);
+    @include gs-font(17.6);
+  }
+
+  &__date {
+    top: gs-y(452);
+    @include gs-font(12);
+  }
+
+  &__rule--date {
+    top: gs-y(469);
+    left: gs-x(389.77);
+    width: gs-x(90.6);
+  }
+
+  &__signatory {
+    position: absolute;
+    top: gs-y(499.53);
+    left: gs-x(410.12);
+    display: flex;
+    flex-direction: column;
+    @include gs-font(12);
+    line-height: 1.23;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .robbo-green-cert {
+    margin: 1rem auto;
+  }
+}
+
+// No named @page here: a page switch around the sheet forced blank pages, and a
+// named page on the whole document made browsers clip the text.
+@media print {
+  .layout-accomplishment .robbo-green-cert {
+    container-type: normal;
+    width: $green-sheet-print-w !important;
+    max-width: none;
+    margin: 0 auto;
+    box-shadow: none;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+}
