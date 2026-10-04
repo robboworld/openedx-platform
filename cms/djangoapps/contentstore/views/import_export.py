@@ -288,13 +288,21 @@ def import_status_handler(request, course_key_string, filename=None):
     return JsonResponse({"ImportStatus": status, "Message": message})
 
 
-def send_tarball(tarball, size):
+def export_download_filename(course_key):
+    """
+    Robbo: name the downloaded export after the course key, e.g. course-v1:Robbo+GC_1+2026.tar.gz.
+    """
+    return f'{course_key}.tar.gz'
+
+
+def send_tarball(tarball, size, filename=None):
     """
     Renders a tarball to response, for use when sending a tar.gz file to the user.
     """
     wrapper = FileWrapper(tarball, settings.COURSE_EXPORT_DOWNLOAD_CHUNK_SIZE)
     response = StreamingHttpResponse(wrapper, content_type='application/x-tgz')
-    response['Content-Disposition'] = 'attachment; filename=%s' % os.path.basename(tarball.name)
+    filename = filename or os.path.basename(tarball.name)
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
     response['Content-Length'] = size
     return response
 
@@ -393,7 +401,7 @@ def export_status_handler(request, course_key_string):
         if isinstance(artifact.file.storage, FileSystemStorage):
             output_url = reverse_course_url('export_output_handler', course_key)
         elif isinstance(artifact.file.storage, S3Boto3Storage):
-            filename = os.path.basename(artifact.file.name)
+            filename = export_download_filename(course_key)
             disposition = f'attachment; filename="{filename}"'
             output_url = artifact.file.storage.url(artifact.file.name, parameters={
                 'ResponseContentDisposition': disposition,
@@ -444,7 +452,11 @@ def export_output_handler(request, course_key_string):
         try:
             artifact = UserTaskArtifact.objects.get(status=task_status, name='Output')
             tarball = course_import_export_storage.open(artifact.file.name)
-            return send_tarball(tarball, artifact.file.storage.size(artifact.file.name))
+            return send_tarball(
+                tarball,
+                artifact.file.storage.size(artifact.file.name),
+                filename=export_download_filename(course_key),
+            )
         except UserTaskArtifact.DoesNotExist:
             raise Http404  # lint-amnesty, pylint: disable=raise-missing-from
         finally:
