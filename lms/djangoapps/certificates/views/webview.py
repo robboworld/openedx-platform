@@ -44,6 +44,7 @@ from lms.djangoapps.certificates.models import (
     GeneratedCertificate
 )
 from lms.djangoapps.certificates.permissions import PREVIEW_CERTIFICATES
+from lms.djangoapps.robbo_certificates import designs as robbo_designs
 from lms.djangoapps.certificates.utils import (
     emit_certificate_event,
     get_certificate_url,
@@ -589,6 +590,10 @@ def render_html_view(request, course_id, certificate=None):  # pylint: disable=t
 
         # Append/Override the existing view context values with any course-specific static values from Advanced Settings
         context.update(course.cert_html_view_overrides)
+
+        # Robbo: Studio "Preview" for a design that is not saved for the course yet
+        if preview_mode and request.GET.get(robbo_designs.PREVIEW_QUERY_PARAM):
+            context[robbo_designs.DESIGN_OVERRIDE_KEY] = request.GET[robbo_designs.PREVIEW_QUERY_PARAM]
 
         # Track certificate view events
         _track_certificate_events(request, course, user, user_certificate)

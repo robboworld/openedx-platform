@@ -1,0 +1,98 @@
+## Copyright (C) 2026 Robbo <https://robbo.ru>
+## SPDX-License-Identifier: AGPL-3.0-only
+## Part of the Robbo Open edX distribution (certificate designs). See NOTICE at repository root.
+##
+## Certificate checks (lms/djangoapps/robbo_certificates/readiness.py).
+## compact=False: readiness card — summary, progress, grid of check tiles.
+## compact=True: plain list for the «tab unavailable» notice.
+<%page args="checks, compact=False" expression_filter="h"/>
+<%! from openedx.core.djangolib.js_utils import js_escaped_string %>
+<%namespace name="icons" file="_robbo-certificate-icons.html"/>
+<%
+STATUS_LABELS = {'ok': 'Готово', 'fail': 'Нужно исправить', 'warn': 'Стоит проверить', 'info': 'Сведения'}
+failing = sum(1 for check in checks if check['status'] == 'fail')
+warnings = sum(1 for check in checks if check['status'] == 'warn')
+required = [check for check in checks if check['status'] in ('ok', 'fail')]
+done = len(required) - failing
+state = 'fail' if failing else ('warn' if warnings else 'ok')
+%>
+
+<%def name="check_item(check)">
+    <li class="robbo-cert-check is-${check['status']}">
+        <span class="robbo-cert-check__icon">${icons.status(check['status'])}</span>
+        <div class="robbo-cert-check__body">
+            <div class="robbo-cert-check__head">
+                <p class="robbo-cert-check__name">${check['title']}</p>
+                <span class="robbo-cert-check__chip">${STATUS_LABELS.get(check['status'], '')}</span>
+            </div>
+            % if check['detail']:
+            <p class="robbo-cert-check__detail">${check['detail']}</p>
+            % endif
+            ## Platform-level settings only a superuser can change (readiness.py, admin_only)
+            % if check.get('admin_only'):
+            <p class="robbo-cert-check__admin-note">${icons.status('lock')}Видит только администратор</p>
+            % endif
+            % if check.get('action') or check['link']:
+            <div class="robbo-cert-check__actions">
+                ## One-click fix: shown only to platform staff (readiness.can_fix_course), checked again on the server
+                % if check.get('action'):
+                <form method="post" action="${check['action']['url']}"
+                      onsubmit="return window.confirm('${check['action']['confirm'] | n, js_escaped_string}');">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token}">
+                    <button type="submit" class="robbo-cert-button">${check['action']['label']}</button>
+                </form>
+                % endif
+                % if check['link']:
+                <a class="robbo-cert-link" href="${check['link']}" target="_blank" rel="noopener">
+                    ${check['link_label']}<span class="sr-only"> (откроется в новой вкладке)</span>
+                    <span class="robbo-cert-link__arrow" aria-hidden="true">→</span>
+                </a>
+                % endif
+            </div>
+            % endif
+        </div>
+    </li>
+</%def>
+
+% if compact:
+<ul class="robbo-cert-checks__compact">
+    % for check in checks:
+    ${check_item(check)}
+    % endfor
+</ul>
+% else:
+<section class="robbo-cert-checks is-${state}" aria-labelledby="robbo-cert-readiness-title">
+    <header class="robbo-cert-checks__header">
+        <span class="robbo-cert-checks__badge">${icons.status(state)}</span>
+        <div class="robbo-cert-checks__heading">
+            <h4 class="robbo-cert-checks__title" id="robbo-cert-readiness-title">
+                % if failing:
+                Курс не готов к выдаче сертификатов
+                % else:
+                Курс готов к выдаче сертификатов
+                % endif
+            </h4>
+            <p class="robbo-cert-checks__summary">
+                % if failing:
+                Нужно исправить: ${failing}${f'. Стоит проверить: {warnings}' if warnings else ''}. Пока это не сделано, ученики не получат сертификат.
+                % elif warnings:
+                Всё необходимое настроено. Стоит проверить: ${warnings}.
+                % else:
+                Все условия выполнены.
+                % endif
+            </p>
+        </div>
+        % if required:
+        <div class="robbo-cert-checks__progress">
+            <span class="robbo-cert-checks__progress-label" id="robbo-cert-progress-label">Выполнено ${done} из ${len(required)}</span>
+            <progress max="${len(required)}" value="${done}" aria-labelledby="robbo-cert-progress-label"></progress>
+        </div>
+        % endif
+    </header>
+    <ul class="robbo-cert-checks__grid">
+        % for check in checks:
+        ${check_item(check)}
+        % endfor
+    </ul>
+</section>
+% endif

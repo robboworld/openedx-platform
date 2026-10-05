@@ -3243,6 +3243,7 @@ INSTALLED_APPS = [
     'lms.djangoapps.robbo_payments.apps.RobboPaymentsConfig',
     'lms.djangoapps.robbo_lk_handoff.apps.RobboLkHandoffConfig',
     'lms.djangoapps.robbo_ora.apps.RobboOraConfig',
+    'lms.djangoapps.robbo_certificates.apps.RobboCertificatesConfig',
 
     # Credit courses
     'openedx.core.djangoapps.credit.apps.CreditConfig',

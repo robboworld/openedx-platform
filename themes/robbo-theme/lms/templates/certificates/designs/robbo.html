@@ -1,0 +1,50 @@
+## title: РОББО
+## description: Фирменный лист А4 с фоном РОББО и подписью генерального директора.
+<%page expression_filter="h"/>
+<%namespace name='static' file='/static_content.html'/>
+<%! from django.utils.translation import gettext as _ %>
+<%
+# Robbo A4 sheet (cert_bg.jpg) — design from commit 7229ac7910.
+# Selected per course in Studio → Certificates (lms/djangoapps/robbo_certificates/designs.py).
+signatories = certificate_data.get('signatories', []) if certificate_data else []
+primary_signatory = signatories[0] if signatories else {}
+signature_src = primary_signatory.get('signature_image_path') or 'robbo-theme/images/certificates/signature_PF.png'
+signatory_title = primary_signatory.get('title') or 'Генеральный директор ООО «РОББО ТЕХНОЛОГИИ»'
+signatory_name = primary_signatory.get('name') or 'Павел Фролов'
+recipient_name = accomplishment_copy_name or accomplishment_copy_username
+%>
+
+<main class="accomplishment accomplishment-main" aria-label="${_('Course completion certificate')}">
+    <div class="wrapper-accomplishment-rendering">
+        <div class="robbo-cert">
+            <div class="robbo-cert__sheet">
+                <div class="robbo-cert__body">
+                    <header class="robbo-cert__header">
+                        <img class="robbo-cert__logo" src="${static.url('robbo-theme/images/certificates/robbo-cert-logo.svg')}" alt="РОББО" />
+                        <h1 class="robbo-cert__title">Сертификат о прохождении курса</h1>
+                    </header>
+
+                    <div class="robbo-cert__statement">
+                        <p class="robbo-cert__lead">Выдан в подтверждение того, что</p>
+                        <p class="robbo-cert__recipient">${recipient_name}</p>
+                        <p class="robbo-cert__course-line">
+                            успешно прошёл(‑ла) курс
+                            <span class="robbo-cert__course-name">«${accomplishment_copy_course_name}»</span>
+                        </p>
+                    </div>
+
+                    <footer class="robbo-cert__footer">
+                        <div class="robbo-cert__signatory">
+                            <img class="robbo-cert__signature" src="${static.url(signature_src)}" alt="" />
+                            <div class="robbo-cert__signatory-info">
+                                <p class="robbo-cert__signatory-role">${signatory_title}</p>
+                                <p class="robbo-cert__signatory-name">${signatory_name}</p>
+                                <p class="robbo-cert__issued">Выдан: ${certificate_created_date} года</p>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

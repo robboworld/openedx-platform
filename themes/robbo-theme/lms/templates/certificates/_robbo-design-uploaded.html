@@ -1,0 +1,105 @@
+<%page expression_filter="h" args="design"/>
+<%namespace name='static' file='/static_content.html'/>
+<%!
+from django.utils.translation import gettext as _
+from lms.djangoapps.robbo_certificates.fields import COURSE_HOURS_KEY, format_hours
+%>
+<%
+# Design uploaded by platform staff in Studio: background + positioned fields
+# (schema: lms/djangoapps/robbo_certificates/fields.py). Values below are validated on save,
+# so they are safe to put into inline styles.
+FONT_STACKS = {
+    'proxima': "'ProximaNova', Helvetica, Arial, sans-serif",
+    'sans': 'Helvetica, Arial, sans-serif',
+    'serif': "Georgia, 'Times New Roman', serif",
+}
+TRANSLATE_X = {'left': '0', 'center': '-50%', 'right': '-100%'}
+
+signatories = certificate_data.get('signatories', []) if certificate_data else []
+signatory = signatories[0] if signatories else {}
+values = {
+    'recipient': accomplishment_copy_name or accomplishment_copy_username,
+    'course': accomplishment_copy_course_name,
+    'date': certificate_created_date,
+    # Studio → Certificates → «Объём курса, часов» (course Advanced Settings)
+    'hours': format_hours(context.get(COURSE_HOURS_KEY)),
+    'signatory_name': signatory.get('name', ''),
+    'signatory_title': signatory.get('title', ''),
+}
+signature_path = signatory.get('signature_image_path')
+
+
+def field_style(field):
+    style = (
+        f"left:{field['x']}%;top:{field['y']}%;width:{field['width']}%;margin:0;padding:0;"
+        f"transform:translateX({TRANSLATE_X[field['align']]});text-align:{field['align']};"
+    )
+    if field['type'] != 'signature':
+        style += (
+            f"font-family:{FONT_STACKS[field['font']]};font-size:{field['font_size']}pt;"
+            f"font-weight:{700 if field['bold'] else 400};color:{field['color']};"
+            f"line-height:1.2;--robbo-udesign-lines:{field['lines']};"
+            f"text-transform:{'uppercase' if field['uppercase'] else 'none'};"
+        )
+    return style
+%>
+
+<main class="accomplishment accomplishment-main" aria-label="${_('Course completion certificate')}">
+    <div class="wrapper-accomplishment-rendering">
+        <div class="robbo-udesign" data-robbo-udesign>
+            <div class="robbo-udesign__sheet" style="background-image: url('${design['background_url']}');">
+                % for field in design['fields']:
+                    % if field['type'] == 'signature':
+                        % if signature_path:
+                        <img class="robbo-udesign__signature" style="${field_style(field)}" src="${static.url(signature_path)}" alt="" />
+                        % endif
+                    % else:
+                        <%
+                        value = field['text'] if field['type'] == 'text' else values.get(field['type'], '')
+                        %>
+                        % if value:
+                        <p class="robbo-udesign__field${' robbo-udesign__field--single' if field['lines'] == 1 else ''}" style="${field_style(field)}">${field['prefix']}${value}${field['suffix']}</p>
+                        % endif
+                    % endif
+                % endfor
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+// Fit the A4 sheet into narrow screens and shrink text that does not fit its box.
+(function () {
+    var root = document.querySelector('[data-robbo-udesign]');
+    if (!root) { return; }
+    var sheet = root.querySelector('.robbo-udesign__sheet');
+
+    function fitText() {
+        root.querySelectorAll('.robbo-udesign__field').forEach(function (el) {
+            if (!el.dataset.baseSize) { el.dataset.baseSize = window.getComputedStyle(el).fontSize; }
+            el.style.fontSize = el.dataset.baseSize;
+            var size = parseFloat(el.dataset.baseSize);
+            while (size > 6 && (el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1)) {
+                size -= 0.5;
+                el.style.fontSize = size + 'px';
+            }
+        });
+    }
+
+    function fitSheet() {
+        sheet.style.transform = '';
+        root.style.height = '';
+        var available = root.clientWidth;
+        var scale = Math.min(1, available / sheet.offsetWidth);
+        if (scale < 1 && !window.matchMedia('print').matches) {
+            sheet.style.transform = 'scale(' + scale + ')';
+            root.style.height = (sheet.offsetHeight * scale) + 'px';
+        }
+    }
+
+    fitText();
+    fitSheet();
+    window.addEventListener('resize', fitSheet);
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(fitText); }
+}());
+</script>

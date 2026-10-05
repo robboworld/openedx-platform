@@ -4,4 +4,10 @@
 // Standalone certificate stylesheet (see accomplishment-base.html).
 // Output: themes/robbo-theme/lms/static/css/robbo-certificate.css
 
+$static-path: '..';
+
+@import 'partials/lms/theme/robbo-proxima-fonts';
 @import 'certificates/certificate';
+@import 'certificates/certificate-olympiad';
+@import 'certificates/certificate-robbo';
+@import 'certificates/certificate-uploaded';

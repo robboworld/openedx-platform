@@ -1,0 +1,532 @@
+// Copyright (C) 2026 Robbo <https://robbo.ru>
+// SPDX-License-Identifier: AGPL-3.0-only
+//
+// Instructor dashboard «Сертификаты» tab: greyed-out tab, readiness card
+// (templates/instructor/instructor_dashboard_2/_robbo-certificate-checks.html)
+// and the stock certificate tools restyled as cards.
+
+$robbo-cert-ok: $robbo-brand-green;
+$robbo-cert-ok-text: $robbo-ui-primary-dark;
+$robbo-cert-fail: #c32d3a;
+$robbo-cert-warn: #b4610e;
+$robbo-cert-muted: #6b7280; // ≈4.8:1 on white / tab background
+$robbo-cert-border: #e5e7eb;
+$robbo-cert-surface: #f7f8f9;
+$robbo-cert-radius: 12px;
+$robbo-cert-max-width: 75rem;
+
+// ---- tab button ----
+body.view-instructordash .instructor-dashboard-content-2 .instructor-nav li button.robbo-tab-unavailable {
+  color: $robbo-cert-muted;
+  background: #f3f4f6;
+
+  &:hover,
+  &:focus-visible {
+    color: $robbo-brand-coal;
+  }
+
+  &.active-section {
+    color: #fff !important;
+    background: $robbo-cert-muted !important;
+  }
+}
+
+// ---- section frame ----
+#certificates {
+  font-family: $robbo-font-body;
+  color: $robbo-brand-coal;
+
+  > h3#header-certificates {
+    margin: 1.5rem 0 1rem;
+    font-family: $robbo-font-headline;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $robbo-brand-coal;
+  }
+}
+
+.robbo-cert-panel,
+#certificates .certificates-wrapper {
+  max-width: $robbo-cert-max-width;
+}
+
+// ---- buttons / links ----
+.robbo-cert-button,
+#certificates .certificates-wrapper .btn-blue {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: .5rem 1.25rem;
+  border: 0;
+  border-radius: 8px;
+  background: $robbo-ui-primary;
+  box-shadow: none;
+  font-family: $robbo-font-body;
+  font-size: .95rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #fff;
+  text-transform: none; // edX pattern-library shim capitalizes every word
+  text-shadow: none;
+  cursor: pointer;
+  transition: background-color .15s ease;
+
+  &:hover {
+    background: $robbo-ui-primary-dark;
+    color: #fff;
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba($robbo-brand-green, .45);
+    outline-offset: 2px;
+  }
+}
+
+.robbo-cert-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  min-height: 44px;
+  font-weight: 600;
+  color: $robbo-cert-ok-text;
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible {
+    color: $robbo-brand-coal;
+    text-decoration: underline;
+  }
+
+  &:hover .robbo-cert-link__arrow {
+    transform: translateX(3px);
+  }
+}
+
+.robbo-cert-link__arrow {
+  transition: transform .15s ease;
+}
+
+// ---- single check (tile in the grid / row in the compact list) ----
+.robbo-cert-check {
+  --robbo-cert-accent: #{$robbo-cert-muted};
+  --robbo-cert-tint: #{$robbo-cert-surface};
+
+  display: flex;
+  gap: .875rem;
+  min-width: 0;
+
+  &.is-ok { --robbo-cert-accent: #{$robbo-cert-ok}; --robbo-cert-tint: #{$robbo-ui-primary-light}; }
+  &.is-fail { --robbo-cert-accent: #{$robbo-cert-fail}; --robbo-cert-tint: #{mix(#fff, $robbo-cert-fail, 92%)}; }
+  &.is-warn { --robbo-cert-accent: #{$robbo-cert-warn}; --robbo-cert-tint: #{mix(#fff, $robbo-cert-warn, 90%)}; }
+}
+
+.robbo-cert-check__icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--robbo-cert-accent);
+  color: #fff;
+
+  svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    fill: currentColor;
+  }
+}
+
+.robbo-cert-check__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.robbo-cert-check__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .25rem .75rem;
+}
+
+.robbo-cert-check__name {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: .25rem 0 0;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: $robbo-brand-coal;
+  overflow-wrap: anywhere;
+}
+
+.robbo-cert-check__chip {
+  flex: 0 0 auto;
+  margin-top: .2rem;
+  white-space: nowrap;
+  padding: .2rem .6rem;
+  border-radius: 999px;
+  background: var(--robbo-cert-tint);
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: var(--robbo-cert-accent);
+
+  .is-ok > .robbo-cert-check__body & { color: $robbo-cert-ok-text; }
+  .is-info > .robbo-cert-check__body & { color: $robbo-cert-muted; }
+}
+
+.robbo-cert-check__detail {
+  margin: .375rem 0 0;
+  white-space: pre-line; // multi-line details (one grading problem per line)
+  font-size: .925rem;
+  line-height: 1.5;
+  color: #4b5563;
+  overflow-wrap: anywhere;
+}
+
+.robbo-cert-check__admin-note {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  margin: .5rem 0 0;
+  padding: .15rem .55rem;
+  border-radius: 999px;
+  background: #f3f4f6;
+  font-size: .75rem;
+  font-weight: 600;
+  color: $robbo-cert-muted;
+
+  svg {
+    width: .8rem;
+    height: .8rem;
+    fill: currentColor;
+  }
+}
+
+.robbo-cert-check__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem 1.25rem;
+  margin-top: .5rem;
+
+  form {
+    margin: 0;
+  }
+}
+
+// ---- readiness card ----
+.robbo-cert-checks {
+  --robbo-cert-state: #{$robbo-cert-muted};
+
+  margin: 0 0 2rem;
+  border: 1px solid $robbo-cert-border;
+  border-radius: $robbo-cert-radius;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(17, 24, 39, .04), 0 4px 16px rgba(17, 24, 39, .04);
+  overflow: hidden;
+
+  &.is-ok { --robbo-cert-state: #{$robbo-cert-ok}; }
+  &.is-warn { --robbo-cert-state: #{$robbo-cert-warn}; }
+  &.is-fail { --robbo-cert-state: #{$robbo-cert-fail}; }
+}
+
+.robbo-cert-checks__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.25rem;
+  padding: 1.5rem;
+  border-top: 4px solid var(--robbo-cert-state);
+  border-bottom: 1px solid $robbo-cert-border;
+  background: linear-gradient(180deg, $robbo-cert-surface, #fff);
+}
+
+.robbo-cert-checks__badge {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: var(--robbo-cert-state);
+  color: #fff;
+
+  svg {
+    width: 1.75rem;
+    height: 1.75rem;
+    fill: currentColor;
+  }
+}
+
+.robbo-cert-checks__heading {
+  flex: 1 1 18rem;
+  min-width: 0;
+}
+
+.robbo-cert-checks__title {
+  margin: 0;
+  font-family: $robbo-font-headline;
+  font-size: 1.375rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: $robbo-brand-coal;
+}
+
+.robbo-cert-checks__summary {
+  margin: .25rem 0 0;
+  color: #4b5563;
+}
+
+.robbo-cert-checks__progress {
+  flex: 0 1 16rem;
+  min-width: 12rem;
+
+  progress {
+    display: block;
+    width: 100%;
+    height: .5rem;
+    margin-top: .375rem;
+    border: 0;
+    border-radius: 999px;
+    background: $robbo-cert-border;
+    overflow: hidden;
+    appearance: none;
+
+    &::-webkit-progress-bar { background: $robbo-cert-border; border-radius: 999px; }
+    &::-webkit-progress-value { background: var(--robbo-cert-state); border-radius: 999px; }
+    &::-moz-progress-bar { background: var(--robbo-cert-state); border-radius: 999px; }
+  }
+}
+
+.robbo-cert-checks__progress-label {
+  font-size: .875rem;
+  font-weight: 700;
+  color: $robbo-brand-coal;
+}
+
+.robbo-cert-checks__grid {
+  display: grid;
+  // min() escaped: libsass 3.3 would evaluate it as the Sass function
+  grid-template-columns: repeat(auto-fill, minmax(#{"min(100%, 22rem)"}, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 1.5rem;
+  list-style: none;
+
+  > .robbo-cert-check {
+    padding: 1rem 1.125rem;
+    border: 1px solid $robbo-cert-border;
+    border-left: 4px solid var(--robbo-cert-accent);
+    border-radius: 10px;
+    background: #fff;
+
+    &.is-fail,
+    &.is-warn {
+      background: var(--robbo-cert-tint);
+    }
+  }
+}
+
+// ---- «tab unavailable» notice ----
+.robbo-cert-lock {
+  display: flex;
+  gap: 1.25rem;
+  margin: 0 0 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: $robbo-cert-radius;
+  background: $robbo-cert-surface;
+}
+
+.robbo-cert-lock__icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: $robbo-brand-coal;
+
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: currentColor;
+  }
+}
+
+.robbo-cert-lock__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.robbo-cert-lock__title {
+  margin: .25rem 0 .25rem;
+  font-family: $robbo-font-headline;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: $robbo-brand-coal;
+}
+
+.robbo-cert-lock__text {
+  max-width: 48rem;
+  margin: 0 0 1rem;
+  color: #4b5563;
+}
+
+.robbo-cert-checks__compact {
+  display: grid;
+  gap: .75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  > .robbo-cert-check {
+    padding: .875rem 1rem;
+    border-radius: 10px;
+    background: #fff;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .robbo-cert-lock {
+    flex-direction: column;
+    gap: .75rem;
+    padding: 1.25rem;
+  }
+
+  .robbo-cert-checks__header,
+  .robbo-cert-checks__grid {
+    padding: 1.125rem;
+  }
+
+  .robbo-cert-checks__progress {
+    flex-basis: 100%;
+  }
+
+  // Chip under the title: side by side squeezes the title into a narrow column
+  .robbo-cert-check__head {
+    flex-direction: column;
+    gap: .25rem;
+  }
+}
+
+// ---- stock certificate tools as cards ----
+#certificates .certificates-wrapper {
+  > hr,
+  hr.section-divider {
+    display: none;
+  }
+
+  .enable-certificates,
+  .start-certificate-generation,
+  .running-tasks-container,
+  .start-certificate-regeneration,
+  .certificate-generation-history,
+  .certificate-exception-container,
+  .certificate-invalidation-container {
+    margin: 0 0 1.25rem;
+    padding: 1.5rem;
+    border: 1px solid $robbo-cert-border;
+    border-radius: $robbo-cert-radius;
+    background: #fff;
+
+    > hr {
+      display: none;
+    }
+  }
+
+  h3.hd-3 {
+    margin: 0 0 .5rem;
+    padding: 0;
+    font-family: $robbo-font-headline;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0;
+    text-transform: none;
+    color: $robbo-brand-coal;
+  }
+
+  p,
+  .under-heading {
+    max-width: 48rem;
+    font-size: .95rem;
+    line-height: 1.5;
+    color: #4b5563;
+  }
+
+  .start-certificate-regeneration label {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    min-height: 2.25rem;
+    font-size: .95rem;
+    color: $robbo-brand-coal;
+    cursor: pointer;
+  }
+
+  input[type="checkbox"] {
+    width: 1.125rem;
+    height: 1.125rem;
+    accent-color: $robbo-ui-primary;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  textarea {
+    min-height: 44px;
+    padding: .5rem .75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    &:focus {
+      border-color: $robbo-ui-primary;
+      outline: 3px solid rgba($robbo-brand-green, .25);
+    }
+  }
+
+  .is-disabled,
+  input.is-disabled,
+  button.is-disabled {
+    min-height: 44px;
+    padding: .5rem 1.25rem;
+    border: 0;
+    border-radius: 8px;
+    background: #e5e7eb;
+    color: $robbo-cert-muted;
+    text-transform: none;
+    cursor: not-allowed;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .925rem;
+
+    th,
+    td {
+      padding: .625rem .75rem;
+      border-bottom: 1px solid $robbo-cert-border;
+      text-align: left;
+    }
+
+    th {
+      font-weight: 700;
+      background: $robbo-cert-surface;
+    }
+  }
+}
+
+// Stock: .instructor-dashboard-wrapper-2 section.idash-section#certificates .certificate-exception-container h3
+// draws a groove underline; one class more to win
+.instructor-dashboard-wrapper-2 section#certificates .certificates-wrapper .certificate-exception-container h3.hd-3 {
+  display: block;
+  border-bottom: 0;
+}
