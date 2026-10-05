@@ -1,0 +1,21 @@
+## Copyright (C) 2026 Robbo <https://robbo.ru>
+## SPDX-License-Identifier: AGPL-3.0-only
+## Part of the Robbo Open edX distribution (certificate designs). See NOTICE at repository root.
+##
+## Greyed-out «Сертификаты» tab: the dashboard hides certificate management until these conditions are met.
+<%page args="section_data" expression_filter="h"/>
+<%namespace name="icons" file="_robbo-certificate-icons.html"/>
+<div class="robbo-cert-panel">
+    <section class="robbo-cert-lock" aria-labelledby="robbo-cert-lock-title">
+        <span class="robbo-cert-lock__icon">${icons.status('lock')}</span>
+        <div class="robbo-cert-lock__body">
+            <h4 class="robbo-cert-lock__title" id="robbo-cert-lock-title">Управление сертификатами пока недоступно</h4>
+            <p class="robbo-cert-lock__text">
+                Пока условия ниже не выполнены, выдачей сертификатов здесь управлять нельзя.
+                Готовность самого курса — в списке под этим блоком.
+            </p>
+            <%include file="_robbo-certificate-checks.html" args="checks=section_data['robbo_conditions'], compact=True" />
+        </div>
+    </section>
+    <%include file="_robbo-certificate-checks.html" args="checks=section_data['robbo_checks']" />
+</div>

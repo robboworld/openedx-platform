@@ -3,11 +3,15 @@
 <%!
 from django.utils.translation import gettext as _
 from openedx.core.djangolib.js_utils import js_escaped_string
+from lms.djangoapps.robbo_certificates.designs import DESIGN_OVERRIDE_KEY, KIND_UPLOADED, get_design
 %>
 <%
 from django.utils.translation import get_language_bidi
 dir_rtl = 'rtl' if get_language_bidi() else 'ltr'
 course_mode_class = course_mode if course_mode else ''
+robbo_cert_design = get_design(context.get(DESIGN_OVERRIDE_KEY))
+# Uploaded designs share one stylesheet block (.robbo-cert-tpl-uploaded)
+robbo_cert_template = 'uploaded' if robbo_cert_design['kind'] == KIND_UPLOADED else robbo_cert_design['id']
 %>
 
 <!DOCTYPE html>
@@ -40,7 +44,7 @@ course_mode_class = course_mode if course_mode else ''
     % endif
 </head>
 
-<body class="layout-accomplishment view-valid-accomplishment ${dir_rtl} certificate certificate-${course_mode_class}" data-view="valid-accomplishment">
+<body class="layout-accomplishment view-valid-accomplishment ${dir_rtl} certificate certificate-${course_mode_class} robbo-cert-tpl-${robbo_cert_template}" data-view="valid-accomplishment">
 
     <div class="wrapper-view" dir="${dir_rtl}">
 

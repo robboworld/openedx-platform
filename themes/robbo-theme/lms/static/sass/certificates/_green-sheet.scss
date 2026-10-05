@@ -213,7 +213,35 @@ $green-sheet-print-w: $green-sheet-print-h * $green-sheet-w / $green-sheet-h;
 
 // No named @page here: a page switch around the sheet forced blank pages, and a
 // named page on the whole document made browsers clip the text.
+// The common @page margin is 0 (_certificate.scss): the 8 mm page margins the sheet is sized for
+// come from the wrapper padding, page-level rules scoped to body.robbo-cert-tpl-green.
 @media print {
+  body.robbo-cert-tpl-green {
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .robbo-cert-tpl-green .wrapper-view {
+    box-sizing: border-box;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 8mm !important;
+    background: transparent !important;
+    overflow: visible !important;
+  }
+
+  .robbo-cert-tpl-green .accomplishment-main,
+  .robbo-cert-tpl-green .wrapper-accomplishment-rendering {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    overflow: visible !important;
+  }
+
   .layout-accomplishment .robbo-green-cert {
     container-type: normal;
     width: $green-sheet-print-w !important;

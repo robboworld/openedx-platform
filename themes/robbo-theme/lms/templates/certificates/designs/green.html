@@ -1,11 +1,14 @@
+## title: Зелёный
+## description: Фирменный зелёный лист ROBBO на английском: ФИО, курс, объём в часах и дата выдачи, подпись ROBBO FINLAND Oy.
+## hours: yes
 ## Copyright (C) 2026 Robbo <https://robbo.ru>
 ## SPDX-License-Identifier: AGPL-3.0-only
 ## Part of the Robbo Open edX distribution. See NOTICE at repository root.
 ##
 ## "Green" certificate sheet: background traced from the designer PDF
 ## (images/certificates/robbo-green-cert-bg.svg, text removed), live text on top.
-## Enabled per course: Advanced Settings → Certificate Web/HTML View Overrides →
-##   {"robbo_sheet": "green", "robbo_course_hours": "72"}
+## Default design on courses (lms/djangoapps/robbo_certificates/designs.py); the course volume comes from
+## Studio → Certificates → «Объём курса, часов» (cert_html_view_overrides.robbo_course_hours).
 ## The sheet is English by design (the word CERTIFICATE is part of the artwork),
 ## so its copy is intentionally not passed through gettext.
 <%page expression_filter="h"/>

@@ -1,4 +1,7 @@
-""" Contenstore API v1 URLs. """
+""" Contenstore API v1 URLs.
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
+"""
 
 from django.conf import settings
 from django.urls import re_path, path
@@ -8,6 +11,9 @@ from openedx.core.constants import COURSE_ID_PATTERN
 from .views import (
     ContainerHandlerView,
     CourseCertificatesView,
+    CertificateDesignDetailView,
+    CertificateDesignListView,
+    CourseCertificateDesignView,
     CourseDetailsView,
     CourseTeamView,
     CourseTextbooksView,
@@ -116,6 +122,21 @@ urlpatterns = [
         fr'^certificates/{COURSE_ID_PATTERN}$',
         CourseCertificatesView.as_view(),
         name="certificates"
+    ),
+    re_path(
+        fr'^certificates/{COURSE_ID_PATTERN}/robbo-design$',
+        CourseCertificateDesignView.as_view(),
+        name="robbo_certificate_design"
+    ),
+    path(
+        'robbo/certificate-designs',
+        CertificateDesignListView.as_view(),
+        name="robbo_certificate_designs"
+    ),
+    re_path(
+        r'^robbo/certificate-designs/(?P<design_id>[a-z0-9_-]{1,64})$',
+        CertificateDesignDetailView.as_view(),
+        name="robbo_certificate_design_detail"
     ),
     re_path(
         fr'^group_configurations/{COURSE_ID_PATTERN}$',

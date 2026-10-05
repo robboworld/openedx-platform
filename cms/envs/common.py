@@ -34,6 +34,8 @@ When refering to XBlocks, we use the entry-point name. For example,
 |   )
 """
 
+# Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
+
 # We intentionally define lots of variables that aren't used, and
 # want to import all variables from base settings files
 # pylint: disable=unused-import, useless-suppression, wrong-import-order, wrong-import-position
@@ -1754,6 +1756,8 @@ INSTALLED_APPS = [
     'lms.djangoapps.coursewarehistoryextended',
     'lms.djangoapps.survey.apps.SurveyConfig',
     'lms.djangoapps.verify_student.apps.VerifyStudentConfig',
+    # Robbo: certificate designs uploaded in Studio (rendered by the LMS)
+    'lms.djangoapps.robbo_certificates.apps.RobboCertificatesConfig',
     'completion',
 
     # System Wide Roles
