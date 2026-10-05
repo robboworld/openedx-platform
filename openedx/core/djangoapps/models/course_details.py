@@ -1,5 +1,7 @@
 """
 CourseDetails
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 
@@ -255,12 +257,12 @@ class CourseDetails:
             dirty = True
             block.certificate_available_date = converted
 
-        if (
-            'certificates_display_behavior' in jsondict
-            and jsondict['certificates_display_behavior'] != block.certificates_display_behavior
-        ):
-            block.certificates_display_behavior = jsondict['certificates_display_behavior']
-            dirty = True
+        if 'certificates_display_behavior' in jsondict:
+            # Robbo: store the plain value; also repairs a malformed stored value on the next save
+            display_behavior = CertificatesDisplayBehaviors.normalize(jsondict['certificates_display_behavior'])
+            if display_behavior != block.certificates_display_behavior:
+                block.certificates_display_behavior = display_behavior
+                dirty = True
 
         if 'course_image_name' in jsondict and jsondict['course_image_name'] != block.course_image:
             block.course_image = jsondict['course_image_name']
@@ -371,12 +373,17 @@ class CourseDetails:
             tuple[str, str]: updated certificate_available_date, updated certificates_display_behavior
             None
         """
+        # Robbo: read values saved as 'CertificatesDisplayBehaviors.X' (see CertificatesDisplayBehaviors.normalize)
+        certificates_display_behavior = CertificatesDisplayBehaviors.normalize(certificates_display_behavior)
+
+        # Robbo: return plain strings, not members. DRF (course_details API) serializes a member with str(), which is
+        # 'CertificatesDisplayBehaviors.END' on Python 3.11; Studio then saved that string back into the course.
         # "early_no_info" will always show regardless of settings
         if certificates_display_behavior == CertificatesDisplayBehaviors.EARLY_NO_INFO:
-            return (None, CertificatesDisplayBehaviors.EARLY_NO_INFO)
+            return (None, CertificatesDisplayBehaviors.EARLY_NO_INFO.value)
 
         # If the date is set and "early_no_info" isn't
         if certificate_available_date:
-            return (certificate_available_date, CertificatesDisplayBehaviors.END_WITH_DATE)
+            return (certificate_available_date, CertificatesDisplayBehaviors.END_WITH_DATE.value)
 
-        return (None, CertificatesDisplayBehaviors.END)
+        return (None, CertificatesDisplayBehaviors.END.value)

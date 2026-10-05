@@ -1,5 +1,7 @@
 """
 Common utility functions useful throughout the contentstore
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 from __future__ import annotations
 
@@ -1392,7 +1394,8 @@ def update_course_details(request, course_key, payload, course_block):
     # during these updates. Otherwise, the legacy UI seems to do the right thing.
     if "self_paced" in payload and payload["self_paced"]:
         payload["certificate_available_date"] = None
-        payload["certificates_display_behavior"] = CertificatesDisplayBehaviors.EARLY_NO_INFO
+        # Robbo: the value, not the member — str(member) is 'CertificatesDisplayBehaviors.EARLY_NO_INFO' on Python 3.11
+        payload["certificates_display_behavior"] = CertificatesDisplayBehaviors.EARLY_NO_INFO.value
 
     # Perform the normal update workflow for the CourseDetails model
     return CourseDetails.update_from_json(course_key, payload, request.user)

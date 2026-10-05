@@ -1,5 +1,7 @@
 """
 A management command that can be used to remove a stale `certificate_available_date` from a course-run.
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 import logging
 import shlex
@@ -91,7 +93,8 @@ class Command(BaseCommand):
         for the course to fix the stale certificate availability date.
         """
         del course.certificate_available_date
-        course.certificates_display_behavior = CertificatesDisplayBehaviors.EARLY_NO_INFO
+        # Robbo: store the value, not the member (see CertificatesDisplayBehaviors.normalize)
+        course.certificates_display_behavior = CertificatesDisplayBehaviors.EARLY_NO_INFO.value
         # commit the changes
         modulestore().update_item(course, ModuleStoreEnum.UserID.mgmt_command)
 
