@@ -1,0 +1,81 @@
+// Copyright (C) 2026 Robbo <https://robbo.ru>
+// SPDX-License-Identifier: AGPL-3.0-only
+//
+// Designs uploaded in Studio (templates/certificates/_robbo-design-uploaded.html):
+// A4 landscape background, fields positioned in % of the sheet, sizes in pt.
+// Page-level rules under body.robbo-cert-tpl-uploaded.
+
+$robbo-udesign-sheet-w: 297mm;
+$robbo-udesign-sheet-h: 210mm;
+$robbo-udesign-line-height: 1.2;
+
+.robbo-cert-tpl-uploaded .wrapper-accomplishment-rendering {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.robbo-udesign {
+  width: 100%;
+  max-width: $robbo-udesign-sheet-w;
+  margin: 0 auto;
+}
+
+.robbo-udesign__sheet {
+  position: relative;
+  width: $robbo-udesign-sheet-w;
+  height: $robbo-udesign-sheet-h;
+  overflow: hidden;
+  // Stretch, not crop: field positions are % of the background image.
+  background: #fff no-repeat 0 0 / 100% 100%;
+  transform-origin: top left;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.robbo-udesign__field {
+  position: absolute;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  line-height: $robbo-udesign-line-height;
+  max-height: calc(var(--robbo-udesign-lines, 1) * #{$robbo-udesign-line-height} * 1em);
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.robbo-udesign__field--single {
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
+.robbo-udesign__signature {
+  position: absolute;
+  display: block;
+  height: auto;
+  object-fit: contain;
+}
+
+@media print {
+  body.robbo-cert-tpl-uploaded {
+    width: $robbo-udesign-sheet-w;
+    height: $robbo-udesign-sheet-h;
+    overflow: hidden !important;
+  }
+
+  .robbo-cert-tpl-uploaded .wrapper-view,
+  .robbo-cert-tpl-uploaded .accomplishment-main,
+  .robbo-cert-tpl-uploaded .wrapper-accomplishment-rendering,
+  .robbo-udesign {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: $robbo-udesign-sheet-w !important;
+    max-width: none !important;
+    height: $robbo-udesign-sheet-h !important;
+    overflow: hidden !important;
+    break-inside: avoid;
+  }
+
+  .robbo-udesign__sheet {
+    transform: none !important;
+  }
+}

@@ -3241,6 +3241,7 @@ INSTALLED_APPS = [
 
     'lms.djangoapps.commerce.apps.CommerceConfig',
     'lms.djangoapps.robbo_ora.apps.RobboOraConfig',
+    'lms.djangoapps.robbo_certificates.apps.RobboCertificatesConfig',
 
     # Credit courses
     'openedx.core.djangoapps.credit.apps.CreditConfig',

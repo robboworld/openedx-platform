@@ -1,5 +1,7 @@
 """
 Instructor Dashboard Views
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 import datetime
 import logging
@@ -37,6 +39,7 @@ from common.djangoapps.util.json_request import JsonResponse
 from lms.djangoapps.bulk_email.api import is_bulk_email_feature_enabled
 from lms.djangoapps.bulk_email.models_api import is_bulk_email_disabled_for_course
 from lms.djangoapps.certificates import api as certs_api
+from lms.djangoapps.robbo_certificates import readiness as robbo_readiness
 from lms.djangoapps.certificates.data import CertificateStatuses
 from lms.djangoapps.certificates.models import (
     CertificateGenerationConfiguration,
@@ -207,8 +210,22 @@ def instructor_dashboard_2(request, course_id):  # lint-amnesty, pylint: disable
     certs_enabled = CertificateGenerationConfiguration.current().enabled and not hasattr(course_key, 'ccx')
     certs_instructor_enabled = settings.FEATURES.get('ENABLE_CERTIFICATES_INSTRUCTOR_MANAGE', False)
 
+    # Robbo: the tab is always shown to course staff; greyed out with the reasons when the stock rules hide it,
+    # and both variants start with the course readiness checks (lms/djangoapps/robbo_certificates/readiness.py).
+    robbo_cert_checks = robbo_readiness.course_checks(
+        course, can_fix=robbo_readiness.can_fix_course(request.user), is_superuser=request.user.is_superuser,
+    )
     if certs_enabled and (access['admin'] or (access['instructor'] and certs_instructor_enabled)):
-        sections.append(_section_certificates(course))
+        section = _section_certificates(course)
+        section['robbo_checks'] = robbo_cert_checks
+        sections.append(section)
+    elif access['staff']:
+        sections.append(_section_certificates_unavailable(
+            robbo_readiness.tab_conditions(
+                course_key, access, certs_instructor_enabled, is_superuser=request.user.is_superuser,
+            ),
+            robbo_cert_checks,
+        ))
 
     openassessment_blocks = modulestore().get_items(
         course_key, qualifiers={'category': 'openassessment'}
@@ -328,6 +345,21 @@ def _section_special_exams(course, access):
         'mfe_view_url': mfe_view_url,
     }
     return section_data
+
+
+def _section_certificates_unavailable(conditions, checks):
+    """
+    Robbo: greyed-out certificates tab — which dashboard conditions are not met and how to fix them.
+    Rendered by robbo-theme instructor_dashboard_2/robbo-unavailable-certificates.html.
+    """
+    return {
+        'section_key': 'certificates',
+        'section_display_name': _('Certificates'),
+        'template_path_prefix': 'robbo-unavailable-',
+        'robbo_unavailable': True,
+        'robbo_conditions': conditions,
+        'robbo_checks': checks,
+    }
 
 
 def _section_certificates(course):

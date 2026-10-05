@@ -1800,6 +1800,7 @@ body.indigo-dark-theme {
 @import '../../../courseware/discover';
 @import '../../../courseware/robbo-courses-catalog';
 @import '../../../courseware/robbo-global-analytics';
+@import '../../../courseware/robbo-instructor-certificates';
 @import '../../../courseware/about';
 @import '../../../courseware/bookmarks';
 @import '../../../courseware/learning-mfe-unit-content';
@@ -1807,7 +1808,7 @@ body.indigo-dark-theme {
 @import '../../../home/home';
 @import '../../../home/guest-landing';
 @import '../../../programs/programs';
-@import '../../../certificates/certificate';
+// Certificate page styles live in the standalone robbo-certificate.css (they set @page for printing).
 @import '../../../xblock/xblock';
 @import '../../../views/teams';
 @import '../../../views/wiki';

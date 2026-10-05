@@ -4,4 +4,9 @@
 // Standalone certificate stylesheet (see accomplishment-base.html).
 // Output: themes/robbo-theme/lms/static/css/robbo-certificate.css
 
+$static-path: '..';
+
+@import 'partials/lms/theme/robbo-proxima-fonts';
+// skill: _certificate.scss holds the page chrome, the «РОББО» sheet and A4 print; designs uploaded in Studio below
 @import 'certificates/certificate';
+@import 'certificates/certificate-uploaded';
