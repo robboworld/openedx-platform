@@ -53,6 +53,8 @@ $robbo-udesign-line-height: 1.2;
   display: block;
   height: auto;
   object-fit: contain;
+  // Signatures uploaded in Studio usually sit on white: multiply drops the white over the background
+  mix-blend-mode: multiply;
 }
 
 @media print {

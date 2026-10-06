@@ -64,6 +64,18 @@ from openedx.core.djangolib.js_utils import dump_js_escaped_json, js_escaped_str
 
     <div class="enable-certificates">
         <h3 class="hd hd-3">${_("Student-Generated Certificates")}</h3>
+        ## Robbo: with auto generation on (certificates.auto_certificate_generation) the button below is not needed
+        % if section_data.get('robbo_auto_generation') and not section_data['enabled_for_course']:
+        <p class="robbo-cert-hint">
+            % if section_data.get('robbo_is_superuser'):
+            Нажимать эту кнопку не нужно: на платформе включён переключатель «certificates.auto_certificate_generation»,
+            и ученик получает сертификат автоматически, как только наберёт проходной балл. Кнопка только добавит
+            ученикам «Запросить сертификат» на странице «Прогресс».
+            % else:
+            Нажимать эту кнопку не нужно: ученик получает сертификат автоматически, как только наберёт проходной балл.
+            % endif
+        </p>
+        % endif
         % if section_data['enabled_for_course']:
             <form id="enable-certificates-form" method="post" action="${section_data['urls']['enable_certificate_generation']}">
                 <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token}">

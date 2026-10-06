@@ -9,7 +9,7 @@
 <%! from openedx.core.djangolib.js_utils import js_escaped_string %>
 <%namespace name="icons" file="_robbo-certificate-icons.html"/>
 <%
-STATUS_LABELS = {'ok': 'Готово', 'fail': 'Нужно исправить', 'warn': 'Стоит проверить', 'info': 'Сведения'}
+STATUS_LABELS = {'ok': 'Готово', 'fail': 'Нужно исправить', 'warn': 'Стоит проверить', 'info': 'Сведения', 'note': 'Важно знать'}
 failing = sum(1 for check in checks if check['status'] == 'fail')
 warnings = sum(1 for check in checks if check['status'] == 'warn')
 required = [check for check in checks if check['status'] in ('ok', 'fail')]

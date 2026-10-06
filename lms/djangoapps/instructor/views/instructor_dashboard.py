@@ -218,6 +218,9 @@ def instructor_dashboard_2(request, course_id):  # lint-amnesty, pylint: disable
     if certs_enabled and (access['admin'] or (access['instructor'] and certs_instructor_enabled)):
         section = _section_certificates(course)
         section['robbo_checks'] = robbo_cert_checks
+        # The «Student-Generated Certificates» block explains that its button is not needed with auto generation on
+        section['robbo_auto_generation'] = certs_api.auto_certificate_generation_enabled()
+        section['robbo_is_superuser'] = request.user.is_superuser
         sections.append(section)
     elif access['staff']:
         sections.append(_section_certificates_unavailable(

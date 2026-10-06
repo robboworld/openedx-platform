@@ -13,10 +13,10 @@ Certificate readiness checks for the LMS instructor dashboard («Сертифи�
   chosen design, the course has started, certificates are available before the course ends (warning only).
 
 Titles describe the current state («Сертификат выдаётся…» / «Сертификат не выдаётся…»), not the requirement.
-Each check: {"key", "status": ok | fail | warn | info, "title", "detail", "link", "link_label",
+Each check: {"key", "status": ok | fail | warn | info | note (special info, shown first), "title", "detail", "link", "link_label",
 "action": None | {"url", "label", "confirm"}, "admin_only": bool}.
-Checks about platform-level settings that only a superuser can change are shown to superusers only
-(``admin_only``, marked «Видит только администратор»).
+Superusers also get the names of platform-level settings and links to them; checks with ``admin_only``
+are shown to superusers only (marked «Видит только администратор»).
 User-facing text is Russian (see .cursor/rules/user-facing-copy-ru.mdc).
 """
 
@@ -38,7 +38,7 @@ from xmodule.modulestore.django import modulestore
 
 from .designs import DESIGN_OVERRIDE_KEY, get_design
 
-OK, FAIL, WARN, INFO = 'ok', 'fail', 'warn', 'info'
+OK, FAIL, WARN, INFO, NOTE = 'ok', 'fail', 'warn', 'info', 'note'
 
 def _check(key, status, title, detail='', link=None, link_label=None, action=None, admin_only=False):
     return {
@@ -234,22 +234,36 @@ def course_checks(course, can_fix=False, is_superuser=False):
     checks = []
 
     # Platform-wide waffle switch: without it nobody gets a certificate for passing the course.
-    # Shown as information («Сведения») and to superusers only: nobody else can change it.
+    # A special note («Важно знать», NOTE) for all course staff, first in the grid: with the switch on the
+    # «Разрешить обучающимся выпускать себе сертификаты» button below is not needed. Superusers, who can change
+    # the switch, get its name and a link to it.
     auto_enabled = certs_api.auto_certificate_generation_enabled()
-    if is_superuser:
-        checks.append(_check(
-            'auto', INFO,
-            'Сертификат выдаётся автоматически при сдаче курса' if auto_enabled
-            else 'Сертификат не выдаётся автоматически при сдаче курса',
-            'Ученик получает сертификат, как только наберёт проходной балл.' if auto_enabled else (
-                'Ученик, сдавший курс, сертификат не получает. Включите переключатель '
-                '«certificates.auto_certificate_generation» в админке: «Django-Waffle» → «Switches» '
-                '(отметка «Active»). Он один на всю платформу.'
-            ),
-            None if auto_enabled else '/admin/waffle/switch/',
-            None if auto_enabled else 'Открыть переключатели',
-            admin_only=True,
-        ))
+    if auto_enabled:
+        auto_title = 'Сертификат выдаётся автоматически при сдаче курса'
+        auto_detail = (
+            'На платформе включён переключатель «certificates.auto_certificate_generation»: ученик получает '
+            'сертификат сам, как только наберёт проходной балл. Поэтому нажимать «Разрешить обучающимся '
+            'выпускать себе сертификаты» не нужно — эта кнопка только добавляет ученикам «Запросить сертификат» '
+            'на странице «Прогресс».' if is_superuser else
+            'Ученик получает сертификат сам, как только наберёт проходной балл. Разрешать ученикам выпускать '
+            'сертификаты (кнопка ниже на этой вкладке) не нужно.'
+        )
+    else:
+        auto_title = 'Сертификат не выдаётся автоматически при сдаче курса'
+        auto_detail = (
+            'Ученик, сдавший курс, сам сертификат не получает. Включите переключатель '
+            '«certificates.auto_certificate_generation» в админке: «Django-Waffle» → «Switches» '
+            '(отметка «Active»). Он один на всю платформу.' if is_superuser else
+            'Ученик, сдавший курс, получит сертификат, только если разрешить ученикам выпускать сертификаты '
+            'на этой вкладке или выпустить сертификаты вручную. Автоматическую выдачу включает '
+            'администратор платформы.'
+        )
+    show_switch_link = is_superuser and not auto_enabled
+    checks.append(_check(
+        'auto', NOTE, auto_title, auto_detail,
+        '/admin/waffle/switch/' if show_switch_link else None,
+        'Открыть переключатели' if show_switch_link else None,
+    ))
 
     modes = list(CourseMode.objects.filter(course_id=course_key).values_list('mode_slug', flat=True))
     has_honor = CourseMode.HONOR in modes
@@ -451,6 +465,12 @@ def course_checks(course, can_fix=False, is_superuser=False):
             'Для этого администратор платформы должен включить управление сертификатами, '
             'после этого выпуск разрешается для курса на этой вкладке.'
         )
+    elif auto_enabled:
+        # Auto generation already issues the certificate: no button here, see the «auto» note
+        self_detail = (
+            'Это не нужно: сертификат выдаётся автоматически при сдаче курса, нажимать «Разрешить обучающимся '
+            'выпускать себе сертификаты» не требуется.'
+        )
     else:
         self_detail = (
             'Разрешите ученикам курса запрашивать сертификат на странице «Прогресс».' if can_fix else
@@ -470,8 +490,8 @@ def course_checks(course, can_fix=False, is_superuser=False):
         self_detail, action=self_action,
     ))
 
-    # Stable sort: keep the order of the checks, informational ones at the end of the grid
-    checks.sort(key=lambda check: check['status'] == INFO)
+    # Stable sort: keep the order of the checks, the special note first, informational ones at the end of the grid
+    checks.sort(key=lambda check: {NOTE: 0, INFO: 2}.get(check['status'], 1))
     return checks
 
 

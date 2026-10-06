@@ -118,6 +118,8 @@ $robbo-cert-ink: #000;
   flex-shrink: 0;
   width: 140px;
   height: auto;
+  // Signatures uploaded in Studio usually sit on white: multiply drops the white over the sheet background
+  mix-blend-mode: multiply;
 }
 
 .robbo-cert__signatory-info {
