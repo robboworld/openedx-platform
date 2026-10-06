@@ -136,22 +136,18 @@ _NECESSITY_LABELS_INLINE_JS = """
         var lang = (el.getAttribute('data-robbo-ora-ui-lang') || '').toLowerCase();
         var labels = lang.indexOf('ru') === 0 ? RU : EN;
         Array.prototype.forEach.call(el.options, function (opt) {
-          if (Object.prototype.hasOwnProperty.call(labels, opt.value)) {
+          if (Object.prototype.hasOwnProperty.call(labels, opt.value) && opt.textContent !== labels[opt.value]) {
             opt.textContent = labels[opt.value];
           }
         });
       },
     );
   }
+  // One pass, no MutationObserver: the label writes retriggered it endlessly and froze Studio.
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', syncNecessityLabels);
   } else {
     syncNecessityLabels();
-  }
-  var editor = document.getElementById('openassessment-editor');
-  if (editor && !editor._robboNecessityLabelSync) {
-    editor._robboNecessityLabelSync = true;
-    new MutationObserver(syncNecessityLabels).observe(editor, { childList: true, subtree: true });
   }
 })();
 </script>
