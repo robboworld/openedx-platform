@@ -125,7 +125,8 @@
         var lang = (sel.getAttribute('data-robbo-ora-ui-lang') || '').toLowerCase();
         var labels = lang.indexOf('ru') === 0 ? NECESSITY_LABELS_RU : NECESSITY_LABELS_EN;
         Array.prototype.forEach.call(sel.options, function (opt) {
-          if (Object.prototype.hasOwnProperty.call(labels, opt.value)) {
+          // Write only on change: replacing the text node is itself a DOM mutation.
+          if (Object.prototype.hasOwnProperty.call(labels, opt.value) && opt.textContent !== labels[opt.value]) {
             opt.textContent = labels[opt.value];
           }
         });
@@ -489,35 +490,32 @@
 
   function bootEditorPatch() {
     var editor = document.getElementById('openassessment-editor');
-    if (!editor) {
-      return false;
+    if (!editor || editor._robboBooted) {
+      return;
     }
-    if (!editor._robboBooted) {
-      editor._robboBooted = true;
-      if (!editor._robboLabelObserver) {
-        var observer = new MutationObserver(function () {
-          syncNecessityOptionLabels();
-          installNecessityFieldListeners();
-          updateNecessityHintVisibility();
-          initLargeFiles();
-        });
-        observer.observe(editor, { childList: true, subtree: true });
-        editor._robboLabelObserver = observer;
-      }
-    }
+    // The editor template is rendered on the server in one piece, so a single pass is enough.
+    editor._robboBooted = true;
     syncNecessityOptionLabels();
     installNecessityFieldListeners();
     updateNecessityHintVisibility();
     initLargeFiles();
-    return true;
   }
 
   installSaveValidationGuard();
   installAjaxHooks();
 
+  // The editor appears later (Edit modal) and comes back as a new element after reopening.
+  // The observer only looks it up, at most once per 100 ms; it must never write to the DOM itself:
+  // writes from the callback retriggered it endlessly and froze Studio on ORA Edit.
   if (!document._robboOraEditorObserver) {
+    var bootTimer = null;
     document._robboOraEditorObserver = new MutationObserver(function () {
-      bootEditorPatch();
+      if (bootTimer === null) {
+        bootTimer = window.setTimeout(function () {
+          bootTimer = null;
+          bootEditorPatch();
+        }, 100);
+      }
     });
     document._robboOraEditorObserver.observe(document.documentElement, {
       childList: true,

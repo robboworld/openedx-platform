@@ -478,6 +478,10 @@
     if (!node || node.nodeType !== 1) {
       return false;
     }
+    // Studio: the ORA editor has no learner upload UI; skip its large subtree.
+    if (node.closest('#openassessment-editor') || node.id === 'openassessment-editor') {
+      return false;
+    }
     if (node.matches(
       '.openassessment, .openassessment__steps, .step--response, .submission__upload__files__title, '
       + 'input.submission__answer__upload, input.file--upload, button.file__upload, button.action--upload, '
@@ -510,8 +514,11 @@
       window.jQuery.ajaxPrefilter(patchSaveFilesDescriptionsPayload);
       window.jQuery(document).ajaxSuccess(onAjaxSuccess);
       // Failed uploads reset the input via jQuery .val(null) without a change event.
-      window.jQuery(document).ajaxComplete(function () {
-        scheduleRefreshUploadUi();
+      // Only XBlock handler calls matter; Studio fires plenty of unrelated requests.
+      window.jQuery(document).ajaxComplete(function (_event, _xhr, settings) {
+        if (settings && settings.url && String(settings.url).indexOf('handler') !== -1) {
+          scheduleRefreshUploadUi();
+        }
       });
     }
 
