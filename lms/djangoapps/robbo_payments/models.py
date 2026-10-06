@@ -50,7 +50,8 @@ class Order(models.Model):
         app_label = 'robbo_payments'
         ordering = ('-created_at',)
         indexes = [
-            models.Index(fields=['user', 'course_key', 'status']),
+            # Name as created by 0001_initial; without it Django computes another one and wants a rename.
+            models.Index(fields=['user', 'course_key', 'status'], name='robbo_payme_user_id_6f0d0a_idx'),
         ]
 
     def __str__(self):
