@@ -11,11 +11,16 @@
   from cms.djangoapps.contentstore.utils import get_pages_and_resources_url, get_course_outline_url, get_course_libraries_url, get_updates_url, get_files_uploads_url, get_video_uploads_url, get_schedule_details_url, get_grading_url, get_advanced_settings_url, get_import_url, get_export_url, get_studio_home_url, get_course_team_url, get_optimizer_url
   from openedx.core.djangoapps.discussions.config.waffle import ENABLE_PAGES_AND_RESOURCES_MICROFRONTEND
   from openedx.core.djangoapps.lang_pref.api import header_language_selector_is_enabled, released_languages
+  from openedx.core.lib.robbo_stack import ROBBO_STACK_PROFILE, robbo_stack_letter, user_can_see_robbo_stack_badge
 %>
 <div class="wrapper-header wrapper" id="view-top">
   <header class="primary" role="banner">
     <div class="wrapper wrapper-l">
       <h1 class="branding">
+        % if user_can_see_robbo_stack_badge(user):
+        ## Admin-only: stack profile letter (O / S / C).
+        <span class="robbo-stack-badge" title="${ROBBO_STACK_PROFILE}">${robbo_stack_letter()}</span>
+        % endif
         % if not toggles.use_new_home_page():
         <a class="brand-link" href="/" title="${settings.STUDIO_NAME}">
           <span class="header-logo-wordmark" aria-hidden="true">РОББО<sup class="header-logo-reg">®</sup></span>

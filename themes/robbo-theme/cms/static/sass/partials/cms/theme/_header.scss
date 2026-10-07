@@ -4,6 +4,9 @@
 
 $robbo-cms-header-green: #00af41;
 $robbo-cms-header-wordmark: 30px;
+// Admin-only stack profile letter (O / S / C) left of the wordmark.
+$robbo-stack-badge-size: 28px;
+$robbo-stack-badge-fs: 16px;
 
 .wrapper-header {
   background: $robbo-cms-header-green !important;
@@ -65,6 +68,27 @@ $robbo-cms-header-wordmark: 30px;
     display: flex;
     align-items: center;
     flex: 0 0 auto;
+    gap: 10px;
+
+    .robbo-stack-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      box-sizing: border-box;
+      min-width: $robbo-stack-badge-size;
+      height: $robbo-stack-badge-size;
+      padding: 0 4px;
+      border: 2px solid currentColor;
+      border-radius: 6px;
+      color: #fff;
+      font-family: inherit;
+      font-size: $robbo-stack-badge-fs;
+      font-weight: 700;
+      line-height: 1;
+      cursor: default;
+      user-select: none;
+    }
 
     .brand-link {
       display: inline-flex;
