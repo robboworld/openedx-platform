@@ -1,17 +1,24 @@
 /**
- * After LMS login, establish LK BFF session (lk_bff_session on localhost:8080)
+ * After LMS login, establish LK BFF session (lk_bff_session) in the background
  * so LK + RS recognize the user without a separate Sign in step.
+ *
+ * Runs silent SSO in a hidden iframe: the page never navigates away, so a BFF
+ * failure (lost PKCE state, LMS lookup error, …) can no longer drop the user
+ * on the LK login page. The iframe lands on a tiny LMS asset on success.
+ * The cookie sticks only when LK and LMS are same-site (prod: *.robbo.ru);
+ * otherwise LK/RS fall back to their own silent SSO on first visit.
  */
 (function () {
   'use strict';
 
-  var STORAGE_KEY = 'robbo_bff_bridge_v1';
+  var STORAGE_KEY = 'robbo_bff_bridge_v2';
+  var TIMEOUT_MS = 15000;
   var startBase = window.__ROBBO_BFF_SSO_START__;
   if (!startBase) {
     return;
   }
 
-  // Learning MFE embeds courseware via /xblock/ iframes; silent SSO here logs the user out.
+  // Learning MFE embeds courseware via /xblock/ iframes; also skips the bridge's own iframe.
   if (window !== window.top) {
     return;
   }
@@ -26,36 +33,56 @@
     return;
   }
 
-  var state = null;
   try {
-    state = window.sessionStorage.getItem(STORAGE_KEY);
+    if (window.sessionStorage.getItem(STORAGE_KEY) === 'done') {
+      return;
+    }
   } catch (e) {
     return;
   }
 
-  if (state === 'done') {
-    return;
-  }
-  if (state === 'pending') {
-    try {
-      window.sessionStorage.setItem(STORAGE_KEY, 'done');
-    } catch (e) {
-      // ignore
-    }
-    return;
-  }
-
-  var returnTo = window.location.href;
+  var returnTo = window.location.origin + '/favicon.ico';
   var bridgeUrl = startBase;
   if (bridgeUrl.indexOf('return_to=') === -1) {
     bridgeUrl += (bridgeUrl.indexOf('?') === -1 ? '?' : '&') +
       'return_to=' + encodeURIComponent(returnTo);
   }
 
-  try {
-    window.sessionStorage.setItem(STORAGE_KEY, 'pending');
-  } catch (e) {
-    return;
+  var frame = null;
+  var timer = null;
+
+  function finish() {
+    if (timer) {
+      window.clearTimeout(timer);
+      timer = null;
+    }
+    // One attempt per tab, success or not: a failed silent SSO must not repeat on every page.
+    try {
+      window.sessionStorage.setItem(STORAGE_KEY, 'done');
+    } catch (e) {
+      // ignore
+    }
+    if (frame && frame.parentNode) {
+      frame.parentNode.removeChild(frame);
+    }
+    frame = null;
   }
-  window.location.replace(bridgeUrl);
+
+  function start() {
+    frame = document.createElement('iframe');
+    frame.setAttribute('aria-hidden', 'true');
+    frame.setAttribute('tabindex', '-1');
+    frame.setAttribute('title', '');
+    frame.hidden = true;
+    frame.addEventListener('load', finish);
+    timer = window.setTimeout(finish, TIMEOUT_MS);
+    frame.src = bridgeUrl;
+    document.body.appendChild(frame);
+  }
+
+  if (document.body) {
+    start();
+  } else {
+    document.addEventListener('DOMContentLoaded', start);
+  }
 })();
