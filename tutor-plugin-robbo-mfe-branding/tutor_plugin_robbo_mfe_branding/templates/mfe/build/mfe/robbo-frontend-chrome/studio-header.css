@@ -137,6 +137,60 @@
   background: none !important;
 }
 
+/*
+ * Admin-only stack profile letter (O / S / C) left of the wordmark, as LMS `.robbo-stack-badge`.
+ * The logo link's own pseudos are taken by the wordmark, so the badge is drawn on its container:
+ * the brand row (desktop, hidden main menu) or the spacer right before the logo (mobile).
+ * Classes come from src/header/Header.tsx (stackProfile.ts).
+ */
+.robbo-stack-shell {
+  display: contents;
+}
+
+.robbo-stack-shell--online {
+  --robbo-stack-letter: "O";
+}
+
+.robbo-stack-shell--skill {
+  --robbo-stack-letter: "S";
+}
+
+.robbo-stack-shell--courses {
+  --robbo-stack-letter: "C";
+}
+
+.robbo-stack-shell--admin .studio-header .row:has(> a > img.logo) {
+  align-items: center;
+  gap: 10px;
+}
+
+.robbo-stack-shell--admin .studio-header .pgn__action-row-spacer:has(+ a > img.logo) {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 10px;
+}
+
+.robbo-stack-shell--admin .studio-header .row:has(> a > img.logo)::before,
+.robbo-stack-shell--admin .studio-header .pgn__action-row-spacer:has(+ a > img.logo)::after {
+  content: var(--robbo-stack-letter);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 4px;
+  border: 2px solid currentColor;
+  border-radius: 6px;
+  color: #fff;
+  font-family: "ProximaNova", "Proxima Nova", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+
 .studio-header img.logo,
 .studio-header img.d-block.logo {
   order: 0;
