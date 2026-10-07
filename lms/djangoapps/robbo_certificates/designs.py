@@ -27,7 +27,7 @@ from django.core.files.storage import default_storage
 from openedx.core.djangoapps.theming.helpers import get_theme_base_dir
 
 DESIGN_OVERRIDE_KEY = 'robbo_certificate_template'
-DEFAULT_DESIGN = 'green'  # courses: the green sheet (online: olympiad, skill: robbo)
+DEFAULT_DESIGN = 'olympiad'  # courses: Scratch Olympiad sheet in English (online: olympiad, skill: robbo)
 PREVIEW_QUERY_PARAM = 'robbo_design'
 
 KIND_THEME = 'theme'

@@ -1,7 +1,6 @@
 ## title: Олимпиада Scratch
-## description: Белый лист с логотипом олимпиады Scratch и подписью председателя оргкомитета.
+## description: Белый лист на английском с логотипом олимпиады Scratch, датой выдачи и подписью председателя оргкомитета.
 <%page expression_filter="h"/>
-<%! from django.utils.translation import gettext as _ %>
 <%namespace name='static' file='/static_content.html'/>
 <%
 # Exact Koa Scratch-Olympiad sheet markup
@@ -10,6 +9,10 @@
 # overridden in robbo-certificate.css (.robbo-koa-cert).
 course_mode_class = course_mode if course_mode else ''
 cert_mode = course_mode or ''
+# courses: the sheet is English whatever the interface language (like the green sheet);
+# plain strftime gives English month names in the LMS container.
+created_on = context.get('certificate_created_on')
+issued_on = created_on.strftime('%-d %B %Y') if created_on else certificate_created_date
 %>
 
 <main class="accomplishment accomplishment-main">
@@ -24,7 +27,7 @@ cert_mode = course_mode or ''
             <div class="accomplishment-type">
 
                 <span style="margin-top: 20px; margin-bottom: 6.5%" class="accomplishment-type-symbol">
-                  <img style="width: 95% !important; max-width: 95% !important;" class="src" src="${static.url('robbo-theme/images/certificates/Robbo-scratch-olympiad.png')}" alt="${_('Scratch Olympiad logo')}">
+                  <img style="width: 95% !important; max-width: 95% !important;" class="src" src="${static.url('robbo-theme/images/certificates/Robbo-scratch-olympiad.png')}" alt="Scratch Olympiad logo">
                 </span>
 
             </div>
@@ -32,16 +35,16 @@ cert_mode = course_mode or ''
             <div class="wrapper-statement-and-signatories-top">
                 <div style="margin-bottom: 30px !important; margin-left:13.3% !important; margin-right: 13.3% !important;" class="accomplishment-statement-left">
 
-                    <p style="white-space: pre; max-width: 100% !important;" class="accomplishment-type-label hd-3-s">${_("C E R T I F I C A T E   O F   C O U R S E   C O M P L E T I O N")}</p>
+                    <p style="white-space: pre; max-width: 100% !important;" class="accomplishment-type-label hd-3-s">C E R T I F I C A T E   O F   C O U R S E   C O M P L E T I O N</p>
 
                     <p class="accomplishment-statement-lead">
-                        <p style="text-align: left; line-height: 1.0 !important;" class="accomplishment-summary copy copy-lead-middle">${_("Issued to certify that")}</p>
+                        <p style="text-align: left; line-height: 1.0 !important;" class="accomplishment-summary copy copy-lead-middle">Issued to certify that</p>
 
                         <strong class="accomplishment-recipient emphasized hd-1-emphasized ">${accomplishment_copy_name}</strong>
                     </p>
                     <p style="border-bottom: 2px dotted gray; margin-bottom: 30px !important;" class="accomplishment-summary copy copy-lead">&nbsp;</p>
 
-                    <p style="line-height: 1.35 !important; margin-bottom: 25px !important;" class="accomplishment-statement-detail copy copy-lead-middle">${_("has successfully completed the course “{course_name}”").format(course_name=accomplishment_copy_course_name)}</p>
+                    <p style="line-height: 1.35 !important; margin-bottom: 25px !important;" class="accomplishment-statement-detail copy copy-lead-middle">has successfully completed the course “${accomplishment_copy_course_name}”</p>
                 </div>
             </div>
 
@@ -49,7 +52,7 @@ cert_mode = course_mode or ''
             <div class="wrapper-statement-and-signatories">
                 % if cert_mode != 'base':
                 <div class="accomplishment-signatories">
-                    <h3 class="accomplishment-signatories-title sr-only">${_("Noted by")}</h3>
+                    <h3 class="accomplishment-signatories-title sr-only">Noted by</h3>
                     <div class="wrapper-signatories">
                         <div class="list-signatories">
                             % if certificate_data:
@@ -64,9 +67,9 @@ cert_mode = course_mode or ''
                                         <div class="signatory-simple robbo-koa-cert__sign-block">
                                            <img class="signatory-signature robbo-koa-cert__signature" src="${static.url(signatory['signature_image_path'])}" alt="${signatory['name']}">
                                             <div class="signatory-name robbo-koa-cert__role">
-                                               <h4 class="signatory-name hd-5-middle name-part">${_("Chair")}</h4>
-                                               <h4 class="signatory-name hd-5-middle name-part">${_("of the Organizing Committee")}</h4>
-                                               <h4 class="signatory-name hd-5-middle-name name-part">Павел Фролов</h4>
+                                               <h4 class="signatory-name hd-5-middle name-part">Chair</h4>
+                                               <h4 class="signatory-name hd-5-middle name-part">of the Organizing Committee</h4>
+                                               <h4 class="signatory-name hd-5-middle-name name-part">Pavel Frolov</h4>
                                              </div>
                                         </div>
                                     </div>
@@ -79,7 +82,7 @@ cert_mode = course_mode or ''
                 % endif
             </div>
             <div style="margin-bottom: 0rem !important; margin-top: 0rem !important;" class="accomplishment-orgs">
-                <h3 class="accomplishment-orgs-title sr-only">${_("Supported by the following organizations")}</h3>
+                <h3 class="accomplishment-orgs-title sr-only">Supported by the following organizations</h3>
                 <ul style="justify-content: space-between;" class="wrapper-orgs list-orgs">
 
                     % if organization_logo:
@@ -103,7 +106,7 @@ cert_mode = course_mode or ''
 
                     <li class="wrapper-organization">
                         <div class="organization-right print-right robbo-koa-cert__issued">
-                             <span class="robbo-koa-cert__issued-line">${_("Issued:")} ${certificate_created_date}</span>
+                             <span class="robbo-koa-cert__issued-line">Issued: ${issued_on}</span>
                         </div>
                     </li>
 
