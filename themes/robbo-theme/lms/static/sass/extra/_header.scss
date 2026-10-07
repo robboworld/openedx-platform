@@ -30,6 +30,9 @@ $robbo-header-green: #00b140;
 // Wordmark (РОББО): 30px; primary tabs — same as MFE `$robbo-mfe-header-nav-fs` (20px)
 $robbo-header-nav-font: 20px;
 $robbo-header-wordmark: 30px;
+// Admin-only stack profile letter (O / S / C) left of the wordmark.
+$robbo-stack-badge-size: 28px;
+$robbo-stack-badge-fs: 16px;
 $robbo-header-user-menu-fs: 1.125rem; // Sign in / Register
 $robbo-header-profile-toggle-fs: 1rem; // 16px: −2px vs 18px for .toggle-user-dropdown
 $robbo-dropdown-enter-duration: 200ms;
@@ -125,8 +128,30 @@ header.global-header {
     }
 
     .header-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
         margin: 0;
         flex: 0 0 auto;
+
+        .robbo-stack-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            box-sizing: border-box;
+            min-width: $robbo-stack-badge-size;
+            height: $robbo-stack-badge-size;
+            padding: 0 4px;
+            border: 2px solid currentColor;
+            border-radius: 6px;
+            color: #fff;
+            font-size: $robbo-stack-badge-fs;
+            font-weight: 700;
+            line-height: 1;
+            cursor: default;
+            user-select: none;
+        }
 
         a {
             @include margin-left(0);
