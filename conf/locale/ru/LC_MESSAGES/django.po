@@ -2974,12 +2974,6 @@ msgstr ""
 "отключен только в том случае, если организация, в которой он находится, "
 "отключена."
 
-#: lms/djangoapps/course_home_api/models.py
-#: openedx/features/discounts/models.py
-#, fuzzy
-msgid "Disabled"
-msgstr "К использованию"
-
 #: lms/djangoapps/course_home_api/outline/serializers.py
 #, python-brace-format
 msgid "({number} Question)"
@@ -6903,10 +6897,6 @@ msgstr ""
 #, python-format
 msgid "%(value)s should have the form ORG+COURSE"
 msgstr "%(value)s должны иметь форму  ORG+COURSE"
-
-#: openedx/core/djangoapps/config_model_utils/models.py
-msgid "Enabled"
-msgstr "Включено"
 
 #: openedx/core/djangoapps/config_model_utils/models.py
 msgid "Configure values for all course runs associated with this site."

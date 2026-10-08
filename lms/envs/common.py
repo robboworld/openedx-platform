@@ -1955,6 +1955,11 @@ ACE_EMAIL_DEFAULT_LANGUAGE = 'en'
 # Account activation email language for all recipients (ignores user language preference).
 # Read from Django settings only (not Site configuration). courses: English instance.
 ACTIVATION_EMAIL_LANGUAGE = 'en'
+
+# Robbo (courses): signed-in users get the language chosen in Account settings («Site language», ``pref-lang``)
+# in the LMS, MFEs and Studio; anonymous visitors keep ROBBO_FORCED_LANGUAGE.
+# lms/djangoapps/robbo_lang/middleware.py, openedx/core/djangoapps/lang_pref/middleware.py
+ROBBO_LANGUAGE_FROM_ACCOUNT = True
 # these languages display right to left
 LANGUAGES_BIDI = ("he", "ar", "fa", "ur", "fa-ir", "rtl")
 
@@ -4637,7 +4642,10 @@ COMPREHENSIVE_THEME_LOCALE_PATHS = []
 # .. setting_default: []
 # .. setting_description: A list of the paths to locale directories to load first e.g.
 #   "PREPEND_LOCALE_PATHS" : ["/edx/my-locales/"].
-PREPEND_LOCALE_PATHS = []
+# Robbo: the theme catalog goes first. The image build replaces conf/locale with the Open edX translations
+# (atlas pull + compilemessages / compilejsi18n with these settings), so Robbo translations live in
+# themes/conf/locale (django.po, djangojs.po).
+PREPEND_LOCALE_PATHS = [REPO_ROOT / 'themes' / 'conf' / 'locale']
 
 # .. setting_name: DEFAULT_SITE_THEME
 # .. setting_default: None

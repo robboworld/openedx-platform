@@ -1,5 +1,7 @@
 """
 Middleware for Language Preferences
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 from django.conf import settings
 from django.utils.deprecation import MiddlewareMixin
@@ -13,6 +15,16 @@ from openedx.core.djangoapps.site_configuration.helpers import get_value
 from openedx.core.djangoapps.user_api.errors import UserAPIInternalError, UserAPIRequestError
 from openedx.core.djangoapps.user_api.preferences.api import get_user_preference, set_user_preference
 from openedx.core.lib.mobile_utils import is_request_from_mobile_app
+
+
+def _robbo_language_pinned():
+    """
+    Robbo (courses): the language comes from Account settings only, and RobboForceRussianLanguageMiddleware
+    (lms/djangoapps/robbo_lang/middleware.py) writes the cookie — the platform language for anonymous visitors.
+    So the cookie is not the user's choice: do not save it into ``pref-lang`` (a guest's English cookie would
+    overwrite the Account language at sign-in) and leave the cookie to that middleware.
+    """
+    return getattr(settings, 'ROBBO_LANGUAGE_FROM_ACCOUNT', False)
 
 
 class LanguagePreferenceMiddleware(MiddlewareMixin):
@@ -37,8 +49,9 @@ class LanguagePreferenceMiddleware(MiddlewareMixin):
                 # DarkLangMiddleware will take care of this so don't change anything
                 if DarkLangConfig.current().enabled and get_user_preference(request.user, DARK_LANGUAGE_KEY):
                     return
-                set_user_preference(request.user, LANGUAGE_KEY, cookie_lang)
-            else:
+                if not _robbo_language_pinned():
+                    set_user_preference(request.user, LANGUAGE_KEY, cookie_lang)
+            elif not _robbo_language_pinned():
                 request._anonymous_user_cookie_lang = cookie_lang  # lint-amnesty, pylint: disable=protected-access
 
             accept_header = request.META.get(LANGUAGE_HEADER, None)
@@ -64,7 +77,7 @@ class LanguagePreferenceMiddleware(MiddlewareMixin):
         if hasattr(request, 'user'):
             current_user = getattr(request.user, 'real_user', request.user)
 
-        if current_user and current_user.is_authenticated:
+        if current_user and current_user.is_authenticated and not _robbo_language_pinned():
 
             # DarkLangMiddleware has already set this cookie
             if DarkLangConfig.current().enabled and get_user_preference(current_user, DARK_LANGUAGE_KEY):
