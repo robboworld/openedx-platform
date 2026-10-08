@@ -171,9 +171,13 @@
   padding-right: 10px;
 }
 
+/* ProximaNova caps sit 0.05em above the middle of their line box: lift the centred badge by
+ * 0.05 × wordmark size (30px; 22px on phones) so it shares the optical middle of the caps. */
 .robbo-stack-shell--admin .studio-header .row:has(> a > img.logo)::before,
 .robbo-stack-shell--admin .studio-header .pgn__action-row-spacer:has(+ a > img.logo)::after {
   content: var(--robbo-stack-letter);
+  position: relative;
+  top: -1.5px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -312,6 +316,46 @@
   transform: rotate(225deg) !important;
 }
 
+/*
+ * «Что нового» and the «LMS» pill before the user menu (src/header/RobboHeaderExtras.tsx).
+ * 8px between items, as the header's own `.nav` blocks (margin-left 8px).
+ */
+.studio-header .robbo-header-slot {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 0 8px;
+}
+
+/* As the LMS «Студия» pill and the user pill above. */
+.studio-header a.robbo-header-lms-link__btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  border: 1px solid #fff;
+  border-radius: 999px;
+  color: #fff !important;
+  font-family: "ProximaNova", "Proxima Nova", Helvetica, Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.35;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 150ms ease;
+}
+
+.studio-header a.robbo-header-lms-link__btn:hover,
+.studio-header a.robbo-header-lms-link__btn:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  text-decoration: none;
+}
+
+.studio-header a.robbo-header-lms-link__btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.45);
+  outline-offset: 3px;
+}
+
 /* Other course nav dropdowns */
 .studio-header .btn-outline-primary:not(#user-dropdown-menu),
 .studio-header .dropdown > .btn:not(#user-dropdown-menu) {
@@ -393,5 +437,15 @@
   .studio-header a:has(> img.logo),
   .studio-header a:has(> img.d-block.logo) {
     font-size: 22px !important;
+  }
+
+  .robbo-stack-shell--admin .studio-header .row:has(> a > img.logo)::before,
+  .robbo-stack-shell--admin .studio-header .pgn__action-row-spacer:has(+ a > img.logo)::after {
+    top: -1.1px;
+  }
+
+  /* As RobboHeader on phones: no room for the pill, «Что нового» stays. */
+  .studio-header a.robbo-header-lms-link__btn {
+    display: none;
   }
 }
