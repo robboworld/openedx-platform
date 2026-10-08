@@ -33,6 +33,9 @@ $robbo-header-wordmark: 30px;
 // Admin-only stack profile letter (O / S / C) left of the wordmark.
 $robbo-stack-badge-size: 28px;
 $robbo-stack-badge-fs: 16px;
+// ProximaNova caps sit 0.05em above the middle of their line box: lift the centred badge by as much
+// so it shares the optical middle of the wordmark caps.
+$robbo-stack-badge-lift: 0.05 * $robbo-header-wordmark;
 $robbo-header-user-menu-fs: 1.125rem; // Sign in / Register
 $robbo-header-profile-toggle-fs: 1rem; // 16px: −2px vs 18px for .toggle-user-dropdown
 $robbo-dropdown-enter-duration: 200ms;
@@ -135,6 +138,8 @@ header.global-header {
         flex: 0 0 auto;
 
         .robbo-stack-badge {
+            position: relative;
+            top: -$robbo-stack-badge-lift;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -537,6 +542,11 @@ header.global-header {
     }
 }
 
+// «Что нового» button (LMS widget) — same spacing as the Studio pill next to it.
+header.global-header .robbo-main-header__trailing .robbo-header-whats-new {
+    margin-right: 10px;
+}
+
 @include media-breakpoint-down(md) {
     header.global-header .main-header.robbo-main-header {
         grid-template-columns: 1fr;
@@ -556,6 +566,31 @@ header.global-header {
     header.global-header .main-header.robbo-main-header .robbo-main-header__primary,
     header.global-header .main-header.robbo-main-header .robbo-main-header__trailing {
         display: none !important;
+    }
+
+    // «Что нового» stays in the bar on phones: logo | news button | hamburger.
+    // The leading wrapper dissolves so the button can sit between its two children.
+    header.global-header .main-header.robbo-main-header:has(.robbo-header-whats-new) {
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        column-gap: 12px;
+
+        .robbo-main-header__leading {
+            display: contents;
+        }
+
+        .hamburger-menu {
+            order: 3;
+        }
+
+        .robbo-main-header__trailing {
+            display: flex !important;
+            order: 2;
+
+            // Studio pill and user menu stay in `#mobile-menu`, as before.
+            > :not(.robbo-header-whats-new) {
+                display: none !important;
+            }
+        }
     }
 
     header.global-header .hamburger-menu {

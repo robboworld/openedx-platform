@@ -1,0 +1,571 @@
+// Copyright (C) 2026 Robbo <https://robbo.ru>
+// SPDX-License-Identifier: AGPL-3.0-only
+// Part of the Robbo Open edX distribution (site changelog). See NOTICE at repository root.
+//
+// «Что нового» (/whats-new): days newest first, entries by importance — same look as the header
+// panel (lms/djangoapps/robbo_changelog/widget/robbo-whats-new.js): kind icon, unread dot, meta line.
+// Layout shell, scroll fix and base tokens — `.robbo-about-page` (`_about-company.scss`).
+// Root is `.container.about.robbo-whats-new`: legacy `.container.about p` / `.container.about a`
+// (margins, underline) are one class stronger than plain BEM selectors.
+
+.robbo-whats-new {
+    --robbo-wn-surface: #{$robbo-brand-white};
+    --robbo-wn-line: #e8eaed;
+    --robbo-wn-hover: #f6f7f8;
+    --robbo-wn-chip: #f1f2f4;
+    --robbo-wn-green: var(--robbo-green, #{$robbo-brand-green});
+    --robbo-wn-green-dark: var(--robbo-ui-primary-dark, #{$robbo-ui-primary-dark});
+    --robbo-wn-green-tint: #effaf3;
+    --robbo-wn-coal: var(--robbo-coal, #{$robbo-brand-coal});
+    --robbo-wn-grey: var(--robbo-grey, #{$robbo-brand-grey});
+    --robbo-wn-action: #fffbea;
+    --robbo-wn-action-line: #f2d75c;
+    // Kind and audience colours: an owner-approved exception to the four-colour brand palette,
+    // only inside «Что нового» (.cursor/rules/site-changelog.mdc). Same values as the header panel.
+    --robbo-wn-important: #e5484d;
+    --robbo-wn-important-ink: #c4282d;
+    --robbo-wn-important-bg: #ffeaea;
+    --robbo-wn-new: var(--robbo-wn-green);
+    --robbo-wn-new-ink: #00873a;
+    --robbo-wn-new-bg: #e3f6ea;
+    --robbo-wn-improved: #2f6fdf;
+    --robbo-wn-improved-ink: #2457b8;
+    --robbo-wn-improved-bg: #e8effc;
+    --robbo-wn-fixed: #ef7d0f;
+    --robbo-wn-fixed-ink: #b85a00;
+    --robbo-wn-fixed-bg: #fff1e0;
+    --robbo-wn-authors-ink: #5b3cc4;
+    --robbo-wn-authors-bg: #efeaff;
+    --robbo-wn-teachers-ink: #0e7a74;
+    --robbo-wn-teachers-bg: #ddf3f1;
+    --robbo-wn-staff-ink: #{$robbo-brand-white};
+    --robbo-wn-staff-bg: var(--robbo-wn-coal);
+    --robbo-wn-admins-ink: #b4234a;
+    --robbo-wn-admins-bg: #fde7ee;
+    --robbo-wn-radius: 1rem;
+    --robbo-wn-gap: clamp(0.75rem, 1.5vw, 1rem);
+    --robbo-wn-title-fs: clamp(1.75rem, 3.5vw, 2.25rem);
+    --robbo-wn-entry-fs: clamp(1.0625rem, 1.4vw, 1.1875rem);
+    --robbo-wn-small-fs: 0.875rem;
+    --robbo-wn-control-h: 2.5rem;
+    --robbo-wn-kind: 2.25rem;
+}
+
+.container.about.robbo-whats-new {
+    align-items: stretch;
+
+    p {
+        margin: 0;
+        overflow-wrap: anywhere;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    .robbo-whats-new__intro,
+    .robbo-whats-new__filters,
+    .robbo-whats-new__release,
+    .robbo-whats-new__empty {
+        margin: 0 auto var(--robbo-about-section-gap);
+        max-width: var(--robbo-about-max);
+        width: 100%;
+    }
+
+    .robbo-whats-new__title {
+        color: var(--robbo-about-text);
+        font-size: var(--robbo-wn-title-fs);
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+        margin: 0 0 0.75rem;
+    }
+
+    .robbo-whats-new__lede,
+    .robbo-whats-new__staff-note {
+        color: var(--robbo-about-muted);
+        font-size: var(--robbo-about-body-fs);
+        line-height: var(--robbo-about-line-height);
+    }
+
+    .robbo-whats-new__staff-note {
+        background: var(--robbo-wn-chip);
+        border-radius: 0.75rem;
+        font-size: var(--robbo-wn-small-fs);
+        margin-top: 1rem;
+        padding: 0.75rem 1rem;
+    }
+
+    // Filters: one row of compact dropdowns (GET form, submits on change).
+    .robbo-whats-new__filters {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 0.75rem;
+    }
+
+    .robbo-whats-new__select {
+        align-items: center;
+        background: var(--robbo-wn-surface);
+        border: 1px solid var(--robbo-wn-line);
+        border-radius: 999px;
+        cursor: pointer;
+        display: inline-flex;
+        flex: 0 1 auto;
+        font-style: normal;
+        gap: 0.375rem;
+        margin: 0;
+        max-width: 100%;
+        min-height: var(--robbo-wn-control-h);
+        min-width: 0;
+        padding: 0 0.25rem 0 1rem;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+        &:hover {
+            border-color: var(--robbo-wn-green);
+        }
+
+        &:focus-within {
+            border-color: var(--robbo-wn-green);
+            box-shadow: 0 0 0 3px var(--robbo-wn-green-tint);
+        }
+
+        select {
+            appearance: none;
+            background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23383838' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 0.75rem center / 0.75rem;
+            border: 0;
+            border-radius: 999px;
+            box-shadow: none;
+            color: var(--robbo-about-text);
+            cursor: pointer;
+            font: inherit;
+            font-size: 0.9375rem;
+            font-style: normal;
+            font-weight: 700;
+            height: auto;
+            margin: 0;
+            max-width: 14rem;
+            min-width: 0;
+            outline: none;
+            overflow: hidden;
+            padding: 0.4375rem 2rem 0.4375rem 0.25rem;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: auto;
+        }
+    }
+
+    .robbo-whats-new__select-label {
+        color: var(--robbo-wn-grey);
+        flex: 0 0 auto;
+        font-style: normal;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .robbo-whats-new__apply,
+    .robbo-whats-new__reset {
+        align-items: center;
+        border-radius: 999px;
+        color: var(--robbo-wn-green-dark);
+        display: inline-flex;
+        font-size: var(--robbo-wn-small-fs);
+        font-weight: 700;
+        min-height: var(--robbo-wn-control-h);
+        padding: 0 0.75rem;
+
+        &:hover {
+            background: var(--robbo-wn-green-tint);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--robbo-wn-green);
+            outline-offset: 2px;
+        }
+    }
+
+    // One day: date heading, then «Главное» → «Заметные улучшения» → «Мелкие правки».
+    .robbo-whats-new__release {
+        border-top: 1px solid var(--robbo-wn-line);
+        padding-top: calc(var(--robbo-wn-gap) * 1.5);
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .robbo-whats-new__release-title {
+        align-items: center;
+        color: var(--robbo-about-text);
+        display: flex;
+        flex-wrap: wrap;
+        font-size: var(--robbo-about-section-fs);
+        font-weight: 800;
+        gap: 0.25rem 0.75rem;
+        letter-spacing: -0.01em;
+        line-height: 1.3;
+        margin: 0 0 var(--robbo-wn-gap);
+
+        &::before {
+            background: var(--robbo-wn-green);
+            border-radius: 999px;
+            content: '';
+            height: 1.25rem;
+            width: 0.3125rem;
+        }
+    }
+
+    .robbo-whats-new__version {
+        color: var(--robbo-wn-grey);
+        font-size: var(--robbo-wn-small-fs);
+        font-weight: 400;
+        letter-spacing: 0;
+    }
+
+    .robbo-whats-new__group + .robbo-whats-new__group {
+        margin-top: calc(var(--robbo-wn-gap) * 1.5);
+    }
+
+    .robbo-whats-new__group-title {
+        align-items: center;
+        color: var(--robbo-wn-grey);
+        display: flex;
+        font-size: 0.75rem;
+        font-weight: 800;
+        gap: 0.5rem;
+        letter-spacing: 0.06em;
+        line-height: 1.4;
+        margin: 0 0 0.5rem;
+        text-transform: uppercase;
+
+        &::before {
+            background: currentColor;
+            border-radius: 50%;
+            content: '';
+            height: 0.5rem;
+            width: 0.5rem;
+        }
+    }
+
+    .robbo-whats-new__group--major .robbo-whats-new__group-title {
+        color: var(--robbo-wn-new-ink);
+    }
+
+    .robbo-whats-new__group--notable .robbo-whats-new__group-title {
+        color: var(--robbo-wn-improved-ink);
+    }
+
+    .robbo-whats-new__entries {
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    // Entry: kind icon + text. Highlights — cards with a kind-coloured edge; the rest — rows.
+    .robbo-whats-new__entry {
+        border-radius: 0.875rem;
+        display: flex;
+        gap: 1rem;
+        margin: 0;
+        min-width: 0;
+        padding: 0.875rem 1rem;
+        transition: background-color 0.15s ease, box-shadow 0.15s ease;
+
+        &:hover {
+            background: var(--robbo-wn-hover);
+        }
+
+        &.is-unread {
+            background: var(--robbo-wn-green-tint);
+        }
+    }
+
+    .robbo-whats-new__entry--major {
+        background: var(--robbo-wn-surface);
+        border: 1px solid var(--robbo-wn-line);
+        border-left: 4px solid var(--robbo-wn-kind-color, var(--robbo-wn-green));
+        border-radius: var(--robbo-wn-radius);
+        padding: clamp(1rem, 2.5vw, 1.375rem);
+
+        &:hover {
+            background: var(--robbo-wn-surface);
+            box-shadow: 0 6px 20px rgba(17, 24, 39, 0.08);
+        }
+
+        &.is-unread {
+            background: var(--robbo-wn-green-tint);
+        }
+    }
+
+    .robbo-whats-new__entry--minor {
+        padding-bottom: 0.625rem;
+        padding-top: 0.625rem;
+    }
+
+    // «Важное»: red edge on every row, not only on highlight cards.
+    .robbo-whats-new__entry--important {
+        --robbo-wn-kind-color: var(--robbo-wn-important);
+        --robbo-wn-kind-ink: var(--robbo-wn-important-ink);
+        --robbo-wn-kind-bg: var(--robbo-wn-important-bg);
+
+        &:not(.robbo-whats-new__entry--major) {
+            box-shadow: inset 3px 0 0 var(--robbo-wn-important);
+        }
+    }
+
+    .robbo-whats-new__entry--new {
+        --robbo-wn-kind-color: var(--robbo-wn-new);
+        --robbo-wn-kind-ink: var(--robbo-wn-new-ink);
+        --robbo-wn-kind-bg: var(--robbo-wn-new-bg);
+    }
+
+    .robbo-whats-new__entry--improved {
+        --robbo-wn-kind-color: var(--robbo-wn-improved);
+        --robbo-wn-kind-ink: var(--robbo-wn-improved-ink);
+        --robbo-wn-kind-bg: var(--robbo-wn-improved-bg);
+    }
+
+    .robbo-whats-new__entry--fixed {
+        --robbo-wn-kind-color: var(--robbo-wn-fixed);
+        --robbo-wn-kind-ink: var(--robbo-wn-fixed-ink);
+        --robbo-wn-kind-bg: var(--robbo-wn-fixed-bg);
+    }
+
+    .robbo-whats-new__kind {
+        align-items: center;
+        background: var(--robbo-wn-kind-bg);
+        border-radius: 0.75rem;
+        color: var(--robbo-wn-kind-ink);
+        display: inline-flex;
+        flex: 0 0 auto;
+        height: var(--robbo-wn-kind);
+        justify-content: center;
+        width: var(--robbo-wn-kind);
+
+        svg {
+            display: block;
+        }
+    }
+
+    .robbo-whats-new__entry--minor .robbo-whats-new__kind {
+        border-radius: 0.625rem;
+        height: 1.875rem;
+        width: 1.875rem;
+    }
+
+    .robbo-whats-new__entry-main {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .robbo-whats-new__entry-title {
+        color: var(--robbo-about-text);
+        font-size: var(--robbo-about-body-fs);
+        font-weight: 700;
+        line-height: 1.35;
+        margin: 0.25rem 0 0.25rem;
+        overflow-wrap: anywhere;
+    }
+
+    .robbo-whats-new__entry--major .robbo-whats-new__entry-title {
+        font-size: var(--robbo-wn-entry-fs);
+        font-weight: 800;
+    }
+
+    .robbo-whats-new__entry--minor .robbo-whats-new__entry-title {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        margin-top: 0.125rem;
+    }
+
+    .robbo-whats-new__dot {
+        background: var(--robbo-wn-green);
+        border-radius: 50%;
+        display: inline-block;
+        height: 0.5rem;
+        margin: 0 0.5rem 0.125rem 0;
+        vertical-align: middle;
+        width: 0.5rem;
+    }
+
+    .robbo-whats-new__entry-text {
+        color: var(--robbo-about-muted);
+        font-size: 0.9375rem;
+        line-height: 1.55;
+
+        p + p {
+            margin-top: 0.5rem;
+        }
+    }
+
+    .robbo-whats-new__entry--minor .robbo-whats-new__entry-text {
+        font-size: var(--robbo-wn-small-fs);
+    }
+
+    .robbo-whats-new__meta {
+        align-items: center;
+        color: var(--robbo-wn-grey);
+        display: flex;
+        flex-wrap: wrap;
+        font-size: 0.8125rem;
+        gap: 0.25rem 0.5rem;
+        line-height: 1.3;
+        margin-top: 0.625rem;
+    }
+
+    .robbo-whats-new__meta-kind {
+        color: var(--robbo-wn-kind-ink);
+        font-weight: 700;
+    }
+
+    .robbo-whats-new__meta-sep {
+        color: #c4c7cc;
+    }
+
+    .robbo-whats-new__audience {
+        background: var(--robbo-wn-staff-bg);
+        border-radius: 999px;
+        color: var(--robbo-wn-staff-ink);
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.125rem 0.625rem;
+    }
+
+    .robbo-whats-new__audience--authors {
+        background: var(--robbo-wn-authors-bg);
+        color: var(--robbo-wn-authors-ink);
+    }
+
+    .robbo-whats-new__audience--teachers {
+        background: var(--robbo-wn-teachers-bg);
+        color: var(--robbo-wn-teachers-ink);
+    }
+
+    .robbo-whats-new__audience--platform_admins {
+        background: var(--robbo-wn-admins-bg);
+        color: var(--robbo-wn-admins-ink);
+    }
+
+    .robbo-whats-new__action {
+        background: var(--robbo-wn-action);
+        border: 1px solid var(--robbo-wn-action-line);
+        border-radius: 0.75rem;
+        margin-top: 0.75rem;
+        padding: 0.625rem 0.875rem;
+    }
+
+    .robbo-whats-new__action-title {
+        color: var(--robbo-wn-coal);
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        margin-bottom: 0.125rem;
+        text-transform: uppercase;
+    }
+
+    .robbo-whats-new__action-text {
+        color: var(--robbo-about-text);
+        font-size: 0.9375rem;
+        line-height: 1.5;
+    }
+
+    .robbo-whats-new__image {
+        border: 1px solid var(--robbo-wn-line);
+        border-radius: 0.625rem;
+        display: block;
+        height: auto;
+        margin-top: 0.75rem;
+        max-width: 100%;
+    }
+
+    .robbo-whats-new__link {
+        align-items: center;
+        color: var(--robbo-wn-green-dark);
+        display: inline-flex;
+        font-size: 0.9375rem;
+        font-weight: 700;
+        gap: 0.375rem;
+        margin-top: 0.5rem;
+        min-height: 2.75rem;
+        overflow-wrap: anywhere;
+
+        &::after {
+            content: '→';
+            transition: transform 0.15s ease;
+        }
+
+        &:hover {
+            color: var(--robbo-about-text);
+            text-decoration: underline;
+
+            &::after {
+                transform: translateX(2px);
+            }
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--robbo-wn-green);
+            outline-offset: 2px;
+        }
+    }
+
+    .robbo-whats-new__empty {
+        color: var(--robbo-about-muted);
+        font-size: var(--robbo-about-body-fs);
+    }
+
+    @media screen and (max-width: 575.98px) {
+        .robbo-whats-new__select {
+            flex: 1 1 100%;
+
+            select {
+                flex: 1 1 auto;
+                max-width: none;
+            }
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .robbo-whats-new__select,
+        .robbo-whats-new__entry,
+        .robbo-whats-new__link::after {
+            transition: none;
+        }
+    }
+}
+
+body.indigo-dark-theme .robbo-whats-new {
+    --robbo-wn-surface: #{$light-overlay-d};
+    --robbo-wn-line: #{$border-color-d};
+    --robbo-wn-hover: #{$light-dark-d};
+    --robbo-wn-chip: #{$light-dark-d};
+    --robbo-wn-green-dark: #{$primary-d};
+    --robbo-wn-green-tint: #{$primary-light-d};
+    --robbo-wn-coal: #{$text-color-primary};
+    --robbo-wn-action: #{$primary-light-d};
+    --robbo-wn-action-line: #{$warning-700};
+    --robbo-wn-new-ink: #{$primary-d};
+    --robbo-wn-new-bg: #{$btn-color-d};
+    --robbo-wn-important-ink: #ff9b9e;
+    --robbo-wn-important-bg: #4a1d1f;
+    --robbo-wn-improved-ink: #9cbcf5;
+    --robbo-wn-improved-bg: #1e2f4d;
+    --robbo-wn-fixed-ink: #ffb26b;
+    --robbo-wn-fixed-bg: #45300f;
+    --robbo-wn-authors-ink: #c7b6ff;
+    --robbo-wn-authors-bg: #2f2552;
+    --robbo-wn-teachers-ink: #8de0d8;
+    --robbo-wn-teachers-bg: #163f3c;
+    --robbo-wn-staff-ink: #{$body-bg-d};
+    --robbo-wn-admins-ink: #ffa3bd;
+    --robbo-wn-admins-bg: #4a1b29;
+
+    .robbo-whats-new__select select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d1fae5' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    }
+}

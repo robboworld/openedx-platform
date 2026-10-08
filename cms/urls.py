@@ -335,6 +335,11 @@ urlpatterns += [
     path('', include('csrf.urls')),
 ]
 
+# Robbo «Что нового» header button on Studio's own Mako pages (the LMS does not allow Studio's origin).
+urlpatterns += [
+    path('', include('lms.djangoapps.robbo_changelog.api_urls', namespace='robbo_changelog')),
+]
+
 if 'openedx.testing.coverage_context_listener' in settings.INSTALLED_APPS:
     urlpatterns += [
         path('coverage_context', include('openedx.testing.coverage_context_listener.urls'))
