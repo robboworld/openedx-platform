@@ -28,6 +28,8 @@ class ChildAncestorSerializer(serializers.Serializer):
 
     url = serializers.SerializerMethodField()
     display_name = serializers.CharField(source="display_name_with_default")
+    # Robbo: backport from upstream master — the Authoring unit page builds subsection breadcrumb links from it
+    usage_key = serializers.CharField(source="location")
 
     def get_url(self, obj):
         """
