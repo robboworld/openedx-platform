@@ -1,0 +1,17 @@
+## mako
+<%!
+# Copyright (C) 2026 Robbo <https://robbo.ru>
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# Part of the Robbo Open edX distribution (site changelog). See NOTICE at repository root.
+%>
+## «Что нового» button: the LMS widget (lms/djangoapps/robbo_changelog/widget) mounts into the span.
+<%page expression_filter="h"/>
+<%!
+from django.urls import reverse
+from lms.djangoapps.robbo_changelog.labels import current_lang
+%>
+% if user.is_authenticated:
+<span class="robbo-header-whats-new" data-robbo-whats-new data-lang="${current_lang()}" data-variant="on-dark"></span>
+<script src="${reverse('robbo_changelog:widget')}" defer></script>
+% endif

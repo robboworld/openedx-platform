@@ -64,6 +64,11 @@ def user_can_see_robbo_studio_header_link(user) -> bool:
     return user_can_see_robbo_instructor_catalog(user)
 
 
+def user_can_see_robbo_lms_header_link(user) -> bool:
+    """«LMS» pill in the Studio header: the same audience as the «Студия» pill in LMS headers."""
+    return user_can_see_robbo_studio_header_link(user)
+
+
 def get_robbo_studio_root_url() -> str:
     """
     CMS / Studio base URL from site config or LMS settings (Tutor ``CMS_ROOT_URL`` / ``CMS_BASE``).

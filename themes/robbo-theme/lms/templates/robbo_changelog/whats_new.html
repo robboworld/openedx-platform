@@ -1,0 +1,141 @@
+<%!
+# Copyright (C) 2026 Robbo <https://robbo.ru>
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# Part of the Robbo Open edX distribution (site changelog). See NOTICE at repository root.
+%>
+## «Что нового»: context from lms/djangoapps/robbo_changelog/entries.py (already filtered by site and role).
+<%namespace name='static' file='../static_content.html'/>
+<%page expression_filter="h"/>
+<%inherit file="../main.html" />
+
+<%block name="bodyclass">robbo-about robbo-whats-new-page</%block>
+
+<%block name="pagetitle">${texts['title']}</%block>
+
+<%def name="filter_select(name, label, options)">
+    <label class="robbo-whats-new__select">
+        <span class="robbo-whats-new__select-label">${label}</span>
+        <select name="${name}" onchange="this.form.submit()">
+            % for option in options:
+            <option value="${option['value']}"${' selected' if option['selected'] else ''}>${option['label']}</option>
+            % endfor
+        </select>
+    </label>
+</%def>
+
+<%def name="kind_icon(kind)">
+    ## Same icons as the header panel (lms/djangoapps/robbo_changelog/widget/robbo-whats-new.js).
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    % if kind == 'important':
+        <path d="M10.3 4.2L2.9 17a2 2 0 001.7 3h14.8a2 2 0 001.7-3L13.7 4.2a2 2 0 00-3.4 0z"/>
+        <path d="M12 9.5v4"/><path d="M12 17h.01"/>
+    % elif kind == 'new':
+        <path d="M12 3.5l1.8 4.9 4.9 1.8-4.9 1.8L12 16.9l-1.8-4.9-4.9-1.8 4.9-1.8z"/>
+        <path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>
+    % elif kind == 'improved':
+        <path d="M4 16l5-5 4 4 7-7"/><path d="M14 8h6v6"/>
+    % else:
+        <path d="M14.7 6.3a4 4 0 00-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 005.4-5.4l-2.5 2.5-2.3-.6-.6-2.3z"/>
+    % endif
+    </svg>
+</%def>
+
+<%def name="entry_body(entry)">
+    <span class="robbo-whats-new__kind robbo-whats-new__kind--${entry['kind']}" title="${entry['kind_label']}">${kind_icon(entry['kind'])}</span>
+    <div class="robbo-whats-new__entry-main">
+        <%
+            title_tag = 'p' if entry['importance'] == 'minor' else 'h4'
+        %>
+        <${title_tag} class="robbo-whats-new__entry-title">
+            % if entry['unread']:
+            <span class="robbo-whats-new__dot" aria-hidden="true"></span><span class="sr-only">${texts['unread']}: </span>
+            % endif
+            ${entry['title']}
+        </${title_tag}>
+        <div class="robbo-whats-new__entry-text">
+            % for paragraph in entry['paragraphs']:
+            <p>${paragraph}</p>
+            % endfor
+        </div>
+        % if entry['action']:
+        <div class="robbo-whats-new__action">
+            <p class="robbo-whats-new__action-title">${texts['action']}</p>
+            <p class="robbo-whats-new__action-text">${entry['action']}</p>
+        </div>
+        % endif
+        % if entry['image']:
+        <img class="robbo-whats-new__image" src="${static.url('images/' + entry['image'])}" alt="${entry['title']}" loading="lazy">
+        % endif
+        % if entry['link_url']:
+        <a class="robbo-whats-new__link" href="${entry['link_url']}">${entry['link_label']}</a>
+        % endif
+        <p class="robbo-whats-new__meta">
+            <span class="robbo-whats-new__meta-kind">${entry['kind_label']}</span><span class="robbo-whats-new__meta-sep" aria-hidden="true">·</span><span>${entry['section_label']}</span>
+            % if entry['audience_label']:
+            <span class="robbo-whats-new__audience robbo-whats-new__audience--${entry['audience']}">${entry['audience_label']}</span>
+            % endif
+        </p>
+    </div>
+</%def>
+
+<main id="main" aria-label="Content" tabindex="-1">
+    <section class="container about robbo-about-page robbo-whats-new">
+        <header class="robbo-whats-new__intro">
+            <h1 class="robbo-whats-new__title">${texts['title']}</h1>
+            <p class="robbo-whats-new__lede">${texts['lede']}</p>
+            % if is_staff_viewer:
+            <p class="robbo-whats-new__staff-note">${texts['staff_note']}</p>
+            % endif
+        </header>
+
+        % if section_options or audience_options:
+        <form class="robbo-whats-new__filters" method="get" role="search" aria-label="${texts['filters']}">
+            % if section_options:
+            ${filter_select('section', texts['section_filter'], section_options)}
+            % endif
+            % if audience_options:
+            ${filter_select('for', texts['audience_filter'], audience_options)}
+            % endif
+            <noscript><button class="robbo-whats-new__apply" type="submit">${texts['apply']}</button></noscript>
+            % if filtered:
+            <a class="robbo-whats-new__reset" href="?">${texts['reset']}</a>
+            % endif
+        </form>
+        % endif
+
+        % if not releases:
+        <div class="robbo-whats-new__empty">
+            % if filtered:
+            <p>${texts['empty_filtered']}</p>
+            <a class="robbo-whats-new__link" href="?">${texts['reset_filter']}</a>
+            % else:
+            <p>${texts['empty']}</p>
+            % endif
+        </div>
+        % endif
+
+        % for release in releases:
+        <section class="robbo-whats-new__release" id="${release['anchor']}" aria-labelledby="${release['anchor']}-title">
+            <h2 class="robbo-whats-new__release-title" id="${release['anchor']}-title">
+                <time datetime="${release['date_iso']}">${release['date_label']}</time>
+                % if release['version']:
+                <span class="robbo-whats-new__version">${texts['version']} ${release['version']}</span>
+                % endif
+            </h2>
+            % for group in release['groups']:
+            <div class="robbo-whats-new__group robbo-whats-new__group--${group['importance']}">
+                <h3 class="robbo-whats-new__group-title">${group['heading']}</h3>
+                <ul class="robbo-whats-new__entries">
+                    % for entry in group['entries']:
+                    <li class="robbo-whats-new__entry robbo-whats-new__entry--${entry['importance']} robbo-whats-new__entry--${entry['kind']}${' is-unread' if entry['unread'] else ''}">
+                        ${entry_body(entry)}
+                    </li>
+                    % endfor
+                </ul>
+            </div>
+            % endfor
+        </section>
+        % endfor
+    </section>
+</main>

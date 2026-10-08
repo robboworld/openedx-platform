@@ -7,6 +7,9 @@ $robbo-cms-header-wordmark: 30px;
 // Admin-only stack profile letter (O / S / C) left of the wordmark.
 $robbo-stack-badge-size: 28px;
 $robbo-stack-badge-fs: 16px;
+// ProximaNova caps sit 0.05em above the middle of their line box: lift the centred badge by as much
+// so it shares the optical middle of the wordmark caps.
+$robbo-stack-badge-lift: 0.05 * $robbo-cms-header-wordmark;
 
 .wrapper-header {
   background: $robbo-cms-header-green !important;
@@ -71,6 +74,8 @@ $robbo-stack-badge-fs: 16px;
     gap: 10px;
 
     .robbo-stack-badge {
+      position: relative;
+      top: -$robbo-stack-badge-lift;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -172,6 +177,32 @@ $robbo-stack-badge-fs: 16px;
   .nav-course a,
   .nav-account a {
     color: #fff !important;
+  }
+
+  // «LMS» pill (platform staff): the way back from Studio, as the «Студия» pill in LMS headers.
+  .robbo-header-lms-link__btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 16px;
+    border: 1px solid #fff;
+    border-radius: 999px;
+    font-size: 16px; // px: Studio sets `html { font-size: 62.5% }`
+    font-weight: 700;
+    line-height: 1.35;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 150ms ease;
+
+    &:hover,
+    &:focus-visible {
+      background: rgba(255, 255, 255, 0.12);
+      text-decoration: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.45);
+      outline-offset: 3px;
+    }
   }
 
   .nav-account {

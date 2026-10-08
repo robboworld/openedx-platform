@@ -166,3 +166,7 @@ pii_report
 
 # Pyenv Python version file
 .python-version
+
+# Robbo «Что нового» release files: kept in the private robbo-openedx-stack meta-repo (changelog/site/;
+# staff entries are not public), copied here by its scripts/sync-site-changelog.sh before an image build.
+lms/djangoapps/robbo_changelog/releases/
