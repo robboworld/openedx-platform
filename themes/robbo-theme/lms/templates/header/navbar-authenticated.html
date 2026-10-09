@@ -51,9 +51,22 @@ from openedx.core.djangoapps.site_configuration import helpers as configuration_
       </li>
     % if getattr(settings, 'MFE_CONFIG', {}).get('ROBBO_LK_SSO_URL'):
       <li class="mobile-nav-item hidden-mobile nav-item nav-tab">
+      % if self.real_user.is_active:
         <a class="tab-nav-link" href="${settings.MFE_CONFIG['ROBBO_LK_SSO_URL']}">
           ${_("Личный кабинет")}
         </a>
+      % else:
+        ## Account not activated yet: no link to the LK — a locked tab with a hint
+        ## (child span, not aria-describedby: header.js clones nav items into #mobile-menu).
+        <span class="tab-nav-link robbo-header-lk-locked" role="link" aria-disabled="true" tabindex="0">
+          <svg class="robbo-header-lk-locked__icon" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false">
+            <rect x="5" y="11" width="14" height="10" rx="2" />
+            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+          </svg>
+          ${_("Личный кабинет")}
+          <span class="robbo-header-lk-locked__hint">${_("Подтвердите почту, чтобы открыть личный кабинет")}</span>
+        </span>
+      % endif
       </li>
     % endif
     </ul>

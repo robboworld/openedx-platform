@@ -23,6 +23,22 @@
     return;
   }
 
+  // Cross-site BFF (local stack: LK API on localhost, LMS on local.openedx.io): the iframe's
+  // /oauth2/authorize reaches the LMS without its Lax session cookie, the LMS answers as for a
+  // guest and its new anonymous `sessionid` replaces the user's one — the user is signed out of
+  // the LMS. The BFF cookie could not stick there anyway, so skip the bridge unless same-site.
+  function siteOf(url) {
+    var parts = url.hostname.split('.');
+    return url.protocol + '//' + parts.slice(-2).join('.');
+  }
+  try {
+    if (siteOf(new URL(startBase, window.location.href)) !== siteOf(window.location)) {
+      return;
+    }
+  } catch (e) {
+    return;
+  }
+
   var path = window.location.pathname || '';
   if (
     path.indexOf('/oauth2/') !== -1 ||

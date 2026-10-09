@@ -547,6 +547,109 @@ header.global-header .robbo-main-header__trailing .robbo-header-whats-new {
     margin-right: 10px;
 }
 
+// «Личный кабинет» before account activation (navbar-authenticated.html): a dimmed tab with a lock,
+// no link; the hint pops up on hover / keyboard focus. Same type scale as `.nav-tab a` above.
+$robbo-header-lk-locked-color: rgba(255, 255, 255, 0.6);
+$robbo-header-lk-hint-gap: 10px;
+
+header.global-header .robbo-main-header__primary .robbo-header-lk-locked {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    padding: 0.2em 0;
+    border-bottom: 2px solid transparent;
+    color: $robbo-header-lk-locked-color;
+    font-size: $robbo-header-nav-font;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.35;
+    cursor: not-allowed;
+
+    &:focus {
+        outline: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid rgba(255, 255, 255, 0.45);
+        outline-offset: 3px;
+    }
+
+    .robbo-header-lk-locked__hint {
+        position: absolute;
+        top: calc(100% + #{$robbo-header-lk-hint-gap});
+        left: 50%;
+        z-index: 10;
+        width: max-content;
+        max-width: unquote("min(340px, 80vw)");
+        padding: 8px 12px;
+        border-radius: 8px;
+        background: $robbo-brand-white;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+        color: $robbo-brand-coal;
+        font-size: 14px;
+        font-weight: 400;
+        letter-spacing: normal;
+        line-height: 20px;
+        text-align: center;
+        white-space: normal;
+        // Hidden visually only: screen readers read it as part of the tab's name.
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -4px);
+        transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+    }
+
+    &:hover .robbo-header-lk-locked__hint,
+    &:focus-visible .robbo-header-lk-locked__hint {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+.robbo-header-lk-locked__icon {
+    flex: none;
+    width: 0.8em;
+    height: 0.8em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+// Hamburger menu clone (`.mobile-nav-link`): no hover there, so the hint is a second line.
+header.global-header .mobile-menu .mobile-nav-link .robbo-header-lk-locked {
+    display: block;
+    padding: 10px 14px;
+    color: $robbo-brand-grey;
+    font-size: 14px;
+    line-height: 20px;
+    cursor: not-allowed;
+    @include text-align(left);
+
+    .robbo-header-lk-locked__icon {
+        margin-right: 0.3em;
+        vertical-align: -0.1em;
+    }
+
+    .robbo-header-lk-locked__hint {
+        display: block;
+        max-width: 240px;
+        padding-top: 2px;
+        color: $robbo-brand-coal;
+        font-size: 12px;
+        line-height: 16px;
+        white-space: normal;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    header.global-header .robbo-main-header__primary .robbo-header-lk-locked .robbo-header-lk-locked__hint {
+        transition: none;
+    }
+}
+
 @include media-breakpoint-down(md) {
     header.global-header .main-header.robbo-main-header {
         grid-template-columns: 1fr;
