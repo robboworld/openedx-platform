@@ -136,7 +136,7 @@ msgid "This component has validation issues."
 msgstr "В этом компоненте есть ошибки."
 
 msgid "This unit has validation issues."
-msgstr "В этом юните есть ошибки."
+msgstr "В этом блоке есть ошибки."
 
 msgid "Video Link/URL"
 msgstr "Ссылка на видео"
