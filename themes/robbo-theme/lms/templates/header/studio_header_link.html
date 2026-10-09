@@ -17,7 +17,8 @@ from lms.djangoapps.courseware.robbo_catalog import (
 <style>
 header.global-header .nav-links .secondary .robbo-header-studio-link {
   display: inline-block;
-  margin-right: 10px;
+  /* Right only: Open edX `.secondary .nav-item` adds 10px on the left, doubling the gap after «Что нового». */
+  margin: 0 10px 0 0;
   padding: 0 !important;
 }
 header.global-header .nav-links .secondary .robbo-header-studio-link .robbo-header-studio-link__btn {
