@@ -16,9 +16,14 @@ from common.djangoapps.student.models import CourseAccessRole
 COURSE_TEAM_ROLES = ('instructor', 'staff', 'limited_staff', 'course_creator_group', 'org_course_creator_group')
 
 
+def can_view(user):
+    """«Что нового» is for signed-in users with an activated account; the rest see no button or page."""
+    return bool(user is not None and user.is_authenticated and user.is_active)
+
+
 def viewer_audiences(user):
-    """Audience codes ``user`` may see; empty for anonymous users (the page needs a login)."""
-    if user is None or not user.is_authenticated:
+    """Audience codes ``user`` may see; empty for guests and accounts not activated yet."""
+    if not can_view(user):
         return frozenset()
     audiences = {'all'}
     if user.is_superuser:

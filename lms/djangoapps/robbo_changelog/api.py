@@ -7,7 +7,7 @@ API of the «Что нового» header button, shared by LMS pages and every 
 
 Plain Django views on the LMS session: MFEs call them with ``credentials: 'include'``
 (their origins are in ``CORS_ORIGIN_WHITELIST`` / ``CSRF_TRUSTED_ORIGINS``). Guests get 401,
-and the button stays hidden for them.
+accounts not activated yet 403, and the button stays hidden for both.
 """
 
 from pathlib import Path
@@ -16,7 +16,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET, require_POST, require_safe
 
-from . import entries, labels, schema
+from . import access, entries, labels, schema
 
 WIDGET_PATH = Path(__file__).resolve().parent / 'widget' / 'robbo-whats-new.js'
 WIDGET_MAX_AGE = 600
@@ -27,31 +27,33 @@ def _lang(request):
     return code if code in schema.LANGS else labels.current_lang()
 
 
-def _login_required():
-    return JsonResponse({'error': 'authentication required'}, status=401)
+def _denied(user):
+    if not user.is_authenticated:
+        return JsonResponse({'error': 'authentication required'}, status=401)
+    return JsonResponse({'error': 'account not activated'}, status=403)
 
 
 @never_cache
 @require_GET
 def status(request):
-    if not request.user.is_authenticated:
-        return _login_required()
+    if not access.can_view(request.user):
+        return _denied(request.user)
     return JsonResponse(entries.status(request.user, _lang(request)))
 
 
 @never_cache
 @require_GET
 def panel(request):
-    if not request.user.is_authenticated:
-        return _login_required()
+    if not access.can_view(request.user):
+        return _denied(request.user)
     return JsonResponse(entries.panel(request.user, _lang(request)))
 
 
 @never_cache
 @require_POST
 def mark_read(request):
-    if not request.user.is_authenticated:
-        return _login_required()
+    if not access.can_view(request.user):
+        return _denied(request.user)
     entries.mark_read(request.user, entries.visible_releases(request.user))
     return JsonResponse({'unread': 0})
 

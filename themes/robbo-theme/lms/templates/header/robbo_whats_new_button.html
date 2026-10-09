@@ -11,7 +11,8 @@
 from django.urls import reverse
 from lms.djangoapps.robbo_changelog.labels import current_lang
 %>
-% if user.is_authenticated:
+## Accounts not activated yet see no «Что нового» (robbo_changelog.access.can_view).
+% if user.is_authenticated and user.is_active:
 <span class="robbo-header-whats-new" data-robbo-whats-new data-lang="${current_lang()}" data-variant="on-dark"></span>
 <script src="${reverse('robbo_changelog:widget')}" defer></script>
 % endif
