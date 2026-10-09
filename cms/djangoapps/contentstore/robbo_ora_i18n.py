@@ -250,7 +250,7 @@ def patch_ora_xblock_i18n():
 # JS gettext() in ORA iframe (djangojs.js may be en or missing entries).
 ROBBO_ORA_JS_CATALOG = {
     "This component has validation issues.": "В этом компоненте есть ошибки.",
-    "This unit has validation issues.": "В этом юните есть ошибки.",
+    "This unit has validation issues.": "В этом блоке есть ошибки.",
     "Saving draft": "Сохранение черновика",
     "Saving draft...": "Сохранение черновика...",
     "Draft saved!": "Черновик сохранён!",
