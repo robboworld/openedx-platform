@@ -1,0 +1,97 @@
+// Copyright (C) 2026 Robbo <https://robbo.ru>
+// SPDX-License-Identifier: AGPL-3.0-only
+//
+// Instructor dashboard «Ответы в свободной форме» (edx-ora2 listing): brand-green summary labels,
+// hint buttons next to them and the shared tooltip, both built by
+// lms/static/js/robbo-ora-instructor-listing.js. Scoped to .open-response-assessment-content
+// to outrank edx-ora2 rules (`.open-response-assessment-block .ora-summary-title`, #0079bc).
+
+$robbo-ora-hint-size: 18px;
+$robbo-ora-hint-gap: 4px;
+$robbo-ora-hint-hit-area: 8px; // extra clickable margin around the icon
+$robbo-ora-tip-max-width: 280px; // fits 320px viewports; the script clamps it to the edges
+
+.open-response-assessment-block .open-response-assessment-content {
+  .ora-summary-title {
+    color: $robbo-brand-green;
+  }
+
+  // Summary: the script keeps the label's last word and the hint in one nowrap span.
+  .robbo-ora-hint-tail {
+    white-space: nowrap;
+  }
+
+  // Labels wrap to different heights; keep the numbers on one line.
+  .open-response-assessment-summary td {
+    vertical-align: bottom;
+  }
+
+  .robbo-ora-hint {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: $robbo-ora-hint-size;
+    height: $robbo-ora-hint-size;
+    margin: 0 0 0 $robbo-ora-hint-gap;
+    padding: 0;
+    vertical-align: middle;
+    border: 1.5px solid currentColor;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: none;
+    color: $robbo-brand-grey;
+    font: 700 11px/1 $robbo-font-body;
+    letter-spacing: 0;
+    text-transform: none;
+    text-shadow: none;
+    cursor: help;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -$robbo-ora-hint-hit-area;
+    }
+
+    &:hover,
+    &:focus-visible,
+    &[aria-expanded='true'] {
+      color: $robbo-ui-primary-dark;
+      background: transparent;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $robbo-ui-primary;
+      outline-offset: 2px;
+    }
+  }
+
+  .robbo-ora-hint__text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+.robbo-ora-tip {
+  position: fixed;
+  z-index: 1000;
+  max-width: $robbo-ora-tip-max-width;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: $robbo-brand-coal;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: $robbo-brand-white;
+  font: 400 14px/1.4 $robbo-font-body;
+  letter-spacing: normal;
+  text-align: left;
+  text-transform: none;
+  pointer-events: none;
+
+  &[hidden] {
+    display: none;
+  }
+}

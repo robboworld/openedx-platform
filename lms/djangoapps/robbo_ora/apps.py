@@ -18,7 +18,10 @@ class RobboOraConfig(AppConfig):
             patch_ora_runtime_limits,
         )
 
+        from .instructor_listing import patch_ora_instructor_listing
+
         patch_ora_runtime_limits()
         patch_ora_lms_student_view()
         patch_ora_xblock_i18n()
         patch_robbo_ora_django_catalog()
+        patch_ora_instructor_listing()
