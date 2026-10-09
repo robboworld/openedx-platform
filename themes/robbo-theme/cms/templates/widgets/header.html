@@ -4,7 +4,7 @@
   from six.moves.urllib.parse import quote
   from django.conf import settings
   from django.urls import reverse
-  from django.utils.translation import gettext as _
+  from django.utils.translation import gettext as _, pgettext
   from urllib.parse import quote_plus
   from common.djangoapps.student.auth import has_studio_advanced_settings_access
   from cms.djangoapps.contentstore import toggles
@@ -12,6 +12,8 @@
   from openedx.core.djangoapps.discussions.config.waffle import ENABLE_PAGES_AND_RESOURCES_MICROFRONTEND
   from openedx.core.djangoapps.lang_pref.api import header_language_selector_is_enabled, released_languages
   from openedx.core.lib.robbo_stack import ROBBO_STACK_PROFILE, robbo_stack_letter, user_can_see_robbo_stack_badge
+  from lms.djangoapps.courseware.robbo_catalog import user_can_see_robbo_lms_header_link
+  from lms.djangoapps.robbo_changelog.labels import current_lang as robbo_whats_new_lang
 %>
 <div class="wrapper-header wrapper" id="view-top">
   <header class="primary" role="banner">
@@ -369,11 +371,19 @@
               <h3 class="title"><span class="label"><a href="${get_online_help_info(online_help_token)['doc_url']}" title="${_('Contextual Online Help')}" rel="noopener" target="_blank">${_("Help")}</a></span></h3>
             </li>
           % endif
+          ## «Что нового»: the LMS widget mounts here and calls Studio's copy of its API (same origin).
+          <li class="nav-item robbo-header-whats-new" data-robbo-whats-new data-lang="${robbo_whats_new_lang()}" data-variant="on-dark"></li>
+          % if user_can_see_robbo_lms_header_link(user):
+          <li class="nav-item robbo-header-lms-link">
+            <a class="robbo-header-lms-link__btn" href="${settings.LMS_ROOT_URL}" aria-label="${_("Go to LMS")}">${pgettext("header button", "LMS")}</a>
+          </li>
+          % endif
           <li class="nav-item nav-account-user">
             <%include file="user_dropdown.html" args="online_help_token=online_help_token" />
           </li>
         </ol>
       </nav>
+      <script src="${reverse('robbo_changelog:widget')}" defer></script>
 
     % else:
       <nav class="nav-not-signedin nav-pitch" aria-label="${_('Account')}">

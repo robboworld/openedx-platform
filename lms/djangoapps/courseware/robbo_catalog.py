@@ -41,6 +41,56 @@ from openedx.core.djangoapps.site_configuration import helpers as configuration_
 from openedx.core.djangolib.markup import HTML, Text
 
 from common.djangoapps.student.models import CourseEnrollment
+from common.djangoapps.student.roles import GlobalStaff
+
+
+def user_can_see_robbo_instructor_catalog(user) -> bool:
+    """
+    True only for platform superuser or global staff (GlobalStaff).
+
+    Course-team roles (instructor/staff on a course) do not see the hidden catalog block.
+    """
+    if user is None or not user.is_authenticated:
+        return False
+    if getattr(user, 'is_superuser', False):
+        return True
+    return GlobalStaff().has_user(user)
+
+
+def user_can_see_robbo_studio_header_link(user) -> bool:
+    """Superuser or global staff only (same as hidden catalog block)."""
+    return user_can_see_robbo_instructor_catalog(user)
+
+
+def user_can_see_robbo_lms_header_link(user) -> bool:
+    """«LMS» pill in the Studio header: the same audience as the «Студия» pill in LMS headers."""
+    return user_can_see_robbo_studio_header_link(user)
+
+
+def get_robbo_studio_root_url() -> str:
+    """
+    CMS / Studio base URL from site config or LMS settings (Tutor ``CMS_ROOT_URL`` / ``CMS_BASE``).
+    """
+    url = configuration_helpers.get_value(
+        'CMS_ROOT_URL',
+        getattr(settings, 'CMS_ROOT_URL', None),
+    )
+    if url:
+        return str(url).rstrip('/')
+
+    cms_base = getattr(settings, 'CMS_BASE', None)
+    if not cms_base:
+        return ''
+
+    if str(cms_base).startswith(('http://', 'https://')):
+        return str(cms_base).rstrip('/')
+
+    use_https = configuration_helpers.get_value(
+        'ENABLE_HTTPS',
+        settings.FEATURES.get('ENABLE_HTTPS', False),
+    )
+    scheme = 'https' if use_https else 'http'
+    return f'{scheme}://{cms_base}'.rstrip('/')
 
 
 def get_robbo_courses_account_banners(request) -> Dict[str, Any]:

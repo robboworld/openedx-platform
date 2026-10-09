@@ -110,3 +110,23 @@ msgstr "Недоступно — откройте, чтобы узнать, че
 # Stock heading is all caps; the certificates tab uses sentence case
 msgid "SET CERTIFICATE EXCEPTIONS"
 msgstr "Исключения при выдаче сертификатов"
+
+#: themes/robbo-theme/lms/templates/header/studio_header_link.html
+msgid "Go to Studio"
+msgstr "Перейти в Студию"
+
+#. Plain "Studio" stays Latin for STUDIO_SHORT_NAME; the header button is localized
+#: themes/robbo-theme/lms/templates/header/studio_header_link.html
+msgctxt "header button"
+msgid "Studio"
+msgstr "Студия"
+
+#: themes/robbo-theme/cms/templates/widgets/header.html
+msgid "Go to LMS"
+msgstr "Перейти в LMS"
+
+#. Plain "LMS" is translated for the Studio footer; the header button keeps the short name
+#: themes/robbo-theme/cms/templates/widgets/header.html
+msgctxt "header button"
+msgid "LMS"
+msgstr "LMS"

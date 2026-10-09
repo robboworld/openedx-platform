@@ -375,6 +375,7 @@ urlpatterns += [
         name='robbo_analytics_menu',
     ),
     path('', include('lms.djangoapps.robbo_certificates.urls', namespace='robbo_certificates')),
+    path('', include('lms.djangoapps.robbo_changelog.urls', namespace='robbo_changelog')),
 
     re_path(r'^courses/?$', branding_views.courses, name='courses'),
 
