@@ -372,7 +372,10 @@
             </li>
           % endif
           ## «Что нового»: the LMS widget mounts here and calls Studio's copy of its API (same origin).
+          ## Accounts not activated yet see no «Что нового» (robbo_changelog.access.can_view).
+          % if user.is_active:
           <li class="nav-item robbo-header-whats-new" data-robbo-whats-new data-lang="${robbo_whats_new_lang()}" data-variant="on-dark"></li>
+          % endif
           % if user_can_see_robbo_lms_header_link(user):
           <li class="nav-item robbo-header-lms-link">
             <a class="robbo-header-lms-link__btn" href="${settings.LMS_ROOT_URL}" aria-label="${_("Go to LMS")}">${pgettext("header button", "LMS")}</a>
@@ -383,7 +386,9 @@
           </li>
         </ol>
       </nav>
+      % if user.is_active:
       <script src="${reverse('robbo_changelog:widget')}" defer></script>
+      % endif
 
     % else:
       <nav class="nav-not-signedin nav-pitch" aria-label="${_('Account')}">
