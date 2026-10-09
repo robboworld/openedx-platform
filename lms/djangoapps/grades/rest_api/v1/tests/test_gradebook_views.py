@@ -1,6 +1,7 @@
 """  # lint-amnesty, pylint: disable=cyclic-import
 Tests for the course grading API view
 """
+# Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 
 
 import json
@@ -527,21 +528,24 @@ class GradebookViewTest(GradebookViewTestBase):
             OrderedDict([
                 ('user_id', self.student.id),
                 ('username', self.student.username),
-                ('email', ''),
+                ('full_name', self.student.profile.name),
+                ('email', self.student.email),
                 ('percent', 0.85),
                 ('section_breakdown', self.expected_subsection_grades()),
             ]),
             OrderedDict([
                 ('user_id', self.other_student.id),
                 ('username', self.other_student.username),
-                ('email', ''),
+                ('full_name', self.other_student.profile.name),
+                ('email', self.other_student.email),
                 ('percent', 0.45),
                 ('section_breakdown', self.expected_subsection_grades()),
             ]),
             OrderedDict([
                 ('user_id', self.program_student.id),
                 ('username', self.program_student.username),
-                ('email', ''),
+                ('full_name', self.program_student.profile.name),
+                ('email', self.program_student.email),
                 ('external_user_key', 'program_user_key_0'),
                 ('percent', 0.75),
                 ('section_breakdown', self.expected_subsection_grades()),
@@ -658,7 +662,8 @@ class GradebookViewTest(GradebookViewTestBase):
                 expected_results = OrderedDict([
                     ('user_id', self.student.id),
                     ('username', self.student.username),
-                    ('email', ''),
+                    ('full_name', self.student.profile.name),
+                    ('email', self.student.email),
                     ('percent', 0.85),
                     ('section_breakdown', self.expected_subsection_grades()),
                 ])
@@ -741,7 +746,8 @@ class GradebookViewTest(GradebookViewTestBase):
                 expected_results = OrderedDict([
                     ('user_id', self.student.id),
                     ('username', self.student.username),
-                    ('email', ''),
+                    ('full_name', self.student.profile.name),
+                    ('email', self.student.email),
                     ('percent', 0.85),
                     ('section_breakdown', self.expected_subsection_grades()),
                 ])
@@ -773,7 +779,8 @@ class GradebookViewTest(GradebookViewTestBase):
                     OrderedDict([
                         ('user_id', self.program_student.id),
                         ('username', self.program_student.username),
-                        ('email', ''),
+                        ('full_name', self.program_student.profile.name),
+                        ('email', self.program_student.email),
                         ('external_user_key', 'program_user_key_0'),
                         ('percent', 0.75),
                         ('section_breakdown', self.expected_subsection_grades()),
@@ -822,7 +829,8 @@ class GradebookViewTest(GradebookViewTestBase):
                     OrderedDict([
                         ('user_id', self.program_student.id),
                         ('username', self.program_student.username),
-                        ('email', ''),
+                        ('full_name', self.program_student.profile.name),
+                        ('email', self.program_student.email),
                         ('external_user_key', 'program_user_key_0'),
                         ('percent', 0.75),
                         ('section_breakdown', self.expected_subsection_grades()),
@@ -870,7 +878,8 @@ class GradebookViewTest(GradebookViewTestBase):
                     OrderedDict([
                         ('user_id', self.other_student.id),
                         ('username', self.other_student.username),
-                        ('email', ''),
+                        ('full_name', self.other_student.profile.name),
+                        ('email', self.other_student.email),
                         ('percent', 0.85),
                         ('section_breakdown', self.expected_subsection_grades()),
                     ]),
@@ -909,7 +918,8 @@ class GradebookViewTest(GradebookViewTestBase):
                     OrderedDict([
                         ('user_id', self.program_student.id),
                         ('username', self.program_student.username),
-                        ('email', ''),
+                        ('full_name', self.program_student.profile.name),
+                        ('email', self.program_student.email),
                         ('external_user_key', 'program_user_key_0'),
                         ('percent', 0.75),
                         ('section_breakdown', self.expected_subsection_grades()),
@@ -975,7 +985,8 @@ class GradebookViewTest(GradebookViewTestBase):
                     OrderedDict([
                         ('user_id', self.student.id),
                         ('username', self.student.username),
-                        ('email', ''),
+                        ('full_name', self.student.profile.name),
+                        ('email', self.student.email),
                         ('percent', 0.85),
                         ('section_breakdown', self.expected_subsection_grades()),
                     ]),
@@ -1130,14 +1141,16 @@ class GradebookViewTest(GradebookViewTestBase):
                     OrderedDict([
                         ('user_id', self.student.id),
                         ('username', self.student.username),
-                        ('email', ''),
+                        ('full_name', self.student.profile.name),
+                        ('email', self.student.email),
                         ('percent', 0.85),
                         ('section_breakdown', self.expected_subsection_grades()),
                     ]),
                     OrderedDict([
                         ('user_id', self.program_student.id),
                         ('username', self.program_student.username),
-                        ('email', ''),
+                        ('full_name', self.program_student.profile.name),
+                        ('email', self.program_student.email),
                         ('external_user_key', 'program_user_key_0'),
                         ('percent', 0.75),
                         ('section_breakdown', self.expected_subsection_grades()),
@@ -1190,7 +1203,8 @@ class GradebookViewTest(GradebookViewTestBase):
                     OrderedDict([
                         ('user_id', self.program_student.id),
                         ('username', self.program_student.username),
-                        ('email', ''),
+                        ('full_name', self.program_student.profile.name),
+                        ('email', self.program_student.email),
                         ('external_user_key', 'program_user_key_0'),
                         ('percent', 0.75),
                         ('section_breakdown', self.expected_subsection_grades()),
@@ -1240,21 +1254,24 @@ class GradebookViewTest(GradebookViewTestBase):
                     OrderedDict([
                         ('user_id', self.student.id),
                         ('username', self.student.username),
-                        ('email', ''),
+                        ('full_name', self.student.profile.name),
+                        ('email', self.student.email),
                         ('percent', 0.0),
                         ('section_breakdown', self.expected_subsection_grades()),
                     ]),
                     OrderedDict([
                         ('user_id', self.other_student.id),
                         ('username', self.other_student.username),
-                        ('email', ''),
+                        ('full_name', self.other_student.profile.name),
+                        ('email', self.other_student.email),
                         ('percent', 0.45),
                         ('section_breakdown', self.expected_subsection_grades()),
                     ]),
                     OrderedDict([
                         ('user_id', self.program_student.id),
                         ('username', self.program_student.username),
-                        ('email', ''),
+                        ('full_name', self.program_student.profile.name),
+                        ('email', self.program_student.email),
                         ('external_user_key', 'program_user_key_0'),
                         ('percent', 0.75),
                         ('section_breakdown', self.expected_subsection_grades()),
@@ -1304,21 +1321,24 @@ class GradebookViewTest(GradebookViewTestBase):
                     OrderedDict([
                         ('user_id', self.student.id),
                         ('username', self.student.username),
-                        ('email', ''),
+                        ('full_name', self.student.profile.name),
+                        ('email', self.student.email),
                         ('percent', 0.0),
                         ('section_breakdown', self.expected_subsection_grades()),
                     ]),
                     OrderedDict([
                         ('user_id', self.other_student.id),
                         ('username', self.other_student.username),
-                        ('email', ''),
+                        ('full_name', self.other_student.profile.name),
+                        ('email', self.other_student.email),
                         ('percent', 0.45),
                         ('section_breakdown', self.expected_subsection_grades()),
                     ]),
                     OrderedDict([
                         ('user_id', self.program_student.id),
                         ('username', self.program_student.username),
-                        ('email', ''),
+                        ('full_name', self.program_student.profile.name),
+                        ('email', self.program_student.email),
                         ('external_user_key', 'program_user_key_0'),
                         ('percent', 0.75),
                         ('section_breakdown', self.expected_subsection_grades()),
