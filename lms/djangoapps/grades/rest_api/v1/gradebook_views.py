@@ -1,6 +1,7 @@
 """
 Defines an endpoint for gradebook data related to a course.
 """
+# Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 
 
 import logging
@@ -508,18 +509,12 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
         )
         user_entry['user_id'] = user.id
 
-        def is_masters_student():
-            # If this is a multiple-user lookup (didn't use the username param) we insert
-            # user.enrollment_mode in _get_enrolled_users. If it is a single-user lookup
-            # (did use username) then we'll need to look up the single user's enrollment mode
-            if hasattr(user, 'enrollment_mode'):
-                return user.enrollment_mode == CourseMode.MASTERS
-            else:
-                mode, _ = CourseEnrollment.enrollment_mode_for_user(user, str(course.id))
-                return mode == CourseMode.MASTERS
-
-        if is_masters_student():
-            user_entry['full_name'] = user.profile.name
+        # Robbo: upstream shows the email and full name only for master's track learners;
+        # Robbo courses have no such track, so the course team got empty columns. The endpoint
+        # is limited to the course team, which already sees learner emails in the instructor dashboard.
+        user_entry['email'] = user.email
+        profile = getattr(user, 'profile', None)  # service users may have no UserProfile
+        user_entry['full_name'] = profile.name if profile else ''
 
         external_user_key = get_external_key_by_user_and_course(user, course.id)
         if external_user_key:
@@ -654,7 +649,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 # TODO: In django 3.0+, we can directly filter on this 'exists' rather than annotating
                 q_objects.append(Q(has_excluded_role=False))
             entries = []
-            related_models = ['user']
+            related_models = ['user', 'user__profile']
             users = self._paginate_users(course_key, q_objects, related_models, annotations=annotations)
 
             users_counts = self._get_users_counts(course_key, q_objects, annotations=annotations)
