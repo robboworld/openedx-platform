@@ -17,7 +17,7 @@ msgid "Explore Courses"
 msgstr "Каталог курсов"
 
 msgid "Register for free"
-msgstr "Зарегистрироваться бесплатно"
+msgstr "Регистрация"
 
 #: themes/robbo-theme/lms/templates/courseware/course_about.html
 msgid "Course Summary"
