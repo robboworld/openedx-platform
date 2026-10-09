@@ -7,7 +7,7 @@
  * «Что нового» header button: news icon, unread counter, panel with the latest changes.
  * One implementation for every header: the LMS serves this file at
  * /api/robbo/v1/whats-new/widget.js to LMS pages and all MFEs; data comes from the
- * robbo_changelog API on the LMS session (guests get 401 and see no button). Studio's Mako
+ * robbo_changelog API on the LMS session (guests get 401, accounts not activated yet 403: no button). Studio's Mako
  * pages load the same file from Studio, which serves a copy of the API (no cross-origin calls).
  *
  *   RobboWhatsNew.mount(container, {lmsUrl, lang, variant})
@@ -574,7 +574,7 @@
       container.hidden = false;
       setUnread(state, data.unread, data.texts);
     }).catch(function () {
-      // Guests (401) and a broken API: no button at all.
+      // Guests (401), accounts not activated yet (403) and a broken API: no button at all.
       container.hidden = true;
     });
     return {
