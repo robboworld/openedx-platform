@@ -4637,7 +4637,10 @@ COMPREHENSIVE_THEME_LOCALE_PATHS = []
 # .. setting_default: []
 # .. setting_description: A list of the paths to locale directories to load first e.g.
 #   "PREPEND_LOCALE_PATHS" : ["/edx/my-locales/"].
-PREPEND_LOCALE_PATHS = []
+# Robbo: the theme catalog goes first. The image build replaces conf/locale with the Open edX translations
+# (atlas pull + compilemessages / compilejsi18n with these settings), so Robbo translations live in
+# themes/conf/locale (django.po, djangojs.po).
+PREPEND_LOCALE_PATHS = [REPO_ROOT / 'themes' / 'conf' / 'locale']
 
 # .. setting_name: DEFAULT_SITE_THEME
 # .. setting_default: None
