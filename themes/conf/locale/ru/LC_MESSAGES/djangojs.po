@@ -1,0 +1,2829 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
+"POT-Creation-Date: 2024-01-21 20:36+0000\n"
+"PO-Revision-Date: 2025-07-23 17:30+0000\n"
+"Last-Translator: Brian Smith, 2025\n"
+"Language-Team: Russian (https://app.transifex.com/open-edx/teams/6205/ru/)\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: common/static/common/js/components/BlockBrowser/components/BlockBrowser/BlockBrowser.jsx
+msgid "Navigate up"
+msgstr "Перейти вверх"
+
+#: common/static/common/js/discussion/utils.js
+#: common/static/common/templates/discussion/templates.underscore
+msgid "…"
+msgstr "…"
+
+#: common/static/common/js/discussion/views/discussion_content_view.js
+msgid "there is currently {numVotes} vote"
+msgid_plural "there are currently {numVotes} votes"
+msgstr[0] "на данный момент есть {numVotes} голосов"
+msgstr[1] "на данный момент есть {numVotes} голосов"
+msgstr[2] "на данный момент есть {numVotes} голосов"
+msgstr[3] "на данный момент есть {numVotes} голосов"
+
+#: common/static/common/js/discussion/views/discussion_content_view.js
+msgid "{numVotes} Vote"
+msgid_plural "{numVotes} Votes"
+msgstr[0] "{numVotes} Голосовать"
+msgstr[1] "{numVotes} голосов"
+msgstr[2] "{numVotes} голосов"
+msgstr[3] "{numVotes} голосов"
+
+#: common/static/common/js/discussion/views/discussion_thread_list_view.js
+msgid "There are no posts in this topic yet."
+msgstr "В этой теме пока нет сообщений."
+
+#: common/static/common/js/discussion/views/response_comment_show_view.js
+#: common/static/common/templates/discussion/templates.underscore
+msgid "anonymous"
+msgstr "анонимный"
+
+#: common/static/js/src/jquery.timeago.locale.js
+#, javascript-format
+msgid "%d month"
+msgid_plural "%d months"
+msgstr[0] "%d месяц"
+msgstr[1] "%d месяцев"
+msgstr[2] "%d месяцев"
+msgstr[3] "%d месяцев"
+
+#: common/static/js/src/jquery.timeago.locale.js
+#, javascript-format
+msgid "%d year"
+msgid_plural "%d years"
+msgstr[0] "%d год"
+msgstr[1] "%d лет"
+msgstr[2] "%d лет"
+msgstr[3] "%d лет"
+
+#: lms/djangoapps/instructor/static/instructor/ProblemBrowser/components/Main/Main.jsx
+msgid "Create a report of problem responses"
+msgstr "Создайте отчет об ответах на проблемы"
+
+#: lms/djangoapps/instructor/static/instructor/ProblemBrowser/data/actions/problemResponses.js
+msgid "Unable to get report generation status."
+msgstr "Не удалось получить статус создания отчета."
+
+#: lms/djangoapps/instructor/static/instructor/ProblemBrowser/data/actions/problemResponses.js
+msgid "Unable to submit request to generate report."
+msgstr "Невозможно отправить запрос на создание отчета."
+
+#: lms/djangoapps/support/static/support/jsx/errors_list.jsx
+msgid "Please fix the following errors:"
+msgstr "Пожалуйста, исправьте следующие ошибки:"
+
+#: lms/djangoapps/support/static/support/jsx/file_upload.jsx
+msgid ""
+"Files that you upload must be PDFs or image files in .gif, .jpg, .jpeg, or "
+".png format."
+msgstr ""
+"Загружаемые вами файлы должны быть PDF-файлами или файлами изображений в "
+"формате .gif, .jpg, .jpeg или .png."
+
+#: lms/djangoapps/support/static/support/jsx/logged_in_user.jsx
+msgid ""
+"For inquiries regarding assignments, grades, or structure of a specific "
+"course, please post in the discussion forums for that course directly."
+msgstr ""
+"По вопросам, касающимся заданий, оценок или структуры конкретного курса, "
+"оставляйте сообщения непосредственно на дискуссионных форумах этого курса."
+
+#: lms/djangoapps/support/static/support/jsx/logged_in_user.jsx
+msgid "Billing/Payment Options"
+msgstr "Варианты выставления счетов/оплаты"
+
+#: lms/djangoapps/support/static/support/jsx/logged_in_user.jsx
+msgid "Errors/Technical Issues"
+msgstr "Ошибки/технические проблемы"
+
+#: lms/djangoapps/support/static/support/jsx/logged_in_user.jsx
+msgid ""
+"While our support team is happy to assist with the edX platform, the course "
+"staff has the expertise for specific assignment questions, grading or the "
+"proper procedures in each course. Please post all course related questions "
+"within the Discussion Forum where the Course Staff can directly respond."
+msgstr ""
+"Хотя наша команда поддержки рада помочь с платформой edX, сотрудники курса "
+"обладают опытом решения конкретных вопросов по заданиям, выставлению оценок "
+"или надлежащих процедур в каждом курсе. Пожалуйста, размещайте все вопросы, "
+"связанные с курсом, на дискуссионном форуме, где сотрудники курса могут "
+"напрямую ответить."
+
+#: lms/djangoapps/support/static/support/jsx/logged_in_user.jsx
+msgid "the more quickly and helpfully we can respond!"
+msgstr "тем быстрее и эффективнее мы сможем ответить!"
+
+#: lms/djangoapps/support/static/support/jsx/logged_in_user.jsx
+msgid "Create Support Ticket"
+msgstr "Создать заявку в службу поддержки"
+
+#: lms/djangoapps/support/static/support/jsx/logged_in_user.jsx
+msgid "What can we help you with, {username}?"
+msgstr "Чем мы можем вам помочь, {username}?"
+
+#: lms/djangoapps/support/static/support/jsx/logged_out_user.jsx
+msgid "Sign in to {platform} so we can help you better."
+msgstr "Войдите в {platform}, чтобы мы могли помочь вам лучше."
+
+#: lms/djangoapps/support/static/support/jsx/logged_out_user.jsx
+msgid "Need help logging in?"
+msgstr "Нужна помощь со входом?"
+
+#: lms/djangoapps/support/static/support/jsx/success.jsx
+msgid ""
+"Thank you for submitting a request! We appreciate your patience while we "
+"work to review your request."
+msgstr ""
+"Благодарим вас за отправку запроса! Мы ценим ваше терпение, пока мы работаем"
+" над рассмотрением вашего запроса."
+
+#: lms/djangoapps/teams/static/teams/js/views/edit_team_members.js
+msgid ""
+"This learner will be removed from the team,allowing another learner to take "
+"the available spot."
+msgstr ""
+"Этот учащийся будет удален из команды, позволяя другому учащемуся занять "
+"свободное место."
+
+#: lms/djangoapps/teams/static/teams/js/views/instructor_tools.js
+msgid ""
+"Deleting a team is permanent and cannot be undone.All members are removed "
+"from the team, and team discussions can no longer be accessed."
+msgstr ""
+"Удаление команды является окончательным и не может быть отменено. Все "
+"участники будут удалены из команды, и доступ к групповым обсуждениям станет "
+"невозможен."
+
+#: lms/djangoapps/teams/static/teams/js/views/manage.js
+#: lms/djangoapps/teams/static/teams/js/views/teams_tab.js
+msgid "Manage"
+msgstr "Управлять"
+
+#: lms/djangoapps/teams/static/teams/js/views/team_card.js
+msgid "View {span_start} {team_name} {span_end}"
+msgstr "Просмотр {span_start} {team_name} {span_end}"
+
+#: lms/djangoapps/teams/static/teams/js/views/team_profile.js
+msgid ""
+"If you leave, you can no longer post in this team's discussions.Your place "
+"will be available to another learner."
+msgstr ""
+"Если вы покинете группу, вы больше не сможете публиковать сообщения в "
+"обсуждениях этой команды. Ваше место будет доступно другому учащемуся."
+
+#: lms/djangoapps/teams/static/teams/js/views/team_profile_header_actions.js
+msgid "You already belong to another team in this team set."
+msgstr "Вы уже принадлежите к другой команде в этом наборе команд."
+
+#: lms/djangoapps/teams/static/teams/js/views/team_profile_header_actions.js
+msgid "Cannot join instructor managed team"
+msgstr "Невозможно присоединиться к команде, управляемой инструктором."
+
+#: lms/djangoapps/teams/static/teams/js/views/teams_tab.js
+msgid ""
+"See all teams you belong to and all public teams in your course, organized "
+"by topic. Join an open public team to collaborate with other learners who "
+"are interested in the same topic as you are."
+msgstr ""
+"Просматривайте все команды, к которым вы принадлежите, и все общедоступные "
+"команды вашего курса, сгруппированные по темам. Присоединяйтесь к открытой "
+"общедоступной команде, чтобы сотрудничать с другими учащимися, которые "
+"интересуются той же темой, что и вы."
+
+#: lms/djangoapps/teams/static/teams/js/views/teams_tab.js
+msgid ""
+"See all teams you belong to and all public teams in your course, organized "
+"by topic."
+msgstr ""
+"Просматривайте все команды, к которым вы принадлежите, и все общедоступные "
+"команды вашего курса, сгруппированные по темам."
+
+#: lms/djangoapps/teams/static/teams/js/views/teams_tab.js
+msgid "See all teams you belong to."
+msgstr "Посмотрите все команды, к которым вы принадлежите."
+
+#. Translators: 'errorCount' is the number of errors found in the form.
+#: lms/static/js/Markdown.Editor.js
+msgid "%(errorCount)s error found in form."
+msgid_plural "%(errorCount)s errors found in form."
+msgstr[0] "В форме обнаружена ошибка %(errorCount)s."
+msgstr[1] "В форме обнаружены ошибки %(errorCount)s."
+msgstr[2] "В форме обнаружены ошибки %(errorCount)s."
+msgstr[3] "В форме обнаружены ошибки %(errorCount)s."
+
+#: lms/static/js/ajax-error.js
+msgid ""
+"You have been logged out of your account. Click Okay to log in again now. "
+"Click Cancel to stay on this page (you must log in again to save your work)."
+msgstr ""
+"Вы вышли из своей учетной записи. Нажмите «ОК», чтобы снова войти в систему."
+" Нажмите «Отмена», чтобы остаться на этой странице (необходимо снова войти в"
+" систему, чтобы сохранить работу)."
+
+#: lms/static/js/certificates/views/certificate_allowlist.js
+msgid "Student Removed from certificate allowlist successfully."
+msgstr "Студент успешно удален из белого списка сертификатов."
+
+#: lms/static/js/certificates/views/certificate_allowlist_editor.js
+msgid ""
+"<%- user %> has been successfully added to the exception list. Click "
+"Generate Exception Certificate below to send the certificate."
+msgstr ""
+"<%-user %> успешно добавлен в список исключений. Нажмите «Создать сертификат"
+" исключения» ниже, чтобы отправить сертификат."
+
+#: lms/static/js/certificates/views/certificate_bulk_allowlist.js
+msgid " learner was successfully added to the exception list"
+msgstr "учащийся был успешно добавлен в список исключений"
+
+#: lms/static/js/certificates/views/certificate_bulk_allowlist.js
+msgid ""
+" records are not in the correct format and have not been added to the "
+"exception list"
+msgstr "записи имеют неправильный формат и не добавлены в список исключений."
+
+#: lms/static/js/certificates/views/certificate_bulk_allowlist.js
+msgid ""
+" record is not in the correct format and has not been added to the exception"
+" list"
+msgstr "запись имеет неправильный формат и не добавлена ​​в список исключений"
+
+#: lms/static/js/certificates/views/certificate_bulk_allowlist.js
+msgid ""
+" learner accounts cannot be found and have not been added to the exception "
+"list"
+msgstr "учетные записи учащихся не найдены и не добавлены в список исключений"
+
+#: lms/static/js/certificates/views/certificate_bulk_allowlist.js
+msgid ""
+" learner account cannot be found and has not been added to the exception "
+"list"
+msgstr ""
+"учетная запись учащегося не найдена и не добавлена ​​в список исключений"
+
+#: lms/static/js/certificates/views/certificate_bulk_allowlist.js
+msgid ""
+" learners are not enrolled in this course and have not added to the "
+"exception list"
+msgstr "учащиеся не зачислены на этот курс и не добавлены в список исключений"
+
+#: lms/static/js/certificates/views/certificate_bulk_allowlist.js
+msgid ""
+" learner is not enrolled in this course and has not been added to the "
+"exception list"
+msgstr "учащийся не зачислен на этот курс и не добавлен в список исключений"
+
+#: lms/static/js/certificates/views/certificate_bulk_allowlist.js
+msgid ""
+" learners have an active certificate invalidation in this course and have "
+"not been added to the exception list"
+msgstr ""
+"учащиеся имеют активную аннулирование сертификата в этом курсе и не были "
+"добавлены в список исключений."
+
+#: lms/static/js/certificates/views/certificate_bulk_allowlist.js
+msgid ""
+" learner has an active certificate invalidation in this course and has not "
+"been added to the exception list"
+msgstr ""
+"у учащегося имеется активная аннулирование сертификата в этом курсе, и он не"
+" был добавлен в список исключений."
+
+#: lms/static/js/certificates/views/certificate_bulk_allowlist.js
+msgid " learners encountered unknown errors"
+msgstr "учащиеся столкнулись с неизвестными ошибками"
+
+#: lms/static/js/certificates/views/certificate_bulk_allowlist.js
+msgid " learner encountered an unknown error"
+msgstr "учащийся столкнулся с неизвестной ошибкой"
+
+#: lms/static/js/customwmd.js
+#: common/static/common/templates/discussion/templates.underscore
+msgid "Your question or idea (required)"
+msgstr "Ваш вопрос или идея (обязательно)"
+
+#: lms/static/js/dashboard/legacy.js
+msgid ""
+"Are you sure you want to unenroll from the verified {certNameLong}  track of"
+" {courseName}  ({courseNumber})?"
+msgstr ""
+"Вы уверены, что хотите отказаться от подтвержденной версии {certNameLong} "
+"{courseName} ({courseNumber})?"
+
+#: lms/static/js/dashboard/legacy.js
+msgid ""
+"Are you sure you want to unenroll from the verified {certNameLong} track of "
+"{courseName} ({courseNumber})?"
+msgstr ""
+"Вы уверены, что хотите отказаться от подтвержденной версии {certNameLong} "
+"{courseName} ({courseNumber})?"
+
+#: lms/static/js/dashboard/legacy.js
+msgid ""
+"The refund deadline for this course has passed, so you will not receive a "
+"refund."
+msgstr ""
+"Срок возврата средств за этот курс истек, поэтому вы не получите возмещение."
+
+#: lms/static/js/dashboard/legacy.js
+#: lms/static/js/learner_dashboard/views/unenroll_view.js
+msgid ""
+"Unable to determine whether we should give you a refund because of System "
+"Error. Please try again later."
+msgstr ""
+"Не удалось определить, должны ли мы вернуть вам деньги из-за системной "
+"ошибки. Пожалуйста, повторите попытку позже."
+
+#: lms/static/js/demographics_collection/DemographicsCollectionBanner.jsx
+msgid "Want to make edX better for everyone?"
+msgstr "Хотите сделать edX лучше для всех?"
+
+#: lms/static/js/demographics_collection/DemographicsCollectionBanner.jsx
+msgid "Get started"
+msgstr "Начать"
+
+#: lms/static/js/demographics_collection/DemographicsCollectionModal.jsx
+msgid "Help make edX better for everyone!"
+msgstr "Помогите сделать edX лучше для всех!"
+
+#: lms/static/js/demographics_collection/DemographicsCollectionModal.jsx
+msgid "Why does edX collect this information?"
+msgstr "Почему edX собирает эту информацию?"
+
+#: lms/static/js/demographics_collection/DemographicsCollectionModal.jsx
+msgid ""
+"What was the total combined income, during the last 12 months, of all "
+"members of your family? "
+msgstr ""
+"Каков был общий совокупный доход всех членов вашей семьи за последние 12 "
+"месяцев?"
+
+#: lms/static/js/demographics_collection/DemographicsCollectionModal.jsx
+msgid ""
+"Have you ever served on active duty in the U.S. Armed Forces, Reserves, or "
+"National Guard?"
+msgstr ""
+"Вы когда-нибудь служили на действительной военной службе в Вооруженных "
+"силах, резерве или Национальной гвардии США?"
+
+#: lms/static/js/demographics_collection/DemographicsCollectionModal.jsx
+msgid "Select military status"
+msgstr "Выберите военный статус"
+
+#: lms/static/js/demographics_collection/DemographicsCollectionModal.jsx
+msgid "Select guardian education"
+msgstr "Выберите образование опекуна"
+
+#: lms/static/js/demographics_collection/DemographicsCollectionModal.jsx
+msgid "Select current industry"
+msgstr "Выберите текущую отрасль"
+
+#: lms/static/js/demographics_collection/DemographicsCollectionModal.jsx
+msgid "Select prospective industry"
+msgstr "Выберите перспективную отрасль"
+
+#: lms/static/js/demographics_collection/DemographicsCollectionModal.jsx
+msgid "Thank you! You’re helping make edX better for everyone."
+msgstr "Спасибо! Вы помогаете сделать edX лучше для всех."
+
+#: lms/static/js/demographics_collection/Wizard.jsx
+msgid "demographics questionnaire"
+msgstr "демографический опросник"
+
+#: lms/static/js/demographics_collection/Wizard.jsx
+msgid "close questionnaire"
+msgstr "закрыть анкету"
+
+#: lms/static/js/demographics_collection/Wizard.jsx
+msgid "finish later"
+msgstr "закончить позже"
+
+#: lms/static/js/demographics_collection/Wizard.jsx
+msgid "next page"
+msgstr "следующая страница"
+
+#: lms/static/js/edxnotes/views/tabs/search_results.js
+msgid "No results found for \"{query_string}\". Please try searching again."
+msgstr ""
+"По запросу \"{query_string}\" результатов не найдено. Пожалуйста, попробуйте"
+" выполнить поиск еще раз."
+
+#: lms/static/js/groups/views/cohort_editor.js
+msgid "{numMoved} learner was moved from {prevCohort}"
+msgid_plural "{numMoved} learners were moved from {prevCohort}"
+msgstr[0] "Учащийся {numMoved} был перенесен из {prevCohort}."
+msgstr[1] "Учащиеся {numMoved} были переведены из {prevCohort}."
+msgstr[2] "Учащиеся {numMoved} были переведены из {prevCohort}."
+msgstr[3] "Учащиеся {numMoved} были переведены из {prevCohort}."
+
+#: lms/static/js/groups/views/cohort_editor.js
+msgid "{numPresent} learner was already in the cohort"
+msgid_plural "{numPresent} learners were already in the cohort"
+msgstr[0] "Учащийся {numPresent} уже был в когорте"
+msgstr[1] "{numPresent} учащихся уже были в когорте"
+msgstr[2] "{numPresent} учащихся уже были в когорте"
+msgstr[3] "{numPresent} учащихся уже были в когорте"
+
+#: lms/static/js/groups/views/cohort_editor.js
+msgid ""
+"{numPreassigned} learner was pre-assigned for this cohort. This learner will"
+" automatically be added to the cohort when they enroll in the course."
+msgid_plural ""
+"{numPreassigned} learners were pre-assigned for this cohort. These learners "
+"will automatically be added to the cohort when they enroll in the course."
+msgstr[0] ""
+"В эту группу заранее был назначен учащийся {numPreassigned}. Этот учащийся "
+"будет автоматически добавлен в группу при зачислении на курс."
+msgstr[1] ""
+"В эту группу заранее были включены {numPreassigned} учащихся. Эти учащиеся "
+"будут автоматически добавлены в группу при зачислении на курс."
+msgstr[2] ""
+"В эту группу заранее были включены {numPreassigned} учащихся. Эти учащиеся "
+"будут автоматически добавлены в группу при зачислении на курс."
+msgstr[3] ""
+"В эту группу заранее были включены {numPreassigned} учащихся. Эти учащиеся "
+"будут автоматически добавлены в группу при зачислении на курс."
+
+#: lms/static/js/groups/views/cohort_editor.js
+msgid "Cohort assignment not allowed: {email_or_username}"
+msgstr "Назначение когорты не разрешено: {email_or_username}"
+
+#: lms/static/js/instructor_dashboard/membership.js
+msgid "This role requires a divided discussions scheme."
+msgstr "Эта роль требует схемы разделенных обсуждений."
+
+#: lms/static/js/learner_dashboard/EnterpriseLearnerPortalModal.jsx
+msgid "You have access to the {enterpriseName} dashboard"
+msgstr "У вас есть доступ к панели управления {enterpriseName}."
+
+#: lms/static/js/learner_dashboard/EnterpriseLearnerPortalModal.jsx
+msgid ""
+"To access the courses available to you through {enterpriseName}, visit the "
+"{enterpriseName} dashboard."
+msgstr ""
+"Чтобы получить доступ к курсам, доступным вам через {enterpriseName}, "
+"посетите панель управления {enterpriseName}."
+
+#: lms/static/js/learner_dashboard/Static2UCallouts.jsx
+msgid "More opportunities for you"
+msgstr "Больше возможностей для вас"
+
+#: lms/static/js/learner_dashboard/Static2UCallouts.jsx
+msgid " to learn"
+msgstr "учиться"
+
+#: lms/static/js/learner_dashboard/Static2UCallouts.jsx
+msgid ""
+"We've added 500+ learning opportunities to create one of the world's most "
+"comprehensive free-to-degree online learning platforms."
+msgstr ""
+"Мы добавили более 500 возможностей обучения, чтобы создать одну из самых "
+"полных в мире платформ бесплатного онлайн-обучения."
+
+#: lms/static/js/learner_dashboard/models/course_card_model.js
+msgid "(Self-paced) Ended {end}"
+msgstr "(Самостоятельный темп) Завершено {end}"
+
+#: lms/static/js/learner_dashboard/models/program_subscription_model.js
+msgid "${price}/month {currency}"
+msgstr "${price}/месяц {currency}"
+
+#: lms/static/js/learner_dashboard/views/course_entitlement_view.js
+msgid "Any course progress or grades from your current session will be lost."
+msgstr "Любой прогресс курса или оценки текущего сеанса будут потеряны."
+
+#: lms/static/js/learner_dashboard/views/entitlement_unenrollment_view.js
+msgid ""
+"Are you sure you want to unenroll from {courseName} ({courseNumber})? You "
+"will be refunded the amount you paid."
+msgstr ""
+"Вы уверены, что хотите отменить регистрацию в {courseName} ({courseNumber})?"
+" Вам будет возвращена уплаченная вами сумма."
+
+#: lms/static/js/learner_dashboard/views/program_alert_list_view.js
+msgid "Enroll in a {programName}'s course"
+msgstr "Запишитесь на курс {programName}"
+
+#: lms/static/js/learner_dashboard/views/program_alert_list_view.js
+msgid ""
+"You have an active subscription to the {programName} program but are not "
+"enrolled in any courses. Enroll in a remaining course and enjoy verified "
+"access."
+msgstr ""
+"У вас есть активная подписка на программу {programName}, но вы не зачислены "
+"ни на какие курсы. Запишитесь на оставшийся курс и получите подтвержденный "
+"доступ."
+
+#: lms/static/js/learner_dashboard/views/program_alert_list_view.js
+msgid ""
+"According to our records, you are not enrolled in any courses included in "
+"your {programName} program subscription. Enroll in a course from the "
+"{i_start}Program Details{i_end} page."
+msgstr ""
+"Согласно нашим данным, вы не зачислены ни на какие курсы, включенные в вашу "
+"подписку на программу {programName}. Запишитесь на курс на странице "
+"{i_start}Сведения о программе{i_end}."
+
+#: lms/static/js/learner_dashboard/views/program_alert_list_view.js
+msgid "Subscription trial expires in less than 24 hours"
+msgstr "Пробная подписка истекает менее чем через 24 часа"
+
+#: lms/static/js/learner_dashboard/views/program_alert_list_view.js
+msgid "Subscription trial expires in {remainingDays} day"
+msgid_plural "Subscription trial expires in {remainingDays} days"
+msgstr[0] "Пробная подписка истекает через {remainingDays} день."
+msgstr[1] "Срок действия пробной подписки истекает через {remainingDays} дн."
+msgstr[2] "Срок действия пробной подписки истекает через {remainingDays} дн."
+msgstr[3] "Срок действия пробной подписки истекает через {remainingDays} дн."
+
+#: lms/static/js/learner_dashboard/views/program_alert_list_view.js
+msgid ""
+"Your {programName} trial will expire at {trialEndTime} on {trialEndDate} and"
+" the card on file will be charged {subscriptionPrice}."
+msgstr ""
+"Срок действия пробной версии {programName} истечет в {trialEndTime} "
+"{trialEndDate}, и с указанной карты будет снята сумма {subscriptionPrice}."
+
+#: lms/static/js/learner_dashboard/views/program_alert_list_view.js
+msgid ""
+"Your {programName} trial will expire in {remainingDays} day at "
+"{trialEndTime} on {trialEndDate} and the card on file will be charged "
+"{subscriptionPrice}."
+msgid_plural ""
+"Your {programName} trial will expire in {remainingDays} days at "
+"{trialEndTime} on {trialEndDate} and the card on file will be charged "
+"{subscriptionPrice}."
+msgstr[0] ""
+"Срок действия пробной версии {programName} истечет через {remainingDays} дня"
+" в {trialEndTime} {trialEndDate}, а с зарегистрированной карты будет снята "
+"сумма {subscriptionPrice}."
+msgstr[1] ""
+"Срок действия пробной версии {programName} истечет через {remainingDays} "
+"дней в {trialEndTime} {trialEndDate}, а с зарегистрированной карты будет "
+"снята сумма {subscriptionPrice}."
+msgstr[2] ""
+"Срок действия пробной версии {programName} истечет через {remainingDays} "
+"дней в {trialEndTime} {trialEndDate}, а с зарегистрированной карты будет "
+"снята сумма {subscriptionPrice}."
+msgstr[3] ""
+"Срок действия пробной версии {programName} истечет через {remainingDays} "
+"дней в {trialEndTime} {trialEndDate}, а с зарегистрированной карты будет "
+"снята сумма {subscriptionPrice}."
+
+#: lms/static/js/student_account/components/PasswordResetConfirmation.jsx
+msgid "Enter and confirm your new password."
+msgstr "Введите и подтвердите новый пароль."
+
+#: lms/static/js/student_account/components/PasswordResetConfirmation.jsx
+msgid "Passwords do not match."
+msgstr "Пароли не совпадают."
+
+#: lms/static/js/student_account/components/StudentAccountDeletion.jsx
+#: lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
+msgid ""
+"You may also lose access to verified certificates and other program "
+"credentials like MicroMasters certificates. If you want to make a copy of "
+"these for your records before proceeding with deletion, follow the "
+"instructions for {htmlStart}printing or downloading a certificate{htmlEnd}."
+msgstr ""
+"Вы также можете потерять доступ к проверенным сертификатам и другим учетным "
+"данным программы, например сертификатам MicroMasters. Если вы хотите сделать"
+" их копию для своих записей, прежде чем приступить к удалению, следуйте "
+"инструкциям по {htmlStart}распечатке или загрузке сертификата{htmlEnd}."
+
+#: lms/static/js/student_account/components/StudentAccountDeletion.jsx
+msgid ""
+"Before proceeding, please {htmlStart}unlink all social media "
+"accounts{htmlEnd}."
+msgstr ""
+"Прежде чем продолжить, {htmlStart}отключите все учетные записи в социальных "
+"сетях{htmlEnd}."
+
+#: lms/static/js/student_account/components/StudentAccountDeletion.jsx
+msgid ""
+"{htmlStart}Want to change your email, name, or password instead?{htmlEnd}"
+msgstr ""
+"{htmlStart}Хотите вместо этого изменить свой адрес электронной почты, имя "
+"или пароль?{htmlEnd}"
+
+#: lms/static/js/student_account/components/StudentAccountDeletion.jsx
+msgid ""
+"{strongStart}Warning: Account deletion is permanent.{strongEnd} Please read "
+"the above carefully before proceeding. This is an irreversible action, and "
+"{strongStart}you will no longer be able to use the same email on "
+"{platformName}.{strongEnd}"
+msgstr ""
+"{strongStart}Внимание: удаление учетной записи является "
+"окончательным.{strongEnd} Прежде чем продолжить, внимательно прочитайте "
+"вышеизложенное. Это необратимое действие, и {strongStart}вы больше не "
+"сможете использовать тот же адрес электронной почты на "
+"{platformName}.{strongEnd}."
+
+#: lms/static/js/student_account/components/StudentAccountDeletion.jsx
+msgid ""
+"Please note: Deletion of your account and personal data is permanent and "
+"cannot be undone. {platformName} will not be able to recover your account or"
+" the data that is deleted."
+msgstr ""
+"Обратите внимание: удаление вашей учетной записи и личных данных является "
+"безвозвратным и не может быть отменено. {platformName} не сможет "
+"восстановить вашу учетную запись или удаленные данные."
+
+#: lms/static/js/student_account/components/StudentAccountDeletion.jsx
+msgid ""
+"Once your account is deleted, you cannot use it to take courses on the "
+"{platformName} app, {siteName}, or any other site hosted by {platformName}."
+msgstr ""
+"После удаления вашей учетной записи вы не сможете использовать ее для "
+"прохождения курсов в приложении {platformName}, {siteName} или на любом "
+"другом сайте, размещенном на {platformName}."
+
+#: lms/static/js/student_account/components/StudentAccountDeletion.jsx
+#: lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
+msgid ""
+"This includes access to {siteName} from your employer’s or university’s "
+"system{additionalSiteSpecificDeletionText}."
+msgstr ""
+"Сюда входит доступ к {siteName} из системы "
+"{additionalSiteSpecificDeletionText} вашего работодателя или университета."
+
+#: lms/static/js/student_account/components/StudentAccountDeletion.jsx
+msgid "We’re sorry to see you go!"
+msgstr "Нам жаль, что вы уходите!"
+
+#: lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
+msgid ""
+"You have selected “Delete my account.” Deletion of your account and personal"
+" data is permanent and cannot be undone. {platformName} will not be able to "
+"recover your account or the data that is deleted."
+msgstr ""
+"Вы выбрали «Удалить мою учетную запись». Удаление вашей учетной записи и "
+"личных данных является безвозвратным и не может быть отменено. "
+"{platformName} не сможет восстановить вашу учетную запись или удаленные "
+"данные."
+
+#: lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
+msgid ""
+"If you proceed, you will be unable to use this account to take courses on "
+"the {platformName} app, {siteName}, or any other site hosted by "
+"{platformName}."
+msgstr ""
+"Если вы продолжите, вы не сможете использовать эту учетную запись для "
+"прохождения курсов в приложении {platformName}, {siteName} или на любом "
+"другом сайте, размещенном на {platformName}."
+
+#: lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
+msgid ""
+"If you still wish to continue and delete your account, please enter your "
+"account password:"
+msgstr ""
+"Если вы все же хотите продолжить и удалить свою учетную запись, введите "
+"пароль своей учетной записи:"
+
+#: lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
+msgid "Yes, Delete"
+msgstr "Да, удалить"
+
+#: lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
+msgid "We're sorry to see you go! Your account will be deleted shortly."
+msgstr "Нам жаль, что вы уходите! Ваш аккаунт будет удален в ближайшее время."
+
+#: lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
+msgid ""
+"Account deletion, including removal from email lists, may take a few weeks "
+"to fully process through our system. If you want to opt-out of emails before"
+" then, please unsubscribe from the footer of any email."
+msgstr ""
+"Полная обработка удаления учетной записи, включая удаление из списков "
+"адресов электронной почты, может занять несколько недель в нашей системе. "
+"Если вы хотите отказаться от получения электронных писем до этого момента, "
+"отпишитесь от подписки в нижнем колонтитуле любого электронного письма."
+
+#: lms/static/js/student_account/views/LoginView.js
+msgid ""
+"{paragraphStart}You entered {boldStart}{email}{boldEnd}. If this email "
+"address is associated with your {platform_name} account, we will send a "
+"message with password recovery instructions to this email "
+"address.{paragraphEnd}{paragraphStart}If you do not receive a password reset"
+" message after 1 minute, verify that you entered the correct email address, "
+"or check your spam folder.{paragraphEnd}{paragraphStart}If you need further "
+"assistance, {anchorStart}contact technical support{anchorEnd}.{paragraphEnd}"
+msgstr ""
+"{paragraphStart}Вы ввели {boldStart}{email}{boldEnd}. Если этот адрес "
+"электронной почты связан с вашей учетной записью {platform_name}, мы "
+"отправим на этот адрес электронной почты сообщение с инструкциями по "
+"восстановлению пароля.{paragraphEnd}{paragraphStart}Если вы не получили "
+"сообщение о сбросе пароля в течение 1 минуты, убедитесь, что вы ввели "
+"правильный адрес электронной почты, или проверьте папку со "
+"спамом.{paragraphEnd}{paragraphStart}Если вам нужна дополнительная помощь, "
+"{anchorStart}обратитесь в службу технической "
+"поддержки{anchorEnd}.{paragraphEnd}"
+
+#: lms/static/js/student_account/views/LoginView.js
+msgid ""
+"In order to sign in, you need to activate your "
+"account.{line_break}{line_break}We just sent an activation link to "
+"{strong_start} {email} {strong_end}. If  you do not receive an email, check "
+"your spam folders or  {anchorStart}contact {platform_name} "
+"Support{anchorEnd}."
+msgstr ""
+"Чтобы войти в систему, вам необходимо активировать свою учетную "
+"запись.{line_break}{line_break}Мы только что отправили ссылку для активации "
+"на {strong_start} {email} {strong_end}. Если вы не получили электронное "
+"письмо, проверьте папки со спамом или {anchorStart}обратитесь в "
+"{platform_name} службу поддержки{anchorEnd}."
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid ""
+"Your profile settings are managed by {enterprise_name}. Contact your "
+"administrator or {link_start}edX Support{link_end} for help."
+msgstr ""
+"Настройки вашего профиля управляются {enterprise_name}. Обратитесь за "
+"помощью к своему администратору или в службу поддержки "
+"{link_start}edX{link_end}."
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid ""
+"You receive messages from {platform_name} and course teams at this address."
+msgstr ""
+"Вы получаете сообщения от {platform_name} и команд курса по этому адресу."
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid ""
+"You may access your account with this address if single-sign on or access to"
+" your primary email is not available."
+msgstr ""
+"Вы можете получить доступ к своей учетной записи с помощью этого адреса, "
+"если единый вход или доступ к вашему основному адресу электронной почты "
+"недоступны."
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid "The country or region where you live."
+msgstr "Страна или регион, в котором вы живете."
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid "These settings include basic information about your account."
+msgstr "Эти настройки включают основную информацию о вашей учетной записи."
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid ""
+"The name that identifies you on {platform_name}. You cannot change your "
+"username."
+msgstr ""
+"Имя, которое идентифицирует вас на {platform_name}. Вы не можете изменить "
+"свое имя пользователя."
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid "Check your email account for instructions to reset your password."
+msgstr ""
+"Проверьте свою учетную запись электронной почты на наличие инструкций по "
+"сбросу пароля."
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid ""
+"The language used throughout this site. This site is currently available in "
+"a limited number of languages. Changing the value of this field will cause "
+"the page to refresh."
+msgstr ""
+"Язык, используемый на этом сайте. В настоящее время этот сайт доступен на "
+"ограниченном количестве языков. Изменение значения этого поля приведет к "
+"обновлению страницы."
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid ""
+"Select the time zone for displaying course dates. If you do not specify a "
+"time zone, course dates, including assignment deadlines, will be displayed "
+"in your browser's local time zone."
+msgstr ""
+"Выберите часовой пояс для отображения дат курса. Если вы не укажете часовой "
+"пояс, даты курса, включая сроки выполнения заданий, будут отображаться в "
+"местном часовом поясе вашего браузера."
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid "All Time Zones"
+msgstr "Все часовые пояса"
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid "Default (Local Time Zone)"
+msgstr "По умолчанию (местный часовой пояс)"
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid "Gender"
+msgstr "Пол"
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid "Year of Birth"
+msgstr "Год рождения"
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid ""
+"We've sent a confirmation message to {new_secondary_email_address}. Click "
+"the link in the message to update your secondary email address."
+msgstr ""
+"Мы отправили сообщение с подтверждением на адрес "
+"{new_secondary_email_address}. Нажмите ссылку в сообщении, чтобы обновить "
+"свой дополнительный адрес электронной почты."
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid "Social Media Links"
+msgstr "Ссылки на социальные сети"
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid ""
+"Optionally, link your personal accounts to the social media icons on your "
+"edX profile."
+msgstr ""
+"При желании свяжите свои личные учетные записи со значками социальных сетей "
+"в своем профиле edX."
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid ""
+"Enter your {platform_display_name} username or the URL to your "
+"{platform_display_name} page. Delete the URL to remove the link."
+msgstr ""
+"Введите свое имя пользователя {platform_display_name} или URL-адрес вашей "
+"страницы {platform_display_name}. Удалите URL-адрес, чтобы удалить ссылку."
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid ""
+"You can link your social media accounts to simplify signing in to "
+"{platform_name}."
+msgstr ""
+"Вы можете связать свои учетные записи в социальных сетях, чтобы упростить "
+"вход в {platform_name}."
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid "ORDER NAME"
+msgstr "НАЗВАНИЕ ЗАКАЗА"
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid "ORDER PLACED"
+msgstr "ЗАКАЗ РАЗМЕЩЕН"
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid "TOTAL"
+msgstr "ОБЩИЙ"
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid "ORDER NUMBER"
+msgstr "НОМЕР ЗАКАЗА"
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid "My Orders"
+msgstr "Мои заказы"
+
+#: lms/static/js/student_account/views/account_settings_factory.js
+msgid ""
+"This page contains information about orders that you have placed with "
+"{platform_name}."
+msgstr ""
+"Эта страница содержит информацию о заказах, которые вы разместили у "
+"{platform_name}."
+
+#: lms/static/js/student_account/views/account_settings_fields.js
+msgid ""
+"We've sent a confirmation message to {new_email_address}. Click the link in "
+"the message to update your email address."
+msgstr ""
+"Мы отправили сообщение с подтверждением на адрес {new_email_address}. "
+"Нажмите ссылку в сообщении, чтобы обновить свой адрес электронной почты."
+
+#: lms/static/js/student_account/views/account_settings_fields.js
+msgid ""
+"You must sign out and sign back in before your language changes take effect."
+msgstr ""
+"Вам необходимо выйти и снова войти в систему, прежде чем изменения языка "
+"вступят в силу."
+
+#: lms/static/js/student_account/views/account_settings_fields.js
+msgid ""
+"We've sent a message to {email}. Click the link in the message to reset your"
+" password. Didn't receive the message? Contact {anchorStart}technical "
+"support{anchorEnd}."
+msgstr ""
+"Мы отправили сообщение на {email}. Нажмите ссылку в сообщении, чтобы "
+"сбросить пароль. Не получили сообщение? Обратитесь в службу "
+"{anchorStart}технической поддержки{anchorEnd}."
+
+#: lms/static/js/student_account/views/account_settings_fields.js
+msgid "Link your {accountName} account"
+msgstr "Привяжите свою учетную запись {accountName}"
+
+#: lms/static/js/student_account/views/account_settings_fields.js
+msgid "Unlink This Account"
+msgstr "Отсоединить эту учетную запись"
+
+#: lms/static/js/student_account/views/account_settings_fields.js
+msgid ""
+"You can use your {accountName} account to sign in to your {platformName} "
+"account."
+msgstr ""
+"Вы можете использовать свою учетную запись {accountName} для входа в свою "
+"учетную запись {platformName}."
+
+#: lms/static/js/student_account/views/account_settings_fields.js
+msgid "Unlink your {accountName} account"
+msgstr "Отключите свою учетную запись {accountName}"
+
+#: lms/static/js/student_account/views/account_settings_fields.js
+msgid ""
+"Link your {accountName} account to your {platformName} account and use "
+"{accountName} to sign in to {platformName}."
+msgstr ""
+"Свяжите свою учетную запись {accountName} со своей учетной записью "
+"{platformName} и используйте {accountName} для входа в {platformName}."
+
+#: lms/static/js/student_account/views/account_settings_fields.js
+msgid "Unlinking"
+msgstr "Отмена связи"
+
+#: lms/static/js/student_account/views/account_settings_fields.js
+msgid "Linking"
+msgstr "Связывание"
+
+#: lms/static/js/student_account/views/account_settings_fields.js
+msgid "Successfully unlinked."
+msgstr "Связь успешно отменена."
+
+#: openedx/features/course_search/static/course_search/js/views/search_results_view.js
+msgid "{total_results} result found for \"{search_term}\""
+msgid_plural "{total_results} results found for \"{search_term}\""
+msgstr[0] "{total_results} найден результат для \"{search_term}\""
+msgstr[1] "{total_results} результатов найдено для \"{search_term}\""
+msgstr[2] "{total_results} результатов найдено для \"{search_term}\""
+msgstr[3] "{total_results} результатов найдено для \"{search_term}\""
+
+#: openedx/features/learner_profile/static/learner_profile/js/learner_profile_factory.js
+msgid "Limited Profile"
+msgstr "Ограниченный профиль"
+
+#: openedx/features/learner_profile/static/learner_profile/js/learner_profile_factory.js
+msgid "Full Profile"
+msgstr "Полный профиль"
+
+#: openedx/features/learner_profile/static/learner_profile/js/learner_profile_factory.js
+msgid ""
+"Tell other learners a little about yourself: where you live, what your "
+"interests are, why you're taking courses, or what you hope to learn."
+msgstr ""
+"Расскажите другим учащимся немного о себе: где вы живете, каковы ваши "
+"интересы, почему вы посещаете курсы или что вы надеетесь узнать."
+
+#: openedx/features/learner_profile/static/learner_profile/js/views/learner_profile_fields.js
+msgid ""
+"You must specify your birth year before you can share your full profile. To "
+"specify your birth year, go to the {account_settings_page_link}"
+msgstr ""
+"Прежде чем вы сможете поделиться своим полным профилем, вы должны указать "
+"год своего рождения. Чтобы указать год своего рождения, перейдите на "
+"страницу {account_settings_page_link}."
+
+#: openedx/features/learner_profile/static/learner_profile/js/views/learner_profile_fields.js
+msgid ""
+"You must be over 13 to share a full profile. If you are over 13, make sure "
+"that you have specified a birth year on the {account_settings_page_link}"
+msgstr ""
+"Вам должно быть больше 13 лет, чтобы поделиться полным профилем. Если вам "
+"больше 13 лет, убедитесь, что вы указали год рождения на "
+"{account_settings_page_link}."
+
+#: openedx/features/learner_profile/static/learner_profile/js/views/learner_profile_fields.js
+msgid "Profile Image"
+msgstr "Изображение профиля"
+
+#: openedx/features/learner_profile/static/learner_profile/js/views/learner_profile_view.js
+msgid "Profile"
+msgstr "Профиль"
+
+#. Translators: {num_points} is the number of points possible (examples: 1, 3,
+#. 10).;
+#: xmodule/js/src/capa/display.js
+msgid "{num_points} point possible (graded, results hidden)"
+msgid_plural "{num_points} points possible (graded, results hidden)"
+msgstr[0] "Максимум {num_points} балл (оценивается, результат скрыт)"
+msgstr[1] "Максимум {num_points} балла (оценивается, результат скрыт)"
+msgstr[2] "Максимум {num_points} баллов (оценивается, результат скрыт)"
+msgstr[3] "Максимум {num_points} баллов (оценивается, результат скрыт)"
+
+#. Translators: {num_points} is the number of points possible (examples: 1, 3,
+#. 10).;
+#: xmodule/js/src/capa/display.js
+msgid "{num_points} point possible (ungraded, results hidden)"
+msgid_plural "{num_points} points possible (ungraded, results hidden)"
+msgstr[0] "Возможно {num_points} балла (без оценки, результаты скрыты)"
+msgstr[1] "Возможно {num_points} баллов (без оценки, результаты скрыты)"
+msgstr[2] "Возможно {num_points} баллов (без оценки, результаты скрыты)"
+msgstr[3] "Возможно {num_points} баллов (без оценки, результаты скрыты)"
+
+#. Translators: {num_points} is the number of points possible (examples: 1, 3,
+#. 10).;
+#: xmodule/js/src/capa/display.js
+msgid "{num_points} point possible (graded)"
+msgid_plural "{num_points} points possible (graded)"
+msgstr[0] "Максимум {num_points} балл (оценивается)"
+msgstr[1] "Максимум {num_points} балла (оценивается)"
+msgstr[2] "Максимум {num_points} баллов (оценивается)"
+msgstr[3] "Максимум {num_points} баллов (оценивается)"
+
+#. Translators: {num_points} is the number of points possible (examples: 1, 3,
+#. 10).;
+#: xmodule/js/src/capa/display.js
+msgid "{num_points} point possible (ungraded)"
+msgid_plural "{num_points} points possible (ungraded)"
+msgstr[0] "{num_points} балл возможен (без оценки)"
+msgstr[1] "Возможно {num_points} баллов (без оценки)"
+msgstr[2] "Возможно {num_points} баллов (без оценки)"
+msgstr[3] "Возможно {num_points} баллов (без оценки)"
+
+#. Translators: {earned} is the number of points earned. {possible} is the
+#. total number of points (examples: 0/1, 1/1, 2/3, 5/10). The total number of
+#. points will always be at least 1. We pluralize based on the total number of
+#. points (example: 0/1 point; 1/2 points);
+#: xmodule/js/src/capa/display.js
+msgid "{earned}/{possible} point (graded)"
+msgid_plural "{earned}/{possible} points (graded)"
+msgstr[0] "{earned}/{possible} балл (оценивается)"
+msgstr[1] "{earned}/{possible} балла (оценивается)"
+msgstr[2] "{earned}/{possible} баллов (оценивается)"
+msgstr[3] "{earned}/{possible} баллов (оценивается)"
+
+#. Translators: {earned} is the number of points earned. {possible} is the
+#. total number of points (examples: 0/1, 1/1, 2/3, 5/10). The total number of
+#. points will always be at least 1. We pluralize based on the total number of
+#. points (example: 0/1 point; 1/2 points);
+#: xmodule/js/src/capa/display.js
+msgid "{earned}/{possible} point (ungraded)"
+msgid_plural "{earned}/{possible} points (ungraded)"
+msgstr[0] "{earned}/{possible} балл (без оценки)"
+msgstr[1] "{earned}/{possible} балла (без оценки)"
+msgstr[2] "{earned}/{possible} баллов (без оценки)"
+msgstr[3] "{earned}/{possible} баллов (без оценки)"
+
+#: xmodule/js/src/html/edit.js
+msgid ""
+"{paragraph}=p;{preformatted}=pre;{heading3}=h3;{heading4}=h4;{heading5}=h5;{heading6}=h6"
+msgstr ""
+"{paragraph}=p;{preformatted}=pre;{heading3}=h3;{heading4}=h4;{heading5}=h5;{heading6}=h6"
+
+#: xmodule/js/src/problem/edit.js
+msgid ""
+"An answer option has been left blank. Please review and edit the component."
+msgstr ""
+"Вариант ответа оставлен пустым. Пожалуйста, просмотрите и отредактируйте "
+"компонент."
+
+#: xmodule/js/src/video/06_video_progress_slider.js
+msgid "%(value)s hour"
+msgid_plural "%(value)s hours"
+msgstr[0] "%(value)s час"
+msgstr[1] "%(value)s часов"
+msgstr[2] "%(value)s часов"
+msgstr[3] "%(value)s часов"
+
+#: xmodule/js/src/video/06_video_progress_slider.js
+msgid "%(value)s second"
+msgid_plural "%(value)s seconds"
+msgstr[0] "%(value)s секунда"
+msgstr[1] "%(value)s секунд"
+msgstr[2] "%(value)s секунд"
+msgstr[3] "%(value)s секунд"
+
+#: cms/static/cms/js/main.js cms/static/js/views/active_video_upload_list.js
+#: cms/static/js/views/video_transcripts.js
+msgid ""
+"This may be happening because of an error with our server or your internet "
+"connection. Try refreshing the page or making sure you are online."
+msgstr ""
+"Это может произойти из-за ошибки на нашем сервере или вашего интернет-"
+"соединения. Попробуйте обновить страницу или убедиться, что вы онлайн."
+
+#: cms/static/cms/js/main.js
+msgid "Studio's having trouble saving your work"
+msgstr "В Studio возникли проблемы с сохранением вашей работы."
+
+#: cms/static/cms/js/xblock/cms.runtime.v1.js
+msgid "OpenAssessment Save Error"
+msgstr "Ошибка сохранения OpenAssessment"
+
+#: cms/static/js/base.js
+msgid "This link will open in a new browser window/tab"
+msgstr "Эта ссылка откроется в новом окне/вкладке браузера."
+
+#: cms/static/js/base.js
+msgid "This link will open in a modal window"
+msgstr "Эта ссылка откроется в модальном окне"
+
+#: cms/static/js/certificates/views/signatory_editor.js
+msgid "Delete \"<%- signatoryName %>\" from the list of signatories?"
+msgstr "Удалить «<%-signatoryName %>» из списка подписавшихся?"
+
+#: cms/static/js/certificates/views/signatory_editor.js
+#: cms/static/js/views/course_info_update.js cms/static/js/views/list_item.js
+#: cms/static/js/views/show_textbook.js cms/static/js/views/tabs.js
+#: cms/static/js/views/utils/xblock_utils.js
+msgid "Deleting"
+msgstr "Удаление"
+
+#: cms/static/js/features/import/factories/import.js
+msgid ""
+"File format not supported. Please upload a file with a {ext} extension."
+msgstr ""
+"Формат файла не поддерживается. Пожалуйста, загрузите файл с расширением "
+"{ext}."
+
+#: cms/static/js/features/import/views/import.js
+msgid "Your import is in progress; navigating away will abort it."
+msgstr "Ваш импорт находится в процессе; переход от него прервет его."
+
+#: cms/static/js/features_jsx/studio/CourseOrLibraryListing.jsx
+msgid "(Read-only)"
+msgstr "(Только чтение)"
+
+#: cms/static/js/maintenance/force_publish_course.js
+msgid "Internal Server Error."
+msgstr "Внутренняя ошибка сервера."
+
+#: cms/static/js/models/chapter.js
+msgid "Chapter name and asset_path are both required"
+msgstr "Название главы и путь к активу являются обязательными."
+
+#: cms/static/js/models/settings/course_details.js
+msgid "The certificate display behavior must be one of: {behavior_options}"
+msgstr ""
+"Поведение отображения сертификата должно быть одним из: {behavior_options}."
+
+#: cms/static/js/models/settings/course_details.js
+msgid ""
+"The certificates display behavior must be {valid_option} if certificate "
+"available date is set."
+msgstr ""
+"Поведение при отображении сертификатов должно быть {valid_option}, если "
+"установлена ​​дата доступности сертификата."
+
+#: cms/static/js/models/uploads.js
+msgid ""
+"Only <%- fileTypes %> files can be uploaded. Please select a file ending in "
+"<%- (fileExtensions) %> to upload."
+msgstr ""
+"Можно загружать только файлы <%-fileTypes %>. Для загрузки выберите файл, "
+"заканчивающийся на <%- (fileExtensions) %>."
+
+#: cms/static/js/models/xblock_validation.js
+msgid "This unit has validation issues."
+msgstr "В этом блоке есть ошибки."
+
+#: cms/static/js/models/xblock_validation.js
+msgid "This component has validation issues."
+msgstr "В этом компоненте есть ошибки."
+
+#: cms/static/js/views/active_video_upload_list.js
+msgid "Drag and drop or {spanStart}browse your computer{spanEnd}."
+msgstr "Перетащите или {spanStart}просмотрите свой компьютер{spanEnd}."
+
+#: cms/static/js/views/active_video_upload_list.js
+msgid "Supported file types: {supportedVideoTypes}"
+msgstr "Поддерживаемые типы файлов: {supportedVideoTypes}."
+
+#: cms/static/js/views/container.js
+msgid "{startTag}{requestToken}{endTag}{selector}"
+msgstr "{startTag}{requestToken}{endTag}{selector}"
+
+#: cms/static/js/views/course_outline.js
+msgid "Copy of '{componentDisplayName}'"
+msgstr "Копия '{componentDisplayName}'"
+
+#: cms/static/js/views/course_outline.js
+#: cms/static/js/views/pages/container.js
+#: cms/static/js/views/utils/xblock_utils.js
+msgid "You may need to update a file(s) manually"
+msgstr "Возможно, вам придется обновить файл(ы) вручную."
+
+#: cms/static/js/views/course_outline.js
+#: cms/static/js/views/pages/container.js
+#: cms/static/js/views/utils/xblock_utils.js
+msgid ""
+"The following files already exist in this course but don't match the version"
+" used by the component you pasted:"
+msgstr ""
+"Следующие файлы уже существуют в этом курсе, но не соответствуют версии, "
+"используемой вставленным вами компонентом:"
+
+#: cms/static/js/views/course_outline.js
+#: cms/static/js/views/pages/container.js
+#: cms/static/js/views/utils/xblock_utils.js
+msgid "New file(s) added to Files & Uploads."
+msgstr "Новые файлы добавлены в раздел «Файлы и загрузки»."
+
+#: cms/static/js/views/course_outline.js
+#: cms/static/js/views/pages/container.js
+#: cms/static/js/views/utils/xblock_utils.js
+msgid "Dismiss"
+msgstr "Увольнять"
+
+#: cms/static/js/views/course_video_settings.js
+msgid "Press Remove to remove language"
+msgstr "Нажмите «Удалить», чтобы удалить язык."
+
+#: cms/static/js/views/course_video_settings.js
+msgid "Automatic transcripts are disabled."
+msgstr "Автоматические расшифровки отключены."
+
+#: cms/static/js/views/course_video_settings.js
+msgid "{selectedProvider} credentials saved"
+msgstr "Учетные данные {selectedProvider} сохранены."
+
+#: cms/static/js/views/edit_chapter.js
+msgid "Upload a new PDF to “<%- name %>”"
+msgstr "Загрузите новый PDF-файл в «<%- name %>»"
+
+#: cms/static/js/views/edit_chapter.js
+msgid "Please select a PDF file to upload."
+msgstr "Пожалуйста, выберите PDF-файл для загрузки."
+
+#: cms/static/js/views/license.js
+msgid "You reserve all rights for your work"
+msgstr "Вы оставляете за собой все права на свою работу"
+
+#: cms/static/js/views/license.js
+msgid "You waive some rights for your work, such that others can use it too"
+msgstr ""
+"Вы отказываетесь от некоторых прав на свою работу, чтобы другие тоже могли "
+"ее использовать."
+
+#: cms/static/js/views/license.js
+msgid "Version"
+msgstr "Версия"
+
+#: cms/static/js/views/license.js
+msgid ""
+"Allow others to copy, distribute, display and perform your copyrighted work "
+"but only if they give credit the way you request. Currently, this option is "
+"required."
+msgstr ""
+"Разрешите другим копировать, распространять, отображать и выполнять вашу "
+"работу, защищенную авторским правом, но только в том случае, если они "
+"отдадут должное так, как вы просите. В настоящее время эта опция является "
+"обязательной."
+
+#: cms/static/js/views/license.js
+msgid "Noncommercial"
+msgstr "Некоммерческий"
+
+#: cms/static/js/views/license.js
+msgid ""
+"Allow others to copy, distribute, display and perform your work - and "
+"derivative works based upon it - but for noncommercial purposes only."
+msgstr ""
+"Разрешите другим копировать, распространять, отображать и выполнять вашу "
+"работу, а также производные работы на ее основе, но только в некоммерческих "
+"целях."
+
+#: cms/static/js/views/license.js
+msgid "No Derivatives"
+msgstr "Никаких производных"
+
+#: cms/static/js/views/license.js
+msgid ""
+"Allow others to copy, distribute, display and perform only verbatim copies "
+"of your work, not derivative works based upon it. This option is "
+"incompatible with \"Share Alike\"."
+msgstr ""
+"Разрешайте другим копировать, распространять, отображать и выполнять только "
+"дословные копии вашей работы, а не производные работы на ее основе. Эта "
+"опция несовместима с «Поделиться одинаково»."
+
+#: cms/static/js/views/license.js
+msgid "Share Alike"
+msgstr "Поделитесь одинаково"
+
+#: cms/static/js/views/license.js
+msgid ""
+"Allow others to distribute derivative works only under a license identical "
+"to the license that governs your work. This option is incompatible with \"No"
+" Derivatives\"."
+msgstr ""
+"Разрешайте другим распространять производные работы только по лицензии, "
+"идентичной лицензии, регулирующей вашу работу. Эта опция несовместима с «Без"
+" производных»."
+
+#: cms/static/js/views/modals/course_outline_modals.js
+msgid "Enable Course Highlight Emails"
+msgstr "Включить электронные письма с описанием курса"
+
+#. Translators: "title" is the name of the current component being edited.
+#: cms/static/js/views/modals/edit_xblock.js
+msgid "Editing: {title}"
+msgstr "Редактирование: {title}"
+
+#: cms/static/js/views/modals/edit_xblock.js
+msgid "Plugins"
+msgstr "Плагины"
+
+#: cms/static/js/views/modals/edit_xblock.js
+msgid "Studio's having trouble parsing the problem component's content"
+msgstr ""
+"У Studio возникли проблемы с анализом содержимого проблемного компонента."
+
+#: cms/static/js/views/modals/move_xblock_modal.js
+msgid "Move"
+msgstr "Двигаться"
+
+#: cms/static/js/views/modals/move_xblock_modal.js
+msgid "Choose a location to move your component to"
+msgstr "Выберите место для перемещения компонента"
+
+#: cms/static/js/views/move_xblock_list.js
+msgid "This {parentCategory} has no {childCategory}"
+msgstr "Этот {parentCategory} не имеет {childCategory}"
+
+#. Translators: "title" is the name of the current component or unit being
+#. edited.
+#: cms/static/js/views/pages/container.js
+msgid "Editing access for: {title}"
+msgstr "Доступ на редактирование для: {title}"
+
+#: cms/static/js/views/pages/container_subviews.js
+msgid "Explicitly Hiding from Students"
+msgstr "Явное сокрытие от студентов"
+
+#. Translators: sample result:
+#. "Showing 0-9 out of 25 total, filtered by Images, sorted by Date Added
+#. ascending"
+#: cms/static/js/views/paging_header.js
+msgid ""
+"Showing {currentItemRange} out of {totalItemsCount}, filtered by "
+"{assetType}, sorted by {sortName} ascending"
+msgstr ""
+"Показаны {currentItemRange} из {totalItemsCount}, отфильтрованы по "
+"{assetType}, отсортированы по возрастанию {sortName}."
+
+#. Translators: sample result:
+#. "Showing 0-9 out of 25 total, filtered by Images, sorted by Date Added
+#. descending"
+#: cms/static/js/views/paging_header.js
+msgid ""
+"Showing {currentItemRange} out of {totalItemsCount}, filtered by "
+"{assetType}, sorted by {sortName} descending"
+msgstr ""
+"Показаны {currentItemRange} из {totalItemsCount}, отфильтрованы по "
+"{assetType}, отсортированы по {sortName} по убыванию."
+
+#. Translators: sample result:
+#. "Showing 0-9 out of 25 total, sorted by Date Added ascending"
+#: cms/static/js/views/paging_header.js
+msgid ""
+"Showing {currentItemRange} out of {totalItemsCount}, sorted by {sortName} "
+"ascending"
+msgstr ""
+"Показаны {currentItemRange} из {totalItemsCount}, отсортированные по "
+"возрастанию {sortName}."
+
+#. Translators: sample result:
+#. "Showing 0-9 out of 25 total, sorted by Date Added descending"
+#: cms/static/js/views/paging_header.js
+msgid ""
+"Showing {currentItemRange} out of {totalItemsCount}, sorted by {sortName} "
+"descending"
+msgstr ""
+"Показаны {currentItemRange} из {totalItemsCount}, отсортированные по "
+"убыванию {sortName}."
+
+#. Translators: turns into "25 total" to be used in other sentences, e.g.
+#. "Showing 0-9 out of 25 total".
+#: cms/static/js/views/paging_header.js
+msgid "{totalItems} total"
+msgstr "Всего {totalItems}"
+
+#: cms/static/js/views/show_textbook.js
+msgid "Delete “<%- name %>”?"
+msgstr "Удалить «<%-имя %>»?"
+
+#: cms/static/js/views/show_textbook.js
+msgid ""
+"Deleting a textbook cannot be undone and once deleted any reference to it in"
+" your courseware's navigation will also be removed."
+msgstr ""
+"Удаление учебника невозможно отменить, и после удаления любая ссылка на него"
+" в навигации вашего курса также будет удалена."
+
+#: cms/static/js/views/uploads.js
+msgid "We're sorry, there was an error"
+msgstr "Сожалеем, произошла ошибка"
+
+#: cms/static/js/views/utils/create_course_utils.js
+msgid ""
+"The combined length of the organization, course number, and course run "
+"fields cannot be more than <%- limit %> characters."
+msgstr ""
+"Общая длина полей организации, номера курса и проведения курса не может "
+"превышать <%-limit %> символов."
+
+#: cms/static/js/views/utils/create_library_utils.js
+msgid ""
+"The combined length of the organization and library code fields cannot be "
+"more than <%- limit %> characters."
+msgstr ""
+"Общая длина полей кода организации и библиотеки не может превышать <%-limit "
+"%> символов."
+
+#: cms/static/js/views/utils/move_xblock_utils.js
+msgid "Success! \"{displayName}\" has been moved."
+msgstr "Успех! «{displayName}» перемещен."
+
+#: cms/static/js/views/utils/move_xblock_utils.js
+msgid ""
+"Move cancelled. \"{sourceDisplayName}\" has been moved back to its original "
+"location."
+msgstr ""
+"Переезд отменен. «{sourceDisplayName}» был перемещен обратно на исходное "
+"место."
+
+#: cms/static/js/views/utils/xblock_utils.js
+msgid "Deleting this {xblock_type} is permanent and cannot be undone."
+msgstr "Удаление этого {xblock_type} необратимо и не может быть отменено."
+
+#: cms/static/js/views/utils/xblock_utils.js
+msgid ""
+"Any content that has listed this content as a prerequisite will also have "
+"access limitations removed."
+msgstr ""
+"С любого контента, для которого этот контент указан в качестве "
+"предварительного условия, также будут сняты ограничения доступа."
+
+#: cms/static/js/views/utils/xblock_utils.js
+msgid "Delete this {xblock_type} (and prerequisite)?"
+msgstr "Удалить этот {xblock_type} (и необходимое условие)?"
+
+#: cms/static/js/views/utils/xblock_utils.js
+msgid "Yes, delete this {xblock_type}"
+msgstr "Да, удалить этот {xblock_type}"
+
+#: cms/static/js/views/utils/xblock_utils.js
+msgid "Delete this {xblock_type}?"
+msgstr "Удалить этот {xblock_type}?"
+
+#: cms/static/js/views/utils/xblock_utils.js
+msgid "section"
+msgstr "раздел"
+
+#: cms/static/js/views/utils/xblock_utils.js
+msgid "subsection"
+msgstr "подраздел"
+
+#: cms/static/js/views/utils/xblock_utils.js
+#: cms/templates/js/container-access.underscore
+msgid "unit"
+msgstr "блок"
+
+#: cms/static/js/views/video/transcripts/file_uploader.js
+msgid "Please select a file in .srt format."
+msgstr "Пожалуйста, выберите файл в формате .srt."
+
+#: cms/static/js/views/video/transcripts/metadata_videolist.js
+msgid "Error: Connection with server failed."
+msgstr "Ошибка: Не удалось установить соединение с сервером."
+
+#: cms/static/js/views/video/transcripts/metadata_videolist.js
+msgid "Link types should be unique."
+msgstr "Типы ссылок должны быть уникальными."
+
+#: cms/static/js/views/video/transcripts/metadata_videolist.js
+msgid "Links should be unique."
+msgstr "Ссылки должны быть уникальными."
+
+#: cms/static/js/views/video/transcripts/metadata_videolist.js
+msgid "Incorrect url format."
+msgstr "Неправильный формат URL."
+
+#: cms/static/js/views/video/translations_editor.js
+msgid ""
+"If you remove this transcript, the transcript will not be available for this"
+" component."
+msgstr ""
+"Если вы удалите эту расшифровку, расшифровка не будет доступна для этого "
+"компонента."
+
+#. Translators: This is a 2 part text which tells the image requirements.
+#: cms/static/js/views/video_thumbnail.js
+msgid ""
+"{InstructionsSpanStart}{videoImageResoultion}{lineBreak} "
+"{videoImageSupportedFileFormats}{spanEnd}"
+msgstr ""
+"{InstructionsSpanStart}{videoImageResoultion}{lineBreak} "
+"{videoImageSupportedFileFormats}{spanEnd}"
+
+#. Translators: This is a 3 part text which tells the image requirements.
+#: cms/static/js/views/video_thumbnail.js
+msgid ""
+"{ReqTextSpanStart}Requirements{spanEnd}{lineBreak}{InstructionsSpanStart}{videoImageResoultion}{lineBreak}"
+" {videoImageSupportedFileFormats}{spanEnd}"
+msgstr ""
+"{ReqTextSpanStart}Требования{spanEnd}{lineBreak}{InstructionsSpanStart}{videoImageResoultion}{lineBreak}"
+" {videoImageSupportedFileFormats}{spanEnd}"
+
+#. Translators: message will be like 1280x720 pixels
+#: cms/static/js/views/video_thumbnail.js
+msgid "{maxWidth}x{maxHeight} pixels"
+msgstr "{maxWidth}x{maxHeight} пикселей"
+
+#. Translators: message will be like Add Thumbnail - Arrow.mp4
+#: cms/static/js/views/video_thumbnail.js
+msgid "Add Thumbnail - {videoName}"
+msgstr "Добавить миниатюру — {videoName}"
+
+#. Translators: humanizeDuration will be like 10 minutes, an hour and 20
+#. minutes etc
+#: cms/static/js/views/video_thumbnail.js
+msgid "Video duration is {humanizeDuration}"
+msgstr "Продолжительность видео — {humanizeDuration}."
+
+#: cms/static/js/views/video_thumbnail.js
+msgid "seconds"
+msgstr "секунды"
+
+#: cms/static/js/views/video_thumbnail.js
+msgid "second"
+msgstr "второй"
+
+#. Translators: message will be like 20 seconds, 1 second
+#: cms/static/js/views/video_thumbnail.js
+msgid "{seconds} {unit}"
+msgstr "{seconds} {unit}"
+
+#: cms/static/js/views/video_thumbnail.js
+msgid "Video image upload started"
+msgstr "Загрузка видеоизображения началась."
+
+#: cms/static/js/views/video_thumbnail.js
+msgid "Could not upload the video image file"
+msgstr "Не удалось загрузить файл видеоизображения"
+
+#: cms/static/js/views/video_transcripts.js
+msgid "Hide transcripts ({transcriptCount})"
+msgstr "Скрыть расшифровки ({transcriptCount})"
+
+#: cms/static/js/views/video_transcripts.js
+msgid "Show transcripts ({transcriptCount})"
+msgstr "Показать стенограммы ({transcriptCount})"
+
+#: cms/static/js/views/video_transcripts.js
+#: cms/templates/js/video-transcripts.underscore
+msgid "{transcriptClientTitle}_{transcriptLanguageCode}.{fileExtension}"
+msgstr "{transcriptClientTitle}_{transcriptLanguageCode}.{fileExtension}"
+
+#: cms/static/js/views/video_transcripts.js
+msgid ""
+"If you remove this transcript, the transcript will not be available for any "
+"components that use this video."
+msgstr ""
+"Если вы удалите эту расшифровку, расшифровка не будет доступна ни для каких "
+"компонентов, использующих это видео."
+
+#: lms/static/js/student_account/views/account_settings_view.js
+msgid ""
+"You have set your language to {beta_language}, which is currently not fully "
+"translated. You can help us translate this language fully by joining the "
+"Transifex community and adding translations from English for learners that "
+"speak {beta_language}."
+msgstr ""
+"Вы установили язык {beta_language}, который в настоящее время переведен не "
+"полностью. Вы можете помочь нам полностью перевести этот язык, "
+"присоединившись к сообществу Transifex и добавив переводы с английского для "
+"учащихся, говорящих на {beta_language}."
+
+#: lms/static/js/student_account/views/account_settings_view.js
+msgid "Help Translate into {beta_language}"
+msgstr "Помогите перевести на {beta_language}"
+
+#: common/static/common/templates/discussion/templates.underscore
+#, python-format
+msgid "discussion posted %(time_ago)s by %(author)s"
+msgstr "обсуждение опубликовано %(time_ago)s пользователем %(author)s"
+
+#: common/static/common/templates/discussion/templates.underscore
+#, python-format
+msgid "question posted %(time_ago)s by %(author)s"
+msgstr "вопрос опубликован %(time_ago)s пользователем %(author)s"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "Pinned"
+msgstr "Закреплено"
+
+#: common/static/common/templates/discussion/templates.underscore
+#, python-format
+msgid "Related to: %(courseware_title_linked)s"
+msgstr "Относится к: %(courseware_title_linked)s"
+
+#: common/static/common/templates/discussion/templates.underscore
+#, python-format
+msgid "This post is visible only to %(group_name)s."
+msgstr "Это сообщение видно только пользователю %(group_name)s."
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "This post is visible to everyone."
+msgstr "Этот пост виден всем."
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid ""
+"Add a clear and descriptive title to encourage participation. (Required)"
+msgstr ""
+"Добавьте четкое и описательное название, чтобы стимулировать участие. "
+"(Необходимый)"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "Edit your post below."
+msgstr "Отредактируйте свое сообщение ниже."
+
+#: common/static/common/templates/discussion/templates.underscore
+#, python-format
+msgid "Show Comment (%(num_comments)s)"
+msgid_plural "Show Comments (%(num_comments)s)"
+msgstr[0] "Показать комментарий (%(num_comments)s)"
+msgstr[1] "Показать комментарии (%(num_comments)s)"
+msgstr[2] "Показать комментарии (%(num_comments)s)"
+msgstr[3] "Показать комментарии (%(num_comments)s)"
+
+#: common/static/common/templates/discussion/templates.underscore
+#, python-format
+msgid "marked as answer %(time_ago)s by %(user)s"
+msgstr "отмечено как ответ %(time_ago)s пользователем %(user)s"
+
+#: common/static/common/templates/discussion/templates.underscore
+#, python-format
+msgid "marked as answer %(time_ago)s"
+msgstr "отмечено как ответ %(time_ago)s"
+
+#: common/static/common/templates/discussion/templates.underscore
+#, python-format
+msgid "endorsed %(time_ago)s by %(user)s"
+msgstr "одобрен %(time_ago)s пользователем %(user)s"
+
+#: common/static/common/templates/discussion/templates.underscore
+#, python-format
+msgid "endorsed %(time_ago)s"
+msgstr "одобрен %(time_ago)s"
+
+#: common/static/common/templates/discussion/templates.underscore
+#, python-format
+msgid "posted %(time_ago)s by %(author)s"
+msgstr "опубликовал %(time_ago)s пользователь %(author)s"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "answered question"
+msgstr "ответил на вопрос"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "unanswered question"
+msgstr "вопрос без ответа"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "Following"
+msgstr "Следующий"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "{unread_comments_count} new"
+msgstr "{unread_comments_count} новый"
+
+#: common/static/common/templates/discussion/templates.underscore
+#, python-format
+msgid ""
+"%(comments_count)s %(span_sr_open)scomments (%(unread_comments_count)s "
+"unread comments)%(span_close)s"
+msgstr ""
+"%(comments_count)s %(span_sr_open)sкомментарии (%(unread_comments_count)s "
+"непрочитанные комментарии)%(span_close)s"
+
+#: common/static/common/templates/discussion/templates.underscore
+#, python-format
+msgid "%(comments_count)s %(span_sr_open)scomments %(span_close)s"
+msgstr "%(comments_count)s %(span_sr_open)sкомментарии %(span_close)s"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid ""
+"Discussion admins, moderators, and TAs can make their posts visible to all "
+"students or specify a single group."
+msgstr ""
+"Администраторы обсуждений, модераторы и технические специалисты могут "
+"сделать свои сообщения видимыми для всех учащихся или указать одну группу."
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "follow this post"
+msgstr "следить за этим сообщением"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "post anonymously to classmates"
+msgstr "опубликовать анонимно в одноклассниках"
+
+#: common/static/common/templates/discussion/templates.underscore
+#, python-format
+msgid "This post will be visible only to %(group_name)s."
+msgstr "Это сообщение будет видно только пользователю %(group_name)s."
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "This post will be visible to everyone."
+msgstr "Этот пост будет виден всем."
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "Add your post to a relevant topic to help others find it. (Required)"
+msgstr ""
+"Добавьте свое сообщение в соответствующую тему, чтобы помочь другим найти "
+"его. (Необходимый)"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "(Community TA)"
+msgstr "(Техническая помощь сообщества)"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "(Staff)"
+msgstr "(Персонал)"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid ""
+"Questions raise issues that need answers. Discussions share ideas and start "
+"conversations. (Required)"
+msgstr ""
+"Вопросы поднимают проблемы, которые требуют ответов. Обсуждения делятся "
+"идеями и начинают разговоры. (Необходимый)"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "Endorse"
+msgstr "Одобрять"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "Unendorse"
+msgstr "Не одобрять"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "Unmark as Answer"
+msgstr "Снять пометку как ответ"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "Follow"
+msgstr "Следовать"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "Unfollow"
+msgstr "Отписаться"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "Vote for this post,"
+msgstr "Проголосуйте за этот пост,"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "Report abuse"
+msgstr "Сообщить о нарушении"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "Report"
+msgstr "Отчет"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "Unreport"
+msgstr "Отменить отчет"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "Unpin"
+msgstr "Открепить"
+
+#: common/static/common/templates/discussion/templates.underscore
+msgid "Open"
+msgstr "Открыть"
+
+#: lms/djangoapps/support/static/support/templates/manage_user.underscore
+msgid "Toggle Account Password (Usable/Unusable)"
+msgstr ""
+"Переключить пароль учетной записи (можно использовать/не использовать)"
+
+#: lms/djangoapps/teams/static/teams/templates/manage.underscore
+msgid "View Current Team Memberships"
+msgstr "Просмотр текущего членства в команде"
+
+#: lms/djangoapps/teams/static/teams/templates/manage.underscore
+msgid "Error assigning team memberships"
+msgstr "Ошибка при назначении членства в команде."
+
+#: lms/templates/courseware/proctored-exam-status.underscore
+msgid "Exam timer and end exam button"
+msgstr "Таймер исследования и кнопка завершения исследования"
+
+#: lms/templates/courseware/proctored-exam-status.underscore
+msgid "You are taking \"{exam_link}\" as {exam_type}. "
+msgstr "Вы принимаете «{exam_link}» как {exam_type}."
+
+#: lms/templates/courseware/proctored-exam-status.underscore
+msgid "The timer on the right shows the time remaining in the exam."
+msgstr "Таймер справа показывает время, оставшееся до экзамена."
+
+#: lms/templates/financial-assistance/financial_assessment_form.underscore
+msgid ""
+"The following information is already a part of your {platform} profile and "
+"is required for your application. To edit this information go to "
+msgstr ""
+"Следующая информация уже является частью вашего профиля {platform} и "
+"необходима для вашего заявления. Чтобы отредактировать эту информацию, "
+"перейдите на"
+
+#: lms/templates/instructor/instructor_dashboard_2/certificate-allowlist.underscore
+msgid "Certificate exceptions group selection"
+msgstr "Выбор группы исключений сертификата"
+
+#: lms/templates/instructor/instructor_dashboard_2/cohort-group-header.underscore
+#, python-format
+msgid "(contains %(student_count)s student)"
+msgid_plural "(contains %(student_count)s students)"
+msgstr[0] "(содержит %(student_count)s студента)"
+msgstr[1] "(содержит %(student_count)s студентов)"
+msgstr[2] "(содержит %(student_count)s студентов)"
+msgstr[3] "(содержит %(student_count)s студентов)"
+
+#: lms/templates/learner_dashboard/course_card.underscore
+msgid "You must select a session by {expiration_date} to access the course."
+msgstr ""
+"Чтобы получить доступ к курсу, вам необходимо выбрать сеанс до "
+"{expiration_date}."
+
+#: lms/templates/learner_dashboard/course_card.underscore
+msgid "You can no longer change sessions."
+msgstr "Вы больше не можете менять сеансы."
+
+#: lms/templates/learner_dashboard/course_card.underscore
+msgid "You can change sessions until {expiration_date}."
+msgstr "Вы можете менять сеансы до {expiration_date}."
+
+#: lms/templates/learner_dashboard/course_entitlement.underscore
+msgid "More sessions coming soon."
+msgstr "Скоро будут еще сеансы."
+
+#: lms/templates/learner_dashboard/course_entitlement.underscore
+msgid "Change to a different session or leave the current session."
+msgstr "Перейдите на другой сеанс или покиньте текущий сеанс."
+
+#: lms/templates/learner_dashboard/course_entitlement.underscore
+msgid "To access the course, select a session."
+msgstr "Чтобы получить доступ к курсу, выберите сеанс."
+
+#: lms/templates/learner_dashboard/course_entitlement.underscore
+msgid "{sessionDates} (Open until {enrollmentEnd})"
+msgstr "{sessionDates} (открыто до {enrollmentEnd})"
+
+#: lms/templates/learner_dashboard/course_entitlement.underscore
+msgid "More sessions coming soon"
+msgstr "Скоро будут еще сеансы"
+
+#: lms/templates/learner_dashboard/course_entitlement.underscore
+msgid "Leave the current session and decide later"
+msgstr "Выйти из текущего сеанса и принять решение позже"
+
+#: lms/templates/learner_dashboard/program_details_sidebar.underscore
+msgid ""
+"View your receipts or modify your subscription on the {a_start}Orders and "
+"subscriptions{a_end} page"
+msgstr ""
+"Просмотрите свои квитанции или измените подписку на странице {a_start}Заказы"
+" и подписки{a_end}."
+
+#: lms/templates/learner_dashboard/program_details_sidebar.underscore
+msgid ""
+"Restart your subscription for {subscriptionPrice}. Your payment history is "
+"still available on the {a_start}Orders and subscriptions{a_end} page"
+msgstr ""
+"Возобновите подписку на {subscriptionPrice}. Ваша история платежей по-"
+"прежнему доступна на странице {a_start}Заказы и подписки{a_end}."
+
+#: lms/templates/learner_dashboard/program_details_sidebar.underscore
+msgid ""
+"If you had a subscription previously, your payment history is still "
+"available on the {a_start}Orders and subscriptions{a_end} page"
+msgstr ""
+"Если у вас ранее была подписка, ваша история платежей по-прежнему доступна "
+"на странице {a_start}Заказы и подписки{a_end}."
+
+#: lms/templates/learner_dashboard/program_details_sidebar.underscore
+msgid ""
+"Need help? Check out the {a_start}Learner Help "
+"Center{span_start}{icon}{span_end}{a_end} to troubleshoot issues or contact "
+"support"
+msgstr ""
+"Нужна помощь? Посетите {a_start}Справочный центр "
+"Learner{span_start}{icon}{span_end}{a_end}, чтобы устранить неполадки или "
+"обратиться в службу поддержки."
+
+#: lms/templates/learner_dashboard/program_details_sidebar.underscore
+msgid "Program Record"
+msgstr "Запись программы"
+
+#: lms/templates/learner_dashboard/program_details_sidebar.underscore
+msgid ""
+"Once you complete one of the program requirements you have a program record."
+" This record is marked complete once you meet all program requirements. A "
+"program record can be used to continue your learning journey and demonstrate"
+" your learning to others."
+msgstr ""
+"После выполнения одного из требований программы у вас появится запись о "
+"программе. Эта запись будет помечена как завершенная, если вы выполните все "
+"требования программы. Запись программы можно использовать для продолжения "
+"вашего обучения и демонстрации вашего обучения другим."
+
+#: lms/templates/learner_dashboard/program_details_sidebar.underscore
+msgid "View Program Record"
+msgstr "Просмотр записи программы"
+
+#: lms/templates/learner_dashboard/program_details_sidebar.underscore
+#: lms/templates/learner_dashboard/program_details_tab_view.underscore
+msgid "Additional Credit Opportunities"
+msgstr "Дополнительные кредитные возможности"
+
+#: lms/templates/learner_dashboard/program_details_sidebar.underscore
+#: lms/templates/learner_dashboard/program_details_tab_view.underscore
+msgid "Additional Professional Opportunities"
+msgstr "Дополнительные профессиональные возможности"
+
+#: lms/templates/learner_dashboard/program_details_tab_view.underscore
+#: lms/templates/learner_dashboard/program_details_view.underscore
+#, python-format
+msgid ""
+"You have successfully completed all the requirements for the %(title)s "
+"%(type)s."
+msgstr "Вы успешно выполнили все требования для %(title)s %(type)s."
+
+#: lms/templates/learner_dashboard/program_details_tab_view.underscore
+#, python-format
+msgid ""
+"Track and plan your progress through the %(count)s course(s) in this "
+"program. To complete the program, you must earn a verified certificate for "
+"each course."
+msgstr ""
+"Отслеживайте и планируйте свой прогресс на курсах %(count)s этой программы. "
+"Для завершения программы вы должны получить подтвержденный сертификат для "
+"каждого курса."
+
+#: lms/templates/learner_dashboard/program_details_tab_view.underscore
+#: lms/templates/learner_dashboard/program_details_view.underscore
+msgid "Start {trialLength}-day free trial"
+msgstr "Начните бесплатную пробную версию на {trialLength} дня"
+
+#: lms/templates/learner_dashboard/program_details_tab_view.underscore
+#: lms/templates/learner_dashboard/program_details_view.underscore
+msgid "Trial ends {trialEndDate} at {trialEndTime}"
+msgstr "Пробная версия заканчивается {trialEndDate} в {trialEndTime}."
+
+#: lms/templates/learner_dashboard/program_details_tab_view.underscore
+#: lms/templates/learner_dashboard/program_details_view.underscore
+msgid "Your next billing date is {currentPeriodEnd}"
+msgstr "Следующая дата выставления счета — {currentPeriodEnd}."
+
+#: lms/templates/learner_dashboard/program_details_tab_view.underscore
+#: lms/templates/learner_dashboard/program_details_view.underscore
+msgid "{subscriptionPrice} subscription. Cancel anytime."
+msgstr "{subscriptionPrice} подписка. Отменить в любое время."
+
+#: lms/templates/learner_dashboard/program_details_tab_view.underscore
+#: lms/templates/learner_dashboard/program_details_view.underscore
+msgid "{subscriptionPrice} subscription after trial ends. Cancel anytime."
+msgstr ""
+"Подписка {subscriptionPrice} после окончания пробного периода. Отменить в "
+"любое время."
+
+#: lms/templates/learner_dashboard/program_details_tab_view.underscore
+#: lms/templates/learner_dashboard/program_details_view.underscore
+msgid "Upgrade All Remaining Courses ("
+msgstr "Обновите все оставшиеся курсы ("
+
+#: lms/templates/learner_dashboard/program_details_tab_view.underscore
+#: lms/templates/learner_dashboard/program_details_view.underscore
+msgid "${listPrice}"
+msgstr "${listPrice}"
+
+#: lms/templates/learner_dashboard/program_details_tab_view.underscore
+#: lms/templates/learner_dashboard/program_details_view.underscore
+msgid " ${price} {currency} )"
+msgstr "${price} {currency} )"
+
+#: lms/templates/learner_dashboard/program_details_tab_view.underscore
+#, python-format
+msgid "Transform your %(org)s %(type)s into a full master’s degree"
+msgstr "Превратите свой %(org)s %(type)s в полную степень магистра"
+
+#: lms/templates/learner_dashboard/program_details_tab_view.underscore
+#, python-format
+msgid ""
+"Successful completion of %(org)s %(program)s credential can be applied "
+"towards flexible, rigorous, and affordable masters degrees from the world’s "
+"leading universities."
+msgstr ""
+"Успешное получение сертификата %(org)s %(program)s может быть использовано "
+"для получения гибких, строгих и доступных степеней магистра в ведущих "
+"университетах мира."
+
+#: lms/templates/learner_dashboard/program_details_view.underscore
+#, python-format
+msgid ""
+"Track and plan your progress through the %(count)s courses in this program. "
+"To complete the program, you must earn a verified certificate for each "
+"course."
+msgstr ""
+"Отслеживайте и планируйте свой прогресс на курсах %(count)s этой программы. "
+"Для завершения программы вы должны получить подтвержденный сертификат для "
+"каждого курса."
+
+#: lms/templates/learner_dashboard/program_list_header_view.underscore
+msgid "My programs"
+msgstr "Мои программы"
+
+#: lms/templates/learner_dashboard/subscription_upsell_view.underscore
+msgid "New"
+msgstr "Новый"
+
+#: lms/templates/learner_dashboard/subscription_upsell_view.underscore
+msgid "Monthly program subscriptions {emDash} more flexible, more affordable"
+msgstr "Ежемесячная подписка на программу {emDash} более гибкая и доступная"
+
+#: lms/templates/learner_dashboard/subscription_upsell_view.underscore
+msgid ""
+"Now available for many popular programs, affordable monthly subscription "
+"pricing can help you manage your budget more effectively. Subscriptions "
+"start at {minSubscriptionPrice}/month USD per program, after a 7-day full "
+"access free trial. Cancel at any time."
+msgstr ""
+"Доступная ежемесячная подписка, доступная теперь для многих популярных "
+"программ, поможет вам более эффективно управлять своим бюджетом. Стоимость "
+"подписки начинается от {minSubscriptionPrice} долларов США в месяц за "
+"программу после 7-дневного бесплатного пробного доступа с полным доступом. "
+"Отменить в любое время."
+
+#: lms/templates/learner_dashboard/subscription_upsell_view.underscore
+msgid "Explore subscription options"
+msgstr "Изучите варианты подписки"
+
+#: lms/templates/learner_dashboard/upgrade_message_subscription.underscore
+msgid "Upgrade with a subscription"
+msgstr "Обновление с подпиской"
+
+#: lms/templates/learner_dashboard/upgrade_message_subscription.underscore
+msgid "Pay {subscriptionPrice} for all courses in this program"
+msgstr "Заплатите {subscriptionPrice} за все курсы этой программы."
+
+#: lms/templates/learner_dashboard/upgrade_message_subscription.underscore
+msgid "Pay {subscriptionPrice} after {trialLength}-day free trial"
+msgstr ""
+"Заплатите {subscriptionPrice} после {trialLength}-дневной бесплатной пробной"
+" версии"
+
+#: lms/templates/student_account/account_settings.underscore
+msgid "Switch Language Back"
+msgstr "Переключить язык обратно"
+
+#: lms/templates/student_account/form_field.underscore
+msgid "Need help signing in?"
+msgstr "Нужна помощь со входом?"
+
+#: lms/templates/student_account/form_field.underscore
+msgid "Other sign-in issues"
+msgstr "Другие проблемы со входом"
+
+#: lms/templates/student_account/form_field.underscore
+msgid "Sign in with your company or school"
+msgstr "Войдите в систему с помощью своей компании или школы"
+
+#: lms/templates/student_account/form_field.underscore
+msgid "Need other help signing in?"
+msgstr "Нужна помощь со входом?"
+
+#: lms/templates/student_account/login.underscore
+msgid "Sign in to continue learning as {email}"
+msgstr "Войдите, чтобы продолжить обучение под именем {email}."
+
+#: lms/templates/student_account/login.underscore
+msgid "Sign in to continue learning"
+msgstr "Войдите, чтобы продолжить обучение"
+
+#: lms/templates/student_account/login.underscore
+msgid ""
+"You already have an edX account with your {enterprise_name} email address."
+msgstr ""
+"У вас уже есть учетная запись edX с вашим адресом электронной почты "
+"{enterprise_name}."
+
+#: lms/templates/student_account/login.underscore
+msgid ""
+"Going forward, your account information will be updated and maintained by "
+"{enterprise_name}."
+msgstr ""
+"В дальнейшем информация о вашей учетной записи будет обновляться и "
+"поддерживаться {enterprise_name}."
+
+#: lms/templates/student_account/login.underscore
+msgid ""
+"You can view your information or unlink from {enterprise_name} anytime in "
+"your Account Settings."
+msgstr ""
+"Вы можете просмотреть свою информацию или отменить связь с {enterprise_name}"
+" в любое время в настройках своей учетной записи."
+
+#: lms/templates/student_account/login.underscore
+msgid "To continue learning with this account, sign in below."
+msgstr ""
+"Чтобы продолжить обучение с помощью этой учетной записи, войдите в систему "
+"ниже."
+
+#: lms/templates/student_account/login.underscore
+msgid "Use my university info"
+msgstr "Используйте информацию о моем университете"
+
+#: lms/templates/student_account/password_reset.underscore
+msgid ""
+"Please enter your log-in or recovery email address below and we will send "
+"you an email with instructions."
+msgstr ""
+"Пожалуйста, введите ниже свой адрес электронной почты для входа или "
+"восстановления, и мы вышлем вам электронное письмо с инструкциями."
+
+#: lms/templates/student_account/register.underscore
+msgid "Support education research by providing additional information"
+msgstr ""
+"Поддержите исследования в области образования, предоставив дополнительную "
+"информацию."
+
+#: lms/templates/verify_student/face_photo_step.underscore
+msgid "Device with Camera"
+msgstr "Устройство с камерой"
+
+#: lms/templates/verify_student/face_photo_step.underscore
+msgid ""
+"You need a device that has a webcam. If you receive a browser prompt for "
+"access to your camera, please make sure to click 'Allow'."
+msgstr ""
+"Вам нужно устройство с веб-камерой. Если вы получили запрос браузера на "
+"доступ к вашей камере, обязательно нажмите «Разрешить»."
+
+#: lms/templates/verify_student/face_photo_step.underscore
+msgid "You need a valid ID that contains your full name and photo."
+msgstr ""
+"Вам понадобится действительное удостоверение личности, содержащее ваше "
+"полное имя и фотографию."
+
+#: lms/templates/verify_student/face_photo_step.underscore
+msgid ""
+"When your face is in position, use the Take Photo button {icon} below to "
+"take your photo."
+msgstr ""
+"Когда ваше лицо займет нужное положение, используйте кнопку "
+"«Сфотографировать» {icon} ниже, чтобы сделать снимок."
+
+#: lms/templates/verify_student/face_photo_step.underscore
+msgid ""
+"To take the photo of your face, click on the camera button {icon}. If you "
+"need to try again, click 'Retake Photo'."
+msgstr ""
+"Чтобы сфотографировать свое лицо, нажмите кнопку камеры {icon}. Если вам "
+"нужно повторить попытку, нажмите «Повторно сделать фото»."
+
+#: lms/templates/verify_student/face_photo_step.underscore
+msgid ""
+"We use your verification photos to confirm your identity and ensure the "
+"validity of your certificate."
+msgstr ""
+"Мы используем ваши проверочные фотографии, чтобы подтвердить вашу личность и"
+" убедиться в действительности вашего сертификата."
+
+#: lms/templates/verify_student/face_photo_step.underscore
+#: lms/templates/verify_student/id_photo_step.underscore
+#: lms/templates/verify_student/incourse_reverify.underscore
+msgid ""
+"What if I can't see the camera image, or if I can't see my photo do "
+"determine which side is visible?"
+msgstr ""
+"Что делать, если я не вижу изображения с камеры или не вижу свою фотографию,"
+" определите, какая сторона видна?"
+
+#: lms/templates/verify_student/face_photo_step.underscore
+#: lms/templates/verify_student/incourse_reverify.underscore
+msgid ""
+"You may be able to complete the image capture procedure without assistance, "
+"but it may take a couple of submission attempts to get the camera "
+"positioning right.  Optimal camera positioning varies with each computer, "
+"but generally the best position for a headshot is approximately 12-18 inches"
+" (30-45 centimeters) from the camera, with your head centered relative to "
+"the computer screen. "
+msgstr ""
+"Возможно, вам удастся выполнить процедуру захвата изображения без "
+"посторонней помощи, но для правильного позиционирования камеры может "
+"потребоваться несколько попыток отправки.  Оптимальное расположение камеры "
+"варьируется в зависимости от компьютера, но обычно лучшее положение для "
+"съемки головы — примерно 12–18 дюймов (30–45 сантиметров) от камеры, при "
+"этом голова должна быть по центру относительно экрана компьютера."
+
+#: lms/templates/verify_student/face_photo_step.underscore
+#: lms/templates/verify_student/id_photo_step.underscore
+#: lms/templates/verify_student/incourse_reverify.underscore
+msgid ""
+"If the photos you submit are rejected, try moving the computer or camera "
+"orientation to change the lighting angle.  The most common reason for "
+"rejection is inability to read the text on the ID card."
+msgstr ""
+"Если отправленные вами фотографии отклонены, попробуйте изменить ориентацию "
+"компьютера или камеры, чтобы изменить угол освещения.  Наиболее "
+"распространенной причиной отказа является невозможность прочитать текст на "
+"удостоверении личности."
+
+#: lms/templates/verify_student/face_photo_step.underscore
+#: lms/templates/verify_student/incourse_reverify.underscore
+msgid ""
+"What if I have difficulty holding my head in position relative to the "
+"camera?"
+msgstr "Что делать, если мне трудно удерживать голову относительно камеры?"
+
+#: lms/templates/verify_student/face_photo_step.underscore
+#: lms/templates/verify_student/id_photo_step.underscore
+#: lms/templates/verify_student/incourse_reverify.underscore
+#, python-format
+msgid ""
+"If you require assistance with taking either photo for submission, contact "
+"%(platformName)s support for additional suggestions."
+msgstr ""
+"Если вам нужна помощь с фотографированием для отправки, обратитесь в службу "
+"поддержки %(platformName)s за дополнительными предложениями."
+
+#: lms/templates/verify_student/id_photo_step.underscore
+msgid ""
+"You need an ID with your name and photo. A driver's license, passport, or ID"
+" are all acceptable."
+msgstr ""
+"Вам понадобится удостоверение личности с вашим именем и фотографией. "
+"Водительские права, паспорт или удостоверение личности принимаются."
+
+#: lms/templates/verify_student/id_photo_step.underscore
+msgid "Once in position, use the Take Photo button {icon} to capture your ID"
+msgstr ""
+"Оказавшись на месте, используйте кнопку «Сфотографировать» {icon}, чтобы "
+"запечатлеть свое удостоверение личности."
+
+#: lms/templates/verify_student/id_photo_step.underscore
+#: lms/templates/verify_student/incourse_reverify.underscore
+msgid "Use the Retake Photo button if you are not pleased with your photo"
+msgstr ""
+"Используйте кнопку «Повторить фото», если вам не нравится ваша фотография."
+
+#: lms/templates/verify_student/id_photo_step.underscore
+msgid ""
+"You may be able to complete the image capture procedure without assistance, "
+"but it may take a couple of submission attempts to get the camera "
+"positioning right.  Optimal camera positioning varies with each computer, "
+"but generally, the best position for a photo of an ID card is 8-12 inches "
+"(20-30 centimeters) from the camera, with the ID card centered relative to "
+"the camera. "
+msgstr ""
+"Возможно, вам удастся выполнить процедуру захвата изображения без "
+"посторонней помощи, но для правильного позиционирования камеры может "
+"потребоваться несколько попыток отправки.  Оптимальное расположение камеры "
+"варьируется в зависимости от компьютера, но, как правило, лучшее положение "
+"для фотографии удостоверения личности — на расстоянии 8–12 дюймов (20–30 см)"
+" от камеры, при этом удостоверение личности находится по центру относительно"
+" камеры."
+
+#: lms/templates/verify_student/id_photo_step.underscore
+msgid ""
+"What if I have difficulty holding my ID in position relative to the camera?"
+msgstr ""
+"Что делать, если мне трудно удерживать удостоверение личности относительно "
+"камеры?"
+
+#: lms/templates/verify_student/incourse_reverify.underscore
+msgid ""
+"Once in position, use the Take Photo button {icon} to capture your photo"
+msgstr ""
+"Оказавшись на месте, используйте кнопку «Сфотографировать» {icon}, чтобы "
+"сделать снимок."
+
+#: lms/templates/verify_student/reverify_success_step.underscore
+msgid ""
+"We have received your information and are verifying your identity. You will "
+"see a message on your dashboard when the verification process is complete "
+"(usually within 5-7 days). In the meantime, you can still access all "
+"available course content."
+msgstr ""
+"Мы получили вашу информацию и проверяем вашу личность. Когда процесс "
+"проверки завершится (обычно в течение 5-7 дней), вы увидите сообщение на "
+"своей панели управления. Тем временем вы по-прежнему можете получить доступ "
+"ко всем доступным материалам курса."
+
+#: openedx/features/learner_profile/static/learner_profile/templates/section_two.underscore
+msgid "This learner is currently sharing a limited profile."
+msgstr "Этот учащийся в настоящее время имеет ограниченный профиль."
+
+#: cms/templates/js/access-editor.underscore
+msgid ""
+"Select a prerequisite subsection and enter a minimum score percentage and "
+"minimum completion percentage to limit access to this subsection. Allowed "
+"values are 0-100"
+msgstr ""
+"Выберите подраздел обязательных условий и введите минимальный процент баллов"
+" и минимальный процент выполнения, чтобы ограничить доступ к этому "
+"подразделу. Допустимые значения: 0–100."
+
+#: cms/templates/js/course-highlights-enable.underscore
+msgid "Course Highlight Emails"
+msgstr "Письма с основными моментами курса"
+
+#: cms/templates/js/course-outline.underscore
+msgid "Onboarding Exam"
+msgstr "Вступительный экзамен"
+
+#: cms/templates/js/course-outline.underscore
+#, python-format
+msgid ""
+"This subsection is configured as \\\"%(gradingType)s\\\", which doesn't "
+"exist in the current grading policy."
+msgstr ""
+"Этот подраздел настроен как «%(gradingType)s», которого нет в текущей "
+"политике оценивания."
+
+#: cms/templates/js/course-outline.underscore
+msgid "From:"
+msgstr "От:"
+
+#: cms/templates/js/course-outline.underscore
+msgid "What's in my clipboard?"
+msgstr "Что у меня в буфере обмена?"
+
+#: cms/templates/js/course-video-settings-update-org-credentials-footer.underscore
+msgid "Press discard changes to discard your changes."
+msgstr "Нажмите «Отменить изменения», чтобы отменить изменения."
+
+#: cms/templates/js/course-video-settings-update-org-credentials-footer.underscore
+msgid "Press update settings to update the information for your organization."
+msgstr ""
+"Нажмите «Настройки обновления», чтобы обновить информацию о вашей "
+"организации."
+
+#: cms/templates/js/course-video-settings-update-settings-footer.underscore
+msgid "Press discard changes to discard changes."
+msgstr "Нажмите «Отменить изменения», чтобы отменить изменения."
+
+#: cms/templates/js/course-video-settings-update-settings-footer.underscore
+msgid "Press update settings to update course video settings"
+msgstr "Нажмите «Обновить настройки», чтобы обновить настройки видео курса."
+
+#: cms/templates/js/course-video-settings.underscore
+msgid "Press close to hide course video settings"
+msgstr "Нажмите «Закрыть», чтобы скрыть настройки видео курса."
+
+#: cms/templates/js/course-video-transcript-preferences.underscore
+msgid "Video Source Language"
+msgstr "Исходный язык видео"
+
+#: cms/templates/js/course-video-transcript-preferences.underscore
+msgid "Press Add to language"
+msgstr "Нажмите Добавить к языку"
+
+#: cms/templates/js/course-video-transcript-provider-selected.underscore
+msgid "Press change to change selected transcript provider."
+msgstr ""
+"Нажмите «Изменить», чтобы изменить выбранного поставщика транскриптов."
+
+#: cms/templates/js/course_grade_policy.underscore
+msgid ""
+"The number of {type} assignments defined here does not match the current "
+"number of {type} assignments in the course:"
+msgstr ""
+"Определенное здесь количество заданий {type} не соответствует текущему "
+"количеству заданий {type} в курсе:"
+
+#: cms/templates/js/course_grade_policy.underscore
+msgid "{assignment_count} {type} assignment(s) found:"
+msgstr "Найдено заданий {assignment_count} {type}:"
+
+#: cms/templates/js/discussion-editor.underscore
+msgid "Please enable discussions for graded units from course authoring app"
+msgstr ""
+"Включите обсуждения оцениваемых модулей в приложении для создания курсов."
+
+#: cms/templates/js/highlights-editor.underscore
+msgid ""
+"Enter 3-5 highlights to include in the email message that learners receive "
+"for this section (250 character limit)."
+msgstr ""
+"Введите 3–5 основных моментов, которые будут включены в электронное письмо, "
+"которое учащиеся получат в этом разделе (ограничение в 250 символов)."
+
+#: cms/templates/js/highlights-editor.underscore
+msgid "A highlight to look forward to this week."
+msgstr "Главное событие, которого стоит ожидать на этой неделе."
+
+#: cms/templates/js/self-paced-due-date-editor.underscore
+msgid ""
+"If a learner starts on {startDate}, this subsection will be due on "
+"{projectedDueIn}."
+msgstr ""
+"Если учащийся начинает {startDate}, этот подраздел будет сдан "
+"{projectedDueIn}."
+
+#: cms/templates/js/self-paced-due-date-editor.underscore
+msgid ""
+"The minimum number of weeks this subsection can be due in is 1 week from the"
+" learner enrollment date."
+msgstr ""
+"Минимальное количество недель, в течение которых можно сдать этот подраздел,"
+" составляет 1 неделю с даты зачисления учащегося."
+
+#: cms/templates/js/summary-configuration-editor.underscore
+msgid "Xpert unit summaries"
+msgstr "Краткое описание экспертного модуля"
+
+#: cms/templates/js/timed-examination-preference-editor.underscore
+msgid ""
+"This subsection was released to learners as a proctored exam, but was "
+"reverted back to a basic or timed exam. You may not configure it as a "
+"proctored exam now. Contact edX Support for assistance."
+msgstr ""
+"Этот подраздел был представлен учащимся как экзамен под контролем, но был "
+"снова возвращен к базовому экзамену или экзамену на время. Сейчас вы не "
+"можете настроить его как экзамен под наблюдением. Обратитесь в службу "
+"поддержки edX за помощью."
+
+#: cms/templates/js/timed-examination-preference-editor.underscore
+msgid ""
+"This proctored exam has been released to learners. You may not convert it to"
+" another type of special exam. You may revert this subsection back to being "
+"a basic exam by selecting 'None', or a timed exam, but you will NOT be able "
+"to configure it as a proctored exam in the future."
+msgstr ""
+"Этот контролируемый экзамен доступен учащимся. Вы не можете преобразовать "
+"его в другой тип специального экзамена. Вы можете снова превратить этот "
+"подраздел в базовый экзамен, выбрав «Нет» или экзамен по времени, но вы НЕ "
+"сможете настроить его как экзамен под контролем в будущем."
+
+#: cms/templates/js/timed-examination-preference-editor.underscore
+msgid ""
+"Proctored exams are timed and they record video of each learner taking the "
+"exam. The videos are then reviewed to ensure that learners follow all "
+"examination rules. Please note that setting this exam as proctored will "
+"change the visibility settings to \"Hide content after due date.\""
+msgstr ""
+"Экзамены проводятся под контролем, и они записывают видео каждого учащегося,"
+" сдающего экзамен. Затем видео просматриваются, чтобы убедиться, что "
+"учащиеся соблюдают все правила экзамена. Обратите внимание, что установка "
+"этого экзамена под контролем приведет к изменению настроек видимости на "
+"«Скрыть контент после установленного срока»."
+
+#: cms/templates/js/timed-examination-preference-editor.underscore
+msgid ""
+"Use Onboarding to introduce learners to proctoring, verify their identity, "
+"and create an onboarding profile. Learners must complete the onboarding "
+"profile step prior to taking a proctored exam. Profile reviews take 2+ "
+"business days."
+msgstr ""
+"Используйте адаптацию, чтобы познакомить учащихся с прокторингом, "
+"подтвердить их личность и создать профиль адаптации. Учащиеся должны пройти "
+"этап адаптации профиля перед сдачей экзамена под контролем. Рассмотрение "
+"профиля занимает более 2 рабочих дней."
+
+#: cms/templates/js/transcript-organization-credentials.underscore
+msgid ""
+"This action updates the {provider} information for your entire organization."
+msgstr ""
+"Это действие обновляет информацию {provider} для всей вашей организации."
+
+#: cms/templates/js/transcript-organization-credentials.underscore
+msgid "Enter the account information for your organization."
+msgstr "Введите данные учетной записи вашей организации."
+
+#: cms/templates/js/transcript-organization-credentials.underscore
+msgid "API Key"
+msgstr "API-ключ"
+
+#: cms/templates/js/transcript-organization-credentials.underscore
+msgid "API Secret"
+msgstr "Секрет API"
+
+#: cms/templates/js/video-transcripts.underscore
+msgid "Show transcripts ({totalTranscripts})"
+msgstr "Показать стенограммы ({totalTranscripts})"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Demo the new Grading Experience"
+msgstr "Демо нового интерфейса оценивания"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Please check your internet connection."
+msgstr "Проверьте подключение к интернету."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Multiple teams returned for course"
+msgstr "Для курса найдено несколько команд"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Could not load teams information."
+msgstr "Не удалось загрузить информацию о командах."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "User lookup failed"
+msgstr "Не удалось найти пользователя"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Error when looking up username"
+msgstr "Ошибка при поиске имени пользователя"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Failed to clone rubric"
+msgstr "Не удалось клонировать рубрику"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "View and grade responses"
+msgstr "Просмотр и оценка ответов"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Staff Grader"
+msgstr "Оценивание персоналом"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"There is still file upload in progress. Please wait until it is finished."
+msgstr "Файл ещё загружается. Дождитесь завершения загрузки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Cannot submit empty response even everything is optional."
+msgstr "Нельзя отправить пустой ответ, даже если все поля необязательны."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Please upload a file."
+msgstr "Загрузите файл."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Please provide a response."
+msgstr "Введите ответ."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "No files selected for upload."
+msgstr "Файлы для загрузки не выбраны."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Please provide a description for each file you are uploading."
+msgstr "Укажите описание для каждого загружаемого файла."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Your file has been deleted or path has been changed: "
+msgstr "Файл удалён или путь изменён: "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Saving draft"
+msgstr "Сохранение черновика"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Saving draft..."
+msgstr "Сохранение черновика..."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Draft saved!"
+msgstr "Черновик сохранён!"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Confirm Submit Response"
+msgstr "Подтвердите отправку ответа"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Individual file size must be {max_files_mb}MB or less."
+msgstr "Размер каждого файла не должен превышать {max_files_mb} МБ."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"File upload failed: unsupported file type. Only the supported file types can"
+" be uploaded. If you have questions, contact your course team."
+msgstr ""
+"Не удалось загрузить файл: неподдерживаемый тип. Можно загружать только "
+"разрешённые типы файлов. По вопросам обратитесь к команде курса."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "The maximum number files that can be saved is "
+msgstr "Максимальное число сохраняемых файлов: "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Confirm Delete Uploaded File"
+msgstr "Подтвердите удаление загруженного файла"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Are you sure you want to delete the following file? It cannot be restored.\n"
+"File: "
+msgstr ""
+"Удалить этот файл? Восстановить его будет нельзя.\n"
+"Файл: "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"This grade will be applied to all members of the team. Do you want to "
+"continue?"
+msgstr "Эта оценка будет применена ко всем участникам команды. Продолжить?"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Confirm Grade Team Submission"
+msgstr "Подтвердите оценку командной работы"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Refresh"
+msgstr "Обновить"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Peers Assessed"
+msgstr "Оценено однокурсников"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Peer Responses Received"
+msgstr "Получено взаимных оценок"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Time Spent On Current Step"
+msgstr "Время на текущем шаге"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Staff assessment"
+msgstr "Оценка персоналом"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Grade Status"
+msgstr "Статус оценки"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"The \"{name}\" problem is configured to require a minimum of {min_grades} "
+"peer grades, and asks to review {min_reviews} peer responses."
+msgstr ""
+"Задание «{name}» требует минимум {min_grades} взаимных оценок и проверки "
+"{min_reviews} ответов однокурсников."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"There are currently {stuck_learners} learners in the waiting state, meaning "
+"they have not yet met all requirements to receive a grade."
+msgstr ""
+"Сейчас {stuck_learners} учащихся в состоянии ожидания: они ещё не выполнили "
+"все условия для получения оценки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"However, {overwritten_count} of these students have received a grade through"
+" the staff grade override tool."
+msgstr ""
+"При этом {overwritten_count} из них уже получили оценку через инструмент "
+"переопределения оценки персоналом."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Error while fetching student data."
+msgstr "Ошибка при загрузке данных учащихся."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Problem cloning rubric"
+msgstr "Ошибка при клонировании рубрики"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"You have added a criterion. You will need to select an option for the "
+"criterion in the Learner Training step."
+msgstr ""
+"Вы добавили критерий. На шаге обучения учащихся нужно выбрать для него "
+"вариант оценки."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Save Unsuccessful"
+msgstr "Не удалось сохранить"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Errors detected on the following tabs: "
+msgstr "Ошибки на вкладках: "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"This ORA has already been released. Changes will only affect learners making"
+" new submissions. Existing submissions will not be affected."
+msgstr ""
+"Это задание уже опубликовано. Изменения затронут только новые отправки; "
+"существующие не изменятся."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "error count: "
+msgstr "количество ошибок: "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"File upload failed: unsupported file type. Only the supported file types can"
+" be uploaded. If you have questions, please reach out to the course team."
+msgstr ""
+"Не удалось загрузить файл: неподдерживаемый тип. Можно загружать только "
+"разрешённые типы. По вопросам обратитесь к команде курса."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"The \"{name}\" problem is configured to require a minimum of {min_grades} "
+"peer grades, and asks to review {min_graded} peers."
+msgstr ""
+"Задание «{name}» требует минимум {min_grades} взаимных оценок и проверки "
+"{min_graded} однокурсников."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"There are currently {stuck_learners} learners in the waiting state, meaning "
+"they have not yet met all requirements for Peer Assessment. "
+msgstr ""
+"Сейчас {stuck_learners} учащихся в ожидании: они ещё не выполнили все "
+"условия взаимной оценки. "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"However, {overwritten_count} of these students have received a grade through"
+" the staff grade override tool already."
+msgstr ""
+"При этом {overwritten_count} из них уже получили оценку через инструмент "
+"переопределения оценки персоналом."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"You have added a criterion. You will need to select an option for the "
+"criterion in the Learner Training step. To do this, click the Assessment "
+"Steps tab."
+msgstr ""
+"Вы добавили критерий. На вкладке «Шаги оценивания» в шаге обучения учащихся "
+"выберите для него вариант."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"This ORA has already been released. Changes will only affect learners making"
+" new submissions. Existing submissions will not be modified by this change."
+msgstr ""
+"Это задание уже опубликовано. Изменения затронут только новые отправки; "
+"существующие не изменятся."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Not Selected"
+msgstr "Не выбрано"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Unnamed Option"
+msgstr "Вариант без названия"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "This problem could not be saved."
+msgstr "Не удалось сохранить задание."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Time must be in the format dd:hh:mm. The days must be between 00 and 99, the"
+" hours between 00 and 23, and the minutes between 00 and 59."
+msgstr ""
+"Время должно быть в формате дд:чч:мм. Дни — 00–99, часы — 00–23, минуты — "
+"00–59."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "File types can not be empty."
+msgstr "Список типов файлов не может быть пустым."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "The following file types are not allowed: "
+msgstr "Следующие типы файлов не разрешены: "
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Criterion Added"
+msgstr "Критерий добавлен"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Option Deleted"
+msgstr "Вариант удалён"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Criterion Deleted"
+msgstr "Критерий удалён"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid ""
+"Changes to steps that are not selected as part of the assignment will not be"
+" saved."
+msgstr "Изменения в шагах, не включённых в задание, не сохранятся."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Response not started."
+msgstr "Ответ не начат."
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Not Started"
+msgstr "Не начато"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Not Completed"
+msgstr "Не завершено"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Waiting for a Staff Grade"
+msgstr "Ожидание оценки персоналом"
+
+#: openassessment (edx-ora2) — Robbo ORA translations
+msgid "Staff Grade"
+msgstr "Оценка персоналом"
