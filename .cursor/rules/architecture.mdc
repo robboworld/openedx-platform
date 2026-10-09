@@ -81,6 +81,8 @@ Comprehensive theme (ветка от Indigo): светлые поверхнос�
 - `robbo-openedx-stack/repos/mfe-overrides/frontend-app-authn`
 - `robbo-openedx-stack/repos/mfe-overrides/frontend-app-profile`
 - `robbo-openedx-stack/repos/mfe-overrides/frontend-app-account`
+- `robbo-openedx-stack/repos/mfe-overrides/frontend-app-ora-grading`
+- `robbo-openedx-stack/repos/mfe-overrides/frontend-app-gradebook`
 
 Все они подключены как Git submodules и переведены на рабочую ветку `robbo-teak`. Для `learner-dashboard` установлен `node_modules`, запущен dev-сервис `learner-dashboard`; общий `mfe` контейнер используется для bundled MFE вроде `authoring` (`http://apps.local.openedx.io:2001/authoring/home`).
 
