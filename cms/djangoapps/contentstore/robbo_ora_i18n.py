@@ -72,6 +72,14 @@ ROBBO_ORA_RU_STRINGS = {
         "чтобы задать ограничение для каждого типа файлов (до %(cap_mb)s МБ)."
     ),
     "Larger file sizes": "Увеличенный размер файлов",
+    "Score on submit": "Засчитывать сразу после отправки",
+    (
+        "Learners get the maximum score for every rubric criterion as soon as they submit a response. "
+        "Assessment steps are skipped. Course staff can change the grade later."
+    ): (
+        "Учащийся получает максимальный балл по всем критериям сразу после отправки ответа. "
+        "Шаги оценки пропускаются. Команда курса может изменить оценку позже."
+    ),
     "Maximum file size by type": "Максимальный размер файла по типам",
     "File type": "Тип файла",
     "Size, MB": "Вес, МБ",
