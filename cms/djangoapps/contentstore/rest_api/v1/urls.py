@@ -9,6 +9,8 @@ from django.urls import re_path, path
 from openedx.core.constants import COURSE_ID_PATTERN
 
 from .views import (
+    AssetFolderMoveView,
+    AssetUploadCheckView,
     ContainerHandlerView,
     CourseCertificatesView,
     CertificateDesignDetailView,
@@ -118,6 +120,16 @@ urlpatterns = [
         fr'^textbooks/{COURSE_ID_PATTERN}$',
         CourseTextbooksView.as_view(),
         name="textbooks"
+    ),
+    re_path(
+        fr'^robbo/assets/{COURSE_ID_PATTERN}/upload-check$',
+        AssetUploadCheckView.as_view(),
+        name="robbo_asset_upload_check"
+    ),
+    re_path(
+        fr'^robbo/assets/{COURSE_ID_PATTERN}/folders/move$',
+        AssetFolderMoveView.as_view(),
+        name="robbo_asset_folders_move"
     ),
     re_path(
         fr'^certificates/{COURSE_ID_PATTERN}$',
