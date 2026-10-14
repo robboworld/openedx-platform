@@ -1,5 +1,7 @@
 """
 MongoDB/GridFS-level code for the contentstore.
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 
@@ -22,6 +24,7 @@ from xmodule.mongo_utils import connect_to_mongodb, create_collection_index
 from xmodule.util.misc import escape_invalid_characters, get_library_or_course_attribute
 
 from .content import ContentStore, StaticContent, StaticContentStream
+from .robbo_asset_attrs import copied_attrs, kept_attrs, project_fields
 
 
 class MongoContentStore(ContentStore):
@@ -122,6 +125,8 @@ class MongoContentStore(ContentStore):
         # The way to version files in gridFS is to not use the file id as the _id but just as the filename.
         # Then you can upload as many versions as you like and access by date or version. Because we use
         # the location as the _id, we must delete before adding (there's no replace method in gridFS)
+        # Robbo: a re-upload keeps the file's folder in «Файлы» (robbo_asset_attrs.py)
+        robbo_attrs = kept_attrs(self.fs_files, content_id)
         self.delete(content_id)  # delete is a noop if the entry doesn't exist; so, don't waste time checking
 
         thumbnail_location = content.thumbnail_location.to_deprecated_list_repr() if content.thumbnail_location else None  # lint-amnesty, pylint: disable=line-too-long
@@ -130,7 +135,8 @@ class MongoContentStore(ContentStore):
                               thumbnail_location=thumbnail_location,
                               import_path=content.import_path,
                               # getattr b/c caching may mean some pickled instances don't have attr
-                              locked=getattr(content, 'locked', False)) as fp:
+                              locked=getattr(content, 'locked', False),
+                              **robbo_attrs) as fp:
 
             # It seems that this code thought that only some specific object would have the `__iter__` attribute
             # but many more objects have this in python3 and shouldn't be using the chunking logic. For string and
@@ -339,6 +345,7 @@ class MongoContentStore(ContentStore):
                         'uploadDate': 1,
                         'thumbnail_location': 1,
                         'md5': 1,
+                        **project_fields(),  # Robbo: keep the folder label when sorting by name
                         'insensitive_displayname': {
                             '$toLower': '$displayname'
                         }
@@ -495,7 +502,8 @@ class MongoContentStore(ContentStore):
             thumbnail_location=asset['thumbnail_location'],
             import_path=asset['import_path'],
             # getattr b/c caching may mean some pickled instances don't have attr
-            locked=asset.get('locked', False)
+            locked=asset.get('locked', False),
+            **copied_attrs(asset),  # Robbo: the folder in «Файлы» survives a course rerun
         )
 
     def delete_all_course_assets(self, course_key):

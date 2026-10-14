@@ -1,4 +1,7 @@
-"""Views for assets"""
+"""Views for assets
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
+"""
 
 
 import json
@@ -32,6 +35,7 @@ from xmodule.exceptions import NotFoundError  # lint-amnesty, pylint: disable=wr
 from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
 from xmodule.modulestore.exceptions import ItemNotFoundError  # lint-amnesty, pylint: disable=wrong-import-order
 
+from . import robbo_asset_folders, robbo_asset_uploads, robbo_asset_usage
 from .exceptions import AssetNotFoundException, AssetSizeTooLargeException
 from .utils import reverse_course_url, get_files_uploads_url, get_response_format, request_response_format_is_json
 from .toggles import use_new_files_uploads_page
@@ -108,61 +112,8 @@ def _get_asset_usage_path(course_key, assets):
     """
     Get a list of units with ancestors that use given asset.
     """
-    store = modulestore()
-    usage_locations = {str(asset['asset_key']): [] for asset in assets}
-    verticals = store.get_items(
-        course_key,
-        qualifiers={
-            'category': 'vertical'
-        },
-    )
-    blocks = []
-
-    for vertical in verticals:
-        blocks.extend(vertical.get_children())
-
-    for block in blocks:
-        for asset in assets:
-            asset_key = asset['asset_key']
-            asset_key_string = str(asset_key)
-            static_path = StaticContent.get_static_path_from_location(asset_key)
-            is_video_block = getattr(block, 'category', '') == 'video'
-            try:
-                if is_video_block:
-                    handout = getattr(block, 'handout', '')
-                    if handout and asset_key_string in handout:
-                        usage_dict = {'display_location': '', 'url': ''}
-                        xblock_display_name = getattr(block, 'display_name', '')
-                        xblock_location = str(block.location)
-                        unit = block.get_parent()
-                        unit_location = str(block.parent)
-                        unit_display_name = getattr(unit, 'display_name', '')
-                        subsection = unit.get_parent()
-                        subsection_display_name = getattr(subsection, 'display_name', '')
-                        current_locations = usage_locations[asset_key_string]
-                        usage_dict['display_location'] = (f'{subsection_display_name} - '
-                                                          f'{unit_display_name} / {xblock_display_name}')
-                        usage_dict['url'] = f'/container/{unit_location}#{xblock_location}'
-                        usage_locations[asset_key_string] = [*current_locations, usage_dict]
-                else:
-                    data = getattr(block, 'data', '')
-                    if static_path in data or asset_key_string in data:
-                        usage_dict = {'display_location': '', 'url': ''}
-                        xblock_display_name = getattr(block, 'display_name', '')
-                        xblock_location = str(block.location)
-                        unit = block.get_parent()
-                        unit_location = str(block.parent)
-                        unit_display_name = getattr(unit, 'display_name', '')
-                        subsection = unit.get_parent()
-                        subsection_display_name = getattr(subsection, 'display_name', '')
-                        current_locations = usage_locations[asset_key_string]
-                        usage_dict['display_location'] = (f'{subsection_display_name} - '
-                                                          f'{unit_display_name} / {xblock_display_name}')
-                        usage_dict['url'] = f'/container/{unit_location}#{xblock_location}'
-                        usage_locations[asset_key_string] = [*current_locations, usage_dict]
-            except AttributeError:
-                continue
-    return usage_locations
+    # Robbo: whole-course scan (course card, certificates, pages, ORA, nested blocks); see robbo_asset_usage.py
+    return robbo_asset_usage.get_asset_usage_path(course_key, assets)
 
 
 def _asset_index(request, course_key):
@@ -469,6 +420,7 @@ def _get_assets_in_json_format(assets, course_key, assets_usage_locations_map):
             asset_file_size,
             usage_locations,
         )
+        asset_in_json.update(robbo_asset_folders.asset_json_extras(asset))  # Robbo: folder in «Файлы»
 
         assets_in_json_format.append(asset_in_json)
 
@@ -656,7 +608,8 @@ def update_asset(request, course_key, asset_key):
 
     elif request.method in ('PUT', 'POST'):
         if 'file' in request.FILES:
-            return _upload_asset(request, course_key)
+            # Robbo: never overwrite a file with the same name silently (robbo_asset_uploads.py)
+            return robbo_asset_uploads.upload_asset(request, course_key)
 
         # update existing asset
         try:
