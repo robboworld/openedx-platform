@@ -1,5 +1,7 @@
 """
 Unit tests for the Mixed Modulestore, with DDT for the various stores (Split, Draft, XML)
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 
@@ -438,6 +440,21 @@ class TestMixedModuleStore(CommonMixedModuleStoreSetup):
 
             with pytest.raises(DuplicateCourseError):
                 self.store.create_course('ORG_X', 'COURSE_Y', 'RUN_Z', self.user_id)
+
+    @ddt.data(ModuleStoreEnum.Type.split)
+    def test_duplicate_course_error_with_different_case_ids_after_read(self, default_store):
+        """
+        Robbo: reads leave inactive bulk ops records in the thread (one per exact course key); a case twin
+        created afterwards still gets DuplicateCourseError, not KeyError from _clear_bulk_ops_record().
+        """
+        self._initialize_mixed(mappings={})
+        with self.store.default_store(default_store):
+            existing = self.store.create_course('org_x', 'course_y', 'run_z', self.user_id).id.for_branch(None)
+            assert self.store.has_course(existing) == existing
+            for org, course, run in (('ORG_X', 'course_y', 'run_z'), ('Org_X', 'Course_Y', 'Run_Z')):
+                with pytest.raises(DuplicateCourseError):
+                    self.store.create_course(org, course, run, self.user_id)
+                assert self.store.has_course(CourseLocator(org, course, run), ignore_case=True) == existing
 
     # split: has one lookup for the course and then one for the course items
     #    but the active_versions check is done in MySQL

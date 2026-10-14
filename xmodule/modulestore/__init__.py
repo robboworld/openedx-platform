@@ -1,6 +1,8 @@
 """
 This module provides an abstraction for working with XModuleDescriptors
 that are stored in a database an accessible using their Location as an identifier
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 
@@ -221,7 +223,11 @@ class BulkOperationsMixin:
                 # Shortcut: check basic equivalence for cases where org/course/run might be None.
                 key_library = get_library_or_course_attribute(key)
                 course_library = get_library_or_course_attribute(course_key)
+                # Robbo: a key that differs by case only joins an active bulk operation. Plain reads leave inactive
+                # records behind (defaultdict); creating a case twin in the same thread picked one up, and
+                # _clear_bulk_ops_record() then raised KeyError instead of letting DuplicateCourseError through.
                 if (key == course_key) or (  # lint-amnesty, pylint: disable=too-many-boolean-expressions
+                        record.active and
                         (key.org and key.org.lower() == course_key.org.lower()) and
                         (key_library and key_library.lower() == course_library.lower()) and
                         (key.run and key.run.lower() == course_key.run.lower())
