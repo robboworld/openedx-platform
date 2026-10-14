@@ -1,5 +1,7 @@
 """
 Functions that are used to modify XBlock fragments for use in the LMS and Studio
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 
@@ -261,6 +263,27 @@ def sanitize_html_id(html_id):
     return sanitized_html_id
 
 
+# Robbo: images pasted into HTML as base64 were echoed in full in the Staff Debug Info modal: staff downloaded
+# every image twice and opening the modal froze the tab for seconds (up to ~20 s on a unit with 20 MB of images).
+STAFF_DEBUG_DATA_URI_RE = re.compile(r'(data:[^,"\'\s]{0,100};base64,)[A-Za-z0-9+/=\r\n]{1024,}')
+
+
+def _shorten_data_uris(value):
+    """
+    Return a field value for the Staff Debug Info modal with long base64 data URIs cut down to
+    ``data:image/png;base64,… (162 KB)``. Values without such URIs are returned unchanged.
+    """
+    text = value if isinstance(value, str) else str(value)
+    if 'base64,' not in text:
+        return value
+
+    def _placeholder(match):
+        size_kb = max(1, round((len(match.group(0)) - len(match.group(1))) * 3 / 4 / 1024))
+        return f'{match.group(1)}… ({size_kb} KB)'
+
+    return STAFF_DEBUG_DATA_URI_RE.sub(_placeholder, text)
+
+
 def add_staff_markup(user, disable_staff_debug_info, block, view, frag, context):  # pylint: disable=unused-argument
     """
     Updates the supplied block with a new get_html function that wraps
@@ -320,14 +343,16 @@ def add_staff_markup(user, disable_staff_debug_info, block, view, frag, context)
     field_contents = []
     for name, field in block.fields.items():
         try:
-            field_contents.append((name, field.read_from(block)))
+            field_contents.append((name, _shorten_data_uris(field.read_from(block))))
         except InvalidScopeError:
             log.warning("Unable to read field in Staff Debug information", exc_info=True)
             field_contents.append((name, "WARNING: Unable to read field"))
 
     staff_context = {
         'fields': field_contents,
-        'xml_attributes': getattr(block, 'xml_attributes', {}),
+        'xml_attributes': {
+            name: _shorten_data_uris(value) for name, value in getattr(block, 'xml_attributes', {}).items()
+        },
         'tags': block._class_tags,  # pylint: disable=protected-access
         'location': block.location,
         'xqa_key': block.xqa_key,
