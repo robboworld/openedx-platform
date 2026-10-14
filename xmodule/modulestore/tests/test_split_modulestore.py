@@ -1,8 +1,11 @@
 """
     Test split modulestore w/o using any django stuff.
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 
+import copy
 import datetime
 import os
 import random
@@ -13,8 +16,11 @@ from unittest.mock import patch
 
 import pytest
 import ddt
+from bson.objectid import ObjectId
 from ccx_keys.locator import CCXBlockUsageLocator
 from django.core.cache import InvalidCacheBackendError, caches
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from opaque_keys.edx.locator import BlockUsageLocator, CourseKey, CourseLocator, LocalId
 from xblock.fields import Reference, ReferenceList, ReferenceValueDict
 
@@ -1771,6 +1777,53 @@ class TestCourseCreation(SplitModuleTest):
             modulestore().create_course(
                 dupe_course_key.org, dupe_course_key.course, dupe_course_key.run, user, BRANCH_NAME_DRAFT
             )
+
+    def test_create_case_twin_rejected(self):
+        """
+        Robbo: create_course rejects an id that differs from an existing one only by case
+        """
+        user = random.getrandbits(32)
+        existing = CourseLocator('Robbo', 'GC_1', 'Run_1')
+        modulestore().create_course(existing.org, existing.course, existing.run, user, BRANCH_NAME_DRAFT)
+        for twin in (
+            CourseLocator('ROBBO', 'GC_1', 'Run_1'),
+            CourseLocator('robbo', 'gc_1', 'run_1'),
+            CourseLocator('Robbo', 'GC_1', 'RUN_1'),
+        ):
+            with pytest.raises(DuplicateCourseError):
+                modulestore().create_course(twin.org, twin.course, twin.run, user, BRANCH_NAME_DRAFT)
+            assert modulestore().has_course(twin, ignore_case=True) == existing
+
+    def test_ignore_case_lookup_lowers_both_sides(self):
+        """
+        Robbo: the ignore_case lookup must not rely on iexact. On MySQL that is LIKE against the utf8_bin
+        course_id column, i.e. still case-sensitive; SQLite in tests can't show it, so check the SQL itself.
+        """
+        with CaptureQueriesContext(connection) as queries:
+            modulestore().db_connection.get_course_index(CourseLocator('Robbo', 'GC_2', 'Run_1'), ignore_case=True)
+        sql = ' '.join(query['sql'] for query in queries.captured_queries).upper()
+        assert 'LOWER(' in sql
+        assert ' LIKE ' not in sql
+
+    def test_ignore_case_lookup_with_existing_twins(self):
+        """
+        Robbo: case twins created before the fix don't break the ignore_case lookup (MultipleObjectsReturned);
+        the exact match wins, otherwise the oldest twin.
+        """
+        store = modulestore()
+        user = random.getrandbits(32)
+        original = CourseLocator('ROBBO', 'GC_3', 'Run_1')
+        store.create_course(original.org, original.course, original.run, user, BRANCH_NAME_DRAFT)
+        twin = CourseLocator('Robbo', 'GC_3', 'Run_1')
+        twin_index = copy.deepcopy(store.get_course_index(original))
+        twin_index.update({'_id': ObjectId(), 'org': twin.org})
+        store.db_connection.insert_course_index(twin_index)
+
+        assert store.has_course(original, ignore_case=True) == original
+        assert store.has_course(twin, ignore_case=True) == twin
+        assert store.has_course(CourseLocator('robbo', 'gc_3', 'run_1'), ignore_case=True) == original
+        with pytest.raises(DuplicateCourseError):
+            store.create_course('robbo', 'gc_3', 'run_1', user, BRANCH_NAME_DRAFT)
 
     def test_bulk_ops_get_courses(self):
         """

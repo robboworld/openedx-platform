@@ -1,5 +1,7 @@
 """
 Segregation of pymongo functions from the data modeling mechanisms for split modulestore.
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 
@@ -14,6 +16,8 @@ from time import time
 
 from ccx_keys.locator import CCXLocator
 from django.core.cache import caches, InvalidCacheBackendError
+from django.db.models import CharField, Value
+from django.db.models.functions import Lower
 from django.db.transaction import TransactionManagementError
 import pymongo
 import pytz
@@ -658,14 +662,14 @@ class DjangoFlexPersistenceBackend(MongoPersistenceBackend):
             return None
         # We never include the branch or the version in the course key in the SplitModulestoreCourseIndex table:
         key = key.for_branch(None).version_agnostic()
-        if not ignore_case:
-            query = {"course_id": key}
-        else:
-            # Case insensitive search is important when creating courses to reject course IDs that differ only by
-            # capitalization.
-            query = {"course_id__iexact": key}
         try:
-            return SplitModulestoreCourseIndex.objects.get(**query).as_v1_schema()
+            if not ignore_case:
+                course_index = SplitModulestoreCourseIndex.objects.get(course_id=key)
+            else:
+                # Case insensitive search is important when creating courses to reject course IDs that differ only by
+                # capitalization.
+                course_index = self._get_course_index_ignoring_case(key)
+            return course_index.as_v1_schema()
         except SplitModulestoreCourseIndex.DoesNotExist:
             # The mongo implementation does not retrieve by string key; it retrieves by (org, course, run) tuple.
             # As a result, it will handle read requests for a CCX key like
@@ -679,6 +683,28 @@ class DjangoFlexPersistenceBackend(MongoPersistenceBackend):
                 )
                 return self.get_course_index(key.to_course_locator(), ignore_case)
             return None
+
+    @staticmethod
+    def _get_course_index_ignoring_case(key):
+        """
+        Robbo: return the SplitModulestoreCourseIndex whose course_id equals `key` ignoring case.
+
+        `course_id__iexact` is not enough: on MySQL it becomes `LIKE`, and the course_id column is utf8_bin
+        (migration 0001), so the match stayed case-sensitive and Studio created case twins of existing courses.
+        Lowering both sides works whatever the column collation is.
+
+        Twins created before this fix may already exist; the row matching `key` exactly wins, then the oldest one.
+        """
+        matches = list(
+            SplitModulestoreCourseIndex.objects.annotate(
+                course_id_lower=Lower("course_id", output_field=CharField()),
+            ).filter(
+                course_id_lower=Lower(Value(str(key), output_field=CharField())),
+            ).order_by("id")
+        )
+        if not matches:
+            raise SplitModulestoreCourseIndex.DoesNotExist
+        return next((index for index in matches if str(index.course_id) == str(key)), matches[0])
 
     def find_matching_course_indexes(  # pylint: disable=arguments-differ
         self,
