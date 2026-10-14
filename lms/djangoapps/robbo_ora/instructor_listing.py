@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 #
 # Instructor dashboard «Ответы в свободной форме»: the edx-ora2 listing (Backgrid table
-# + summary row) gets a hint next to every counter of the summary row and Russian labels.
+# + summary row) gets a hint next to every counter of the summary row, Russian labels and
+# the entry to «Проверка по учащимся» of the ORA grading MFE (learner_grading.py).
 # The page script is lms/static/js/robbo-ora-instructor-listing.js.
 
 """Hints and labels for the ORA listing in the LMS instructor dashboard."""
@@ -10,6 +11,7 @@
 import json
 import logging
 
+from django.conf import settings
 from django.utils.translation import gettext as _
 
 from cms.djangoapps.contentstore.robbo_ora_i18n import robbo_ora_russian_active
@@ -35,6 +37,11 @@ LISTING_HINTS = {
 
 HINT_BUTTON_LABEL = "What does “{label}” mean?"
 
+LEARNER_GRADING_LABEL = "Grade by learner"
+LEARNER_GRADING_TEXT = (
+    "All responses of one learner to the course assignments on one page: files, text and grading."
+)
+
 LISTING_RU = {
     LISTING_HINTS['parent_name']: "Блоки курса, в которых есть задания с развёрнутым ответом.",
     LISTING_HINTS['name']: "Задания с развёрнутым ответом в курсе.",
@@ -50,6 +57,8 @@ LISTING_RU = {
     LISTING_HINTS['staff']: "Ответы, которые ждут оценки команды курса.",
     LISTING_HINTS['done']: "Ответы, по которым оценивание завершено и выставлена итоговая оценка.",
     HINT_BUTTON_LABEL: "Что означает «{label}»?",
+    LEARNER_GRADING_LABEL: "Проверка по учащимся",
+    LEARNER_GRADING_TEXT: "Все ответы одного учащегося на задания курса на одной странице: файлы, текст и оценка.",
 }
 
 # Russian labels that replace edx-ora2 ones: untranslated («Staff Grader») or misleading
@@ -75,8 +84,20 @@ def _message(msgid):
     return _(msgid)
 
 
-def listing_config():
-    """Hints and label overrides for the page script, in the request language."""
+def _learner_grading(course_key):
+    """Link to «Проверка по учащимся» of the course, None without the ORA grading MFE."""
+    mfe_url = getattr(settings, 'ORA_GRADING_MICROFRONTEND_URL', None)
+    if not mfe_url or course_key is None:
+        return None
+    return {
+        'url': f'{mfe_url.rstrip("/")}/{course_key}',
+        'label': _message(LEARNER_GRADING_LABEL),
+        'text': _message(LEARNER_GRADING_TEXT),
+    }
+
+
+def listing_config(course_key=None):
+    """Hints, label overrides and the learner grading link for the page script, in the request language."""
     russian = robbo_ora_russian_active()
     return {
         'hints': {column: _message(msgid) for column, msgid in LISTING_HINTS.items()},
@@ -84,11 +105,12 @@ def listing_config():
         'tableLabels': TABLE_LABELS_RU if russian else {},
         'summaryLabels': SUMMARY_LABELS_RU if russian else {},
         'linkTexts': LINK_TEXTS_RU if russian else {},
+        'learnerGrading': _learner_grading(course_key),
     }
 
 
-def _config_script():
-    payload = json.dumps(listing_config(), ensure_ascii=False).replace('<', '\\u003c')
+def _config_script(course_key):
+    payload = json.dumps(listing_config(course_key), ensure_ascii=False).replace('<', '\\u003c')
     return f'<script type="application/json" id="robbo-ora-listing-config">{payload}</script>'
 
 
@@ -109,7 +131,7 @@ def patch_ora_instructor_listing():
         except ValueError:  # not collected yet: keep the stock listing working
             log.warning('robbo-ora-instructor-listing.js is missing from staticfiles')
             return fragment
-        fragment.content += _config_script()
+        fragment.content += _config_script(self.location.course_key)
         fragment.add_javascript_url(script_url)
         return fragment
 
