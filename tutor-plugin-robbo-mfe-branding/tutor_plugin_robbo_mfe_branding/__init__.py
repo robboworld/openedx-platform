@@ -226,6 +226,20 @@ handle /openassessment/fileupload/* {
 }
 """
 
+# Files with a content hash in the name never change under the same URL, but uwsgi (LMS/CMS
+# /static) and the MFE Caddy sent no Cache-Control, so browsers revalidated them on every visit.
+# LMS/CMS: ManifestStaticFilesStorage adds a 12-hex hash; MFE: webpack 20-hex chunk hashes and
+# 32-hex asset names. index.html and unhashed files keep the default behaviour.
+_PATCH_CADDYFILE_HASHED_STATIC = r"""
+@robbo_hashed_static path_regexp ^/static/.+\.[0-9a-f]{12}\.(css|js|png|jpe?g|gif|svg|webp|ico|woff2?|ttf|eot|otf)$
+header @robbo_hashed_static Cache-Control "public, max-age=31536000, immutable"
+"""
+
+_PATCH_MFE_CADDYFILE_HASHED_ASSETS = r"""
+@robbo_hashed_assets path_regexp ^/[^/]+/(.+[.-])?[0-9a-f]{20,32}\.(css|js|png|jpe?g|gif|svg|webp|ico|woff2?|ttf|eot|otf)$
+header @robbo_hashed_assets Cache-Control "public, max-age=31536000, immutable"
+"""
+
 # «Проверка ответов» (ORA grading MFE) shows files and rich text written by learners, on the LMS
 # site locally and next to it in production. Its Content-Security-Policy limits what such content could
 # do if a sanitizer ever let something through: scripts only from the MFE itself (its build has no
@@ -498,6 +512,12 @@ PLUGIN_SLOTS.add_item(
     )
 )
 
+# Course images had no Cache-Control and were revalidated on every catalog/dashboard visit.
+hooks.Filters.CLI_DO_INIT_TASKS.add_item(
+    ("lms", "./manage.py lms robbo_enable_course_asset_cache"),
+    priority=hooks.priorities.LOW,
+)
+
 hooks.Filters.CONFIG_DEFAULTS.add_items(
     [
         ("ROBBO_YANDEX_METRIKA_COUNTER_ID", ""),
@@ -549,6 +569,9 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-development-settings", _PATCH_YANDEX_METRIKA_DEV_LMS),
         ("openedx-lms-production-settings", _PATCH_YANDEX_METRIKA_PROD_LMS),
         ("caddyfile-lms", _PATCH_CADDYFILE_LMS_ORA_UPLOADS),
+        ("caddyfile-lms", _PATCH_CADDYFILE_HASHED_STATIC),
+        ("caddyfile-cms", _PATCH_CADDYFILE_HASHED_STATIC),
+        ("mfe-caddyfile", _PATCH_MFE_CADDYFILE_HASHED_ASSETS),
         ("mfe-caddyfile", _PATCH_MFE_CADDYFILE_ORA_GRADING_CSP),
         ("mfe-lms-production-settings", _PATCH_LOCAL_MFE_ON_LMS_HOST),
         ("openedx-cms-production-settings", _PATCH_LOCAL_AUTHORING_MFE_ON_LMS_HOST_CMS),
