@@ -50,6 +50,7 @@ from lms.djangoapps.bulk_email.models_api import is_bulk_email_feature_enabled
 from lms.djangoapps.commerce.utils import EcommerceService
 from lms.djangoapps.courseware.access import administrative_accesses_to_course_for_user
 from lms.djangoapps.courseware.access_utils import check_course_open_for_learner
+from lms.djangoapps.learner_home.robbo_card_preview import get_learner_home_card_preview
 from lms.djangoapps.learner_home.serializers import (
     LearnerDashboardSerializer,
 )
@@ -642,5 +643,11 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
         }
 
         response_data = serialize_learner_home_data(learner_dash_data, context)
+
+        # Robbo: course card preview for the course team (?robbo_card_preview=<course key>).
+        if not is_masquerade:
+            card_preview = get_learner_home_card_preview(self.request, user)
+            if card_preview:
+                response_data["robboCardPreview"] = card_preview
 
         return Response(response_data)

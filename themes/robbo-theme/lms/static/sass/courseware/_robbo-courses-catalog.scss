@@ -81,6 +81,14 @@
   --robbo-cat-desc-chars-short: 55;
   --robbo-cat-desc-chars-long: 165;
   --robbo-cat-desc-max-lines: 4;
+  // Course card preview for the course team (`_robbo_card_preview.html`)
+  --robbo-cat-preview-bg: #{$robbo-ui-primary-light};
+  --robbo-cat-preview-border: #{$robbo-ui-primary};
+  --robbo-cat-preview-accent: #{$robbo-ui-primary-dark};
+  // Preview panel bleeds into the wrap padding by inset + border (padding = inset), so its inner
+  // width matches the catalog grid and the preview card keeps its real width; < pad: no overflow.
+  --robbo-cat-preview-inset: calc(var(--robbo-cat-pad) / 2);
+  --robbo-cat-preview-border-w: 1px;
 
   background: transparent;
   box-sizing: border-box;
@@ -308,6 +316,144 @@
   &:hover,
   &:focus {
     color: var(--robbo-cat-cta-bg-hover);
+  }
+}
+
+// Course card preview: note + the real card in a catalog-width column (`_robbo_card_preview.html`).
+.robbo-courses-catalog__preview {
+  align-items: start;
+  background: var(--robbo-cat-preview-bg);
+  border: var(--robbo-cat-preview-border-w) dashed var(--robbo-cat-preview-border);
+  border-radius: var(--robbo-cat-radius);
+  box-sizing: border-box;
+  display: grid;
+  gap: var(--robbo-cat-gap);
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0 calc(-1 * (var(--robbo-cat-preview-inset) + var(--robbo-cat-preview-border-w)))
+    var(--robbo-cat-hero-mb);
+  padding: var(--robbo-cat-preview-inset);
+
+  @include media-breakpoint-up(md) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    .robbo-courses-catalog__preview-card {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .robbo-courses-catalog__preview-note {
+      align-self: center;
+      grid-column: 2;
+      grid-row: 1;
+    }
+  }
+}
+
+.robbo-courses-catalog__preview-card {
+  min-width: 0;
+}
+
+.robbo-courses-catalog__preview-note {
+  color: var(--robbo-cat-text);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: var(--robbo-cat-preview-inset);
+}
+
+.robbo-courses-catalog__preview-eyebrow {
+  color: var(--robbo-cat-preview-accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.robbo-courses-catalog__preview-title {
+  color: var(--robbo-cat-text);
+  font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.robbo-courses-catalog__preview-status {
+  align-items: center;
+  align-self: flex-start;
+  background: var(--robbo-cat-card-bg);
+  border: 1px solid var(--robbo-cat-warn);
+  border-radius: 999px;
+  color: var(--robbo-cat-text);
+  display: inline-flex;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  gap: 0.4rem;
+  line-height: 1.3;
+  margin: 0;
+  padding: 0.2rem 0.65rem;
+
+  &::before {
+    background: var(--robbo-cat-warn);
+    border-radius: 50%;
+    content: '';
+    flex-shrink: 0;
+    height: 0.5rem;
+    width: 0.5rem;
+  }
+}
+
+.robbo-courses-catalog__preview-text {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 65ch;
+
+}
+
+.robbo-courses-catalog__preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.25rem;
+
+  // Scoped: must beat the LMS-wide `a:visited:not(.btn)` (link color, `font: inherit`, no underline).
+  a.robbo-courses-catalog__preview-link {
+    &,
+    &:link,
+    &:visited {
+      align-items: center;
+      color: var(--robbo-cat-preview-accent);
+      display: inline-flex;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      min-height: 2.75rem;
+      text-decoration: underline;
+      text-underline-offset: 0.15em;
+    }
+
+    &:hover,
+    &:focus-visible {
+      color: var(--robbo-cat-text);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--robbo-cat-preview-border);
+      outline-offset: 2px;
+    }
+  }
+
+  a.robbo-courses-catalog__preview-link--muted {
+    &,
+    &:link,
+    &:visited,
+    &:hover,
+    &:focus-visible {
+      color: var(--robbo-cat-text);
+      font-weight: 400;
+    }
   }
 }
 

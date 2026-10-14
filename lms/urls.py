@@ -18,7 +18,8 @@ from edx_django_utils.plugins import get_plugin_url_patterns
 from common.djangoapps.student import views as student_views
 from common.djangoapps.util import views as util_views
 from lms.djangoapps.branding import views as branding_views
-from lms.djangoapps.courseware import robbo_course_interest
+from lms.djangoapps.courseware import robbo_card_preview, robbo_course_interest
+from lms.djangoapps.learner_home import robbo_card_preview as learner_home_robbo_card_preview
 from lms.djangoapps.courseware.masquerade import MasqueradeView
 from lms.djangoapps.courseware.block_render import (
     handle_xblock_callback,
@@ -362,6 +363,16 @@ urlpatterns += [
         'api/robbo/course-interest/',
         robbo_course_interest.course_interest,
         name='robbo_course_interest',
+    ),
+    re_path(
+        fr'^robbo/course-card-preview/{settings.COURSE_ID_PATTERN}/(?P<target>catalog|dashboard)/$',
+        robbo_card_preview.course_card_preview,
+        name='robbo_course_card_preview',
+    ),
+    re_path(
+        fr'^api/robbo/v1/course-card-preview/{settings.COURSE_ID_PATTERN}/$',
+        learner_home_robbo_card_preview.CourseCardPreviewView.as_view(),
+        name='robbo_course_card_preview_api',
     ),
     path('', include('lms.djangoapps.robbo_payments.urls', namespace='robbo_payments')),
     path('', include('lms.djangoapps.robbo_lk_handoff.urls', namespace='robbo_lk_handoff')),

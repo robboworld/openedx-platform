@@ -410,16 +410,22 @@ def _catalog_course_uses_placeholder_image(course) -> bool:
 def build_robbo_catalog_course_cards(
     request,
     courses_list: list,
+    as_new_learner: bool = False,
 ) -> List[Dict[str, Any]]:
     """
     Catalog grid cards for courses visible on /courses (same list as ``get_courses`` in the view).
+
+    ``as_new_learner``: cards as a learner who is not enrolled yet sees them, without the current
+    user's enrollment, progress and enroll-on-click (course card preview, ``robbo_card_preview``).
     """
     from lms.djangoapps.courseware.robbo_course_progress import get_courses_progress  # pylint: disable=import-outside-toplevel
     from openedx.features.course_experience import course_home_url  # pylint: disable=import-outside-toplevel
 
     cards: List[Dict[str, Any]] = []
     user = getattr(request, 'user', None) if request else None
-    is_active_user = user is not None and user.is_authenticated and user.is_active
+    is_active_user = (
+        not as_new_learner and user is not None and user.is_authenticated and user.is_active
+    )
 
     enrolled_ids = set()
     progress_by_course: Dict[Any, Optional[Dict[str, int]]] = {}
