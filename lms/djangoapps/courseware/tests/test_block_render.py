@@ -1803,6 +1803,20 @@ class TestStaffDebugInfo(SharedModuleStoreTestCase):
         assert expected_score_override_html.format(block_id=problem_block.location.block_id) in\
                html_fragment.content
 
+    def test_staff_debug_info_shortens_base64_images(self):
+        """Robbo: a base64 image is rendered once in the block and only as a placeholder in Staff Debug Info."""
+        payload = 'A' * 4096
+        html_block = BlockFactory.create(
+            category='html',
+            data=f'<p><img src="data:image/png;base64,{payload}" /></p>',
+        )
+        field_data_cache = FieldDataCache.cache_for_block_descendents(self.course.id, self.user, html_block)
+        block = render.get_block(self.user, self.request, html_block.location, field_data_cache)
+        content = block.render(STUDENT_VIEW).content
+        assert 'Staff Debug' in content
+        assert content.count(payload) == 1
+        assert 'data:image/png;base64,… (3 KB)' in content
+
     @XBlock.register_temp_plugin(DetachedXBlock, identifier='detached-block')
     def test_staff_debug_info_disabled_for_detached_blocks(self):
         """Staff markup should not be present on detached blocks."""
