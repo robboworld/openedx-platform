@@ -76,6 +76,49 @@ $robbo-ora-tip-max-width: 280px; // fits 320px viewports; the script clamps it t
   }
 }
 
+// Entry to «Проверка по учащимся» above the summary (the same script).
+$robbo-ora-entry-height: 40px;
+
+.open-response-assessment-block .robbo-ora-learner-grading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin: 0 0 16px;
+
+  .robbo-ora-learner-grading__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: $robbo-ora-entry-height;
+    padding: 0 16px;
+    border-radius: 4px;
+    background: $robbo-ui-primary;
+    color: $robbo-brand-white;
+    font: 600 14px/1.2 $robbo-font-body;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      background: $robbo-ui-primary-dark;
+      color: $robbo-brand-white;
+      text-decoration: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $robbo-ui-primary-dark;
+      outline-offset: 2px;
+    }
+  }
+
+  .robbo-ora-learner-grading__text {
+    flex: 1 1 16rem;
+    min-width: 0;
+    margin: 0;
+    color: $robbo-brand-coal;
+    font: 400 14px/1.4 $robbo-font-body;
+  }
+}
+
 .robbo-ora-tip {
   position: fixed;
   z-index: 1000;
