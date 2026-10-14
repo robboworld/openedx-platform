@@ -125,6 +125,16 @@
             </div>
         </div>
     </li>
+    <li id="robbo_ora_auto_score_wrapper" class="field comp-setting-entry">
+        <div class="wrapper-comp-setting robbo-ora-toggle">
+            <input type="checkbox" id="robbo_ora_auto_score_toggle" class="robbo-ora-toggle__checkbox"
+                   {% if robbo_auto_score %}checked{% endif %} />
+            <label for="robbo_ora_auto_score_toggle" class="setting-label">{% trans "Score on submit" %}</label>
+        </div>
+        <p class="setting-help">
+            {% trans "Learners get the maximum score for every rubric criterion as soon as they submit a response. Assessment steps are skipped. Course staff can change the grade later." %}
+        </p>
+    </li>
     <li id="openassessment_submission_latex_wrapper" class="field comp-setting-entry">
         <div class="wrapper-comp-setting">
             <label for="openassessment_submission_latex_editor" class="setting-label">{% trans "Allow LaTeX Responses"%}</label>

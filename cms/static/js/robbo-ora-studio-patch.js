@@ -467,6 +467,10 @@
           payload.robbo_large_files = sizeSettings.enabled;
           payload.robbo_file_size_limits = sizeSettings.limits;
         }
+        var autoScore = document.getElementById('robbo_ora_auto_score_toggle');
+        if (autoScore) {
+          payload.robbo_auto_score = autoScore.checked;
+        }
         options.data = JSON.stringify(payload);
       } catch (e) {
         // leave request unchanged

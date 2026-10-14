@@ -1,9 +1,10 @@
 # Copyright (C) 2024-2026 Robbo <https://robbo.ru>
 # SPDX-License-Identifier: AGPL-3.0-only
 
-"""Robbo ORA: per-block file count/size limits and Studio template overrides."""
+"""Robbo ORA: per-block file count/size limits, score on submit, and Studio template overrides."""
 
 import json
+import logging
 from pathlib import Path
 
 from django.conf import settings
@@ -19,6 +20,10 @@ ROBBO_ORA_DEFAULT_MAX_FILE_BYTES = 5 * 1000 * 1000  # 5 MB
 # "Larger files" option: per-extension limit in MB, 1..cap. Keep in sync with the LMS Caddy limit for
 # /openassessment/fileupload/* (tutor-plugin-robbo-mfe-branding, caddyfile-lms patch).
 ROBBO_ORA_LARGE_FILE_MB_CAP = getattr(settings, 'ROBBO_ORA_LARGE_FILE_MB_CAP', 50)
+# Scorer of the automatic staff assessment ("Score on submit"); not a real user, so no username is shown.
+ROBBO_ORA_AUTO_SCORER_ID = 'robbo-auto-score'
+
+log = logging.getLogger(__name__)
 
 
 def _robbo_ora_max_file_upload_bytes():
@@ -60,18 +65,21 @@ _STUDIO_HINT_CSS = """
 #openassessment-editor .robbo-ora-large-files {
     margin-top: 16px;
 }
-#openassessment-editor .robbo-ora-large-files__toggle {
+#openassessment-editor .robbo-ora-large-files__toggle,
+#openassessment-editor .robbo-ora-toggle {
     display: flex;
     align-items: center;
     gap: 10px;
 }
-#openassessment-editor .robbo-ora-large-files__toggle label.setting-label {
+#openassessment-editor .robbo-ora-large-files__toggle label.setting-label,
+#openassessment-editor .robbo-ora-toggle label.setting-label {
     width: auto;
     margin: 0;
     cursor: pointer;
 }
 /* Studio stretches every settings input to 45% width; keep the checkbox at its natural size. */
-#openassessment-editor .robbo-ora-large-files__toggle input.robbo-ora-large-files__checkbox {
+#openassessment-editor .robbo-ora-large-files__toggle input.robbo-ora-large-files__checkbox,
+#openassessment-editor .robbo-ora-toggle input.robbo-ora-toggle__checkbox {
     flex: 0 0 auto;
     width: 18px;
     min-width: 0;
@@ -232,6 +240,11 @@ class _RobboOraFilesLimitMixin:
         default={},
         scope=Scope.settings,
     )
+    robbo_auto_score = Boolean(
+        display_name='Score on submit',
+        default=False,
+        scope=Scope.settings,
+    )
 
 
 def _register_max_files_count_field(open_assessment_block):
@@ -241,7 +254,7 @@ def _register_max_files_count_field(open_assessment_block):
     Assigning Integer() into fields{} at runtime leaves field.name='unknown' and
     breaks LMS staff preview (KeyError in add_staff_markup).
     """
-    for field_name in ('max_files_count', 'robbo_large_files', 'robbo_file_size_limits'):
+    for field_name in ('max_files_count', 'robbo_large_files', 'robbo_file_size_limits', 'robbo_auto_score'):
         existing = open_assessment_block.fields.get(field_name)
         if existing is not None and getattr(existing, 'name', None) == 'unknown':
             del open_assessment_block.fields[field_name]
@@ -264,7 +277,90 @@ def patch_ora_runtime_limits():
     OpenAssessmentBlock.MAX_FILES_COUNT = property(
         lambda self: _effective_max_files_count(self),
     )
+    _patch_ora_auto_score(OpenAssessmentBlock)
+    _patch_ora_staff_list_unknown_scorer()
     OpenAssessmentBlock._robbo_runtime_limits_patched = True
+
+
+def _max_points_options(criteria):
+    """{criterion name: option name with the most points}; feedback-only criteria (no options) are skipped."""
+    selected = {}
+    for criterion in criteria or []:
+        options = criterion.get('options') or []
+        if options:
+            best = max(options, key=lambda option: option.get('points', 0))
+            selected[criterion['name']] = best['name']
+    return selected
+
+
+def _auto_score_submission(block, submission_uuid):
+    """
+    "Score on submit": full marks right after the learner submits.
+
+    Same path as a staff grade override in ORA: a staff assessment with the top option of every
+    criterion, then the workflow moves to "done" (remaining steps are skipped) and the score goes
+    to the submissions API, which updates Progress. Course staff can still regrade.
+    """
+    from openassessment.assessment.api import staff as staff_api
+    from openassessment.workflow import api as workflow_api
+    from openassessment.xblock.utils.data_conversion import create_rubric_dict
+
+    criteria = block.rubric_criteria_with_labels
+    options_selected = _max_points_options(criteria)
+    if not options_selected:
+        return
+    assessment = staff_api.create_assessment(
+        submission_uuid,
+        ROBBO_ORA_AUTO_SCORER_ID,
+        options_selected,
+        {},
+        '',
+        create_rubric_dict(block.prompts, criteria),
+    )
+    block.publish_assessment_event('openassessmentblock.staff_assess', assessment, type='full-grade')
+    workflow_api.update_from_assessments(submission_uuid, None, {}, override_submitter_requirements=True)
+
+
+def _patch_ora_auto_score(open_assessment_block):
+    """Individual submissions only: team ORA creates its workflow elsewhere (team_workflow_mixin)."""
+    original_create_workflow = open_assessment_block.create_workflow
+
+    def create_workflow(self, submission_uuid):
+        original_create_workflow(self, submission_uuid)
+        if not getattr(self, 'robbo_auto_score', False):
+            return
+        try:
+            _auto_score_submission(self, submission_uuid)
+        except Exception:  # pylint: disable=broad-except
+            # The response is already saved; staff can still grade it by hand.
+            log.exception('Robbo ORA: automatic score failed for submission %s', submission_uuid)
+
+    open_assessment_block.create_workflow = create_workflow
+
+
+def _patch_ora_staff_list_unknown_scorer():
+    """
+    Keep answers whose grader is not a user in the ORA staff grading list.
+
+    The stock list (edx-ora2 StaffGraderMixin.list_staff_workflows) drops the whole row when the
+    grader has no username, so every "Score on submit" answer (scorer ROBBO_ORA_AUTO_SCORER_ID) was
+    missing from it. Such answers are listed with no grader; «Проверка по учащимся»
+    (lms/djangoapps/robbo_ora/learner_grading.py) uses the same serializer.
+    """
+    from openassessment.staffgrader.serializers.submission_list import (
+        MissingContextException,
+        SubmissionListSerializer,
+    )
+
+    original_get_graded_by = SubmissionListSerializer.get_gradedBy
+
+    def get_gradedBy(self, workflow):  # pylint: disable=invalid-name
+        try:
+            return original_get_graded_by(self, workflow)
+        except MissingContextException:
+            return None
+
+    SubmissionListSerializer.get_gradedBy = get_gradedBy
 
 
 def patch_ora_studio_editor():
@@ -285,6 +381,7 @@ def patch_ora_studio_editor():
     schema_dict[Optional('max_files_count')] = int
     schema_dict[Optional('robbo_large_files')] = bool
     schema_dict[Optional('robbo_file_size_limits')] = dict
+    schema_dict[Optional('robbo_auto_score')] = bool
     updated_schema = Schema(schema_dict)
     # studio_mixin imports EDITOR_UPDATE_SCHEMA at load time; patch both bindings.
     schema_module.EDITOR_UPDATE_SCHEMA = updated_schema
@@ -316,6 +413,7 @@ def patch_ora_studio_editor():
             'for each file type (up to %(cap_mb)s MB).'
         ] % {'max_mb': max_upload_mb, 'cap_mb': ROBBO_ORA_LARGE_FILE_MB_CAP}
         context['robbo_large_files'] = bool(getattr(self, 'robbo_large_files', False))
+        context['robbo_auto_score'] = bool(getattr(self, 'robbo_auto_score', False))
         context['robbo_default_file_mb'] = _default_file_mb()
         context['robbo_large_file_mb_cap'] = ROBBO_ORA_LARGE_FILE_MB_CAP
         context['robbo_file_size_limits_json'] = json.dumps(
@@ -346,6 +444,7 @@ def patch_ora_studio_editor():
         raw_count = payload.pop('max_files_count', None)
         raw_large_files = payload.pop('robbo_large_files', None)
         raw_size_limits = payload.pop('robbo_file_size_limits', None)
+        raw_auto_score = payload.pop('robbo_auto_score', None)
         result = original_update(self, payload, suffix=suffix)
         if result.get('success'):
             if raw_count is not None:
@@ -360,6 +459,8 @@ def patch_ora_studio_editor():
                 self.robbo_large_files = bool(raw_large_files)
             if raw_size_limits is not None:
                 self.robbo_file_size_limits = _normalize_size_limits(raw_size_limits)
+            if raw_auto_score is not None:
+                self.robbo_auto_score = bool(raw_auto_score)
         return result
 
     OpenAssessmentBlock.update_editor_context = XBlock.json_handler(_robbo_update_editor_context)
