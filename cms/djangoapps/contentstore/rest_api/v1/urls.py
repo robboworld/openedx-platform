@@ -14,6 +14,7 @@ from .views import (
     CertificateDesignDetailView,
     CertificateDesignListView,
     CourseCertificateDesignView,
+    CourseDeleteView,
     CourseDetailsView,
     CourseTeamView,
     CourseTextbooksView,
@@ -137,6 +138,11 @@ urlpatterns = [
         r'^robbo/certificate-designs/(?P<design_id>[a-z0-9_-]{1,64})$',
         CertificateDesignDetailView.as_view(),
         name="robbo_certificate_design_detail"
+    ),
+    re_path(
+        fr'^robbo/courses/{COURSE_ID_PATTERN}$',
+        CourseDeleteView.as_view(),
+        name="robbo_course_delete"
     ),
     re_path(
         fr'^group_configurations/{COURSE_ID_PATTERN}$',
