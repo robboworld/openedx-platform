@@ -8,6 +8,7 @@ import json
 import logging
 import math
 import re
+from datetime import timezone
 from functools import partial
 from urllib.parse import urljoin
 
@@ -662,6 +663,17 @@ def _delete_thumbnail(thumbnail_location, course_key, asset_key):  # lint-amnest
             logging.warning('Could not delete thumbnail: %s', thumbnail_location)
 
 
+def _robbo_iso_utc(dtime):
+    """
+    Robbo: ISO 8601 in UTC (``2026-10-13T11:23:45.123+00:00``) or None; naive is UTC, as in get_default_time_display.
+    """
+    if dtime is None:
+        return None
+    if dtime.tzinfo is None:
+        dtime = dtime.replace(tzinfo=timezone.utc)
+    return dtime.astimezone(timezone.utc).isoformat(timespec='milliseconds')
+
+
 def get_asset_json(display_name, content_type, date, location, thumbnail_location,
                    locked, course_key, file_size=None, usage=None):
     '''
@@ -683,6 +695,8 @@ def get_asset_json(display_name, content_type, date, location, thumbnail_locatio
         'display_name': display_name,
         'content_type': content_type,
         'date_added': get_default_time_display(date),
+        # Robbo: date_added is localized («13 октября 2026 г. 11:23 UTC»), JS can't parse it; the MFE uses this one
+        'date_added_iso': _robbo_iso_utc(date),
         'url': asset_url,
         'external_url': external_url,
         'portable_url': portable_url,
