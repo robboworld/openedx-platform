@@ -1,7 +1,8 @@
 /**
  * Robbo: instructor dashboard «Ответы в свободной форме» (edx-ora2 Backgrid listing).
  * Adds a hint button next to every counter in the summary row, applies Robbo labels
- * to the summary and the table header and counts units once in «Блоки».
+ * to the summary and the table header, counts units once in «Блоки» and links to
+ * «Проверка по учащимся» of the ORA grading MFE.
  * Texts come from #robbo-ora-listing-config (lms/djangoapps/robbo_ora/instructor_listing.py);
  * styles — themes/robbo-theme/lms/static/sass/courseware/_robbo-instructor-ora.scss.
  * edx-ora2 rebuilds the grids on every refresh, so the DOM is re-enhanced on mutation.
@@ -183,10 +184,33 @@
     }
   }
 
+  // Entry to «Проверка по учащимся» (ORA grading MFE) above the summary. It lives in the
+  // content wrapper, so it hides with the listing when edx-ora2 opens one assignment.
+  function addLearnerGrading() {
+    var entry = config.learnerGrading;
+    var content = root.querySelector('.open-response-assessment-content');
+    if (!entry || !content || content.querySelector('.robbo-ora-learner-grading')) {
+      return;
+    }
+    var block = document.createElement('div');
+    var link = document.createElement('a');
+    var text = document.createElement('p');
+    block.className = 'robbo-ora-learner-grading';
+    link.className = 'robbo-ora-learner-grading__link';
+    link.href = entry.url;
+    link.textContent = entry.label;
+    text.className = 'robbo-ora-learner-grading__text';
+    text.textContent = entry.text;
+    block.appendChild(link);
+    block.appendChild(text);
+    content.insertBefore(block, content.firstChild);
+  }
+
   function enhance() {
     if (tipOwner && !document.body.contains(tipOwner)) {
       hideTip();
     }
+    addLearnerGrading();
     countUnits();
     enhanceSummary();
     relabelHeader();
