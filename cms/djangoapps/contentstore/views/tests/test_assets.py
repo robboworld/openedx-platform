@@ -441,6 +441,7 @@ class AssetToJsonTestCase(AssetsTestCase):
 
         self.assertEqual(output["display_name"], "my_file")
         self.assertEqual(output["date_added"], "Jun 01, 2013 at 10:30 UTC")
+        self.assertEqual(output["date_added_iso"], "2013-06-01T10:30:00.000+00:00")  # Robbo
         self.assertEqual(output["url"], "/asset-v1:org+class+run+type@asset+block@my_file_name.jpg")
         self.assertEqual(
             output["external_url"], "https://lms_root_url/asset-v1:org+class+run+type@asset+block@my_file_name.jpg"
