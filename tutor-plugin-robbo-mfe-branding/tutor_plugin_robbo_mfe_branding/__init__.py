@@ -226,6 +226,26 @@ handle /openassessment/fileupload/* {
 }
 """
 
+# «Проверка ответов» (ORA grading MFE) shows files and rich text written by learners, on the LMS
+# site locally and next to it in production. Its Content-Security-Policy limits what such content could
+# do if a sanitizer ever let something through: scripts only from the MFE itself (its build has no
+# inline scripts, see frontend-app-ora-grading webpack.prod.config.js; the pdf.js worker comes with the
+# app), requests and media only to the LMS, Paragon theme CSS from jsdelivr, no plugins, no framing by
+# other sites. ROBBO_ORA_GRADING_CSP: "enforce" (default), "report-only" (try a change on a server
+# first: violations only reported, nothing blocked) or "off"; ROBBO_CSP_REPORT_URI: where browsers
+# POST violation reports (empty: no reports).
+_PATCH_MFE_CADDYFILE_ORA_GRADING_CSP = """
+{% if ROBBO_ORA_GRADING_CSP in ["enforce", "report-only"] %}
+{% set robbo_lms = ("https://" if ENABLE_HTTPS else "http://") + LMS_HOST %}
+@robbo_ora_grading path /ora-grading /ora-grading/*
+header @robbo_ora_grading {
+    {% if ROBBO_ORA_GRADING_CSP == "report-only" %}Content-Security-Policy-Report-Only{% else %}Content-Security-Policy{% endif %} "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' {{ robbo_lms }} https://cdn.jsdelivr.net; img-src 'self' data: {{ robbo_lms }}; font-src 'self' data: {{ robbo_lms }} https://cdn.jsdelivr.net; media-src 'self' {{ robbo_lms }}; connect-src 'self' {{ robbo_lms }}; worker-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' {{ robbo_lms }}; frame-ancestors 'self' {{ robbo_lms }}{% if ENABLE_HTTPS %}; upgrade-insecure-requests{% endif %}{% if ROBBO_CSP_REPORT_URI %}; report-uri {{ ROBBO_CSP_REPORT_URI }}{% endif %}"
+    X-Content-Type-Options "nosniff"
+    Referrer-Policy "strict-origin-when-cross-origin"
+}
+{% endif %}
+"""
+
 # Local Tutor (ENABLE_HTTPS=false): MFE URLs on LMS_HOST, not apps.* — avoids browser
 # HTTPS-Only upgrading http://apps.local… to https://… (connection refused on :443).
 _PATCH_LOCAL_MFE_ON_LMS_HOST = """
@@ -481,6 +501,8 @@ PLUGIN_SLOTS.add_item(
 hooks.Filters.CONFIG_DEFAULTS.add_items(
     [
         ("ROBBO_YANDEX_METRIKA_COUNTER_ID", ""),
+        ("ROBBO_ORA_GRADING_CSP", "enforce"),
+        ("ROBBO_CSP_REPORT_URI", ""),
     ]
 )
 
@@ -527,6 +549,7 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-development-settings", _PATCH_YANDEX_METRIKA_DEV_LMS),
         ("openedx-lms-production-settings", _PATCH_YANDEX_METRIKA_PROD_LMS),
         ("caddyfile-lms", _PATCH_CADDYFILE_LMS_ORA_UPLOADS),
+        ("mfe-caddyfile", _PATCH_MFE_CADDYFILE_ORA_GRADING_CSP),
         ("mfe-lms-production-settings", _PATCH_LOCAL_MFE_ON_LMS_HOST),
         ("openedx-cms-production-settings", _PATCH_LOCAL_AUTHORING_MFE_ON_LMS_HOST_CMS),
         ("openedx-cms-development-settings", _PATCH_LOCAL_AUTHORING_MFE_ON_LMS_HOST_CMS),
