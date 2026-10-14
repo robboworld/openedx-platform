@@ -1,10 +1,4 @@
 ## mako
-<%page expression_filter="h"/>
-<%namespace name='static' file='../static_content.html'/>
-<div class="wrapper-footer wrapper robbo-studio-footer-wrap">
-  <footer class="robbo-site-footer" role="contentinfo">
-    <div class="robbo-site-footer__inner">
-      <%include file="robbo_footer_inner.html" />
-    </div>
-  </footer>
-</div>
+## Studio has no footer: this empty override keeps upstream cms/templates/widgets/footer.html
+## out of base.html (the help bar above it is emptied in widgets/sock.html). The Authoring MFE
+## renders no StudioFooterSlot either.
