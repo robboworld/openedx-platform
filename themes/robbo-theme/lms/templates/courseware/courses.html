@@ -119,6 +119,10 @@
       robbo_account = robbo_courses_account
   else:
       robbo_account = _robbo_account_banners(request)
+  if robbo_card_preview is not UNDEFINED:
+      robbo_preview = robbo_card_preview
+  else:
+      robbo_preview = None
 %>
 
 <%block name="js_extra">
@@ -294,6 +298,9 @@
           </p>
         </div>
       </div>
+    % endif
+    % if robbo_preview:
+      <%include file="_robbo_card_preview.html" args="preview=robbo_preview, account=robbo_account" />
     % endif
     <header class="robbo-courses-catalog__hero">
       % if robbo_hero.get('lede'):

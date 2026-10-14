@@ -1,0 +1,24 @@
+<%page args="preview, account" expression_filter="h"/>
+## Course card preview for the course team (?robbo_card_preview=, see robbo_card_preview.py).
+<section class="robbo-courses-catalog__preview" aria-labelledby="robbo-card-preview-title">
+  <div class="robbo-courses-catalog__preview-note">
+    <p class="robbo-courses-catalog__preview-eyebrow">${preview['eyebrow']}</p>
+    <h2 id="robbo-card-preview-title" class="robbo-courses-catalog__preview-title">${preview['title']}</h2>
+    % if preview.get('is_hidden'):
+      <p class="robbo-courses-catalog__preview-status">${preview['hidden_label']}</p>
+    % endif
+    <p class="robbo-courses-catalog__preview-text">${preview['text']} ${preview['note']}</p>
+    <div class="robbo-courses-catalog__preview-actions">
+      % if preview.get('dashboard_url'):
+        <a class="robbo-courses-catalog__preview-link" href="${preview['dashboard_url']}">${preview['dashboard_label']}</a>
+      % endif
+      % if preview.get('studio_url'):
+        <a class="robbo-courses-catalog__preview-link" href="${preview['studio_url']}">${preview['studio_label']}</a>
+      % endif
+      <a class="robbo-courses-catalog__preview-link robbo-courses-catalog__preview-link--muted" href="${preview['exit_url']}">${preview['exit_label']}</a>
+    </div>
+  </div>
+  <div class="robbo-courses-catalog__preview-card">
+    <%include file="_robbo_course_card.html" args="course_card=preview['card'], account=account, card_index='preview'" />
+  </div>
+</section>

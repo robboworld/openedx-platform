@@ -424,9 +424,13 @@ def _catalog_course_uses_placeholder_image(course) -> bool:
 def build_robbo_catalog_course_cards(
     request,
     courses_list: list,
+    as_new_learner: bool = False,
 ) -> List[Dict[str, Any]]:
     """
     Catalog grid cards for courses visible on /courses (same list as ``get_courses`` in the view).
+
+    ``as_new_learner``: cards as a learner who is not enrolled yet sees them, without the current
+    user's enrollment, progress and enroll-on-click (course card preview, ``robbo_card_preview``).
     """
     from openedx.features.course_experience import course_home_url  # pylint: disable=import-outside-toplevel
 

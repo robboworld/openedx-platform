@@ -152,6 +152,7 @@ from openedx.features.course_experience.utils import dates_banner_should_display
 from openedx.features.course_experience.waffle import ENABLE_COURSE_ABOUT_SIDEBAR_HTML
 from openedx.features.enterprise_support.api import data_sharing_consent_required
 
+from ..robbo_card_preview import build_catalog_card_preview
 from ..robbo_catalog import (
     build_robbo_catalog_course_cards,
     get_robbo_catalog_about,
@@ -351,6 +352,7 @@ def courses(request):
             'robbo_instructor_catalog_banner': robbo_instructor_catalog_banner,
             'robbo_instructor_catalog_courses': robbo_instructor_catalog_courses,
             'robbo_courses_account': get_robbo_courses_account_banners(request),
+            'robbo_card_preview': build_catalog_card_preview(request, courses_list),
             # Match learner dashboard header: primary nav tabs are hidden when unset (Mako treats as falsy).
             'show_dashboard_tabs': True,
         }
