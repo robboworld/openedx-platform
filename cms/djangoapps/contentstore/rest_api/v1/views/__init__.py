@@ -13,6 +13,7 @@ from .grading import CourseGradingView
 from .group_configurations import CourseGroupConfigurationsView
 from .help_urls import HelpUrlsView
 from .home import HomePageCoursesView, HomePageLibrariesView, HomePageView
+from .robbo_asset_catalog import AssetFolderMoveView, AssetUploadCheckView
 from .robbo_certificate_design import (
     CertificateDesignDetailView,
     CertificateDesignListView,

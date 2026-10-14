@@ -19,6 +19,8 @@ Modulestore virtual   |          XML physical (draft, published)
              (a, -)   |  (a, -) | (x, -) | (x, x) | (x, y) | (a, x)
              (a, a)   |  (a, a) | (x, a) | (x, x) | (x, y) | (a, x)
              (a, b)   |  (a, b) | (x, b) | (x, x) | (x, y) | (a, x)
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 import json
@@ -46,6 +48,7 @@ from common.djangoapps.util.monitoring import monitor_import_failure
 from openedx.core.djangoapps.content_tagging.api import import_course_tags_from_csv
 from xmodule.assetstore import AssetMetadata
 from xmodule.contentstore.content import StaticContent
+from xmodule.contentstore.robbo_asset_attrs import import_attrs
 from xmodule.errortracker import make_error_tracker
 from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import ASSET_IGNORE_REGEX
@@ -209,6 +212,8 @@ class StaticContentImporter:  # lint-amnesty, pylint: disable=missing-class-docs
         # then commit the content
         try:
             self.static_content_store.save(content)
+            # Robbo: the folder in «Файлы» from policies/assets.json (robbo_asset_attrs.py)
+            import_attrs(self.static_content_store, asset_key, policy_ele)
         except Exception as err:  # lint-amnesty, pylint: disable=broad-except
             msg = f'Error importing {file_subpath}, error={err}'
             log.exception(f'Course import {self.target_id}: {msg}')
