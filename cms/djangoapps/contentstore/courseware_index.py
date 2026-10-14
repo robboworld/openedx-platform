@@ -674,6 +674,7 @@ class CourseAboutSearchIndexer(CoursewareSearchIndexer):
         if not searcher:
             return
 
-        response = searcher.search(field_dictionary=cls._get_location_info(structure_key))
-        result_ids = [result["data"]["id"] for result in response["results"]]
-        searcher.remove(result_ids)
+        # Robbo: the course document's id is the course key (see index_about_information), so remove it
+        # directly. Searching by "course" fails on Meilisearch: edx-search does not make that field
+        # filterable in the course_info index, and the stale document stayed in the index.
+        searcher.remove([str(structure_key)])
