@@ -66,6 +66,8 @@ from xmodule.tabs import CourseTabList
 
 from ..utils import (
     ancestor_has_staff_lock,
+    get_group_access_source_info,
+    get_own_group_access_info,
     find_release_date_source,
     find_staff_lock_source,
     get_split_group_display_name,
@@ -1342,6 +1344,13 @@ def create_xblock_info(  # lint-amnesty, pylint: disable=too-many-statements
         xblock_info["user_partition_info"] = get_visibility_partition_info(
             xblock, course=course
         )
+        # Robbo: a restriction set higher up locks the block's own one in Studio (only when there is one)
+        group_access_from = get_group_access_source_info(xblock, course=course)
+        if group_access_from:
+            xblock_info["group_access_from"] = group_access_from
+            own_group_access = get_own_group_access_info(xblock, course=course)
+            if own_group_access:
+                xblock_info["own_group_access"] = own_group_access
 
         if course_outline or is_xblock_unit:
             # Previously, ENABLE_COPY_PASTE_UNITS was a feature flag; now it's always on.

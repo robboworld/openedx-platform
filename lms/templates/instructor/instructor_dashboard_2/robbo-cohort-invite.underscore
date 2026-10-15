@@ -1,0 +1,31 @@
+<%/*
+  Copyright (C) 2026 Robbo <https://robbo.ru>
+  SPDX-License-Identifier: AGPL-3.0-only
+  Part of the Robbo Open edX distribution (course groups). See NOTICE at repository root.
+  Body of the «Ссылка-приглашение» tab of the cohort editor: js/groups/views/robbo_cohort_invite.js.
+*/%>
+<% if (invite && invite.url) { %>
+    <div class="robbo-cohort-invite-link<% if (!invite.is_active) { %> is-disabled<% } %>">
+        <label class="sr" for="robbo-cohort-invite-url"><%- gettext('Invite link') %></label>
+        <input id="robbo-cohort-invite-url" class="robbo-cohort-invite-url" type="text" readonly value="<%- invite.url %>">
+        <% if (invite.is_active) { %>
+        <button type="button" class="form-submit button action-primary robbo-cohort-invite-copy"><%- gettext('Copy the link') %></button>
+        <% } %>
+    </div>
+    <% if (!invite.is_active) { %>
+    <p class="robbo-cohort-invite-note"><%- gettext('The link is switched off: nobody can join the group by it.') %></p>
+    <% } %>
+    <div class="form-actions robbo-cohort-invite-actions">
+        <% if (invite.is_active) { %>
+        <button type="button" class="button action-secondary robbo-cohort-invite-disable"><%- gettext('Switch off') %></button>
+        <% } else { %>
+        <button type="button" class="button action-secondary robbo-cohort-invite-enable"><%- gettext('Switch on') %></button>
+        <% } %>
+        <button type="button" class="button action-secondary robbo-cohort-invite-replace"><%- gettext('Replace the link') %></button>
+    </div>
+<% } else if (invite) { %>
+    <p class="robbo-cohort-invite-note"><%- gettext('The group has no invite link yet.') %></p>
+    <div class="form-actions robbo-cohort-invite-actions">
+        <button type="button" class="form-submit button action-primary robbo-cohort-invite-issue"><%- gettext('Create a link') %></button>
+    </div>
+<% } %>

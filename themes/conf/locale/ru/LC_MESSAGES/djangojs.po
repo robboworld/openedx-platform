@@ -1841,10 +1841,10 @@ msgstr "Выбор группы исключений сертификата"
 #, python-format
 msgid "(contains %(student_count)s student)"
 msgid_plural "(contains %(student_count)s students)"
-msgstr[0] "(содержит %(student_count)s студента)"
-msgstr[1] "(содержит %(student_count)s студентов)"
-msgstr[2] "(содержит %(student_count)s студентов)"
-msgstr[3] "(содержит %(student_count)s студентов)"
+msgstr[0] "%(student_count)s слушатель"
+msgstr[1] "%(student_count)s слушателя"
+msgstr[2] "%(student_count)s слушателей"
+msgstr[3] "%(student_count)s слушателей"
 
 #: lms/templates/learner_dashboard/course_card.underscore
 msgid "You must select a session by {expiration_date} to access the course."
@@ -2827,3 +2827,176 @@ msgstr "Ожидание оценки персоналом"
 #: openassessment (edx-ora2) — Robbo ORA translations
 msgid "Staff Grade"
 msgstr "Оценка персоналом"
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "Invite link"
+msgstr "Ссылка-приглашение"
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "Learners who open the link join the course and this group. Someone without an account signs up first and joins right after that."
+msgstr "По этой ссылке слушатели записываются на курс и попадают в эту группу. Кто ещё не зарегистрирован, сначала создаст учётную запись — и сразу окажется в группе."
+
+#: lms/templates/instructor/instructor_dashboard_2/cohort-editor.underscore — Robbo group invite links
+msgid "A learner already placed in another group of this course stays there: the link only opens the course for them. Move them to this group on the «Manage Learners» tab."
+msgstr "Слушателя, которого уже распределили в другую группу этого курса, ссылка не переводит — она просто откроет ему курс. Перевести его в эту группу можно на вкладке «Управление слушателями»."
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "Copy the link"
+msgstr "Скопировать"
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "The link is switched off: nobody can join the group by it."
+msgstr "Ссылка отключена: по ней нельзя вступить в группу."
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "Switch off"
+msgstr "Отключить"
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "Switch on"
+msgstr "Включить"
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "Replace the link"
+msgstr "Сменить ссылку"
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "The group has no invite link yet."
+msgstr "У группы пока нет ссылки-приглашения."
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "Create a link"
+msgstr "Создать ссылку"
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "Could not load the invite link."
+msgstr "Не удалось загрузить ссылку-приглашение."
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "Could not change the invite link."
+msgstr "Не удалось изменить ссылку-приглашение."
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "The link is ready. Send it to the learners."
+msgstr "Ссылка готова — отправьте её слушателям."
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "The current link will stop working. Replace it?"
+msgstr "Текущая ссылка перестанет работать. Сменить её?"
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "A new link is ready, the old one no longer works."
+msgstr "Новая ссылка готова, старая больше не работает."
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "The link is switched on."
+msgstr "Ссылка включена."
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "The link is switched off."
+msgstr "Ссылка отключена."
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "The link is copied."
+msgstr "Ссылка скопирована."
+
+#: lms/static/js/groups/views/robbo_cohort_invite.js — Robbo group invite links
+msgid "Press Ctrl+C to copy the link."
+msgstr "Нажмите Ctrl+C, чтобы скопировать ссылку."
+
+#: lms/static/js/groups/views/cohort_editor.js — Robbo: the stock ru entry is fuzzy and wrong
+msgid "There was an error when trying to add learners:"
+msgid_plural "{numErrors} learners could not be added to this cohort:"
+msgstr[0] "Не удалось добавить в группу:"
+msgstr[1] "Не удалось добавить в группу:"
+msgstr[2] "Не удалось добавить в группу:"
+msgstr[3] "Не удалось добавить в группу:"
+
+#: lms/static/js/groups/views/robbo_cohort_members.js — Robbo group members
+msgid "Group members"
+msgstr "Участники группы"
+
+msgid "Search the group members"
+msgstr "Поиск по участникам группы"
+
+msgid "Name, username or email"
+msgstr "Имя, логин или email"
+
+msgid "Nobody found."
+msgstr "Никого не нашлось."
+
+msgid "The group has no learners yet. Add them below or send them the invite link."
+msgstr "В группе пока нет слушателей. Добавьте их ниже или отправьте им ссылку-приглашение."
+
+#, python-format
+msgid "Found: %(count)s"
+msgstr "Найдено: %(count)s"
+
+msgid "Not enrolled in the course"
+msgstr "Не записан на курс"
+
+msgid "Remove from the group"
+msgstr "Убрать из группы"
+
+msgid "Show more"
+msgstr "Показать ещё"
+
+msgid "Could not load the group members."
+msgstr "Не удалось загрузить участников группы."
+
+msgid "Remove {name} from the group «{group}»? They stay in the course and move to an automatic group (such as «Default Group»). The access restrictions of «{group}» no longer apply to them."
+msgstr "Убрать из группы «{group}»: {name}? Слушатель останется на курсе и перейдёт в автоматическую группу (например, «Группа по умолчанию»). Ограничения доступа группы «{group}» на него больше не будут действовать."
+
+msgid "{name} is no longer in the group «{group}» and is now in «{newGroup}»."
+msgstr "{name} больше не в группе «{group}» и теперь в группе «{newGroup}»."
+
+msgid "Learners come to this group automatically, so nobody can be removed from it. To move a learner, add them to another group on its «Manage Learners» tab."
+msgstr "В эту группу слушатели попадают автоматически, поэтому убрать из неё нельзя. Чтобы перевести слушателя, добавьте его в другую группу на её вкладке «Управление слушателями»."
+
+msgid "{name} is no longer in the group."
+msgstr "{name} больше не в группе."
+
+msgid "{name} is not in this group any more."
+msgstr "{name} уже не в этой группе."
+
+msgid "Could not change the group. Try again."
+msgstr "Не удалось изменить группу. Попробуйте ещё раз."
+
+msgid "Remove from the course"
+msgstr "Удалить с курса"
+
+msgid "Remove {name} from the course? They lose access to the course and leave the group «{group}». Their progress is kept: enrolled again, they go on where they stopped."
+msgstr "Удалить с курса: {name}? Слушатель потеряет доступ к курсу и выйдет из группы «{group}». Прогресс сохранится: если снова записать его на курс, он продолжит с того же места."
+
+msgid "The course is paid: the payment is not refunded."
+msgstr "Курс оплачен: деньги автоматически не возвращаются."
+
+msgid "Learner {name} is removed from the course."
+msgstr "Слушатель {name} удалён с курса."
+
+msgid "Delete the group"
+msgstr "Удалить группу"
+
+msgid "Delete the group «{group}»? Its learners stay in the course and move to an automatic group. The invite link of the group stops working. This cannot be undone."
+msgstr "Удалить группу «{group}»? Её слушатели останутся на курсе и перейдут в автоматическую группу. Ссылка-приглашение группы перестанет работать. Отменить удаление нельзя."
+
+msgid "The access restrictions set up for this group no longer apply to its learners."
+msgstr "Ограничения доступа, настроенные для этой группы, перестанут действовать на её слушателей."
+
+msgid "The group «{group}» is deleted."
+msgstr "Группа «{group}» удалена."
+
+msgid "Its learners are now in «{newGroups}»."
+msgstr "Её слушатели перешли в группу «{newGroups}»."
+
+msgid "Its learners are now in the groups «{newGroups}»."
+msgstr "Её слушатели перешли в группы «{newGroups}»."
+
+msgid "Could not delete the group. Try again."
+msgstr "Не удалось удалить группу. Попробуйте ещё раз."
+
+msgid "The default group cannot be deleted."
+msgstr "Группу по умолчанию удалить нельзя."
+
+msgid "This is the default group: everyone not placed in another group comes here, so it cannot be deleted."
+msgstr "Это группа по умолчанию: сюда попадают все, кого не распределили по другим группам, поэтому удалить её нельзя."

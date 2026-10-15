@@ -9,6 +9,8 @@ from rest_framework.views import APIView
 
 from cms.djangoapps.contentstore.utils import (
     get_container_handler_context,
+    get_group_access_source_info,
+    get_own_group_access_info,
     get_user_partition_info,
     get_visibility_partition_info,
     get_xblock_validation_messages,
@@ -287,7 +289,7 @@ class VerticalContainerView(APIView, ContainerHandlerMixin):
                     validation_messages = get_xblock_validation_messages(child_info)
                     render_error = get_xblock_render_error(request, child_info)
 
-                    children.append({
+                    child = {
                         "xblock": child_info,
                         "name": child_info.display_name_with_default,
                         "block_id": child_info.location,
@@ -302,7 +304,15 @@ class VerticalContainerView(APIView, ContainerHandlerMixin):
                         ),
                         "validation_messages": validation_messages,
                         "render_error": render_error,
-                    })
+                    }
+                    # Robbo: a restriction of the unit or higher locks the component's own one (only when there is one)
+                    group_access_from = get_group_access_source_info(child_info, course=course)
+                    if group_access_from:
+                        child["group_access_from"] = group_access_from
+                        own_group_access = get_own_group_access_info(child_info, course=course)
+                        if own_group_access:
+                            child["own_group_access"] = own_group_access
+                    children.append(child)
 
             is_published = False
             try:

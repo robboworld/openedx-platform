@@ -6961,3 +6961,65 @@ msgid ""
 msgstr ""
 "Практический курс по российским микроконтроллерам: архитектура, локализация "
 "и портирование сценариев с открытой и проприетарной периферией."
+
+#: lms/templates/robbo_groups/join.html — Robbo group invite links
+msgid "Invite link"
+msgstr "Ссылка-приглашение"
+
+#: lms/templates/robbo_groups/join.html — Robbo group invite links
+msgid "Sign up and join"
+msgstr "Зарегистрироваться"
+
+#: lms/templates/robbo_groups/join.html — Robbo group invite links
+msgid "Sign in and join"
+msgstr "Войти"
+
+#: lms/templates/robbo_groups/join.html — Robbo group invite links
+msgid "You are signed in as {username}."
+msgstr "Вы вошли как {username}."
+
+#: lms/templates/robbo_groups/join.html — Robbo group invite links
+msgid "Not you? Sign out"
+msgstr "Не вы? Выйти"
+
+#: lms/templates/robbo_groups/join.html — Robbo group invite links
+msgid "This course cannot be joined by an invite link. Ask your teacher for help."
+msgstr "На этот курс нельзя записаться по ссылке-приглашению. Обратитесь к преподавателю."
+
+#: lms/templates/robbo_groups/join.html — Robbo group invite links
+msgid "The invite link does not work"
+msgstr "Ссылка-приглашение не работает"
+
+#: lms/templates/robbo_groups/join.html — Robbo group invite links
+msgid "The teacher may have replaced or switched off the link. Ask them for a new one."
+msgstr "Возможно, преподаватель сменил или отключил ссылку. Попросите у него новую."
+
+#: lms/templates/robbo_groups/join.html — Robbo group invite links
+msgid "Go to the course catalog"
+msgstr "К каталогу курсов"
+
+#: lms/templates/robbo_groups/join.html — Robbo group invite links
+msgid "Invitation to a course"
+msgstr "Приглашение на курс"
+
+#: lms/templates/robbo_groups/join.html — Robbo group invite links
+msgid "Sign up or sign in: the course opens right after that."
+msgstr "Зарегистрируйтесь или войдите — курс откроется сразу после этого."
+
+#: lms/templates/robbo_groups/join.html — Robbo group invite links
+msgid "Join the course"
+msgstr "Присоединиться к курсу"
+
+#: lms/templates/robbo_groups/join.html — Robbo group invite links
+msgid "Could not join the course"
+msgstr "Не получилось записаться на курс"
+
+#: cms/djangoapps/contentstore/views/preview.py — Robbo: group access label, no «для»
+#, python-brace-format
+msgid "Access restricted to: {list_of_groups}"
+msgstr "Доступ ограничен: {list_of_groups}"
+
+#: cms/djangoapps/contentstore/views/preview.py — Robbo: «hide from groups» rule
+#, python-brace-format
+msgid "everyone except {list_of_groups}"
+msgstr "всем, кроме {list_of_groups}"

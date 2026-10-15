@@ -128,6 +128,9 @@ class ChildVerticalContainerSerializer(serializers.Serializer):
     block_type = serializers.CharField()
     user_partition_info = serializers.DictField()
     user_partitions = serializers.ListField()
+    # Robbo: contentstore.utils.get_group_access_source_info; absent when nothing above restricts access
+    group_access_from = serializers.DictField(required=False)
+    own_group_access = serializers.DictField(required=False)  # Robbo: contentstore.utils.get_own_group_access_info
     upstream_link = UpstreamLinkSerializer(allow_null=True)
     actions = serializers.SerializerMethodField()
     validation_messages = MessageValidation(many=True)

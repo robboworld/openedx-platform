@@ -1758,6 +1758,8 @@ INSTALLED_APPS = [
     'lms.djangoapps.verify_student.apps.VerifyStudentConfig',
     # Robbo: certificate designs uploaded in Studio (rendered by the LMS)
     'lms.djangoapps.robbo_certificates.apps.RobboCertificatesConfig',
+    # Robbo: group invite links (LMS); here only so deleting a user or a cohort in Studio cascades
+    'lms.djangoapps.robbo_groups.apps.RobboGroupsConfig',
     'completion',
 
     # System Wide Roles

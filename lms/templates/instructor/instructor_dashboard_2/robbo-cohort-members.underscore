@@ -1,0 +1,44 @@
+<%/*
+  Copyright (C) 2026 Robbo <https://robbo.ru>
+  SPDX-License-Identifier: AGPL-3.0-only
+  Part of the Robbo Open edX distribution (course groups). See NOTICE at repository root.
+  The members of a group on the «Управление слушателями» tab of the cohort editor: js/groups/views/robbo_cohort_members.js.
+*/%>
+<% if (isAutomatic && members.length > 0) { %>
+    <p class="robbo-cohort-members-note"><%- gettext('Learners come to this group automatically, so nobody can be removed from it. To move a learner, add them to another group on its «Manage Learners» tab.') %></p>
+<% } %>
+<% if (members.length === 0) { %>
+    <p class="robbo-cohort-members-empty"><%- query ? gettext('Nobody found.') : gettext('The group has no learners yet. Add them below or send them the invite link.') %></p>
+<% } else { %>
+    <% if (query) { %>
+    <p class="robbo-cohort-members-found"><%- interpolate(gettext('Found: %(count)s'), {count: count}, true) %></p>
+    <% } %>
+    <ul class="robbo-cohort-members-list">
+        <% _.each(members, function(member) { %>
+        <li class="robbo-cohort-member">
+            <div class="robbo-cohort-member-info">
+                <span class="robbo-cohort-member-name"><%- member.name || member.username %></span>
+                <span class="robbo-cohort-member-meta"><% if (member.name) { %><%- member.username %> · <% } %><%- member.email %></span>
+                <% if (!member.is_enrolled) { %>
+                <span class="robbo-cohort-member-badge"><%- gettext('Not enrolled in the course') %></span>
+                <% } %>
+            </div>
+            <div class="robbo-cohort-member-actions">
+                <% if (!isAutomatic) { %>
+                <button type="button" class="button action-secondary robbo-cohort-member-remove" data-username="<%- member.username %>">
+                    <%- gettext('Remove from the group') %><span class="sr"> <%- member.name || member.username %></span>
+                </button>
+                <% } %>
+                <% if (member.is_enrolled) { %>
+                <button type="button" class="button action-secondary robbo-cohort-member-unenroll" data-username="<%- member.username %>">
+                    <%- gettext('Remove from the course') %><span class="sr"> <%- member.name || member.username %></span>
+                </button>
+                <% } %>
+            </div>
+        </li>
+        <% }); %>
+    </ul>
+    <% if (hasMore) { %>
+    <button type="button" class="button action-secondary robbo-cohort-members-more"><%- gettext('Show more') %></button>
+    <% } %>
+<% } %>
