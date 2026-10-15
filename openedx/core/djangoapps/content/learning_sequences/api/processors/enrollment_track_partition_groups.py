@@ -5,6 +5,7 @@ from typing import Dict
 
 from opaque_keys.edx.keys import CourseKey
 from openedx.core import types
+from openedx.core.lib.robbo_group_access import deny_key
 
 from xmodule.partitions.enrollment_track_partition_generator import (  # lint-amnesty, pylint: disable=wrong-import-order
     create_enrollment_track_partition_with_course_id
@@ -53,6 +54,11 @@ class EnrollmentTrackPartitionGroupsOutlineProcessor(OutlineProcessor):
         """
         if not user_partition_groups:
             return False
+
+        # Robbo: «hide from groups» rule (openedx/core/lib/robbo_group_access.py)
+        hidden_from = user_partition_groups.get(deny_key(ENROLLMENT_TRACK_PARTITION_ID))
+        if hidden_from and self.user_group and self.user_group.id in hidden_from:
+            return True
 
         groups = user_partition_groups.get(ENROLLMENT_TRACK_PARTITION_ID)
         if not groups:

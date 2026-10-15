@@ -12,6 +12,8 @@ from openedx.core.djangoapps.course_groups.cohorts import (
     get_group_info_for_cohort,
 )
 
+from openedx.core.lib.robbo_group_access import deny_key
+
 from .base import OutlineProcessor
 
 log = logging.getLogger(__name__)
@@ -49,6 +51,11 @@ class CohortPartitionGroupsOutlineProcessor(OutlineProcessor):
         """
         if not user_partition_groups:
             return False
+
+        # Robbo: «hide from groups» rule (openedx/core/lib/robbo_group_access.py)
+        hidden_from = user_partition_groups.get(deny_key(self.cohorted_partition_id))
+        if hidden_from and self.user_cohort_group_id in hidden_from:
+            return True
 
         groups = user_partition_groups.get(self.cohorted_partition_id)
         if not groups:

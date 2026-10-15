@@ -1,0 +1,1143 @@
+// Copyright (C) 2026 Robbo <https://robbo.ru>
+// SPDX-License-Identifier: AGPL-3.0-only
+//
+// Course groups: the /join/<code> invite page (lms/templates/robbo_groups/join.html) and the instructor
+// dashboard «Группы» tab — stock cohort markup (templates/instructor/instructor_dashboard_2/cohort*.underscore)
+// restyled like the «Сертификаты» tab, plus «Ссылка-приглашение» (robbo-cohort-invite.underscore) and
+// the group's members (robbo-cohort-members.underscore).
+
+$robbo-groups-muted: #6b7280; // ≈4.8:1 on white
+$robbo-groups-text-soft: #4b5563;
+$robbo-groups-border: #e5e7eb;
+$robbo-groups-border-strong: #d1d5db;
+$robbo-groups-surface: #f7f8f9;
+$robbo-groups-warn: #b4610e;
+$robbo-groups-fail: #c32d3a;
+$robbo-groups-radius: 12px;
+$robbo-groups-radius-sm: 8px;
+$robbo-groups-control-height: 44px;
+$robbo-groups-focus-ring: 0 0 0 3px rgba($robbo-brand-green, 0.35);
+
+// ==== /join/<code> ====
+
+.robbo-join {
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  min-height: 60vh;
+  padding: 1.5rem 1rem 2.5rem;
+  background:
+    radial-gradient(40rem 24rem at 0% 0%, rgba($robbo-brand-green, 0.14), transparent 70%),
+    radial-gradient(36rem 24rem at 100% 100%, rgba($robbo-brand-green, 0.12), transparent 70%),
+    mix($robbo-brand-white, $robbo-brand-green, 96%);
+  font-family: $robbo-font-body;
+  color: $robbo-brand-coal;
+
+  @media (min-width: 768px) {
+    align-items: center;
+    padding: 3rem 1.5rem 4rem;
+  }
+}
+
+// One column: course image across the top (16:9 like the catalog cards, so banner-like images
+// with text are not cut), then the invitation.
+.robbo-join-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 40rem;
+  overflow: hidden;
+  border: 1px solid $robbo-groups-border;
+  border-radius: 16px;
+  background: $robbo-brand-white;
+  box-shadow: 0 18px 40px rgba(16, 24, 40, 0.08), 0 2px 6px rgba(16, 24, 40, 0.04);
+}
+
+.robbo-join-card__media {
+  border-bottom: 1px solid $robbo-groups-border;
+  background: $robbo-groups-surface;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+}
+
+.robbo-join-card__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  min-width: 0;
+  padding: 1.5rem 1.25rem;
+  text-align: start;
+
+  @media (min-width: 768px) {
+    padding: 2rem 2.5rem 2.5rem;
+  }
+}
+
+.robbo-join-card__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  background: $robbo-ui-primary-light;
+  color: $robbo-ui-primary-dark;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.2;
+
+  svg {
+    flex: 0 0 auto;
+  }
+}
+
+.robbo-join-page .robbo-join-card__title {
+  margin: 0;
+  text-align: inherit;
+  font-family: $robbo-font-headline;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: $robbo-brand-coal;
+  overflow-wrap: anywhere;
+
+  @media (min-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.robbo-join-page .robbo-join-card__description {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: $robbo-groups-text-soft;
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow-wrap: anywhere;
+}
+
+.robbo-join-page .robbo-join-card__text {
+  margin: 0;
+  color: $robbo-groups-muted;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+
+  strong {
+    color: $robbo-brand-coal;
+  }
+}
+
+.robbo-join-page .robbo-join-switch {
+  margin-inline-start: 0.25rem;
+  font-weight: 600;
+  text-decoration: underline;
+
+  &,
+  &:link,
+  &:visited {
+    color: $robbo-ui-primary-dark;
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: $robbo-brand-coal;
+  }
+}
+
+.robbo-join-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  width: 100%;
+  margin: 0.5rem 0 0;
+
+  > form {
+    display: flex;
+    flex: 1 1 12rem;
+    margin: 0;
+  }
+}
+
+// Message states (link switched off, course closed for links): one narrow column with an icon.
+.robbo-join-card--message .robbo-join-card__body {
+  align-items: center;
+  text-align: center;
+
+  @media (min-width: 768px) {
+    padding: 2.5rem 3rem;
+  }
+}
+
+.robbo-join-page .robbo-join-card--message .robbo-join-card__title {
+  font-size: 1.375rem;
+
+  @media (min-width: 768px) {
+    font-size: 1.625rem;
+  }
+}
+
+.robbo-join-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: mix($robbo-brand-white, $robbo-groups-warn, 90%);
+  color: $robbo-groups-warn;
+}
+
+// Pills like the catalog «Записаться» (_robbo-courses-catalog.scss); the page prefix beats
+// legacy LMS `button` gradients and Bootstrap `a` colours.
+.robbo-join-page .robbo-join-button {
+  display: inline-flex;
+  flex: 1 1 12rem;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 48px;
+  margin: 0;
+  padding: 0.5rem 1.5rem;
+  border: 2px solid $robbo-ui-primary;
+  border-radius: 24px;
+  background-image: none;
+  box-shadow: none;
+  font-family: $robbo-font-body;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: normal;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: none;
+  text-transform: none;
+  white-space: normal;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $robbo-groups-focus-ring;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+.robbo-join-page .robbo-join-button--primary {
+  &,
+  &:link,
+  &:visited {
+    background-color: $robbo-ui-primary;
+    color: $robbo-brand-white;
+  }
+
+  &:hover,
+  &:focus-visible {
+    border-color: $robbo-ui-primary-dark;
+    background-color: $robbo-ui-primary-dark;
+    color: $robbo-brand-white;
+  }
+}
+
+.robbo-join-page .robbo-join-button--secondary {
+  &,
+  &:link,
+  &:visited {
+    background-color: $robbo-brand-white;
+    color: $robbo-ui-primary-dark;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background-color: $robbo-ui-primary-light;
+    color: $robbo-ui-primary-dark;
+  }
+}
+
+// ==== instructor dashboard «Группы» ====
+// One class more than the stock `.instructor-dashboard-wrapper-2 section.idash-section#cohort_management`
+// rules (lms/static/sass/course/instructor/_instructor_2.scss), so no !important is needed.
+
+%robbo-groups-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  min-height: $robbo-groups-control-height;
+  margin: 0;
+  padding: 0.5rem 1.25rem;
+  border: 1px solid $robbo-ui-primary;
+  border-radius: $robbo-groups-radius-sm;
+  background: $robbo-ui-primary;
+  background-image: none;
+  box-shadow: none;
+  color: $robbo-brand-white;
+  font-family: $robbo-font-body;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  line-height: 1.2;
+  text-shadow: none;
+  text-transform: none;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    border-color: $robbo-ui-primary-dark;
+    background: $robbo-ui-primary-dark;
+    color: $robbo-brand-white;
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba($robbo-brand-green, 0.45);
+    outline-offset: 2px;
+  }
+
+  &:disabled,
+  &.is-disabled {
+    opacity: 0.5;
+  }
+
+  .icon {
+    margin: 0;
+  }
+}
+
+%robbo-groups-button-secondary {
+  @extend %robbo-groups-button;
+
+  border-color: $robbo-groups-border-strong;
+  background: $robbo-brand-white;
+  color: $robbo-brand-coal;
+
+  &:hover,
+  &:focus-visible {
+    border-color: $robbo-ui-primary;
+    background: $robbo-ui-primary-light;
+    color: $robbo-ui-primary-dark;
+  }
+}
+
+// destructive actions («Удалить с курса», «Удалить группу»): secondary, red text
+%robbo-groups-button-danger {
+  @extend %robbo-groups-button;
+
+  border-color: $robbo-groups-border-strong;
+  background: $robbo-brand-white;
+  color: $robbo-groups-fail;
+
+  &:hover,
+  &:focus-visible {
+    border-color: $robbo-groups-fail;
+    background: rgba($robbo-groups-fail, 0.06);
+    color: $robbo-groups-fail;
+  }
+
+  &:focus-visible {
+    outline-color: rgba($robbo-groups-fail, 0.4);
+  }
+}
+
+%robbo-groups-control {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: $robbo-groups-control-height;
+  margin: 0;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid $robbo-groups-border-strong;
+  border-radius: $robbo-groups-radius-sm;
+  background-color: $robbo-brand-white;
+  box-shadow: none;
+  color: $robbo-brand-coal;
+  font-family: $robbo-font-body;
+  font-size: 1rem;
+  line-height: 1.4;
+
+  &:focus {
+    border-color: $robbo-ui-primary;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($robbo-brand-green, 0.2);
+  }
+}
+
+%robbo-groups-card {
+  box-sizing: border-box;
+  border: 1px solid $robbo-groups-border;
+  border-radius: $robbo-groups-radius;
+  background: $robbo-brand-white;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+body.view-instructordash .instructor-dashboard-wrapper-2 section.idash-section#cohort_management {
+  max-width: 75rem;
+  font-family: $robbo-font-body;
+  color: $robbo-brand-coal;
+
+  > #header-cohort_management {
+    margin: 1.5rem 0 1rem;
+    font-family: $robbo-font-headline;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $robbo-brand-coal;
+  }
+
+  hr.divider {
+    display: none;
+  }
+
+  // ---- «Включить группы» ----
+  .cohorts-state-section {
+    @extend %robbo-groups-card;
+
+    display: flex;
+    align-items: center;
+    margin: 0 0 1rem;
+    padding: 0.25rem 1rem;
+    background: $robbo-groups-surface;
+
+    label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.625rem;
+      min-height: $robbo-groups-control-height;
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin: 0;
+      accent-color: $robbo-ui-primary;
+    }
+  }
+
+  // ---- group picker + «Добавить группу» ----
+  .cohort-management-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 1rem;
+
+    &::before,
+    &::after {
+      display: none; // stock clearfix; would be flex items
+    }
+
+    .cohort-management-nav-form {
+      flex: 1 1 20rem;
+      width: auto;
+      min-width: 0;
+      margin: 0;
+      float: none;
+    }
+
+    .form-actions {
+      margin: 0;
+      padding: 0;
+    }
+
+    .cohort-select {
+      @extend %robbo-groups-control;
+
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .action-create {
+      @extend %robbo-groups-button;
+
+      float: none;
+    }
+
+    &.is-disabled {
+      .cohort-select,
+      .action-create {
+        opacity: 0.45;
+      }
+    }
+  }
+
+  // ---- buttons inside the tab ----
+  .form-submit,
+  .file-upload-form .action-submit,
+  .message .action-primary {
+    @extend %robbo-groups-button;
+  }
+
+  .form-cancel {
+    display: inline-flex;
+    align-items: center;
+    min-height: $robbo-groups-control-height;
+    padding: 0 0.5rem;
+    color: $robbo-ui-primary-dark;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      color: $robbo-brand-coal;
+      text-decoration: underline;
+    }
+  }
+
+  // ---- cards: the selected group and «Добавить группу» ----
+  .cohort-management-settings.has-tabs,
+  .cohort-management-add-form .cohort-management-settings {
+    @extend %robbo-groups-card;
+
+    margin: 0 0 1rem;
+    overflow: hidden;
+  }
+
+  // the settings form nested in the group card is not a card of its own
+  .cohort-management-details .cohort-management-settings {
+    margin: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .cohort-management-add-form .cohort-management-settings > form > .form-title {
+    margin: 0;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid $robbo-groups-border;
+    background: $robbo-brand-white;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $robbo-brand-coal;
+  }
+
+  .cohort-management-add-form .tab-content.new-cohort-form {
+    padding: 1.5rem;
+    border: 0;
+  }
+
+  // ---- group card header ----
+  .cohort-management-group-header {
+    padding: 1.25rem 1.5rem 1rem;
+    border: 0;
+    background: $robbo-brand-white;
+
+    .robbo-cohort-header-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem 1rem;
+      margin: 0 0 0.5rem;
+    }
+
+    .group-header-title {
+      display: flex;
+      flex: 1 1 16rem;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem 0.75rem;
+      min-width: 0;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .button.robbo-cohort-delete {
+      @extend %robbo-groups-button-danger;
+
+      flex: 0 0 auto;
+    }
+
+    .title-value {
+      margin: 0;
+      font-family: $robbo-font-headline;
+      font-size: 1.375rem;
+      font-weight: 700;
+      color: $robbo-brand-coal;
+      overflow-wrap: anywhere;
+    }
+
+    .group-count {
+      display: inline-flex;
+      align-items: center;
+      margin: 0;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      background: $robbo-ui-primary-light;
+      color: $robbo-ui-primary-dark;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+  }
+
+  .cohort-management-group-header .cohort-management-group-setup {
+    padding: 0;
+    background: $robbo-brand-white;
+    color: $robbo-groups-muted;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+
+    &::after {
+      display: none; // stock clearfix
+    }
+
+    .setup-value {
+      width: auto;
+      margin: 0;
+      float: none;
+    }
+  }
+
+  // ---- tabs: underline like the course navigation ----
+  // One row; on a phone the row scrolls instead of wrapping under the underline.
+  .wrapper-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0 1.5rem;
+    top: 0;
+    margin: 0;
+    padding: 0 1.5rem;
+    overflow-x: auto;
+    border-bottom: 1px solid $robbo-groups-border;
+    background: $robbo-brand-white;
+    scrollbar-width: thin;
+
+    .tab {
+      flex: 0 0 auto;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .tab .toggle-button,
+    .tab.is-selected .toggle-button {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      min-height: 48px;
+      padding: 0.5rem 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      color: $robbo-groups-muted;
+      font-family: $robbo-font-body;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+
+      &::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        bottom: -1px;
+        left: 0;
+        height: 3px;
+        border-radius: 3px 3px 0 0;
+        background: transparent;
+      }
+
+      &:hover {
+        color: $robbo-brand-coal;
+      }
+
+      &:focus-visible {
+        outline: 3px solid rgba($robbo-brand-green, 0.45);
+        outline-offset: 2px;
+      }
+    }
+
+    .tab.is-selected .toggle-button {
+      color: $robbo-brand-coal;
+      cursor: default;
+
+      &::after {
+        background: $robbo-ui-primary;
+      }
+    }
+  }
+
+  .tab-content,
+  .cohort-management-group-add,
+  .cohort-management-details {
+    padding: 1.5rem;
+    border: 0;
+    background: $robbo-brand-white;
+  }
+
+  // ---- forms ----
+  .form-title {
+    margin: 0 0 0.25rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-family: $robbo-font-headline;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: $robbo-brand-coal;
+  }
+
+  .form-introduction {
+    margin: 0 0 1.25rem;
+
+    p {
+      margin: 0;
+      color: $robbo-groups-muted;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+    }
+
+    p + p {
+      margin-top: 0.5rem;
+    }
+  }
+
+  .form-fields {
+    padding: 0;
+  }
+
+  .form-field > .field ~ .field {
+    margin-top: 1.5rem; // the stock <hr> dividers between them are hidden
+  }
+
+  .form-fields .label,
+  .form-fields .form-label {
+    display: block;
+    margin: 0 0 0.5rem;
+    color: $robbo-brand-coal;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .form-fields .tip {
+    display: block;
+    margin-top: 0.375rem;
+    color: $robbo-groups-muted;
+    font-size: 0.8125rem;
+  }
+
+  .form-fields .field-text .input,
+  .cohort-management-group-add-students {
+    @extend %robbo-groups-control;
+  }
+
+  .cohort-management-group-add-students {
+    min-height: 8rem;
+    resize: vertical;
+  }
+
+  .field-radio {
+    label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 36px;
+      margin: 0;
+      font-size: 0.9375rem;
+      cursor: pointer;
+    }
+
+    input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      accent-color: $robbo-ui-primary;
+    }
+
+    .has-other-input-text {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.25rem 1rem;
+    }
+
+    .input-group-other .msg-inline {
+      margin: 0;
+    }
+
+    .copy-error {
+      margin: 0;
+      color: $robbo-groups-fail;
+      font-size: 0.875rem;
+
+      a {
+        color: $robbo-ui-primary-dark;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem 0 0;
+  }
+
+  // ---- result messages of the stock views (js/views/notification) ----
+  .message {
+    margin: 0 0 1rem;
+    padding: 0.875rem 1rem;
+    border: 1px solid $robbo-groups-border;
+    border-left: 4px solid $robbo-groups-muted;
+    border-radius: $robbo-groups-radius-sm;
+    background: $robbo-groups-surface;
+    box-shadow: none;
+
+    .message-title {
+      margin: 0 0 0.25rem;
+      color: $robbo-brand-coal;
+      font-size: 0.9375rem;
+      font-weight: 700;
+    }
+
+    .message-copy {
+      color: $robbo-groups-text-soft;
+      font-size: 0.875rem;
+    }
+
+    .message-actions {
+      margin-top: 0.75rem;
+    }
+
+    &.message-confirmation {
+      border-color: mix($robbo-brand-white, $robbo-brand-green, 70%);
+      border-left-color: $robbo-ui-primary;
+      background: $robbo-ui-primary-light;
+    }
+
+    &.message-warning {
+      border-color: mix($robbo-brand-white, $robbo-groups-warn, 70%);
+      border-left-color: $robbo-groups-warn;
+      background: mix($robbo-brand-white, $robbo-groups-warn, 94%);
+    }
+
+    &.message-error {
+      border-color: mix($robbo-brand-white, $robbo-groups-fail, 70%);
+      border-left-color: $robbo-groups-fail;
+      background: mix($robbo-brand-white, $robbo-groups-fail, 95%);
+    }
+  }
+
+  // ---- CSV upload + note about «Скачивание данных» ----
+  .wrapper-cohort-supplemental {
+    margin-top: 1.5rem;
+  }
+
+  .toggle-cohort-management-secondary {
+    display: inline-flex;
+    align-items: center;
+    min-height: $robbo-groups-control-height;
+    padding: 0;
+    color: $robbo-ui-primary-dark;
+    font-family: $robbo-font-body;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      color: $robbo-brand-coal;
+      text-decoration: underline;
+    }
+  }
+
+  .cohort-management-file-upload {
+    @extend %robbo-groups-card;
+
+    margin: 0 0 1rem;
+    padding: 1.5rem;
+
+    .form-title {
+      margin-bottom: 1rem;
+    }
+
+    .file-upload-form .form-fields {
+      padding: 0;
+    }
+
+    .input-file {
+      margin: 0;
+      color: $robbo-groups-text-soft;
+      font-family: $robbo-font-body;
+      font-size: 0.9375rem;
+
+      &::file-selector-button {
+        min-height: 40px;
+        margin-right: 0.75rem;
+        padding: 0.5rem 1rem;
+        border: 1px solid $robbo-groups-border-strong;
+        border-radius: $robbo-groups-radius-sm;
+        background: $robbo-brand-white;
+        color: $robbo-brand-coal;
+        font-family: $robbo-font-body;
+        font-weight: 600;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .cohort-management-supplemental {
+    margin: 0;
+    padding: 1rem 1.25rem;
+    border: 1px solid mix($robbo-brand-white, $robbo-brand-green, 75%);
+    border-left: 4px solid $robbo-ui-primary;
+    border-radius: $robbo-groups-radius-sm;
+    background: $robbo-ui-primary-light;
+    color: $robbo-brand-coal;
+
+    // Not flex: the «Скачивание данных» button sits inside the sentence.
+    p {
+      position: relative;
+      margin: 0;
+      padding-inline-start: 1.625rem;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+    }
+
+    .icon {
+      position: absolute;
+      top: 0.2rem;
+      left: 0;
+      margin: 0;
+      color: $robbo-ui-primary;
+    }
+
+    .link-cross-reference {
+      display: inline;
+      padding: 0;
+      font: inherit;
+      vertical-align: baseline;
+      border: 0;
+      background: none;
+      color: $robbo-ui-primary-dark;
+      font-weight: 700;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+
+  // ---- members of the group, above «Добавить слушателей» ----
+  .robbo-cohort-members {
+    margin: 0 0 2rem;
+    padding: 0 0 2rem;
+    border-bottom: 1px solid $robbo-groups-border;
+  }
+
+  .robbo-cohort-members-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1rem;
+    margin: 0 0 1rem;
+
+    .form-title {
+      margin: 0;
+    }
+  }
+
+  .robbo-cohort-members-search {
+    @extend %robbo-groups-control;
+
+    flex: 0 1 22rem;
+    width: auto;
+    min-width: 0;
+
+    &.is-hidden {
+      display: none;
+    }
+
+    @media (max-width: 575px) {
+      flex-basis: 100%;
+    }
+  }
+
+  .robbo-cohort-members-empty,
+  .robbo-cohort-members-found,
+  .robbo-cohort-members-note {
+    margin: 0;
+    color: $robbo-groups-muted;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .robbo-cohort-members-found,
+  .robbo-cohort-members-note {
+    margin-bottom: 0.75rem;
+  }
+
+  .robbo-cohort-members-list {
+    margin: 0;
+    padding: 0;
+    border: 1px solid $robbo-groups-border;
+    border-radius: $robbo-groups-radius-sm;
+    list-style: none;
+  }
+
+  .robbo-cohort-member {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin: 0;
+    padding: 0.75rem 1rem;
+
+    // not `& + &`: nested in the long root selector it would repeat the whole of it
+    &:not(:first-child) {
+      border-top: 1px solid $robbo-groups-border;
+    }
+  }
+
+  .robbo-cohort-member-info {
+    display: flex;
+    flex: 1 1 16rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.125rem;
+    min-width: 0;
+  }
+
+  .robbo-cohort-member-name {
+    color: $robbo-brand-coal;
+    font-size: 1rem;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+
+  .robbo-cohort-member-meta {
+    color: $robbo-groups-muted;
+    font-size: 0.875rem;
+    overflow-wrap: anywhere;
+  }
+
+  .robbo-cohort-member-badge {
+    margin-top: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 999px;
+    background: rgba($robbo-groups-warn, 0.12);
+    color: $robbo-groups-warn;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .robbo-cohort-member-actions {
+    display: flex;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .button.robbo-cohort-member-remove {
+    @extend %robbo-groups-button-secondary;
+  }
+
+  .button.robbo-cohort-member-unenroll {
+    @extend %robbo-groups-button-danger;
+  }
+
+  .button.robbo-cohort-members-more {
+    @extend %robbo-groups-button-secondary;
+
+    margin-top: 1rem;
+  }
+
+  .robbo-cohort-members-status {
+    margin: 0 0 1rem;
+    color: $robbo-ui-primary-dark;
+    font-size: 0.9375rem;
+    font-weight: 600;
+
+    &:empty {
+      margin: 0;
+    }
+  }
+
+  // what is left of the editor after «Удалить группу»
+  .robbo-cohort-deleted {
+    margin: 0;
+    padding: 1.25rem 1.5rem;
+    color: $robbo-ui-primary-dark;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.5;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  // ---- «Ссылка-приглашение» ----
+  .robbo-cohort-invite {
+    .robbo-cohort-invite-link {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      max-width: 48rem;
+      margin: 0 0 1rem;
+    }
+
+    .robbo-cohort-invite-url {
+      @extend %robbo-groups-control;
+
+      flex: 1 1 20rem;
+      width: auto;
+      min-width: 0;
+      background-color: $robbo-groups-surface;
+      font-weight: 600;
+    }
+
+    .is-disabled .robbo-cohort-invite-url {
+      color: $robbo-groups-muted;
+      text-decoration: line-through;
+    }
+
+    .robbo-cohort-invite-actions {
+      padding: 0;
+    }
+
+    .button.action-secondary {
+      @extend %robbo-groups-button-secondary;
+    }
+
+    .robbo-cohort-invite-note {
+      margin: 0 0 1rem;
+      color: $robbo-groups-muted;
+      font-size: 0.9375rem;
+    }
+
+    .robbo-cohort-invite-status {
+      min-height: 1.5em;
+      margin: 1rem 0 0;
+      color: $robbo-ui-primary-dark;
+      font-size: 0.9375rem;
+      font-weight: 600;
+
+      &:empty {
+        margin: 0;
+      }
+    }
+  }
+}

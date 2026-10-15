@@ -9,6 +9,7 @@ from opaque_keys.edx.keys import CourseKey
 
 from openedx.core import types
 from openedx.core.djangoapps.content.learning_sequences.api.processors.base import OutlineProcessor
+from openedx.core.lib.robbo_group_access import split_group_access
 from openedx.core.lib.teams_config import create_team_set_partitions_with_course_id, CONTENT_GROUPS_FOR_TEAMS
 from xmodule.partitions.partitions import Group
 from xmodule.partitions.partitions_service import get_user_partition_groups
@@ -67,7 +68,16 @@ class TeamPartitionGroupsOutlineProcessor(OutlineProcessor):
         if not user_partition_groups:
             return False
 
-        for partition_id, groups in user_partition_groups.items():
+        # Robbo: «hide from groups» rules (negative keys, openedx/core/lib/robbo_group_access.py) are not
+        # allow lists: check them on their own, or any of them would exclude everyone below.
+        allowed, hidden = split_group_access(user_partition_groups)
+        for partition_id, groups in hidden.items():
+            if partition_id in self.current_user_groups and self.current_user_groups[partition_id].id in groups:
+                return True
+        if not allowed:
+            return False
+
+        for partition_id, groups in allowed.items():
             if partition_id not in self.current_user_groups:
                 continue
             if self.current_user_groups[partition_id].id in groups:
