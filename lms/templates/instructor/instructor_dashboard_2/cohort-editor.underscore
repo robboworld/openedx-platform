@@ -4,9 +4,23 @@
     <ul class="wrapper-tabs">
         <li class="tab tab-manage_students is-selected" data-tab="manage_students"><button type="button" class="toggle-button"><span class="sr"><%- gettext('Selected tab') %> </span><%- gettext("Manage Learners") %></button></li>
         <li class="tab tab-settings" data-tab="settings"><button type="button" class="toggle-button"><%- gettext("Settings") %></button></li>
+        <%/* Robbo: group invite link, js/groups/views/robbo_cohort_invite.js */%>
+        <li class="tab tab-robbo_invite" data-tab="robbo_invite"><button type="button" class="toggle-button"><%- gettext("Invite link") %></button></li>
     </ul>
 
     <div class="cohort-management-group-add tab-content tab-content-manage_students" tabindex="-1">
+        <%/* Robbo: who is in the group, js/groups/views/robbo_cohort_members.js */%>
+        <section class="robbo-cohort-members" aria-labelledby="robbo-cohort-members-title">
+            <div class="robbo-cohort-members-head">
+                <h4 class="hd hd-3 form-title" id="robbo-cohort-members-title"><%- gettext('Group members') %></h4>
+                <label class="sr" for="robbo-cohort-members-search"><%- gettext('Search the group members') %></label>
+                <input type="search" id="robbo-cohort-members-search" class="robbo-cohort-members-search is-hidden"
+                       placeholder="<%- gettext('Name, username or email') %>" autocomplete="off">
+            </div>
+            <p class="robbo-cohort-members-status" role="status" aria-live="polite"></p>
+            <div class="robbo-cohort-members-body"></div>
+        </section>
+
         <form action="" method="post" id="cohort-management-group-add-form" class="cohort-management-group-add-form">
 
             <h4 class="hd hd-3 form-title"><%- gettext('Add learners to this cohort') %></h4>
@@ -43,5 +57,15 @@
     </div>
 
     <div class="cohort-management-details tab-content tab-content-settings is-hidden" tabindex="-1">
+    </div>
+
+    <div class="cohort-management-group-add robbo-cohort-invite tab-content tab-content-robbo_invite is-hidden" tabindex="-1">
+        <h4 class="hd hd-3 form-title"><%- gettext('Invite link') %></h4>
+        <div class="form-introduction">
+            <p><%- gettext('Learners who open the link join the course and this group. Someone without an account signs up first and joins right after that.') %></p>
+            <p><%- gettext('A learner already placed in another group of this course stays there: the link only opens the course for them. Move them to this group on the «Manage Learners» tab.') %></p>
+        </div>
+        <div class="robbo-cohort-invite-body"></div>
+        <p class="robbo-cohort-invite-status" role="status" aria-live="polite"></p>
     </div>
 </section>

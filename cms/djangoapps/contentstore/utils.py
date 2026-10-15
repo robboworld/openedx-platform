@@ -102,6 +102,7 @@ from openedx.core.djangoapps.site_configuration.models import SiteConfiguration
 from openedx.core.djangoapps.xblock.api import get_component_from_usage_key
 from openedx.core.lib.courses import course_image_url
 from openedx.core.lib.html_to_text import html_to_text
+from openedx.core.lib.robbo_group_access import deny_key
 from openedx.core.lib.teams_config import CONTENT_GROUPS_FOR_TEAMS, TEAM_SCHEME
 from openedx.features.content_type_gating.models import ContentTypeGatingConfig
 from openedx.features.content_type_gating.partitions import CONTENT_TYPE_GATING_SCHEME
@@ -681,6 +682,47 @@ def find_staff_lock_source(xblock):
     return find_staff_lock_source(parent)
 
 
+def get_group_access_source_info(xblock, course=None):
+    """
+    Robbo: the nearest section, subsection or unit above the xblock that restricts access by groups
+    itself (openedx/core/lib/robbo_group_access.py), as
+    ``{"category", "display_name", "selected_groups_label", "access_mode"}``, or None.
+
+    Studio locks the xblock's own group access settings while it is part of such a unit:
+    the unit's restriction already applies to it (group_access is inherited).
+    """
+    parent = xblock.get_parent()
+    while parent is not None and parent.category != 'course':
+        if parent.fields['group_access'].is_set_on(parent) and any((parent.group_access or {}).values()):
+            partition_info = get_visibility_partition_info(parent, course=course)
+            if partition_info['selected_partition_index'] >= 0:
+                return {
+                    "category": parent.category,
+                    "display_name": parent.display_name_with_default,
+                    "selected_groups_label": partition_info['selected_groups_label'],
+                    "access_mode": partition_info.get('access_mode', 'allow'),
+                }
+        parent = parent.get_parent()
+    return None
+
+
+def get_own_group_access_info(xblock, course=None):
+    """
+    Robbo: the group access rule the xblock sets itself (not inherited), as
+    ``{"selected_groups_label", "access_mode"}``, or None. Shown in the Studio lock (see
+    get_group_access_source_info) so that a rule set before the unit above was restricted can be removed.
+    """
+    if not (xblock.fields['group_access'].is_set_on(xblock) and any((xblock.group_access or {}).values())):
+        return None
+    partition_info = get_visibility_partition_info(xblock, course=course)
+    if partition_info['selected_partition_index'] < 0:
+        return None
+    return {
+        "selected_groups_label": partition_info['selected_groups_label'],
+        "access_mode": partition_info.get('access_mode', 'allow'),
+    }
+
+
 def ancestor_has_staff_lock(xblock, parent_xblock=None):
     """
     Returns True iff one of xblock's ancestors has staff lock.
@@ -833,6 +875,12 @@ def get_user_partition_info(xblock, schemes=None, course=None):
         # a deleted group
         # Also filter by scheme name if there's a filter defined.
         selected_groups = set(xblock.group_access.get(p.id, []) or [])
+        # Robbo: or the groups of the «hide from groups» rule (openedx/core/lib/robbo_group_access.py);
+        # Studio sets one rule or the other, «access_mode» below tells which.
+        denied_groups = set(xblock.group_access.get(deny_key(p.id), []) or [])
+        access_mode = 'deny' if denied_groups and not selected_groups else 'allow'
+        if access_mode == 'deny':
+            selected_groups = denied_groups
         if (p.groups or selected_groups) and (schemes is None or p.scheme.name in schemes):
 
             # First, add groups defined by the partition
@@ -860,12 +908,15 @@ def get_user_partition_info(xblock, schemes=None, course=None):
                 })
 
             # Put together the entire partition dictionary
-            partitions.append({
+            partition_info = {
                 "id": p.id,
                 "name": str(p.name),  # Convert into a string in case ugettext_lazy was used
                 "scheme": p.scheme.name,
                 "groups": groups,
-            })
+            }
+            if access_mode == 'deny':
+                partition_info["access_mode"] = access_mode  # Robbo: absent means 'allow'
+            partitions.append(partition_info)
 
     return partitions
 
@@ -929,11 +980,15 @@ def get_visibility_partition_info(xblock, course=None):
                 if selected_partition_index == -1:
                     selected_partition_index = index
 
-    return {
+    partition_info = {
         "selectable_partitions": selectable_partitions,
         "selected_partition_index": selected_partition_index,
         "selected_groups_label": selected_groups_label,
     }
+    # Robbo: the selected groups are the ones the block is hidden from; absent means 'allow'
+    if selected_partition_index >= 0 and selectable_partitions[selected_partition_index].get("access_mode") == "deny":
+        partition_info["access_mode"] = "deny"
+    return partition_info
 
 
 def get_xblock_aside_instance(usage_key):

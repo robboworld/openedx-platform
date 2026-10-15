@@ -42,6 +42,7 @@ from lms.djangoapps.ccx.models import CustomCourseForEdX
 from lms.djangoapps.mobile_api.models import IgnoreMobileAvailableFlagConfig
 from lms.djangoapps.courseware.toggles import course_is_invitation_only
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
+from openedx.core.lib.robbo_group_access import is_deny_key
 from openedx.features.course_duration_limits.access import check_course_expired
 from common.djangoapps.student import auth
 from common.djangoapps.student.models import CourseEnrollment, CourseEnrollmentAllowed
@@ -486,6 +487,10 @@ def _has_group_access(block, user, course_key):
     # use merged_group_access which takes group access on the block's
     # parents / ancestors into account
     merged_access = block.merged_group_access
+    # Robbo: «hide from groups» rules (negative keys, openedx/core/lib/robbo_group_access.py) are checked
+    # after the allow lists below.
+    denied_access = {-key: group_ids for key, group_ids in merged_access.items() if is_deny_key(key)}
+    merged_access = {key: group_ids for key, group_ids in merged_access.items() if not is_deny_key(key)}
 
     # resolve the partition IDs in group_access to actual
     # partition objects, skipping those which contain empty group directives.
@@ -567,6 +572,18 @@ def _has_group_access(block, user, course_key):
             user_message=message,
             user_fragment=fragment,
         )
+
+    # Robbo: the learner's group in a partition is one the block is hidden from.
+    for partition_id, group_ids in denied_access.items():
+        try:
+            partition = block._get_user_partition(partition_id)  # pylint: disable=protected-access
+        except NoSuchUserPartitionError:
+            continue  # a deleted partition hides nothing
+        if not partition.active:
+            continue
+        user_group = partition.scheme.get_group_for_user(course_key, user, partition)
+        if user_group is not None and user_group.id in group_ids:
+            return ACCESS_DENIED
 
     # all checks passed.
     return ACCESS_GRANTED

@@ -38,6 +38,7 @@ from common.djangoapps.edxmako.shortcuts import render_to_string
 from common.djangoapps.edxmako.services import MakoService
 from common.djangoapps.xblock_django.user_service import DjangoXBlockUserService
 from lms.djangoapps.lms_xblock.field_data import LmsFieldData
+from openedx.core.djangolib.markup import HTML, Text
 from openedx.core.lib.license import wrap_with_license
 from openedx.core.lib.cache_utils import CacheService
 from openedx.core.lib.xblock_utils import (
@@ -297,9 +298,16 @@ def _studio_wrap_xblock(xblock, view, frag, context, display_name_only=False):
         root_xblock = context.get('root_xblock')
         is_root = root_xblock and xblock.location == root_xblock.location
         is_reorderable = _is_xblock_reorderable(xblock, context)
-        selected_groups_label = get_visibility_partition_info(xblock)['selected_groups_label']
+        partition_info = get_visibility_partition_info(xblock)
+        selected_groups_label = partition_info['selected_groups_label']
         if selected_groups_label:
-            selected_groups_label = _('Access restricted to: {list_of_groups}').format(list_of_groups=selected_groups_label)  # lint-amnesty, pylint: disable=line-too-long
+            # Robbo: «Доступ ограничен: **…**», the groups or, for a block hidden from them, «everyone except …»
+            # (openedx/core/lib/robbo_group_access.py) in bold; the same label as the authoring MFE shows.
+            if partition_info.get('access_mode') == 'deny':
+                selected_groups_label = _('everyone except {list_of_groups}').format(list_of_groups=selected_groups_label)
+            selected_groups_label = Text(_('Access restricted to: {list_of_groups}')).format(
+                list_of_groups=HTML('<strong>{}</strong>').format(selected_groups_label),
+            )
         course = modulestore().get_course(xblock.location.course_key)
 
         can_edit = context.get('can_edit', True)

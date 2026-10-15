@@ -4,6 +4,7 @@ User Partitions Transformer
 
 
 from lms.djangoapps.courseware.access import has_access
+from openedx.core.lib.robbo_group_access import deny_key
 from openedx.core.djangoapps.content.block_structure.transformer import (  # lint-amnesty, pylint: disable=unused-import
     BlockStructureTransformer
 )
@@ -107,7 +108,11 @@ class UserPartitionTransformer(BlockStructureTransformer):
 
                 if access_denying_partition:
                     user_group = user_groups.get(access_denying_partition.id)
-                    allowed_groups = transformer_block_field.get_allowed_groups()[access_denying_partition.id]
+                    allowed_groups = transformer_block_field.get_allowed_groups().get(access_denying_partition.id)
+                    if allowed_groups is None:
+                        # Robbo: hidden by a «hide from groups» rule, there is nothing to unlock.
+                        access_denying_reasons.append(access_denying_partition.name)
+                        continue
                     access_denied_message = access_denying_partition.access_denied_message(
                         block_key, user, user_group, allowed_groups
                     )
@@ -177,6 +182,11 @@ class _MergedGroupAccess:
         # restrictions exist for that partition.
         self._access = {}
 
+        # Robbo: { partition.id: set(IDs of groups the block is hidden from) }, the «hide from groups»
+        # rules of openedx/core/lib/robbo_group_access.py. Unlike allow lists they add up down the tree.
+        # Read with getattr: pickles collected before this field existed don't have it.
+        self._denied = {}
+
         # Get the group_access value that is directly set on the xblock.
         # Do not get the inherited value since field inheritance doesn't
         # take a union of them for DAGs.
@@ -223,6 +233,17 @@ class _MergedGroupAccess:
             if merged_group_ids is not None:
                 self._access[partition.id] = merged_group_ids
 
+            # Robbo: parents hide a group only if every parent chain hides it (the same "most
+            # permissive chain wins" rule as above); the block's own rule adds to that.
+            denied_group_ids = set(xblock_group_access.get(deny_key(partition.id)) or [])
+            if merged_parent_access_list:
+                denied_group_ids |= set.intersection(*[
+                    set(getattr(merged_parent_access, '_denied', {}).get(partition.id, ()))
+                    for merged_parent_access in merged_parent_access_list
+                ])
+            if denied_group_ids:
+                self._denied[partition.id] = denied_group_ids
+
     def get_allowed_groups(self):
         return self._access
 
@@ -268,6 +289,15 @@ class _MergedGroupAccess:
             # If the user does not belong to one of the allowed groups for this
             # partition, then return this partition as one that would deny access
             elif user_groups[partition_id].id not in allowed_group_ids:
+                denied_access.append(partition_id)
+
+        # Robbo: the user's group is one the block is hidden from.
+        for partition_id, denied_group_ids in getattr(self, '_denied', {}).items():
+            if (
+                partition_id not in denied_access
+                and partition_id in user_groups
+                and user_groups[partition_id].id in denied_group_ids
+            ):
                 denied_access.append(partition_id)
 
         return denied_access

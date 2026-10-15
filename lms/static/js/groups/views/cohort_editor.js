@@ -2,16 +2,22 @@
 (function(define) {
     'use strict';
 
+    // Robbo: RobboCohortInviteView — the «Ссылка-приглашение» tab (group invite link);
+    // RobboCohortMembersView — the group's members on «Управление слушателями»; deleteGroup — «Удалить группу».
     define(['backbone', 'underscore', 'jquery', 'gettext', 'js/groups/views/cohort_form',
-        'edx-ui-toolkit/js/utils/html-utils', 'string_utils', 'js/models/notification', 'js/views/notification'],
-    function(Backbone, _, $, gettext, CohortFormView, HtmlUtils) {
+        'edx-ui-toolkit/js/utils/html-utils', 'js/groups/views/robbo_cohort_invite',
+        'js/groups/views/robbo_cohort_members', 'edx-ui-toolkit/js/utils/string-utils',
+        'string_utils', 'js/models/notification', 'js/views/notification'],
+    function(Backbone, _, $, gettext, CohortFormView, HtmlUtils, RobboCohortInviteView, RobboCohortMembersView,
+        StringUtils) {
         var CohortEditorView = Backbone.View.extend({
 
             events: {
                 'click .wrapper-tabs .tab': 'selectTab',
                 'click .tab-content-settings .action-save': 'saveSettings',
                 'click .tab-content-settings .action-cancel': 'cancelSettings',
-                'submit .cohort-management-group-add-form': 'addStudents'
+                'submit .cohort-management-group-add-form': 'addStudents',
+                'click .robbo-cohort-delete': 'deleteGroup'
             },
 
             initialize: function(options) {
@@ -41,13 +47,97 @@
                 });
                 this.cohortFormView.render();
                 this.$('.tab-content-settings').append(this.cohortFormView.$el);
+                this.undelegateViewEvents(this.robboInviteView);
+                this.robboInviteView = new RobboCohortInviteView({
+                    el: this.$('.tab-content-robbo_invite'),
+                    url: this.model.url() + '/robbo-invite'
+                });
+                this.renderRobboMembers();
                 return this;
+            },
+
+            // Robbo: lms/djangoapps/robbo_groups/views.py:cohort_delete. The learners go to an automatic group, so
+            // the cohort list is fetched again for the counts; the editor of the deleted group gives way to a message.
+            deleteGroup: function(event) {
+                var self = this,
+                    name = this.model.get('name'),
+                    message = StringUtils.interpolate(
+                        gettext('Delete the group «{group}»? Its learners stay in the course and move to an automatic '
+                            + 'group. The invite link of the group stops working. This cannot be undone.'),
+                        {group: name}
+                    );
+                event.preventDefault();
+                if (this.model.get('group_id') !== null && this.model.get('group_id') !== undefined) {
+                    message += ' ' + gettext('The access restrictions set up for this group no longer apply '
+                        + 'to its learners.');
+                }
+                // eslint-disable-next-line no-alert
+                if (!window.confirm(message)) {
+                    return;
+                }
+                this.$('.robbo-cohort-delete').prop('disabled', true);
+                $.post(this.model.url() + '/robbo-delete')
+                    .done(function(data) {
+                        var status = StringUtils.interpolate(gettext('The group «{group}» is deleted.'), {group: name});
+                        if (data.new_groups.length) {
+                            status += ' ' + StringUtils.interpolate(
+                                data.new_groups.length === 1
+                                    ? gettext('Its learners are now in «{newGroups}».')
+                                    : gettext('Its learners are now in the groups «{newGroups}».'),
+                                {newGroups: data.new_groups.join('», «')}
+                            );
+                        }
+                        self.refreshCohorts().always(function() {
+                            HtmlUtils.setHtml(self.$el, HtmlUtils.joinHtml(
+                                HtmlUtils.HTML('<p class="robbo-cohort-deleted" role="status" tabindex="-1">'),
+                                status,
+                                HtmlUtils.HTML('</p>')
+                            ));
+                            self.$('.robbo-cohort-deleted').focus();
+                        });
+                    })
+                    .fail(function(xhr) {
+                        self.$('.robbo-cohort-delete').prop('disabled', false);
+                        self.showErrorMessage(xhr.status === 400
+                            ? gettext('The default group cannot be deleted.')
+                            : gettext('Could not delete the group. Try again.'), true);
+                    });
+            },
+
+            renderRobboMembers: function() {
+                var self = this,
+                    cohortId = this.model.id;
+                this.undelegateViewEvents(this.robboMembersView);
+                this.robboMembersView = new RobboCohortMembersView({
+                    el: this.$('.robbo-cohort-members'),
+                    url: this.model.url() + '/robbo-members',
+                    cohortName: this.model.get('name'),
+                    isAutomatic: this.model.get('assignment_type') === 'random',
+                    state: this.robboMembersState,
+                    // like addStudents: fresh counts in the selector and the header, then render again
+                    onRemoved: function(state) {
+                        self.robboMembersState = state;
+                        self.refreshCohorts().done(function() {
+                            self.setCohort(self.cohorts.get(cohortId));
+                            self.robboMembersState = null;
+                        });
+                    }
+                });
+                this.robboMembersView.load();
             },
 
             renderGroupHeader: function() {
                 HtmlUtils.setHtml(this.$('.cohort-management-group-header'), this.groupHeaderTemplate({
-                    cohort: this.model
+                    cohort: this.model,
+                    isDefaultCohort: this.isDefaultCohort()
                 }));
+            },
+
+            // Robbo: the only automatic group, like CohortFormView.isDefault; it can't be deleted
+            // (robbo_groups api.delete_group).
+            isDefaultCohort: function() {
+                var randomCohorts = this.cohorts ? this.cohorts.where({assignment_type: 'random'}) : [];
+                return randomCohorts.length === 1 && randomCohorts[0].id === this.model.id;
             },
 
             selectTab: function(event) {
@@ -65,6 +155,9 @@
                 );
                 this.$('.tab-content').addClass('is-hidden');
                 this.$('.tab-content-' + tabName).removeClass('is-hidden').focus();
+                if (tabName === 'robbo_invite') {
+                    this.robboInviteView.load();
+                }
             },
 
             saveSettings: function(event) {
@@ -74,6 +167,7 @@
                 cohortFormView.saveForm()
                     .done(function() {
                         self.renderGroupHeader();
+                        self.renderRobboMembers(); // Robbo: the group may have become automatic or manual
                         cohortFormView.showMessage(gettext('Saved cohort'));
                     });
             },

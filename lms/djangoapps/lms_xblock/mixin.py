@@ -12,6 +12,7 @@ from xblock.fields import Boolean, Dict, Scope, String
 from xblock.validation import ValidationMessage
 
 from lms.lib.utils import is_unit
+from openedx.core.lib.robbo_group_access import is_deny_key
 from xmodule.modulestore.inheritance import UserPartitionList  # lint-amnesty, pylint: disable=wrong-import-order
 from xmodule.partitions.partitions import NoSuchUserPartitionError, NoSuchUserPartitionGroupError  # lint-amnesty, pylint: disable=wrong-import-order
 
@@ -126,7 +127,10 @@ class LmsBlockMixin(XBlockMixin):
         if self.group_access is not None:
             for partition_id, group_ids in self.group_access.items():  # pylint: disable=no-member
                 if group_ids:  # skip if the "local" group_access for this partition is None or empty.
-                    if partition_id in merged_access:
+                    if is_deny_key(partition_id):
+                        # Robbo: «hide from groups» rules (openedx/core/lib/robbo_group_access.py) add up.
+                        merged_access[partition_id] = sorted(set(merged_access.get(partition_id) or []) | set(group_ids))
+                    elif partition_id in merged_access:
                         if merged_access[partition_id] is False:
                             # special case - means somewhere up the hierarchy, merged access rules have eliminated
                             # all group_ids from this partition, so there's no possible intersection.
@@ -185,6 +189,8 @@ class LmsBlockMixin(XBlockMixin):
         component_group_access = self.group_access
 
         for user_partition_id, parent_group_ids in parent_group_access.items():
+            if is_deny_key(user_partition_id):
+                continue  # Robbo: hiding a block from more groups than its parent always makes sense
             component_group_ids = component_group_access.get(user_partition_id)  # pylint: disable=no-member
             if component_group_ids:
                 return parent_group_ids and not set(component_group_ids).issubset(set(parent_group_ids))
@@ -204,7 +210,8 @@ class LmsBlockMixin(XBlockMixin):
 
         for user_partition_id, group_ids in self.group_access.items():  # lint-amnesty, pylint:disable=no-member
             try:
-                user_partition = self._get_user_partition(user_partition_id)
+                # Robbo: a negative key is the «hide from groups» rule of that partition
+                user_partition = self._get_user_partition(abs(user_partition_id))
             except NoSuchUserPartitionError:
                 has_invalid_user_partitions = True
             else:

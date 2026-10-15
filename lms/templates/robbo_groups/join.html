@@ -1,0 +1,89 @@
+<%!
+# Copyright (C) 2026 Robbo <https://robbo.ru>
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# Part of the Robbo Open edX distribution (course groups). See NOTICE at repository root.
+from django.urls import reverse
+from django.utils.translation import gettext as _
+%>
+## Group invite page (/join/<code>), context from lms/djangoapps/robbo_groups/views.py:join.
+## state: anonymous | confirm | invalid | unavailable. The group itself is never named here: its name is
+## for the teacher. Styles: robbo-theme courseware/_robbo-groups.scss.
+<%page expression_filter="h"/>
+<%inherit file="../main.html" />
+
+<%block name="bodyclass">robbo-join-page</%block>
+
+<%block name="pagetitle">${_("Invitation to a course") if state in ('anonymous', 'confirm') else _("Invite link")}</%block>
+
+<main id="main" class="robbo-join" tabindex="-1">
+% if state in ('anonymous', 'confirm'):
+  <article class="robbo-join-card" aria-labelledby="robbo-join-title">
+    % if course_image_url:
+    <div class="robbo-join-card__media">
+      ## A course image that is set but missing from the course files: no empty frame.
+      <img src="${course_image_url}" alt="" onerror="this.parentNode.remove();">
+    </div>
+    % endif
+    <div class="robbo-join-card__body">
+      <p class="robbo-join-card__eyebrow">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 7.5 12 4l8 3.5-8 3.5z"/><path d="M7.5 9.2v4.3c0 1.4 2 2.5 4.5 2.5s4.5-1.1 4.5-2.5V9.2"/><path d="M20 7.5V13"/>
+        </svg>
+        ${_("Invitation to a course")}
+      </p>
+      <h1 class="robbo-join-card__title" id="robbo-join-title">${course_name}</h1>
+      % if course_description:
+      <p class="robbo-join-card__description">${course_description}</p>
+      % endif
+    % if state == 'anonymous':
+      <p class="robbo-join-card__text">${_("Sign up or sign in: the course opens right after that.")}</p>
+      <div class="robbo-join-card__actions">
+        <form method="post" action="${join_url}">
+          <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token}">
+          <input type="hidden" name="then" value="register">
+          <button type="submit" class="robbo-join-button robbo-join-button--primary">${_("Sign up and join")}</button>
+        </form>
+        <form method="post" action="${join_url}">
+          <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token}">
+          <input type="hidden" name="then" value="login">
+          <button type="submit" class="robbo-join-button robbo-join-button--secondary">${_("Sign in and join")}</button>
+        </form>
+      </div>
+    % else:
+      <p class="robbo-join-card__text">${_("You are signed in as {username}.").format(username=username)}
+        <a class="robbo-join-switch" href="${logout_url}">${_("Not you? Sign out")}</a>
+      </p>
+      <form class="robbo-join-card__actions" method="post" action="${join_url}">
+        <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token}">
+        <button type="submit" class="robbo-join-button robbo-join-button--primary">${_("Join the course")}</button>
+      </form>
+    % endif
+    </div>
+  </article>
+% else:
+  <article class="robbo-join-card robbo-join-card--message" aria-labelledby="robbo-join-title">
+    <div class="robbo-join-card__body">
+      <span class="robbo-join-card__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="28" height="28" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        % if state == 'unavailable':
+          <circle cx="12" cy="12" r="9"/><path d="M12 7.5v5"/><path d="M12 16.5h.01"/>
+        % else:
+          <path d="M9.5 14.5 8 16a3.5 3.5 0 0 1-5-5l1.5-1.5"/><path d="M14.5 9.5 16 8a3.5 3.5 0 0 1 5 5l-1.5 1.5"/><path d="M8.5 3.5 9.5 6"/><path d="M3.5 8.5 6 9.5"/><path d="M15.5 20.5l-1-2.5"/><path d="M20.5 15.5 18 14.5"/>
+        % endif
+        </svg>
+      </span>
+    % if state == 'unavailable':
+      <h1 class="robbo-join-card__title" id="robbo-join-title">${_("Could not join the course")}</h1>
+      <p class="robbo-join-card__text">${_("This course cannot be joined by an invite link. Ask your teacher for help.")}</p>
+    % else:
+      <h1 class="robbo-join-card__title" id="robbo-join-title">${_("The invite link does not work")}</h1>
+      <p class="robbo-join-card__text">${_("The teacher may have replaced or switched off the link. Ask them for a new one.")}</p>
+    % endif
+      <div class="robbo-join-card__actions">
+        <a class="robbo-join-button robbo-join-button--secondary" href="${reverse('courses')}">${_("Go to the course catalog")}</a>
+      </div>
+    </div>
+  </article>
+% endif
+</main>

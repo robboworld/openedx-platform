@@ -950,6 +950,8 @@ select {
     content: '';
     position: absolute;
     top: 83px;
+    // Robbo: a group access label on two lines would be crossed out at 83px; keep the line under it.
+    top: unquote('max(83px, calc(100% - 2px))');
     left: 25px;
     width: 95%;
     height: 1px;
@@ -1109,5 +1111,15 @@ select {
 
   .paste-component-button.button {
     @extend %button-primary-outline;
+  }
+}
+
+// Robbo: «Доступ ограничен: **…**», only the groups (or «всем, кроме …») in bold, like the authoring MFE
+// (cms/djangoapps/contentstore/views/preview.py).
+.wrapper-xblock .xblock-header-primary .header-details .xblock-group-visibility-label {
+  font-weight: 400;
+
+  strong {
+    font-weight: 700;
   }
 }
