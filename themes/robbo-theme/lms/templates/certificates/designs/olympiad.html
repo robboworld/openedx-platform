@@ -20,11 +20,13 @@ signature_src = primary_signatory.get('signature_image_path') or 'robbo-theme/im
 # Koa-era placeholders in imported courses: the old sheet ignored them, so they count as not filled in
 koa_placeholder_titles = {'scratch', 'robboscratch'}
 koa_placeholder_names = {'pavel frolov', 'robbo founder, pavel frolov'}
+# courses: the sheet stays English, so Cyrillic values count as not filled in either
+has_cyrillic = lambda value: any('\u0400' <= char <= '\u04ff' for char in value)
 signatory_title = (primary_signatory.get('title') or '').strip()
-if signatory_title.lower() in koa_placeholder_titles:
+if signatory_title.lower() in koa_placeholder_titles or has_cyrillic(signatory_title):
     signatory_title = ''
 signatory_name = (primary_signatory.get('name') or '').strip()
-if not signatory_name or signatory_name.lower() in koa_placeholder_names:
+if not signatory_name or signatory_name.lower() in koa_placeholder_names or has_cyrillic(signatory_name):
     signatory_name = 'Pavel Frolov'
 %>
 
@@ -80,7 +82,7 @@ if not signatory_name or signatory_name.lower() in koa_placeholder_names:
                                             % if signatory_title:
                                             <h4 class="signatory-name hd-5-middle name-part">${signatory_title}</h4>
                                             % else:
-                                            <h4 class="signatory-name hd-5-middle name-part">Chair</h4>
+                                            <h4 class="signatory-name hd-5-middle name-part">Chairman</h4>
                                             <h4 class="signatory-name hd-5-middle name-part">of the Organizing Committee</h4>
                                             % endif
                                             <h4 class="signatory-name hd-5-middle-name name-part">${signatory_name}</h4>
