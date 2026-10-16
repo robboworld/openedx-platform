@@ -1,5 +1,7 @@
 """
 Views related to operations on course objects
+
+Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
 """
 import copy
 import json
@@ -70,6 +72,11 @@ from xmodule.error_block import ErrorBlock  # lint-amnesty, pylint: disable=wron
 from xmodule.modulestore import EdxJSONEncoder  # lint-amnesty, pylint: disable=wrong-import-order
 from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
 from xmodule.modulestore.exceptions import DuplicateCourseError  # lint-amnesty, pylint: disable=wrong-import-order
+from openedx.core.lib.robbo_course_key_case import (  # lint-amnesty, pylint: disable=wrong-import-order
+    CourseKeyCaseConflictError,
+    check_course_key_case,
+    course_key_case_error_message,
+)
 from xmodule.tabs import CourseTab, CourseTabList, InvalidTabsException  # lint-amnesty, pylint: disable=wrong-import-order
 
 from ..course_group_config import (
@@ -917,6 +924,9 @@ def _create_or_rerun_course(request):
                 })
             except ValidationError as ex:
                 return JsonResponse({'error': str(ex)}, status=400)
+    except CourseKeyCaseConflictError as error:
+        message = course_key_case_error_message(error)
+        return JsonResponse({'ErrMsg': message, 'OrgErrMsg': message, 'CourseErrMsg': message})
     except DuplicateCourseError:
         return JsonResponse({
             'ErrMsg': _(
@@ -1001,6 +1011,8 @@ def create_new_course_in_store(store, user, org, number, run, fields):
         fields['grading_policy'] = get_default_grading_policy(fields.get('language'))
 
     with modulestore().default_store(store):
+        # Robbo: also refuse a key that differs only by letter case from a deleted course whose data remains.
+        check_course_key_case(modulestore().make_course_key(org, number, run))
         # Creating the course raises DuplicateCourseError if an existing course with this org/name is found
         new_course = modulestore().create_course(
             org,
@@ -1034,6 +1046,7 @@ def rerun_course(user, source_course_key, org, number, run, fields, background=T
     # verify org course and run don't already exist
     if store.has_course(destination_course_key, ignore_case=True):
         raise DuplicateCourseError(source_course_key, destination_course_key)
+    check_course_key_case(destination_course_key)  # Robbo: data of a deleted course in another letter case
 
     # if org or name of source course don't match the destination course,
     # verify user has access to the destination course

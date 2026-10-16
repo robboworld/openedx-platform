@@ -1,5 +1,7 @@
 """
 Test view handler for rerun (and eventually create)
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 
@@ -112,6 +114,47 @@ class TestCourseListing(ModuleStoreTestCase):
         course_orgs = get_course_organizations(dest_course_key)
         self.assertEqual(len(course_orgs), 1)
         self.assertEqual(course_orgs[0]['short_name'], self.source_course_key.org)
+
+    @mock.patch(
+        'openedx.core.lib.robbo_course_key_case.find_course_key_case_variant',
+        return_value='course-v1:Orgx+CS101+2015_T2',
+    )
+    def test_course_creation_refused_for_key_case_variant(self, _mock_variant):
+        """
+        Robbo: a key that differs only by letter case from a deleted course whose data remains is refused,
+        and the form gets the stored spelling. SQLite cannot produce the clash itself, so the lookup is mocked.
+        """
+        response = self.client.ajax_post(self.course_create_rerun_url, {
+            'org': 'orgX',
+            'number': 'CS101',
+            'display_name': 'Case variant',
+            'run': '2015_T2'
+        })
+        self.assertEqual(response.status_code, 200)
+        data = parse_json(response)
+        self.assertNotIn('course_key', data)
+        self.assertIn('course-v1:Orgx+CS101+2015_T2', data['ErrMsg'])
+        self.assertIsNone(self.store.get_course(CourseKey.from_string('course-v1:orgX+CS101+2015_T2')))
+
+    @mock.patch(
+        'openedx.core.lib.robbo_course_key_case.find_course_key_case_variant',
+        return_value='course-v1:ORIGIN+the_beginning+copy',
+    )
+    def test_rerun_refused_for_key_case_variant(self, _mock_variant):
+        """
+        Robbo: a rerun into a key that differs only by letter case from a deleted course is refused.
+        """
+        response = self.client.ajax_post(self.course_create_rerun_url, {
+            'source_course_key': str(self.source_course_key),
+            'org': self.source_course_key.org,
+            'course': self.source_course_key.course,
+            'run': 'copy',
+            'display_name': 'Case variant rerun',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = parse_json(response)
+        self.assertNotIn('destination_course_key', data)
+        self.assertIn('course-v1:ORIGIN+the_beginning+copy', data['ErrMsg'])
 
     def test_newly_created_course_has_web_certs_enabled(self):
         """
