@@ -641,7 +641,9 @@ class AccessTestCase(LoginEnrollmentTestCase, ModuleStoreTestCase, MilestonesTes
         course = CourseOverviewFactory.create(catalog_visibility=CATALOG_VISIBILITY_NONE)
         assert not access._has_access_course(user, 'see_about_page', course)
 
-        CourseEnrollmentFactory(user=user, course_id=course.id)
+        # enroll() refreshes the request cache of enrollment states, which the check above has filled;
+        # CourseEnrollmentFactory writes the row only, so the cached "not enrolled" would stay.
+        CourseEnrollment.enroll(user, course.id)
         assert access._has_access_course(user, 'see_about_page', course)
         assert not access._has_access_course(user, 'see_in_catalog', course)
 

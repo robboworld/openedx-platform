@@ -201,7 +201,11 @@ class LoginEnrollmentTestCase(TestCase):
         message_list = list(messages.get_messages(response.wsgi_request))
         assert len(message_list) == 1
         assert 'success' in message_list[0].tags
-        assert 'You have activated your account.' in message_list[0].message
+        # Robbo: MARKETING_EMAILS_OPT_IN is on, so activate_account says "confirmed your email".
+        if settings.MARKETING_EMAILS_OPT_IN:
+            assert 'You have confirmed your email.' in message_list[0].message
+        else:
+            assert 'You have activated your account.' in message_list[0].message
 
     # ============ User creation and login ==============
 
@@ -229,7 +233,10 @@ class LoginEnrollmentTestCase(TestCase):
             'username': username,
             'email': email,
             'password': password,
-            'name': 'username',
+            # Robbo: registration requires a three-word full name (registration_form.validate_name)
+            # and, where REGISTRATION_EXTRA_FIELDS has it required, a company without Latin letters.
+            'name': 'Test User Name',
+            'company': 'Тестовая школа',
             'terms_of_service': 'true',
             'honor_code': 'true',
         }
