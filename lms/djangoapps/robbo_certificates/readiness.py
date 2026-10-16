@@ -40,6 +40,9 @@ from .designs import DESIGN_OVERRIDE_KEY, get_design
 
 OK, FAIL, WARN, INFO, NOTE = 'ok', 'fail', 'warn', 'info', 'note'
 
+# Name Studio puts into a new certificate (cms/static/js/certificates/models/certificate.js) when the author keeps it
+STUDIO_DEFAULT_CERT_NAME = 'Name of the certificate'
+
 def _check(key, status, title, detail='', link=None, link_label=None, action=None, admin_only=False):
     return {
         'key': key, 'status': status, 'title': title, 'detail': detail,
@@ -332,11 +335,15 @@ def course_checks(course, can_fix=False, is_superuser=False):
         None if html_enabled else 'Открыть редактор курса',
     ))
 
+    design = get_design((course.cert_html_view_overrides or {}).get(DESIGN_OVERRIDE_KEY))
     active = certs_api.get_active_web_certificate(course)
     created = bool((course.certificates or {}).get('certificates'))
     if active:
+        active_name = (active.get('name') or '').strip()
+        if active_name in ('', STUDIO_DEFAULT_CERT_NAME):
+            active_name = design['title']
         active_title = 'Сертификат создан и активирован в редакторе курса'
-        active_detail = f'Активный сертификат: «{active.get("name") or "без названия"}».'
+        active_detail = f'Активный сертификат: «{active_name}».'
     elif created:
         active_title = 'Сертификат создан, но не активирован'
         active_detail = 'На странице «Сертификаты» в редакторе курса нажмите «Активировать».'
@@ -362,7 +369,6 @@ def course_checks(course, can_fix=False, is_superuser=False):
         studio_grading_url(course_key), 'Открыть оценивание',
     ))
 
-    design = get_design((course.cert_html_view_overrides or {}).get(DESIGN_OVERRIDE_KEY))
     checks.append(_check(
         'design', INFO, f'Оформление сертификата: «{design["title"]}»',
         'Меняется на странице «Сертификаты» в редакторе курса.',
