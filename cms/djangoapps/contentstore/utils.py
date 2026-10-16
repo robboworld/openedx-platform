@@ -69,7 +69,7 @@ from common.djangoapps.course_modes.models import CourseMode
 from common.djangoapps.edxmako.services import MakoService
 from common.djangoapps.student import auth
 from common.djangoapps.student.auth import STUDIO_EDIT_ROLES, has_studio_read_access, has_studio_write_access
-from common.djangoapps.student.models import CourseEnrollment
+from common.djangoapps.student.models import CourseAccessRole, CourseEnrollment
 from common.djangoapps.student.roles import (
     CourseInstructorRole,
     CourseStaffRole,
@@ -153,10 +153,13 @@ def remove_all_instructors(course_key):
     """
     Removes all instructor and staff users from the given course.
     """
-    staff_role = CourseStaffRole(course_key)
-    staff_role.remove_users(*staff_role.users_with_role())
-    instructor_role = CourseInstructorRole(course_key)
-    instructor_role.remove_users(*instructor_role.users_with_role())
+    # Robbo: MySQL compares course_id case-insensitively, so removing the team of a case twin
+    # (course-v1:Robbo+X next to course-v1:ROBBO+X) took the other course's team too. Remove exact-case rows only.
+    entries = CourseAccessRole.objects.filter(
+        course_id=course_key, role__in=(CourseStaffRole.ROLE, CourseInstructorRole.ROLE)
+    )
+    exact_ids = [entry.id for entry in entries if str(entry.course_id) == str(course_key)]
+    CourseAccessRole.objects.filter(id__in=exact_ids).delete()
 
 
 def delete_course(course_key, user_id, keep_instructors=False):

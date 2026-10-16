@@ -1,5 +1,7 @@
 """
 Signal handler for invalidating cached course overviews
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 
@@ -48,7 +50,13 @@ def _listen_for_course_delete(sender, course_key, **kwargs):  # pylint: disable=
     Catches the signal that a course has been deleted from Studio and
     invalidates the corresponding CourseOverview cache entry if one exists.
     """
-    CourseOverview.objects.filter(id=course_key).delete()
+    # Robbo: CourseOverview ids are matched case-insensitively on MySQL. Deleting a case twin
+    # (course-v1:Robbo+X next to course-v1:ROBBO+X) must keep the other course's overview.
+    overview_key = CourseOverview.objects.filter(id=course_key).values_list('id', flat=True).first()
+    if overview_key is not None and str(overview_key) != str(course_key):
+        LOG.warning(f'CourseOverview [{overview_key}] belongs to case twin of [{course_key}], not deleted.')
+    else:
+        CourseOverview.objects.filter(id=course_key).delete()
     courserun_key = str(course_key)
     LOG.info(f'DELETE_COURSE_DETAILS triggered upon course_deleted signal. Key: [{courserun_key}]')
     # This signal will be handled in `federated_content_connector` plugin
