@@ -1,6 +1,8 @@
 """
 Functions for accessing and displaying courses within the
 courseware.
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 import logging
@@ -14,6 +16,8 @@ from crum import get_current_request
 from dateutil.parser import parse as parse_date
 from django.conf import settings
 from django.core.cache import cache
+from django.db import connection
+from django.db.models import BinaryField, F, Func, OuterRef, Prefetch, Subquery
 from django.http import Http404, QueryDict
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -22,6 +26,7 @@ from fs.errors import ResourceNotFound
 from opaque_keys.edx.keys import UsageKey
 from path import Path as path
 
+from common.djangoapps.course_modes.models import CourseMode
 from common.djangoapps.edxmako.shortcuts import render_to_string
 from common.djangoapps.static_replace import replace_static_urls
 from common.djangoapps.util.date_utils import strftime_localized
@@ -896,6 +901,29 @@ def get_course_syllabus_section(course, section_key):
     raise KeyError("Invalid about key " + str(section_key))
 
 
+def _robbo_exact_case_course_modes():
+    """
+    Robbo: course modes whose course_id matches their course overview exactly, case included.
+
+    MySQL compares course keys case-insensitively. A mode left over from a deleted case twin
+    (course-v1:Robbo+X next to course-v1:ROBBO+X) joins the other course, and prefetch_related('modes')
+    then raises KeyError, so the whole catalog returns 500.
+    """
+    modes = CourseMode.objects.all()
+    if connection.vendor != 'mysql':
+        return modes
+
+    def as_binary(expression):
+        return Func(expression, template='CAST(%(expressions)s AS BINARY)', output_field=BinaryField())
+
+    # The overview id is read with a subquery: course__id would be folded into course_id itself.
+    overview_key = CourseOverview.objects.filter(id=OuterRef('course_id')).values('id')[:1]
+    return modes.alias(
+        robbo_mode_course_key=as_binary(F('course_id')),
+        robbo_overview_key=as_binary(Subquery(overview_key)),
+    ).filter(robbo_mode_course_key=F('robbo_overview_key'))
+
+
 @function_trace('get_courses')
 def get_courses(user, org=None, filter_=None, permissions=None, active_only=False, course_keys=None):
     """
@@ -910,7 +938,7 @@ def get_courses(user, org=None, filter_=None, permissions=None, active_only=Fals
         active_only=active_only,
         course_keys=course_keys
     ).prefetch_related(
-        'modes',
+        Prefetch('modes', queryset=_robbo_exact_case_course_modes()),
     ).select_related(
         'image_set'
     )
