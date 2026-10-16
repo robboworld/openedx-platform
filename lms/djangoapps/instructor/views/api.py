@@ -1888,6 +1888,21 @@ class StudentProgressUrlSerializer(serializers.Serializer):
     course_id = CourseKeyField(required=False)
     progress_url = serializers.SerializerMethodField()
 
+    def validate(self, attrs):
+        """
+        Resolve the student while validating, so an unknown identifier is a 400 and not a 500
+        (the DRF port dropped @common_exceptions_400, which used to handle it).
+        """
+        try:
+            attrs['user'] = get_student_from_identifier(attrs['unique_student_identifier'])
+        except User.DoesNotExist as err:
+            raise serializers.ValidationError({'unique_student_identifier': _('User does not exist.')}) from err
+        except MultipleObjectsReturned as err:
+            raise serializers.ValidationError({'unique_student_identifier': _(
+                'Found a conflict with given identifier. Please try an alternative identifier'
+            )}) from err
+        return attrs
+
     def get_progress_url(self, obj):    # pylint: disable=unused-argument
         """
         Return the progress URL for the student.
@@ -1896,7 +1911,7 @@ class StudentProgressUrlSerializer(serializers.Serializer):
         Returns:
             str: The URL for the progress of the student in the course.
         """
-        user = get_student_from_identifier(obj.get('unique_student_identifier'))
+        user = obj['user']
         course_id = obj.get('course_id')  # Adjust based on your data structure
 
         if course_home_mfe_progress_tab_is_active(course_id):
