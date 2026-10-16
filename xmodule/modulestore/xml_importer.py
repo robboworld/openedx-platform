@@ -643,6 +643,20 @@ class CourseImportManager(ImportManager):
         runtime = None
         # Creates a new course if it doesn't already exist
         if self.create_if_not_present and not existing_id:
+            # Robbo: refuse a key that differs only by letter case from a deleted course whose data remains.
+            from openedx.core.lib.robbo_course_key_case import (  # pylint: disable=import-outside-toplevel
+                CourseKeyCaseConflictError,
+                check_course_key_case,
+            )
+            try:
+                check_course_key_case(dest_id)
+            except CourseKeyCaseConflictError as error:
+                # run_imports() skips DuplicateCourseError silently; say why this course was not imported.
+                log.warning(
+                    "Skipping import of course %s: course %s existed before and differs only by letter case",
+                    dest_id, error.stored_key,
+                )
+                raise
             try:
                 new_course = self.store.create_course(
                     dest_id.org, dest_id.course, dest_id.run, self.user_id
