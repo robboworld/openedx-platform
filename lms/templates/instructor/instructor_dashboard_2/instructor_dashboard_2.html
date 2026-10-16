@@ -130,9 +130,13 @@ from openedx.core.djangolib.js_utils import (
             ## This is necessary so we don't scrape 'section_display_name' as a string.
             <% dname = section_data['section_display_name'] %>
             % if not is_hidden:
-              ## Robbo: a greyed-out tab (robbo_unavailable) still opens and explains what is missing
-              <% unavailable = section_data.get('robbo_unavailable', False) %>
-              <li class="nav-item"><button type="button" class="btn-link ${ section_data['section_key'] }${' hidden' if is_hidden else ''}${' robbo-tab-unavailable' if unavailable else ''}" data-section="${ section_data['section_key'] }" title="${_('Unavailable: open to see what is missing') if unavailable else ''}">${_(dname)}</button></li>
+              ## Robbo: a greyed-out tab (robbo_unavailable) still opens and explains what is missing;
+              ## other tabs keep the stock markup
+              % if section_data.get('robbo_unavailable', False):
+              <li class="nav-item"><button type="button" class="btn-link ${ section_data['section_key'] } robbo-tab-unavailable" data-section="${ section_data['section_key'] }" title="${_('Unavailable: open to see what is missing')}">${_(dname)}</button></li>
+              % else:
+              <li class="nav-item"><button type="button" class="btn-link ${ section_data['section_key'] }${' hidden' if is_hidden else ''}" data-section="${ section_data['section_key'] }">${_(dname)}</button></li>
+              % endif
             % endif
           % endfor
         </ul>

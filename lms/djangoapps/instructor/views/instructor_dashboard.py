@@ -353,7 +353,7 @@ def _section_special_exams(course, access):
 def _section_certificates_unavailable(conditions, checks):
     """
     Robbo: greyed-out certificates tab — which dashboard conditions are not met and how to fix them.
-    Rendered by robbo-theme instructor_dashboard_2/robbo-unavailable-certificates.html.
+    Rendered by instructor_dashboard_2/robbo-unavailable-certificates.html (styles in robbo-theme).
     """
     return {
         'section_key': 'certificates',
