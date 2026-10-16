@@ -10,6 +10,19 @@
 # overridden in robbo-certificate.css (.robbo-koa-cert).
 course_mode_class = course_mode if course_mode else ''
 cert_mode = course_mode or ''
+# Defaults for the chair; a signatory added in Studio overrides only the fields filled in (as in robbo.html)
+signatories = certificate_data.get('signatories', []) if certificate_data else []
+primary_signatory = signatories[0] if signatories else {}
+signature_src = primary_signatory.get('signature_image_path') or 'robbo-theme/images/certificates/signature_PF.png'
+# Koa-era placeholders in imported courses: the old sheet ignored them, so they count as not filled in
+koa_placeholder_titles = {'scratch', 'robboscratch'}
+koa_placeholder_names = {'pavel frolov', 'robbo founder, pavel frolov'}
+signatory_title = (primary_signatory.get('title') or '').strip()
+if signatory_title.lower() in koa_placeholder_titles:
+    signatory_title = ''
+signatory_name = (primary_signatory.get('name') or '').strip()
+if not signatory_name or signatory_name.lower() in koa_placeholder_names:
+    signatory_name = 'Павел Фролов'
 %>
 
 <main class="accomplishment accomplishment-main">
@@ -52,27 +65,25 @@ cert_mode = course_mode or ''
                     <h3 class="accomplishment-signatories-title sr-only">${_("Noted by")}</h3>
                     <div class="wrapper-signatories">
                         <div class="list-signatories">
-                            % if certificate_data:
-                                % for signatory in certificate_data.get('signatories', []):
-                                    % if signatory.get('signature_image_path'):
-                                    <div class="signatory robbo-koa-cert__signatory-row">
-                                        <div class="robbo-koa-cert__links">
-                                            <h4 class="signatory-name hd-5-middle label-hashtag">#ScratchOlympiad</h4>
-                                            <h4 class="signatory-name hd-5-middle label-hashtag robbo-koa-cert__web-link">creativeprogramming.org</h4>
-                                        </div>
+                                <div class="signatory robbo-koa-cert__signatory-row">
+                                    <div class="robbo-koa-cert__links">
+                                        <h4 class="signatory-name hd-5-middle label-hashtag">#ScratchOlympiad</h4>
+                                        <h4 class="signatory-name hd-5-middle label-hashtag robbo-koa-cert__web-link">creativeprogramming.org</h4>
+                                    </div>
 
-                                        <div class="signatory-simple robbo-koa-cert__sign-block">
-                                           <img class="signatory-signature robbo-koa-cert__signature" src="${static.url(signatory['signature_image_path'])}" alt="${signatory['name']}">
-                                            <div class="signatory-name robbo-koa-cert__role">
-                                               <h4 class="signatory-name hd-5-middle name-part">${_("Chair")}</h4>
-                                               <h4 class="signatory-name hd-5-middle name-part">${_("of the Organizing Committee")}</h4>
-                                               <h4 class="signatory-name hd-5-middle-name name-part">Павел Фролов</h4>
-                                             </div>
+                                    <div class="signatory-simple robbo-koa-cert__sign-block">
+                                        <img class="signatory-signature robbo-koa-cert__signature" src="${static.url(signature_src)}" alt="${signatory_name}">
+                                        <div class="signatory-name robbo-koa-cert__role">
+                                            % if signatory_title:
+                                            <h4 class="signatory-name hd-5-middle name-part">${signatory_title}</h4>
+                                            % else:
+                                            <h4 class="signatory-name hd-5-middle name-part">${_("Chair")}</h4>
+                                            <h4 class="signatory-name hd-5-middle name-part">${_("of the Organizing Committee")}</h4>
+                                            % endif
+                                            <h4 class="signatory-name hd-5-middle-name name-part">${signatory_name}</h4>
                                         </div>
                                     </div>
-                                    % endif
-                                % endfor
-                            % endif
+                                </div>
                         </div>
                     </div>
                 </div>
