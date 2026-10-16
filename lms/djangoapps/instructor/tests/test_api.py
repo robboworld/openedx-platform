@@ -3028,6 +3028,16 @@ class TestInstructorAPILevelsDataDump(SharedModuleStoreTestCase, LoginEnrollment
             self.assertIn(key, res_json)
             self.assertEqual(res_json[key], value)
 
+    @ddt.data('nobody@example.com', 'nobody')
+    def test_get_student_progress_url_unknown_student(self, identifier):
+        """ Test that an unknown email or username is a 400, not a 500. """
+        url = reverse('get_student_progress_url', kwargs={'course_id': str(self.course.id)})
+        response = self.client.post(url, {'unique_student_identifier': identifier})
+        assert response.status_code == 400
+        assert json.loads(response.content.decode('utf-8')) == {
+            'unique_student_identifier': ['User does not exist.']
+        }
+
     def test_get_student_progress_url_noparams(self):
         """ Test that the endpoint 404's without the required query params. """
         url = reverse('get_student_progress_url', kwargs={'course_id': str(self.course.id)})
