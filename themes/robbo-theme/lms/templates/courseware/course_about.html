@@ -10,6 +10,13 @@ from common.djangoapps.edxmako.shortcuts import marketing_link
 from openedx.core.djangolib.js_utils import js_escaped_string
 from openedx.core.djangolib.markup import clean_dangerous_html, HTML, Text
 from openedx.core.lib.courses import course_image_url
+
+# Theme must not require robbo_catalog (omitted in some images), as in courses.html.
+try:
+    from lms.djangoapps.courseware.robbo_catalog import course_image_or_placeholder as _robbo_course_image
+except ImportError:
+    def _robbo_course_image(url):
+        return url
 %>
 
 <%inherit file="../main.html" />
@@ -57,6 +64,10 @@ from openedx.core.lib.courses import course_image_url
 <section class="course-info about container" id="main">
 
   <%block name="course_about_header">
+  <%
+  ## Course without an uploaded image: placeholder right away instead of a 404 request.
+  about_image_url = _robbo_course_image(course_image_urls['large'])
+  %>
   <!-- Course profile header is updated inclusive of course heading and course image. -->
   <header class="course-profile">
     <div class="intro-inner-wrapper">
@@ -64,7 +75,7 @@ from openedx.core.lib.courses import course_image_url
         % if get_course_about_section(request, course, "video"):
         <a href="#video-modal" class="media" rel="leanModal">
           <div class="hero">
-            <img src="${course_image_urls['large']}" alt="" aria-hidden="true" />
+            <img src="${about_image_url}" alt="" aria-hidden="true" />
             <div class="play-intro"></div>
           </div>
         </a>
@@ -72,7 +83,7 @@ from openedx.core.lib.courses import course_image_url
         <div class="media">
           <div class="hero">
             <!-- NEW IN INDIGO: Add fallback image in case of no course-image using onerror -->
-            <img src="${course_image_urls['large']}" onerror="this.src='/theming/asset/images/no_course_image.png';" alt="" aria-hidden="true" />
+            <img src="${about_image_url}" onerror="this.src='/theming/asset/images/no_course_image.png';" alt="" aria-hidden="true" />
           </div>
         </div>
         % endif
