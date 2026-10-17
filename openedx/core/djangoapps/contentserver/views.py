@@ -51,6 +51,17 @@ log = logging.getLogger(__name__)
 
 HTTP_DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 
+# Robbo: course assets keep the Content-Type given at upload time, which the uploader controls and
+# the store does not verify. Without X-Content-Type-Options the browser may sniff an octet-stream or
+# mistyped response up to HTML and run it on the LMS origin. These types execute script simply by being
+# opened in the address bar, so they are additionally forced to download instead of rendering inline.
+# Images, PDF, CSS and JS are not listed: they must still load inline / as subresources.
+ROBBO_ACTIVE_CONTENT_TYPES = frozenset({
+    'text/html',
+    'application/xhtml+xml',
+    'image/svg+xml',
+})
+
 
 def is_asset_request(request):
     """Determines whether the given request is an asset request"""
@@ -195,6 +206,13 @@ def process_request(request):
         response['Accept-Ranges'] = 'bytes'
         response['Content-Type'] = content.content_type
         response['X-Frame-Options'] = 'ALLOW'
+
+        # Robbo: never let a stored asset be sniffed to HTML, and make active document types download
+        # instead of executing on our origin (see ROBBO_ACTIVE_CONTENT_TYPES).
+        response['X-Content-Type-Options'] = 'nosniff'
+        base_content_type = (content.content_type or '').split(';', 1)[0].strip().lower()
+        if base_content_type in ROBBO_ACTIVE_CONTENT_TYPES:
+            response['Content-Disposition'] = 'attachment'
 
         # Set any caching headers, and do any response cleanup needed.  Based on how much
         # middleware we have in place, there's no easy way to use the built-in Django
