@@ -48,7 +48,9 @@ from common.djangoapps.util.monitoring import monitor_import_failure
 from openedx.core.djangoapps.content_tagging.api import import_course_tags_from_csv
 from xmodule.assetstore import AssetMetadata
 from xmodule.contentstore.content import StaticContent
+from xmodule.contentstore.django import contentstore
 from xmodule.contentstore.robbo_asset_attrs import import_attrs
+from xmodule.contentstore.robbo_signature_assets import relink_course_signatures
 from xmodule.errortracker import make_error_tracker
 from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import ASSET_IGNORE_REGEX
@@ -749,6 +751,9 @@ class CourseImportManager(ImportManager):
         """
         Trigger celery task to create upstream links for newly imported blocks.
         """
+        # Robbo: signature images keep the exported course's path; point them at the imported files
+        relink_course_signatures(self.store, self.static_content_store or contentstore(), dest_id, self.user_id)
+
         # .. event_implemented_name: COURSE_IMPORT_COMPLETED
         # .. event_type: org.openedx.content_authoring.course.import.completed.v1
         COURSE_IMPORT_COMPLETED.send_event(
