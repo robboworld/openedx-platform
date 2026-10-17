@@ -76,6 +76,7 @@ from openedx.core.djangoapps.embargo.models import CountryAccessRule, Restricted
 from openedx.core.lib import ensure_cms
 from openedx.core.lib.extract_archive import safe_extractall
 from xmodule.contentstore.django import contentstore
+from xmodule.contentstore.robbo_signature_assets import relink_course_signatures
 from xmodule.course_block import CourseFields
 from xmodule.exceptions import SerializationError
 from xmodule.modulestore import COURSE_ROOT, LIBRARY_ROOT, ModuleStoreEnum
@@ -151,6 +152,9 @@ def rerun_course(source_course_key_string, destination_course_key_string, user_i
         store = modulestore()
         with store.default_store('split'):
             store.clone_course(source_course_key, destination_course_key, user_id, fields=fields)
+
+        # Robbo: signature images still point at the source course; point them at the copied files
+        relink_course_signatures(store, contentstore(), destination_course_key, user_id)
 
         update_unit_discussion_state_from_discussion_blocks(destination_course_key, user_id)
 
