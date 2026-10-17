@@ -30,6 +30,7 @@ Slug → source assets (replace files under ``images/catalog/`` when refreshing 
 from __future__ import annotations
 
 import hashlib
+import logging
 from typing import Any, Dict, List, Optional
 from urllib.parse import urlencode
 
@@ -41,9 +42,14 @@ from opaque_keys.edx.keys import CourseKey
 from openedx.core.djangoapps.models.course_details import CourseDetails
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from openedx.core.djangolib.markup import HTML, Text
+from xmodule.contentstore.content import StaticContent
+from xmodule.contentstore.django import contentstore
+from xmodule.exceptions import NotFoundError
 
 from common.djangoapps.student.models import CourseEnrollment
 from common.djangoapps.student.roles import GlobalStaff
+
+log = logging.getLogger(__name__)
 
 
 def user_can_see_robbo_instructor_catalog(user) -> bool:
@@ -377,19 +383,73 @@ def _absolute_url(request, path: str) -> str:
     return path
 
 
+CATALOG_PLACEHOLDER_IMAGE_URL = '/theming/asset/images/no_course_image.png'
+CATALOG_IMAGE_MISSING_CACHE_TTL = 10 * 60
+
+
+def _course_asset_is_missing(url: str) -> bool:
+    """
+    True when ``url`` is a course asset path (``/asset-v1:...``) with no file in the contentstore.
+
+    Studio sets ``course_image`` to ``images_course_image.jpg`` for every new course but never
+    uploads that file, so the card ``<img>`` got a 404 (Firefox: NS_BINDING_ABORTED in the console)
+    before ``onerror`` swapped in the placeholder. Cached per URL: a new course image gets a new
+    file name, and a file uploaded under the default name shows up after the TTL.
+    """
+    path = (url or '').split('?', 1)[0]
+    __, path = StaticContent.parse_versioned_asset_path(path)
+    if not path.startswith(('/asset-v1:', '/c4x/')):
+        return False
+
+    cache_key = 'robbo:catalog_image_missing:v1:' + hashlib.md5(path.encode('utf-8')).hexdigest()
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    try:
+        asset_key = StaticContent.get_location_from_path(path)
+    except InvalidKeyError:
+        return False
+    if asset_key is None:
+        return False
+    try:
+        contentstore().get_attrs(asset_key)
+        missing = False
+    except NotFoundError:
+        missing = True
+    except Exception:  # pylint: disable=broad-except
+        log.warning('Catalog: could not check course image %s', path, exc_info=True)
+        return False
+    cache.set(cache_key, missing, CATALOG_IMAGE_MISSING_CACHE_TTL)
+    return missing
+
+
+def course_image_or_placeholder(url: str) -> str:
+    """``url``, or the placeholder when it is a course asset whose file is not in the course's Files."""
+    if _course_asset_is_missing(url):
+        return CATALOG_PLACEHOLDER_IMAGE_URL
+    return url
+
+
 def _catalog_course_image_url(course) -> str:
-    """Thumbnail for catalog cards; ``get_courses`` returns ``CourseOverview`` instances."""
+    """
+    Thumbnail for catalog cards; ``get_courses`` returns ``CourseOverview`` instances.
+
+    A course image whose file is not in the course's Files gives the placeholder right away.
+    """
     image_urls = getattr(course, 'image_urls', None)
     if image_urls:
-        return (
+        url = (
             image_urls.get('small')
             or image_urls.get('large')
             or image_urls.get('raw')
             or ''
         )
-    return getattr(course, 'course_image_url', '') or (
-        settings.STATIC_URL + settings.DEFAULT_COURSE_ABOUT_IMAGE_URL
-    )
+    else:
+        url = getattr(course, 'course_image_url', '') or (
+            settings.STATIC_URL + settings.DEFAULT_COURSE_ABOUT_IMAGE_URL
+        )
+    return course_image_or_placeholder(url)
 
 
 
