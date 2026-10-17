@@ -104,6 +104,15 @@ def _delete_asset(course_key, asset_key_string):
                 )
                 return
 
+        # Robbo: a path copied from another course (import, rerun) must not delete that course's file
+        if asset_key.course_key != course_key:
+            LOGGER.info(
+                "In course %r, signature image %r belongs to another course, not deleting it.",
+                course_key,
+                asset_key_string,
+            )
+            return
+
         try:
             delete_asset(course_key, asset_key)
         # If the asset was not found, it doesn't have to be deleted...
