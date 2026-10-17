@@ -60,7 +60,8 @@ from openedx.core.djangolib.js_utils import (
   <script type="text/javascript" src="${static.url('js/vendor/jQuery-File-Upload/js/jquery.fileupload.js')}"></script>
   <script type="text/javascript" src="${static.url('js/vendor/jquery.qubit.js')}"></script>
   <%static:webpack entry='HtmlBlockEditor'/>
-  <link rel="stylesheet" href="${static.url('css/HtmlBlockEditor.css')}">
+  ## Robbo: built-in block CSS is collected under css-builtin-blocks/ (xmodule/util/builtin_assets.py); css/ gave a 404
+  <link rel="stylesheet" href="${static.url('css-builtin-blocks/HtmlBlockEditor.css')}">
   <%static:js group='instructor_dash'/>
 
   ## Backbone classes declared explicitly until RequireJS is supported
@@ -82,12 +83,16 @@ from openedx.core.djangolib.js_utils import (
     % endif
   % endfor
 
+  ## Robbo: Beamer (edX.org product news) only when configured; with an empty id it loaded a third-party
+  ## script for nothing and logged «Failed to initialize Beamer» on every tab switch
+  % if settings.BEAMER_PRODUCT_ID:
    <script>
 	var beamer_config = {
 		product_id : "${settings.BEAMER_PRODUCT_ID | n, js_escaped_string}",
 	};
 </script>
 <script type="text/javascript" src="https://app.getbeamer.com/js/beamer-embed.js" defer="defer"></script>
+  % endif
 </%block>
 
 ## Include Underscore templates

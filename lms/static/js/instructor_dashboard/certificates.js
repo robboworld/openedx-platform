@@ -109,16 +109,22 @@ var onCertificatesReady = null;
     var Certificates = (function() {
         // eslint-disable-next-line no-shadow
         function Certificates($section) {
+            // Robbo: the Pending Tasks block is rendered only with instructor generation (certificates.html),
+            // and the exceptions block has its own .no-pending-tasks-message: look inside the tasks container
+            // only, otherwise findAndAssert throws «Failed Element Selection» and the tab click a TypeError.
+            var $tasks = $section.find('.running-tasks-container');
             $section.data('wrapper', this);
-            this.instructor_tasks = new window.InstructorDashboard.util.PendingInstructorTasks($section);
+            this.instructor_tasks = $tasks.length
+                ? new window.InstructorDashboard.util.PendingInstructorTasks($tasks)
+                : null;
         }
 
         Certificates.prototype.onClickTitle = function() {
-            return this.instructor_tasks.task_poller.start();
+            return this.instructor_tasks && this.instructor_tasks.task_poller.start();
         };
 
         Certificates.prototype.onExit = function() {
-            return this.instructor_tasks.task_poller.stop();
+            return this.instructor_tasks && this.instructor_tasks.task_poller.stop();
         };
         return Certificates;
     }());
