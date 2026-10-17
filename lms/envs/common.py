@@ -1930,6 +1930,10 @@ STATICFILES_DIRS = [
     COMMON_ROOT / "static",
     PROJECT_ROOT / "static",
     NODE_MODULES_ROOT / "@edx",
+    # Robbo: @edx/paragon 2.6.4 static/paragon.min.css points its FontAwesome fonts at static/<hash>.woff2,
+    # i.e. paragon/static/static/; without this copy they 404 and break fa icons on pages that load it
+    # (instructor dashboard, wiki, track selection, password reset).
+    ("paragon/static/static", NODE_MODULES_ROOT / "@edx" / "paragon" / "static"),
     # Temporarily adding the following static path as we are migrating the built-in blocks' Sass to vanilla CSS.
     # Once all of the built-in blocks are extracted from edx-platform, we can remove this static path.
     # Relevant ticket: https://github.com/openedx/edx-platform/issues/35300
