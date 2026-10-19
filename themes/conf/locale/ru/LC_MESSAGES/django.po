@@ -4351,6 +4351,13 @@ msgstr ""
 "учащегося по определенному подразделу. Это вернет дату выполнения для "
 "учащегося к исходной дате выполнения задачи."
 
+#. Batch enrollment button under «Внесение в список группами»; Open edX ru has
+#. no entry for this context, so it showed in English
+#: lms/templates/instructor/instructor_dashboard_2/membership.html
+msgctxt "someone"
+msgid "Enroll"
+msgstr "Записать на курс"
+
 #: lms/templates/instructor/instructor_dashboard_2/membership.html
 msgid ""
 "To register and enroll a list of users in this course, choose a CSV file "
