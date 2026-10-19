@@ -1,0 +1,155 @@
+# Copyright (C) 2026 Robbo <https://robbo.ru>
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# Part of the Robbo Open edX distribution (human-readable errors). See NOTICE at repository root.
+#
+# The one source of error texts: the LMS and Studio read it directly (catalog.py), Caddy pages and
+# the MFE copy are generated from it by scripts/robbo-errors-sync.py in the meta repo — run it
+# after editing this file (`--check` tells whether the copies are stale).
+#
+# Codes: AREA-REASON, Latin capitals; never rename one, support looks codes up in old messages.
+# Texts follow .cursor/rules/user-facing-copy-ru.mdc and docs/human-errors.md §1: the title says
+# what did not work for the user, the message gives one reason and one thing to do, «вы».
+#
+# Per code:
+#   status   — HTTP status the code is answered with by default
+#   journal  — case: every occurrence goes to the journal (searchable by number);
+#              count: only a per-day counter (the user fixes it alone, numbers are not looked up)
+#   caddy    — Caddy answers it itself (502, 413…; SRV-ERROR for anything else), so the proxy pages
+#              need the text: no " \ < > & { } in it, Caddy and HTML would take them for syntax
+#   message_fallback — used when a {param} of `message` is not known
+#   support  — for support staff: what it means and what to answer (shown in the journal)
+
+ui:
+  code: {ru: "Код", en: "Code"}
+  copy: {ru: "Скопировать", en: "Copy"}
+  copied: {ru: "Скопировано", en: "Copied"}
+  # [brackets] mark the text of the link to support_url.
+  help_learner: {ru: "Покажите это сообщение преподавателю или [напишите в поддержку]",
+                 en: "Show this message to your teacher or [contact support]"}
+  help_staff: {ru: "Не получается? [Напишите в поддержку]", en: "Still not working? [Contact support]"}
+  retry: {ru: "Повторить", en: "Try again"}
+  reload: {ru: "Обновить страницу", en: "Reload the page"}
+  back: {ru: "Вернуться назад", en: "Go back"}
+  home: {ru: "На главную", en: "Go to the home page"}
+  login: {ru: "Войти", en: "Sign in"}
+  support_url: "https://support.robbo.world/"
+
+codes:
+  NET-OFFLINE:
+    journal: case
+    title: {ru: "Нет связи с сайтом", en: "No connection to the site"}
+    message: {ru: "Проверьте подключение к интернету и повторите действие.",
+              en: "Check your internet connection and try again."}
+    support: >-
+      Браузер не получил ответа. Если интернет у пользователя в порядке, найдите в журнале
+      SRV-RESTART за то же время: значит, сайт перезапускался.
+
+  SRV-RESTART:
+    status: 502
+    journal: case
+    caddy: true
+    title: {ru: "Сайт временно не отвечает", en: "The site is temporarily unavailable"}
+    message: {ru: "Скорее всего, идёт обновление. Подождите минуту и повторите действие.",
+              en: "It is probably being updated. Wait a minute and try again."}
+    support: >-
+      Caddy не дождался ответа LMS или редактора курсов (502/503/504): перезапуск при обновлении,
+      упавший процесс uwsgi или слишком долгий запрос. Много случаев подряд — проверить контейнеры.
+
+  SRV-ERROR:
+    status: 500
+    journal: case
+    caddy: true
+    title: {ru: "Не получилось выполнить действие", en: "Couldn't complete the action"}
+    message: {ru: "Это ошибка на нашей стороне, мы её записали. Попробуйте ещё раз позже.",
+              en: "This is an error on our side, and we have logged it. Please try again later."}
+    support: >-
+      Необработанная ошибка сервера. Трассировка — в карточке случая; передайте номер разработчикам.
+
+  SESSION-EXPIRED:
+    status: 401
+    journal: count
+    title: {ru: "Нужно войти заново", en: "Please sign in again"}
+    message: {ru: "Время входа на сайт истекло. Войдите ещё раз и повторите действие.",
+              en: "Your session has expired. Sign in again and repeat the action."}
+    support: >-
+      Сессия истекла или нет входа в редактор курсов. Помогает выйти и войти заново;
+      в редактор курсов — через кнопку «Студия».
+
+  ACCESS-DENIED:
+    status: 403
+    journal: count
+    title: {ru: "Нет доступа", en: "No access"}
+    message: {ru: "У вашей учётной записи нет доступа к этой странице или действию.",
+              en: "Your account doesn't have access to this page or action."}
+    support: >-
+      Проверьте роль пользователя в курсе (команда курса, запись на курс) и под какой учётной записью
+      выполнен вход.
+
+  NOT-FOUND:
+    status: 404
+    journal: count
+    title: {ru: "Страница не найдена", en: "Page not found"}
+    message: {ru: "Возможно, материал удалили или в ссылке ошибка. Проверьте адрес или вернитесь на главную.",
+              en: "The material may have been removed, or the link has a mistake. Check the address or go to the home page."}
+    support: "Ссылка ведёт на удалённый или несуществующий материал. Попросите прислать ссылку, которая не открылась."
+
+  TOO-MANY:
+    status: 429
+    journal: count
+    title: {ru: "Слишком много попыток", en: "Too many attempts"}
+    message: {ru: "Подождите несколько минут и попробуйте снова.",
+              en: "Wait a few minutes and try again."}
+    support: >-
+      Сработало ограничение частоты запросов (вход, регистрация, ссылки-приглашения). Проходит само
+      через несколько минут; если вход заблокирован надолго, блокировку снимает разработчик.
+
+  UPLOAD-SIZE:
+    status: 413
+    journal: count
+    caddy: true
+    title: {ru: "Не удалось загрузить файл", en: "Couldn't upload the file"}
+    message: {ru: "Файл больше {limit} МБ. Уменьшите его или разделите на несколько частей.",
+              en: "The file is larger than {limit} MB. Make it smaller or split it into parts."}
+    message_fallback: {ru: "Файл слишком большой. Уменьшите его или разделите на несколько частей.",
+                       en: "The file is too large. Make it smaller or split it into parts."}
+    support: >-
+      Лимиты загрузки: фото профиля 1 МБ, файлы ответа на задание 50 МБ, прочие загрузки на сайте
+      курсов 5 МБ, редактор курсов 250 МБ.
+
+  PAGE-STALE:
+    status: 403
+    journal: count
+    title: {ru: "Страница устарела", en: "The page is out of date"}
+    message: {ru: "Вернитесь назад, обновите страницу и повторите действие. Если не поможет, выйдите и войдите снова.",
+              en: "Go back, reload the page and repeat the action. If that doesn't help, sign out and sign in again."}
+    support: >-
+      Не совпал CSRF-токен: страница была открыта давно, cookies очищены или вход выполнен заново в
+      другой вкладке. Помогает обновить страницу; если повторяется — проверить, не блокирует ли браузер cookies.
+
+  BAD-INPUT:
+    status: 400
+    journal: count
+    title: {ru: "Проверьте введённые данные", en: "Check the entered data"}
+    message: {ru: "Сайт не смог принять данные в таком виде. Исправьте их и попробуйте снова.",
+              en: "The site couldn't accept the data in this form. Correct it and try again."}
+    support: "Запрос с неверными данными без точного кода. Спросите, что пользователь вводил."
+
+  UNIT-LOAD:
+    journal: case
+    title: {ru: "Не удалось загрузить материал", en: "Couldn't load the material"}
+    message: {ru: "Обновите страницу. Если материал так и не появится, откройте его позже.",
+              en: "Reload the page. If the material still doesn't appear, open it later."}
+    support: >-
+      Окно урока (learning) не смогло показать блок курса: сервер ответил ошибкой внутри окна. Рядом в
+      журнале по этому пользователю ищите SRV-ERROR или ACCESS-DENIED за то же время — там причина;
+      путь в карточке — адрес блока.
+
+  APP-CRASH:
+    journal: case
+    title: {ru: "Страница не загрузилась", en: "The page failed to load"}
+    message: {ru: "Обновите страницу. Если не поможет, откройте её снова через несколько минут.",
+              en: "Reload the page. If that doesn't help, open it again in a few minutes."}
+    support: >-
+      Ошибка в коде страницы в браузере пользователя. Текст ошибки и страница — в карточке случая;
+      передайте номер разработчикам.

@@ -1,0 +1,86 @@
+<%page expression_filter="h"/>
+<%doc>
+Copyright (C) 2026 Robbo <https://robbo.ru>
+SPDX-License-Identifier: AGPL-3.0-only
+Part of the Robbo Open edX distribution (human-readable errors). See NOTICE at repository root.
+
+The body of the LMS and Studio error pages (lms/djangoapps/robbo_errors/pages.py; docs/human-errors.md
+§1 in the meta repo): title, message, one action, the code with the incident number and «Copy», whom
+to turn to. The same look as Caddy's own error page (tutor-plugin-robbo-mfe-branding). Styles and the
+copy script are inline on purpose: an error page must work even when static files do not. Sizes are
+em from an explicit 16px: Studio sets html { font-size: 62.5% }, so rem would shrink the block there.
+Brand tokens: docs/design/robbo-brand-guidelines.md.
+</%doc>
+<% e = robbo_error %>
+<div class="robbo-error-block" lang="${e['lang']}">
+  <style>
+    .robbo-error-block { --robbo-green: #00af41; --robbo-coal: #383838; --robbo-grey: #989898; --robbo-white: #ffffff; --robbo-gap: 1em;
+      box-sizing: border-box; width: calc(100% - 2 * var(--robbo-gap)); max-width: 34em; margin: calc(var(--robbo-gap) * 3) auto; padding: calc(var(--robbo-gap) * 2);
+      border: 1px solid var(--robbo-grey); border-radius: 0.75em; background: var(--robbo-white); color: var(--robbo-coal);
+      font: 16px/1.5 "ProximaNova", "Proxima Nova", Helvetica, Arial, sans-serif; text-align: left; }
+    .robbo-error-block *, .robbo-error-block *::before, .robbo-error-block *::after { box-sizing: border-box; }
+    .robbo-error-block h1.robbo-error-block__title { margin: 0 0 0.5em; color: var(--robbo-coal); font-size: 1.5em; line-height: 1.25; font-weight: 700; text-align: left; text-transform: none; letter-spacing: normal; overflow-wrap: anywhere; }
+    .robbo-error-block p { margin: 0 0 var(--robbo-gap); overflow-wrap: anywhere; }
+    .robbo-error-block > :last-child { margin-bottom: 0; }
+    .robbo-error-block a { color: var(--robbo-coal); text-decoration: underline; }
+    .robbo-error-block a:hover { color: var(--robbo-green); }
+    .robbo-error-block :focus-visible { outline: 2px solid var(--robbo-green); outline-offset: 2px; }
+    .robbo-error-block__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--robbo-gap); margin: calc(var(--robbo-gap) * 1.5) 0; }
+    .robbo-error-block a.robbo-error-block__button, .robbo-error-block button.robbo-error-block__button { display: inline-flex; align-items: center; min-height: 2.75em;
+      padding: 0.5em 1.25em; border: 0; border-radius: 0.5em; background: var(--robbo-green); color: var(--robbo-white); font: inherit; text-decoration: none; cursor: pointer; box-shadow: none; }
+    .robbo-error-block .robbo-error-block__button:hover { filter: brightness(0.92); color: var(--robbo-white); }
+    .robbo-error-block__code { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5em; font-size: 0.875em; }
+    .robbo-error-block__number { font-family: ui-monospace, Menlo, Consolas, monospace; }
+    .robbo-error-block button.robbo-error-block__copy { min-height: 2.75em; padding: 0 0.75em; border: 1px solid var(--robbo-grey); border-radius: 0.5em;
+      background: transparent; color: var(--robbo-coal); font: inherit; cursor: pointer; box-shadow: none; text-transform: none; }
+    .robbo-error-block__help { font-size: 0.875em; }
+    @media (max-width: 575.98px) { .robbo-error-block { margin: var(--robbo-gap) auto; padding: calc(var(--robbo-gap) * 1.25); } }
+  </style>
+  <h1 class="robbo-error-block__title">${e['title']}</h1>
+  <p class="robbo-error-block__message">${e['message']}</p>
+  <div class="robbo-error-block__actions">
+    % if e['action'] == 'reload':
+      <button type="button" class="robbo-error-block__button" onclick="window.location.reload()">${e['action_label']}</button>
+    % elif e['action'] == 'back':
+      <button type="button" class="robbo-error-block__button" onclick="window.history.back()">${e['action_label']}</button>
+    % elif e['action'] == 'login':
+      <a class="robbo-error-block__button" href="${e['login_url']}">${e['action_label']}</a>
+    % else:
+      <a class="robbo-error-block__button" href="/">${e['action_label']}</a>
+    % endif
+    % if e['action'] != 'home':
+      <a href="/">${e['home_label']}</a>
+    % endif
+  </div>
+  <p class="robbo-error-block__code">
+    <span>${e['code_label']}: <span class="robbo-error-block__number" data-robbo-error-code>${e['code']} · ${e['short_id']}</span></span>
+    <button type="button" class="robbo-error-block__copy" data-robbo-error-copy data-copied="${e['copied_label']}" hidden>${e['copy_label']}</button>
+  </p>
+  <p class="robbo-error-block__help">${e['help_before']}<a href="${e['support_url']}" target="_blank" rel="noopener noreferrer">${e['help_link']}</a>${e['help_after']}</p>
+  <script>
+    (function () {
+      var block = document.currentScript.parentNode;
+      var button = block.querySelector('[data-robbo-error-copy]');
+      var label = block.querySelector('[data-robbo-error-code]').parentNode.textContent.replace(/\s+/g, ' ').trim();
+      var copy = function () {
+        if (navigator.clipboard && window.isSecureContext) {
+          return navigator.clipboard.writeText(label);
+        }
+        var field = document.createElement('textarea');
+        field.value = label;
+        field.setAttribute('readonly', '');
+        field.style.position = 'fixed';
+        field.style.opacity = '0';
+        document.body.appendChild(field);
+        field.select();
+        var done = document.execCommand('copy');
+        field.remove();
+        return done ? Promise.resolve() : Promise.reject(new Error('copy failed'));
+      };
+      button.hidden = false;
+      button.addEventListener('click', function () {
+        copy().then(function () { button.textContent = button.getAttribute('data-copied'); });
+      });
+    })();
+  </script>
+</div>
