@@ -22,6 +22,7 @@ import logging
 import os
 import unicodedata
 
+from django.conf import settings
 from django.core.cache import cache
 from django.utils.translation import gettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -29,6 +30,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 
 from common.djangoapps.util.json_request import JsonResponse
+from lms.djangoapps.robbo_errors.responses import robbo_error
 from xmodule.contentstore.content import StaticContent
 from xmodule.contentstore.django import contentstore
 from xmodule.exceptions import NotFoundError
@@ -195,7 +197,11 @@ def upload_asset(request, course_key):
         try:
             content = update_course_run_asset(course_key, upload_file)
         except AssetSizeTooLargeException as exception:
-            return JsonResponse({'error': str(exception)}, status=413)
+            # The human text with a code and number (lms/djangoapps/robbo_errors), not the English sentence.
+            return robbo_error(
+                request, 'UPLOAD-SIZE', 413, developer_message=str(exception),
+                limit=settings.MAX_ASSET_UPLOAD_FILE_SIZE_IN_MB,
+            )
         robbo_asset_folders.apply_upload_folder(request, content.location, created=status != STATUS_REPLACED)
         if status != STATUS_CREATED:
             log.info('Robbo asset upload %s: %s -> %s (%s)', course_key, original_name, content.name, status)
