@@ -35,6 +35,9 @@
 
     reverse_proxy {args.0} {
         header_up X-Forwarded-Port {{ 443 if ENABLE_HTTPS else 80 }}
+        # Robbo: the incident number of the request (lms.djangoapps.robbo_errors; also in every answer,
+        # patch caddyfile-proxy of this plugin)
+        header_up X-Request-ID {http.request.uuid}
     }
 
     {{ patch("caddyfile-proxy")|indent(4) }}
