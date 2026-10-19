@@ -694,7 +694,9 @@ def upsert_library_collection_index_doc(collection_key: LibraryCollectionLocator
     If the Collection is not found or disabled (i.e. soft-deleted), then delete it from the search index.
     """
     doc = searchable_doc_for_collection(collection_key)
-    update_components = False
+    # Robbo: backport from upstream master (2759d15cca) — Teak set `update_components` here, so renaming,
+    # hard-deleting or changing the items of an already indexed collection raised UnboundLocalError
+    update_items = False
 
     # Soft-deleted/disabled collections are removed from the index
     # and their components updated.
