@@ -9,7 +9,11 @@
       or course_card.get('start_label')
       or course_card.get('about_url')
   )
-  has_course_status = has_course_meta or course_card.get('progress_percent') is not None
+  has_course_status = (
+      has_course_meta
+      or course_card.get('progress_percent') is not None
+      or course_card.get('progress_pending')
+  )
   media_classes = 'robbo-courses-catalog__stub-media'
   if course_card.get('is_image_placeholder'):
       media_classes += ' is-placeholder'
@@ -56,6 +60,18 @@
                   <div class="robbo-courses-catalog__course-progress-bar"></div>
                 </div>
                 <span class="robbo-courses-catalog__course-progress-label">${course_card['progress_percent']}%</span>
+              </div>
+            % elif course_card.get('progress_pending'):
+              ## Robbo: the progress is not cached yet; robbo_courses_catalog.js loads it after the cards.
+              <div
+                class="robbo-courses-catalog__course-progress is-pending"
+                data-robbo-progress-pending
+                data-robbo-progress-label="Прогресс курса"
+                aria-busy="true"
+              >
+                <div class="robbo-courses-catalog__course-progress-track"></div>
+                <span class="robbo-courses-catalog__course-progress-placeholder"></span>
+                <span class="sr">Прогресс курса загружается</span>
               </div>
             % endif
           </div>

@@ -53,6 +53,7 @@ from lms.djangoapps.courseware.access_utils import check_course_open_for_learner
 from lms.djangoapps.learner_home.robbo_card_preview import get_learner_home_card_preview
 from lms.djangoapps.learner_home.serializers import (
     LearnerDashboardSerializer,
+    serialize_course_progress,
 )
 from lms.djangoapps.learner_home.utils import (
     get_masquerade_user,
@@ -337,15 +338,19 @@ def get_resume_urls_for_course_enrollments(user, course_enrollments):
 
 @function_trace("get_course_progress")
 def get_course_progress(user, course_enrollments):
-    """Unit completion summary for enrolled courses (cached, see robbo_course_progress)."""
+    """
+    Unit completion summary for enrolled courses, from the cache only (see robbo_course_progress),
+    and the course keys whose progress is not cached yet: the cards show without it, and the
+    dashboard loads it from RobboProgressView, so building a course tree no longer holds the page.
+    """
     from lms.djangoapps.courseware.robbo_course_progress import (  # pylint: disable=import-outside-toplevel
-        get_courses_progress,
+        get_cached_courses_progress,
     )
 
-    progress = get_courses_progress(
+    progress, pending = get_cached_courses_progress(
         user, [enrollment.course_overview for enrollment in course_enrollments]
     )
-    return {course_key: value for course_key, value in progress.items() if value}
+    return {course_key: value for course_key, value in progress.items() if value}, set(pending)
 
 
 def _get_courses_with_unmet_prerequisites(user, course_enrollments):
@@ -600,7 +605,7 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
         resume_button_urls, resume_block_titles = get_resume_data_for_course_enrollments(
             user, course_enrollments
         )
-        course_progress = get_course_progress(user, course_enrollments)
+        course_progress, course_progress_pending = get_course_progress(user, course_enrollments)
 
         # Get suggested courses
         suggested_courses = get_suggested_courses().get("courses", [])
@@ -633,6 +638,7 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
             "resume_course_urls": resume_button_urls,
             "resume_block_titles": resume_block_titles,
             "course_progress": course_progress,
+            "course_progress_pending": course_progress_pending,
             "course_share_urls": course_share_urls,
             "show_email_settings_for": show_email_settings_for,
             "fulfilled_entitlements": fulfilled_entitlements_by_course_key,
@@ -651,3 +657,32 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
                 response_data["robboCardPreview"] = card_preview
 
         return Response(response_data)
+
+
+class RobboProgressView(APIView):
+    """
+    Robbo: progress of the course cards the init API sent without it (``progressPending``).
+
+    GET ``/api/learner_home/robbo_progress`` (``?user=`` for staff, as for init) returns
+    ``{"progress": {<course id>: {completedCount, totalCount, percent} | null}}`` for the user's
+    enrollments; progress that is not cached yet is built here and cached for the next visit.
+    """
+
+    authentication_classes = InitializeView.authentication_classes
+    permission_classes = InitializeView.permission_classes
+
+    def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
+        from lms.djangoapps.courseware.robbo_course_progress import (  # pylint: disable=import-outside-toplevel
+            get_courses_progress,
+        )
+
+        user = get_masquerade_user(request) or request.user
+        site_org_whitelist, site_org_blacklist = get_org_block_and_allow_lists()
+        course_enrollments, _ = get_enrollments(user, site_org_whitelist, site_org_blacklist)
+        progress = get_courses_progress(user, [enrollment.course_overview for enrollment in course_enrollments])
+        return Response({
+            "progress": {
+                str(enrollment.course_id): serialize_course_progress(progress.get(enrollment.course_id))
+                for enrollment in course_enrollments
+            },
+        })

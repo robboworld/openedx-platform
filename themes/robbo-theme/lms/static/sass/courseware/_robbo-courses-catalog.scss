@@ -1115,6 +1115,25 @@
     text-align: left;
   }
 
+  // Progress that is not cached yet follows the cards (robbo_courses_catalog.js): a placeholder
+  // of the same size meanwhile.
+  .robbo-courses-catalog__course-progress-placeholder {
+    background: var(--robbo-cat-course-progress-bg);
+    border-radius: 999px;
+    flex-shrink: 0;
+    height: 0.75rem;
+    width: 2rem;
+  }
+
+  .robbo-courses-catalog__course-progress.is-pending .robbo-courses-catalog__course-progress-track,
+  .robbo-courses-catalog__course-progress-placeholder {
+    animation: robbo-catalog-progress-pulse 1.2s ease-in-out infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+  }
+
   .robbo-courses-catalog__stub-desc {
     -webkit-line-clamp: var(--robbo-cat-course-desc-max-lines);
     font-size: 0.875rem;
@@ -1578,6 +1597,12 @@ a.robbo-courses-catalog__featured-cta--enroll.is-enrolling {
     border-color: var(--robbo-cat-cta-bg);
     box-shadow: 0 0 0 3px var(--robbo-cat-stub-btn-ring);
     outline: none;
+  }
+}
+
+@keyframes robbo-catalog-progress-pulse {
+  50% {
+    opacity: 0.45;
   }
 }
 
