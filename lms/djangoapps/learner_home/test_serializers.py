@@ -178,16 +178,36 @@ class TestCourseSerializer(LearnerDashboardBaseTest):
         input_data = test_enrollment.course_overview
         output_data = CourseSerializer(input_data, context=test_context).data
 
-        expected_banner = input_data.image_urls["small"]
-        if settings.LMS_ROOT_URL and expected_banner and not urlparse(expected_banner).netloc:
-            expected_banner = urljoin(settings.LMS_ROOT_URL.rstrip("/") + "/", expected_banner)
+        # Robbo: the factory course image is not in the course's Files, so the card gets the
+        # themed placeholder and bannerImgIsPlaceholder (robbo_catalog).
+        expected_banner = "/theming/asset/images/no_course_image.png"
+        if settings.LMS_ROOT_URL:
+            expected_banner = urljoin(settings.LMS_ROOT_URL.rstrip("/") + "/", expected_banner.lstrip("/"))
 
         assert output_data == {
             "bannerImgSrc": expected_banner,
+            "bannerImgIsPlaceholder": True,
             "courseName": test_enrollment.course_overview.display_name_with_default,
             "courseNumber": test_enrollment.course_overview.display_number_with_default,
             "socialShareUrl": test_context["course_share_urls"][course_id],
         }
+
+    @mock.patch(
+        "lms.djangoapps.courseware.robbo_catalog._catalog_course_uses_placeholder_image",
+        return_value=False,
+    )
+    def test_uploaded_banner(self, _mock_placeholder):
+        """Robbo: a course image that is in the course's Files keeps its URL, absolute on the LMS host."""
+        test_enrollment = self.create_test_enrollment()
+        input_data = test_enrollment.course_overview
+        output_data = CourseSerializer(input_data, context=self.create_test_context(input_data.id)).data
+
+        expected_banner = input_data.image_urls["small"]
+        if settings.LMS_ROOT_URL and expected_banner and not urlparse(expected_banner).netloc:
+            expected_banner = urljoin(settings.LMS_ROOT_URL.rstrip("/") + "/", expected_banner)
+
+        assert output_data["bannerImgSrc"] == expected_banner
+        assert output_data["bannerImgIsPlaceholder"] is False
 
 
 class TestCourseRunSerializer(LearnerDashboardBaseTest):
@@ -203,6 +223,9 @@ class TestCourseRunSerializer(LearnerDashboardBaseTest):
                     "days_for_upsell": randint(0, 14),
                 }
             },
+            # Robbo: unit completion and the resume block title for the dashboard card
+            "course_progress": {course_id: {"completed": 1, "total": 4, "percent": 25}},
+            "resume_block_titles": {course_id: random_string()},
         }
 
     def test_with_data(self):
@@ -548,6 +571,8 @@ class TestCertificateSerializer(LearnerDashboardBaseTest):
                 "isRestricted": False,
                 "isEarned": True,
                 "isDownloadable": True,
+                # Robbo: only a "requesting" certificate is requestable
+                "isRequestable": False,
                 "certPreviewUrl": cert_url,
             },
         )
