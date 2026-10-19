@@ -642,6 +642,8 @@ class TestDashboardView(BaseTestDashboardView):
                 "isRestricted": False,
                 "isEarned": True,
                 "isDownloadable": True,
+                # Robbo: only a "requesting" certificate is requestable
+                "isRequestable": False,
                 "certPreviewUrl": mock_cert_info["cert_web_view_url"],
             },
         )
@@ -674,6 +676,7 @@ class TestDashboardView(BaseTestDashboardView):
             "isRestricted": False,
             "isEarned": False,
             "isDownloadable": False,
+            "isRequestable": False,  # Robbo
             "certPreviewUrl": None,
         }
 
