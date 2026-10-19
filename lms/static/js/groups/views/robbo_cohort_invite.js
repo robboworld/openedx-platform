@@ -6,12 +6,13 @@
  *
  * Instructor dashboard «Группы», cohort editor tab «Ссылка-приглашение»: the group's invite link
  * from lms/djangoapps/robbo_groups/views.py:cohort_invite. Loaded when the tab is opened.
+ * Failed requests say what failed with the code and number (js/robbo-errors).
  */
 (function(define) {
     'use strict';
 
-    define(['backbone', 'jquery', 'gettext', 'edx-ui-toolkit/js/utils/html-utils'],
-        function(Backbone, $, gettext, HtmlUtils) {
+    define(['backbone', 'jquery', 'gettext', 'edx-ui-toolkit/js/utils/html-utils', 'js/robbo-errors'],
+        function(Backbone, $, gettext, HtmlUtils, RobboErrors) {
             var RobboCohortInviteView = Backbone.View.extend({
 
                 events: {
@@ -37,8 +38,8 @@
                         .done(function(invite) {
                             self.show(invite, '');
                         })
-                        .fail(function() {
-                            self.showStatus(gettext('Could not load the invite link.'));
+                        .fail(function(xhr) {
+                            self.showStatus(RobboErrors.withCode(gettext('Could not load the invite link.'), xhr));
                         });
                 },
 
@@ -58,8 +59,8 @@
                         .done(function(invite) {
                             self.show(invite, status);
                         })
-                        .fail(function() {
-                            self.showStatus(gettext('Could not change the invite link.'));
+                        .fail(function(xhr) {
+                            self.showStatus(RobboErrors.withCode(gettext('Could not change the invite link.'), xhr));
                         });
                 },
 

@@ -8,14 +8,15 @@
  * «Показать ещё», «Убрать из группы» and «Удалить с курса» (lms/djangoapps/robbo_groups/views.py:cohort_members).
  * A learner removed from a group goes to an automatic group, so an automatic group has no «Убрать из группы».
  * After a removal the editor refreshes the cohort counts and renders again; `state` carries the search
- * and the message over to the new view.
+ * and the message over to the new view. Failed requests say what failed with the code and number
+ * (js/robbo-errors).
  */
 (function(define) {
     'use strict';
 
     define(['backbone', 'jquery', 'underscore', 'gettext', 'edx-ui-toolkit/js/utils/html-utils',
-        'edx-ui-toolkit/js/utils/string-utils'],
-    function(Backbone, $, _, gettext, HtmlUtils, StringUtils) {
+        'edx-ui-toolkit/js/utils/string-utils', 'js/robbo-errors'],
+    function(Backbone, $, _, gettext, HtmlUtils, StringUtils, RobboErrors) {
         var RobboCohortMembersView = Backbone.View.extend({
 
             events: {
@@ -65,7 +66,7 @@
                     })
                     .fail(function(xhr, textStatus) {
                         if (textStatus !== 'abort') {
-                            self.showStatus(gettext('Could not load the group members.'));
+                            self.showStatus(RobboErrors.withCode(gettext('Could not load the group members.'), xhr));
                         }
                     });
             },
@@ -137,7 +138,7 @@
                             return;
                         }
                         $button.prop('disabled', false);
-                        self.showStatus(gettext('Could not change the group. Try again.'));
+                        self.showStatus(RobboErrors.withCode(gettext('Could not change the group. Try again.'), xhr));
                     });
             },
 
