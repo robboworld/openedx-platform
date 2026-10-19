@@ -888,6 +888,9 @@ XQUEUE_INTERFACE = {
 ################################# Middleware ###################################
 
 MIDDLEWARE = [
+    # Robbo: first, so that its process_exception sees only the crashes no other middleware handled
+    # (incident number, error journal, JSON answer for AJAX; docs/human-errors.md in the meta repo).
+    'lms.djangoapps.robbo_errors.middleware.RobboErrorsMiddleware',
     'openedx.core.lib.x_forwarded_for.middleware.XForwardedForMiddleware',
     'edx_django_utils.security.csp.middleware.content_security_policy_middleware',
 
@@ -1760,6 +1763,8 @@ INSTALLED_APPS = [
     'lms.djangoapps.robbo_certificates.apps.RobboCertificatesConfig',
     # Robbo: group invite links (LMS); here only so deleting a user or a cohort in Studio cascades
     'lms.djangoapps.robbo_groups.apps.RobboGroupsConfig',
+    # Robbo: Studio errors go to the same error journal as the LMS ones
+    'lms.djangoapps.robbo_errors.apps.RobboErrorsConfig',
     'completion',
 
     # System Wide Roles
@@ -2538,6 +2543,14 @@ CORS_ALLOW_HEADERS = corsheaders_default_headers + (
     'content-range',
     'content-disposition',
 )
+# Robbo: the authoring MFE reads the incident number of an error answer (Caddy adds it).
+CORS_EXPOSE_HEADERS = ['X-Request-ID']
+# Robbo: a stale form gets the error page with a code (PAGE-STALE), not Django's bare CSRF page.
+CSRF_FAILURE_VIEW = 'lms.djangoapps.robbo_errors.handlers.csrf_failure'
+
+# Robbo error journal (lms.djangoapps.robbo_errors), shared with the LMS: see lms/envs/common.py.
+ROBBO_ERRORS_RETENTION_DAYS = 90
+ROBBO_ERRORS_MAX_PER_MINUTE = 300
 
 LOGIN_REDIRECT_WHITELIST = []
 

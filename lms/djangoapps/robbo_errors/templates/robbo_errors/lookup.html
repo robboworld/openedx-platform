@@ -1,0 +1,136 @@
+{% extends "admin/base_site.html" %}
+{% comment %}
+Copyright (C) 2026 Robbo <https://robbo.ru>
+SPDX-License-Identifier: AGPL-3.0-only
+Part of the Robbo Open edX distribution (human-readable errors). See NOTICE at repository root.
+
+Support page of the error journal: search by the code from the user's screen, or a summary per code.
+Uses the Django admin look (its CSS, no markup of its own to style) without being part of admin.
+{% endcomment %}
+
+{% block extrastyle %}{{ block.super }}{% include "robbo_errors/_style.html" %}{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+<div id="content-main" class="robbo-errors">
+  <div id="toolbar">
+    <form id="changelist-search" method="get" action="">
+      <div>
+        <label for="robbo-errors-q">Код с экрана пользователя, номер случая, логин или почта</label>
+        <input type="text" size="40" name="q" value="{{ query }}" id="robbo-errors-q"
+               placeholder="UPLOAD-SIZE · 7F3A-29C1" autofocus>
+        <input type="submit" value="Найти">
+        {% if query %}<a href="?">Сводка</a>{% endif %}
+      </div>
+    </form>
+  </div>
+
+  {% if query %}
+    {% if number %}
+      <p>Ищем случай с номером <strong>{{ number|upper|slice:":4" }}-{{ number|upper|slice:"4:" }}</strong>.
+      {% if code %}Вид с экрана — {{ code }}.{% endif %}</p>
+    {% elif code %}
+      <p>Последние случаи вида <strong>{{ code }}</strong>.</p>
+    {% endif %}
+
+    {% if incidents %}
+      <div class="results">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Номер</th>
+              <th scope="col">Вид</th>
+              <th scope="col">Когда</th>
+              <th scope="col">Пользователь</th>
+              <th scope="col">Где</th>
+              <th scope="col">Статус</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for row in incidents %}
+            <tr>
+              <td class="nowrap"><a href="{% url 'robbo_errors:incident' row.pk %}">{{ row.short_id|default:"счётчик" }}</a></td>
+              <td class="nowrap">{{ row.code }}</td>
+              <td>
+                {{ row.last_seen|date:"d.m.Y H:i:s" }}
+                {% if row.count > 1 %}<br>{{ row.count }} раз с {{ row.first_seen|date:"d.m H:i" }}{% endif %}
+              </td>
+              <td>
+                {% if row.user %}<a href="?q={{ row.user.username|urlencode }}">{{ row.user.username }}</a>{% else %}—{% endif %}
+                {% if row.audience %}<br><span class="help">{% if row.audience == "staff" %}команда курса{% else %}учащийся{% endif %}</span>{% endif %}
+              </td>
+              <td>{{ row.source }} · {{ row.site }}<br>{{ row.method }} {{ row.path|default:row.page }}</td>
+              <td>{% if row.status %}{{ row.status }}{% else %}нет ответа{% endif %}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if incidents|length >= search_limit %}<p class="help">Показаны последние {{ search_limit }}. Уточните поиск номером случая.</p>{% endif %}
+    {% else %}
+      <p>Ничего не нашлось.</p>
+      <ul>
+        <li>Номер случая — 8 знаков после «·», например 7F3A-29C1. Журнал хранит случаи 90 дней.</li>
+        <li>Виды, которые пользователь исправляет сам (например, UPLOAD-SIZE), не пишутся по одному —
+            только счётчиком в сводке. Что ответить, подскажет <a href="?#codes">справочник видов</a>.</li>
+        <li>Логин и почту ищем только точно.</li>
+      </ul>
+    {% endif %}
+
+  {% else %}
+    <h2>Сводка по видам ошибок</h2>
+    {% if summary %}
+      <div class="results">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Вид</th>
+              <th scope="col">Что видит пользователь</th>
+              <th scope="col">Сегодня</th>
+              <th scope="col">7 дней</th>
+              <th scope="col">30 дней</th>
+              <th scope="col">Пользователей за 7 дней</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for row in summary %}
+            <tr>
+              <td class="nowrap"><a href="?q={{ row.code|urlencode }}">{{ row.code }}</a></td>
+              <td>{{ row.title }}{% if row.journal == "count" %}<br><span class="help">только счётчик</span>{% endif %}</td>
+              <td>{{ row.today }}</td>
+              <td>{{ row.week }}</td>
+              <td>{{ row.month }}</td>
+              <td>{% if row.journal == "count" %}—{% else %}{{ row.users|default:0 }}{% endif %}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p>За последние 30 дней ошибок нет.</p>
+    {% endif %}
+
+    <h2 id="codes">Справочник видов</h2>
+    <div class="results">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Вид</th>
+            <th scope="col">Что видит пользователь</th>
+            <th scope="col">Что это и что ответить</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for kind in kinds %}
+          <tr>
+            <td class="nowrap">{{ kind.code }}</td>
+            <td><strong>{{ kind.title.ru }}</strong><br>{{ kind.message_ru }}</td>
+            <td>{{ kind.support }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

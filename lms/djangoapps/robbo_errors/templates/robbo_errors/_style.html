@@ -1,0 +1,13 @@
+{% comment %}
+Copyright (C) 2026 Robbo <https://robbo.ru>
+SPDX-License-Identifier: AGPL-3.0-only
+Part of the Robbo Open edX distribution (human-readable errors). See NOTICE at repository root.
+
+On top of the admin's base.css: long paths, user agents and tracebacks wrap instead of widening the page.
+{% endcomment %}
+<style>
+.robbo-errors table { width: 100%; }
+.robbo-errors td { overflow-wrap: anywhere; }
+.robbo-errors pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.robbo-errors #changelist-search input[type="text"] { max-width: 100%; }
+</style>
