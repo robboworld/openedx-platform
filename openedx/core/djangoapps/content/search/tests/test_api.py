@@ -765,6 +765,37 @@ class TestSearchApi(ModuleStoreTestCase):
             any_order=True,
         )
 
+    # Robbo: regression test for the `update_items` backport in upsert_library_collection_index_doc
+    @override_settings(MEILISEARCH_ENABLED=True)
+    def test_rename_indexed_collection(self, mock_meilisearch):
+        """
+        Test renaming a collection that is already in the search index.
+        """
+        updated_date = datetime(2023, 6, 7, 8, 9, 10, tzinfo=timezone.utc)
+        with freeze_time(updated_date):
+            authoring_api.update_collection(
+                self.collection.learning_package_id,
+                key=self.collection.key,
+                title="my_collection renamed",
+            )
+        mock_meilisearch.return_value.index.reset_mock()
+
+        # get_document() returns a mock, so the collection counts as already indexed
+        with patch(
+            "openedx.core.djangoapps.content.search.tasks.update_library_components_collections"
+        ) as mock_components_task, patch(
+            "openedx.core.djangoapps.content.search.tasks.update_library_containers_collections"
+        ) as mock_containers_task:
+            api.upsert_library_collection_index_doc(self.collection_key)
+
+        doc_collection = copy.deepcopy(self.collection_dict)
+        doc_collection["display_name"] = "my_collection renamed"
+        doc_collection["modified"] = updated_date.timestamp()
+        mock_meilisearch.return_value.index.return_value.update_documents.assert_called_once_with([doc_collection])
+        # Only new or restored collections re-index their components and containers
+        mock_components_task.delay.assert_not_called()
+        mock_containers_task.delay.assert_not_called()
+
     @override_settings(MEILISEARCH_ENABLED=True)
     def test_delete_collection(self, mock_meilisearch):
         """
