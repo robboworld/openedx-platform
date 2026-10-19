@@ -1,0 +1,77 @@
+{% extends "admin/base_site.html" %}
+{% comment %}
+Copyright (C) 2026 Robbo <https://robbo.ru>
+SPDX-License-Identifier: AGPL-3.0-only
+Part of the Robbo Open edX distribution (human-readable errors). See NOTICE at repository root.
+
+One incident of the error journal, for support: what the user saw, what it means, where it happened.
+Tables only: the admin's base.css styles them, its form styles are not loaded outside admin forms.
+{% endcomment %}
+
+{% block extrastyle %}{{ block.super }}{% include "robbo_errors/_style.html" %}{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+<div id="content-main" class="robbo-errors">
+  <p><a href="{% url 'robbo_errors:lookup' %}">← Журнал ошибок</a></p>
+
+  <div class="module">
+    <table>
+      <caption>Что видел пользователь</caption>
+      <tbody>
+        <tr><td><strong>{{ user_text.title }}</strong><br>{{ user_text.message }}</td></tr>
+        {% if kind and kind.support %}
+          <tr><td><strong>Что это и что ответить:</strong> {{ kind.support }}</td></tr>
+        {% elif not kind %}
+          <tr><td>Вида {{ incident.code }} нет в каталоге: пользователь видел общий текст ошибки сервера.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="module">
+    <table>
+      <caption>Случай</caption>
+      <tbody>
+        <tr><th scope="row">Номер</th><td>{{ incident.short_id|default:"— (счётчик за день)" }}</td></tr>
+        <tr><th scope="row">Вид</th><td>{{ incident.code }}</td></tr>
+        <tr><th scope="row">Когда</th><td>
+          {{ incident.last_seen|date:"d.m.Y H:i:s" }}
+          {% if incident.count > 1 %}— {{ incident.count }} раз, первый {{ incident.first_seen|date:"d.m.Y H:i:s" }}{% endif %}
+        </td></tr>
+        {% if merged_numbers %}
+          <tr><th scope="row">Номера повторов</th><td>{{ merged_numbers|join:", " }}</td></tr>
+        {% endif %}
+        <tr><th scope="row">Пользователь</th><td>
+          {% if incident.user %}
+            {{ incident.user.username }} · <a href="{% url 'robbo_errors:lookup' %}?q={{ incident.user.username|urlencode }}">все ошибки этого пользователя</a>
+          {% else %}—{% endif %}
+          {% if incident.audience == "staff" %}<br><span class="help">команда курса: в сообщении была ссылка на поддержку</span>{% elif incident.audience %}<br><span class="help">учащийся: в сообщении было «покажите преподавателю»</span>{% endif %}
+        </td></tr>
+        <tr><th scope="row">Сайт</th><td>{{ incident.site|default:"—" }} ({{ incident.source }})</td></tr>
+        <tr><th scope="row">Запрос</th><td>{{ incident.method }} {{ incident.path|default:"—" }} → {% if incident.status %}{{ incident.status }}{% else %}нет ответа{% endif %}</td></tr>
+        {% if incident.page %}
+          <tr><th scope="row">Страница</th><td>{{ incident.page }}</td></tr>
+        {% endif %}
+        {% if incident.user_agent %}
+          <tr><th scope="row">Браузер</th><td>{{ incident.user_agent }}</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if incident.developer_message or incident.traceback %}
+    <div class="module">
+      <table>
+        <caption>Для разработчиков</caption>
+        <tbody>
+          {% if incident.developer_message %}<tr><td><pre>{{ incident.developer_message }}</pre></td></tr>{% endif %}
+          {% if incident.traceback %}
+            <tr><td><details><summary>Трассировка</summary><pre>{{ incident.traceback }}</pre></details></td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

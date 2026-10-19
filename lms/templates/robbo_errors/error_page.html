@@ -1,0 +1,15 @@
+<%page expression_filter="h"/>
+<%doc>
+Copyright (C) 2026 Robbo <https://robbo.ru>
+SPDX-License-Identifier: AGPL-3.0-only
+Part of the Robbo Open edX distribution (human-readable errors). See NOTICE at repository root.
+
+LMS error page (lms/djangoapps/robbo_errors/pages.py): the site's header and footer around the error block.
+</%doc>
+<%inherit file="../main.html" />
+<%block name="pagetitle">${robbo_error['title']}</%block>
+<%block name="bodyclass">view-robbo-error</%block>
+
+<main id="main" aria-label="Content" tabindex="-1">
+  <%include file="/robbo_errors/_error_block.html" />
+</main>

@@ -19,6 +19,7 @@ from common.djangoapps.student import views as student_views
 from common.djangoapps.util import views as util_views
 from lms.djangoapps.branding import views as branding_views
 from lms.djangoapps.courseware import robbo_card_preview, robbo_course_interest
+from lms.djangoapps.robbo_errors import handlers as robbo_errors_handlers
 from lms.djangoapps.learner_home import robbo_card_preview as learner_home_robbo_card_preview
 from lms.djangoapps.courseware.masquerade import MasqueradeView
 from lms.djangoapps.courseware.block_render import (
@@ -36,7 +37,6 @@ from lms.djangoapps.discussion.config.settings import is_forum_daily_digest_enab
 from lms.djangoapps.discussion.notification_prefs import views as notification_prefs_views
 from lms.djangoapps.instructor.views import instructor_dashboard as instructor_dashboard_views
 from lms.djangoapps.instructor_task import views as instructor_task_views
-from lms.djangoapps.static_template_view import views as static_template_view_views
 from lms.djangoapps.staticbook import views as staticbook_views
 from openedx.core.apidocs import api_info
 from openedx.core.djangoapps.auth_exchange.views import LoginWithAccessTokenView
@@ -71,10 +71,12 @@ if settings.DEBUG or settings.FEATURES.get('ENABLE_DJANGO_ADMIN_SITE'):
 # Custom error pages
 # These are used by Django to render these error codes. Do not remove.
 # pylint: disable=invalid-name
-handler403 = static_template_view_views.render_403
-handler404 = static_template_view_views.render_404
-handler429 = static_template_view_views.render_429
-handler500 = static_template_view_views.render_500
+# Robbo: the error page with a code and number, JSON for AJAX (lms/djangoapps/robbo_errors/handlers.py)
+handler400 = robbo_errors_handlers.handler400
+handler403 = robbo_errors_handlers.handler403
+handler404 = robbo_errors_handlers.handler404
+handler429 = robbo_errors_handlers.handler429
+handler500 = robbo_errors_handlers.handler500
 
 notification_prefs_urls = [
     path('notification_prefs/enable/', notification_prefs_views.ajax_enable),
@@ -381,6 +383,7 @@ urlpatterns += [
     path('', include('lms.djangoapps.robbo_changelog.urls', namespace='robbo_changelog')),
     path('', include('lms.djangoapps.robbo_ora.urls', namespace='robbo_ora')),
     path('', include('lms.djangoapps.robbo_gradebook.urls', namespace='robbo_gradebook')),
+    path('', include('lms.djangoapps.robbo_errors.urls', namespace='robbo_errors')),
 
     re_path(r'^courses/?$', branding_views.courses, name='courses'),
 

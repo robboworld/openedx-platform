@@ -19,6 +19,7 @@ import openedx.core.djangoapps.lang_pref.views
 from cms.djangoapps.contentstore import toggles
 from cms.djangoapps.contentstore import views as contentstore_views
 from cms.djangoapps.contentstore import robbo_group_access
+from lms.djangoapps.robbo_errors import handlers as robbo_errors_handlers
 from cms.djangoapps.contentstore.views.block import xblock_edit_view
 from cms.djangoapps.contentstore.views.organization import OrganizationListView
 from openedx.core.apidocs import api_info
@@ -37,8 +38,11 @@ if password_policy_compliance.should_enforce_compliance_on_login():
 # Custom error pages
 # These are used by Django to render these error codes. Do not remove.
 # pylint: disable=invalid-name
-handler404 = contentstore_views.render_404
-handler500 = contentstore_views.render_500
+# Robbo: the error page with a code and number, JSON for AJAX (lms/djangoapps/robbo_errors/handlers.py)
+handler400 = robbo_errors_handlers.handler400
+handler403 = robbo_errors_handlers.handler403
+handler404 = robbo_errors_handlers.handler404
+handler500 = robbo_errors_handlers.handler500
 
 # Pattern to match a course key or a library key
 COURSELIKE_KEY_PATTERN = r'(?P<course_key_string>({}|{}))'.format(

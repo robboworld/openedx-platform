@@ -2257,6 +2257,9 @@ CREDIT_NOTIFICATION_CACHE_TIMEOUT = 5 * 60 * 60
 ################################# Middleware ###################################
 
 MIDDLEWARE = [
+    # Robbo: first, so that its process_exception sees only the crashes no other middleware handled
+    # (incident number, error journal, JSON answer for AJAX; docs/human-errors.md in the meta repo).
+    'lms.djangoapps.robbo_errors.middleware.RobboErrorsMiddleware',
     'openedx.core.lib.x_forwarded_for.middleware.XForwardedForMiddleware',
     'edx_django_utils.security.csp.middleware.content_security_policy_middleware',
 
@@ -3253,6 +3256,7 @@ INSTALLED_APPS = [
     'lms.djangoapps.robbo_ora.apps.RobboOraConfig',
     'lms.djangoapps.robbo_certificates.apps.RobboCertificatesConfig',
     'lms.djangoapps.robbo_groups.apps.RobboGroupsConfig',
+    'lms.djangoapps.robbo_errors.apps.RobboErrorsConfig',
 
     # Credit courses
     'openedx.core.djangoapps.credit.apps.CreditConfig',
@@ -3723,6 +3727,10 @@ CORS_ALLOW_HEADERS = corsheaders_default_headers + (
     'pragma',
     'use-jwt-cookie',
 )
+# Robbo: MFEs on the apps.* host read the incident number of an error answer (Caddy adds it).
+CORS_EXPOSE_HEADERS = ['X-Request-ID']
+# Robbo: a stale form gets the error page with a code (PAGE-STALE), not Django's bare CSRF page.
+CSRF_FAILURE_VIEW = 'lms.djangoapps.robbo_errors.handlers.csrf_failure'
 
 # Default cache expiration for the cross-domain proxy HTML page.
 # This is a static page that can be iframed into an external page
@@ -5686,6 +5694,12 @@ ROBBO_CATALOG_FEATURED_IMAGE = 'mcu.png'
 ROBBO_COURSE_INTEREST_RECIPIENTS = ['e.sovkov@robbo.ru']
 # Optional LMS log files used as a fallback for historic course-interest submissions.
 ROBBO_COURSE_INTEREST_LOG_PATHS = []
+
+### Robbo error journal (lms.djangoapps.robbo_errors) ###
+# Rows older than this are purged while new ones are written.
+ROBBO_ERRORS_RETENTION_DAYS = 90
+# Writes per minute above which new errors only reach the log (an outage must not fill the database).
+ROBBO_ERRORS_MAX_PER_MINUTE = 300
 
 # Guest landing: migration banner — only on online.robbo.ru (not dev/stage hosts).
 ROBBO_GUEST_MIGRATION_BANNER_HOSTS = (
