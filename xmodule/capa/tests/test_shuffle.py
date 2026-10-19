@@ -306,3 +306,69 @@ class CapaShuffleTest(unittest.TestCase):
 
         with self.assertRaisesRegex(LoncapaProblemError, "shuffle and answer-pool"):
             new_loncapa_problem(xml_str)
+
+    def test_shuffle_checkboxgroup(self):
+        """Robbo: shuffle="true" on <checkboxgroup> shuffles like <choicegroup>; names keep the authored order."""
+        xml_str = textwrap.dedent("""
+            <problem>
+            <choiceresponse>
+              <checkboxgroup shuffle="true">
+                <choice correct="false">Apple</choice>
+                <choice correct="true">Banana</choice>
+                <choice correct="false">Chocolate</choice>
+                <choice correct="true">Donut</choice>
+              </checkboxgroup>
+            </choiceresponse>
+            </problem>
+        """)
+        problem = new_loncapa_problem(xml_str, seed=0)
+        # Same rng as the multiple choice tests: 4 things with seed 0 yield B A C D
+        response = list(problem.responders.values())[0]
+        assert response.has_shuffle()
+        assert response.unmask_order() == ['choice_1', 'choice_0', 'choice_2', 'choice_3']
+        the_html = problem.get_html()
+        self.assertRegex(the_html.replace('\n', ' '), r"Banana.*Apple.*Chocolate.*Donut")
+        assert the_html == problem.get_html(), 'should be able to call get_html() twice'
+        correct_map = problem.grade_answers({response.answer_id: ['choice_1', 'choice_3']})
+        assert correct_map.get_correctness(response.answer_id) == 'correct'
+
+    def test_shuffle_checkboxgroup_fixed_and_compoundhint(self):
+        """Robbo: fixed choices stay at the tail, <compoundhint> keeps its place and still matches by id."""
+        xml_str = textwrap.dedent("""
+            <problem>
+            <choiceresponse>
+              <checkboxgroup shuffle="true">
+                <choice correct="true">Apple</choice>
+                <choice correct="false">Banana</choice>
+                <choice correct="true">Chocolate</choice>
+                <choice correct="false" fixed="true">None of the above</choice>
+                <compoundhint value="A B">Apple and Banana</compoundhint>
+              </checkboxgroup>
+            </choiceresponse>
+            </problem>
+        """)
+        problem = new_loncapa_problem(xml_str, seed=0)
+        response = list(problem.responders.values())[0]
+        assert response.unmask_order()[-1] == 'choice_3'
+        group = response.xml.find('checkboxgroup')
+        assert group[-1].tag == 'compoundhint'
+        correct_map = problem.grade_answers({response.answer_id: ['choice_0', 'choice_1']})
+        assert 'Apple and Banana' in correct_map.get_msg(response.answer_id)
+
+    def test_no_shuffle_checkboxgroup(self):
+        """Robbo: without shuffle="true" checkboxes keep the authored order."""
+        xml_str = textwrap.dedent("""
+            <problem>
+            <choiceresponse>
+              <checkboxgroup>
+                <choice correct="false">Apple</choice>
+                <choice correct="true">Banana</choice>
+                <choice correct="false">Chocolate</choice>
+              </checkboxgroup>
+            </choiceresponse>
+            </problem>
+        """)
+        problem = new_loncapa_problem(xml_str, seed=0)
+        response = list(problem.responders.values())[0]
+        assert not response.has_shuffle()
+        assert response.unmask_order() == ['choice_0', 'choice_1', 'choice_2']
