@@ -1528,6 +1528,59 @@ class ProblemBlockTest(unittest.TestCase):  # lint-amnesty, pylint: disable=miss
         # Expect that the problem was NOT reset
         assert (('success' in result) and (not result['success']))
 
+    @ddt.data(
+        ('multiplechoiceresponse', 'choicegroup type="MultipleChoice"', 'choicegroup'),
+        ('choiceresponse', 'checkboxgroup', 'checkboxgroup'),
+    )
+    @ddt.unpack
+    def test_reset_problem_reshuffles_choices(self, response_tag, group_open, group_close):
+        """
+        Robbo: with a new order on every attempt, a reset never shows shuffled choices in the
+        order of the previous attempt, even with two choices where a new seed repeats it half the time.
+        """
+        xml = textwrap.dedent(f"""
+            <problem>
+            <{response_tag}>
+              <{group_open} shuffle="true">
+                <choice correct="true">Apple</choice>
+                <choice correct="false">Banana</choice>
+              </{group_close}>
+            </{response_tag}>
+            </problem>
+        """)
+        block = CapaFactory.create(xml=xml, rerandomize=RANDOMIZATION.ALWAYS, done=True)
+        orders = [block.shuffled_choice_order(block.lcp)]
+        with patch('xmodule.capa_block.ProblemBlock.get_problem_html') as mock_html:
+            mock_html.return_value = "<div>Test HTML</div>"
+            for _ in range(20):
+                block.lcp.done = True  # submitted, as after an answer
+                assert block.reset_problem({})['success']
+                orders.append(block.shuffled_choice_order(block.lcp))
+        assert all(order for order in orders)
+        assert all(previous != current for previous, current in zip(orders, orders[1:]))
+
+    def test_reset_problem_keeps_order_per_student(self):
+        """
+        Robbo: with an order of its own for each learner, a reset keeps the shuffled choices in place.
+        """
+        xml = textwrap.dedent("""
+            <problem>
+            <choiceresponse>
+              <checkboxgroup shuffle="true">
+                <choice correct="true">Apple</choice>
+                <choice correct="false">Banana</choice>
+                <choice correct="true">Chocolate</choice>
+              </checkboxgroup>
+            </choiceresponse>
+            </problem>
+        """)
+        block = CapaFactory.create(xml=xml, rerandomize=RANDOMIZATION.PER_STUDENT, done=True)
+        order = block.shuffled_choice_order(block.lcp)
+        with patch('xmodule.capa_block.ProblemBlock.get_problem_html') as mock_html:
+            mock_html.return_value = "<div>Test HTML</div>"
+            assert block.reset_problem({})['success']
+        assert block.shuffled_choice_order(block.lcp) == order
+
     def test_rescore_problem_correct(self):
 
         block = CapaFactory.create(attempts=0, done=True)

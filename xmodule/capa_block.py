@@ -1,5 +1,7 @@
 """
 Implements the Problem XBlock, which is built on top of the CAPA subsystem.
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 from __future__ import annotations
 
@@ -66,6 +68,8 @@ _ = lambda text: text
 NUM_RANDOMIZATION_BINS = 20
 # Never produce more than this many different seeds, no matter what.
 MAX_RANDOMIZATION_BINS = 1000
+# Robbo: how many more seeds a reset tries so that shuffled choices come in a new order.
+RESHUFFLE_ATTEMPTS = 10
 
 
 try:
@@ -869,6 +873,16 @@ class _BuiltInProblemBlock(
             # So that sandboxed code execution can be cached, but still have an interesting
             # number of possibilities, cap the number of different random seeds.
             self.seed %= MAX_RANDOMIZATION_BINS
+
+    @staticmethod
+    def shuffled_choice_order(lcp):
+        """
+        Robbo: the displayed order of every shuffled choice group of the problem, () if there is none.
+        """
+        return tuple(
+            (response.answer_id, tuple(response.unmask_order()))
+            for response in lcp.responders.values() if response.has_shuffle()
+        )
 
     def new_lcp(self, state, text=None):
         """
@@ -2195,12 +2209,22 @@ class _BuiltInProblemBlock(
                 'msg': _("You must submit an answer before you can select Reset."),
             }
 
-        if self.is_submitted() and self.rerandomize in [RANDOMIZATION.ALWAYS, RANDOMIZATION.ONRESET]:
+        reshuffle = self.is_submitted() and self.rerandomize in [RANDOMIZATION.ALWAYS, RANDOMIZATION.ONRESET]
+        old_order = self.shuffled_choice_order(self.lcp) if reshuffle else ()
+        if reshuffle:
             # Reset random number generator seed.
             self.choose_new_seed()
 
         # Generate a new problem with either the previous seed or a new seed
         self.lcp = self.new_lcp(None)
+
+        # Robbo: a new seed may still give the same order of shuffled choices (one time in two
+        # for two choices), so draw again until the learner gets the choices in a new order.
+        for _attempt in range(RESHUFFLE_ATTEMPTS if old_order else 0):
+            if self.shuffled_choice_order(self.lcp) != old_order:
+                break
+            self.choose_new_seed()
+            self.lcp = self.new_lcp(None)
 
         # Pull in the new problem seed
         self.set_state_from_lcp()
