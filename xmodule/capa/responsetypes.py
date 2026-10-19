@@ -3,6 +3,8 @@ Problem response evaluation.  Handles checking of student responses,
 of a variety of types.
 
 Used by capa_problem.py
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 # standard library imports
 import abc
@@ -696,6 +698,36 @@ class ChoiceResponse(LoncapaResponse):
             # If a choice does not have an id, assign 'A' 'B', .. used by CompoundHint
             if not choice.get('id'):
                 choice.set("id", chr(ord("A") + index))
+
+    def late_transforms(self, problem):
+        """
+        Robbo: shuffle="true" on <checkboxgroup> (or <radiogroup>) shuffles the choices
+        the way MultipleChoiceResponse does for <choicegroup>: by the problem seed, with
+        fixed="true" choices held at the head/tail, sharing the problem's rng.
+
+        Choice names and ids were assigned in setup_response, so grading, compound hints
+        and saved answers keep the authored order; only the displayed order changes.
+        Other children of the group (<compoundhint>) stay where they were.
+        """
+        groups = self.xml.xpath('checkboxgroup[@shuffle="true"] | radiogroup[@shuffle="true"]')
+        if not groups or self.has_shuffle():
+            return
+        self._has_shuffle = True  # pylint: disable=attribute-defined-outside-init
+        group = groups[0]
+        children = list(group)
+        shuffled = iter(MultipleChoiceResponse.shuffle_choices(
+            self, [child for child in children if child.tag == 'choice'], MultipleChoiceResponse.get_rng(self, problem),
+        ))
+        for child in children:
+            group.remove(child)
+        for child in children:
+            group.append(next(shuffled) if child.tag == 'choice' else child)
+
+    def unmask_order(self):
+        """
+        Choice names in the order displayed to the learner (logged as the shuffle permutation).
+        """
+        return [choice.get('name') for choice in self.get_choices()]
 
     def grade_via_every_decision_counts(self, **kwargs):
         """
