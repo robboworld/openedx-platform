@@ -1,15 +1,17 @@
 /* globals _, NotificationModel, NotificationView, interpolate_text */
+// Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 (function(define) {
     'use strict';
 
     // Robbo: RobboCohortInviteView — the «Ссылка-приглашение» tab (group invite link);
-    // RobboCohortMembersView — the group's members on «Управление слушателями»; deleteGroup — «Удалить группу».
+    // RobboCohortMembersView — the group's members on «Управление слушателями»; deleteGroup — «Удалить группу»;
+    // RobboErrors — the code line of failed requests (js/robbo-errors).
     define(['backbone', 'underscore', 'jquery', 'gettext', 'js/groups/views/cohort_form',
         'edx-ui-toolkit/js/utils/html-utils', 'js/groups/views/robbo_cohort_invite',
-        'js/groups/views/robbo_cohort_members', 'edx-ui-toolkit/js/utils/string-utils',
+        'js/groups/views/robbo_cohort_members', 'edx-ui-toolkit/js/utils/string-utils', 'js/robbo-errors',
         'string_utils', 'js/models/notification', 'js/views/notification'],
     function(Backbone, _, $, gettext, CohortFormView, HtmlUtils, RobboCohortInviteView, RobboCohortMembersView,
-        StringUtils) {
+        StringUtils, RobboErrors) {
         var CohortEditorView = Backbone.View.extend({
 
             events: {
@@ -98,9 +100,13 @@
                     })
                     .fail(function(xhr) {
                         self.$('.robbo-cohort-delete').prop('disabled', false);
-                        self.showErrorMessage(xhr.status === 400
-                            ? gettext('The default group cannot be deleted.')
-                            : gettext('Could not delete the group. Try again.'), true);
+                        // The errors live on «Управление слушателями»: from another tab they were not visible.
+                        self.$('.wrapper-tabs .tab-manage_students').click();
+                        if (xhr.status === 400) {
+                            self.showErrorMessage(gettext('The default group cannot be deleted.'), true);
+                        } else {
+                            self.showRequestError(gettext('Could not delete the group. Try again.'), xhr);
+                        }
                     });
             },
 
@@ -210,8 +216,8 @@
                                 self.$('.cohort-management-group-add-students').val(students);
                             }
                         });
-                    }).fail(function() {
-                        self.showErrorMessage(gettext('Error adding learners.'), true);
+                    }).fail(function(xhr) {
+                        self.showRequestError(gettext('Error adding learners.'), xhr); // Robbo: with the code
                     });
                 } else {
                     self.showErrorMessage(gettext('Enter a username or email.'), true);
@@ -230,6 +236,13 @@
                 if (view) {
                     view.undelegateEvents();
                 }
+            },
+
+            // Robbo: a failed request — the message as the title, the code with the number under it.
+            showRequestError: function(message, xhr) {
+                var model = new NotificationModel();
+                model.set('message', RobboErrors.codeLine(xhr));
+                this.showErrorMessage(message, true, model);
             },
 
             showErrorMessage: function(message, removeConfirmations, model) {
