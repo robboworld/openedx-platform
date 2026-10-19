@@ -18,4 +18,4 @@ where = ["."]
 include = ["tutor_plugin_robbo_mfe_branding*"]
 
 [tool.setuptools.package-data]
-tutor_plugin_robbo_mfe_branding = ["templates/**/*"]
+tutor_plugin_robbo_mfe_branding = ["templates/**/*", "robbo_errors.json"]

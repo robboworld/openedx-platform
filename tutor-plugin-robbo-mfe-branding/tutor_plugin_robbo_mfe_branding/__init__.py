@@ -10,6 +10,7 @@ installs Robbo ``@edx/brand`` and RobboFooter chrome for Authoring MFE at image 
 """
 from __future__ import annotations
 
+import json
 from importlib import resources
 
 from tutor import hooks
@@ -287,6 +288,160 @@ header @robbo_ora_grading {
 }
 {% endif %}
 """
+
+# Human-readable errors (docs/human-errors.md in the meta repo). Every request gets a number: Caddy's
+# request UUID goes to LMS/Studio as X-Request-ID (templates/apps/caddy/Caddyfile, `proxy` snippet) and
+# back in every answer; the error journal (lms.djangoapps.robbo_errors) and the user's screen show it.
+_PATCH_CADDYFILE_PROXY_REQUEST_ID = """
+header X-Request-ID {http.request.uuid}
+"""
+
+# Texts of the answers Caddy gives by itself: a copy of the platform's error catalog, written by
+# scripts/robbo-errors-sync.py in the meta repo (the plugin is installed without the platform).
+hooks.Filters.ENV_TEMPLATE_VARIABLES.add_item(
+    ("ROBBO_ERRORS", json.loads((resources.files(_PKG) / "robbo_errors.json").read_text(encoding="utf-8")))
+)
+
+# Upload limits of the Caddyfile: templates/apps/caddy/Caddyfile (profile images 1MB, LMS 5MB,
+# Studio 250MB) and _PATCH_CADDYFILE_LMS_ORA_UPLOADS (50MB). Keep in step: the page names the limit.
+_ROBBO_LMS_UPLOAD_MB = 5
+_ROBBO_LMS_PATH_UPLOAD_MB = [["/api/profile_images/*", 1], ["/openassessment/fileupload/*", 50]]
+_ROBBO_CMS_UPLOAD_MB = 250
+
+# `handle_errors` of an LMS or Studio site block. Errors Caddy answers by itself (502 while LMS
+# restarts, 413 over the upload limit) get the code, text and number of the error catalog: JSON for
+# AJAX calls, a page for the browser. CORS headers let the MFEs (on MFE_HOST, or on LMS_HOST locally)
+# read the real status; without them the browser hides it and MFEs say "Axios Error (Request)".
+#
+# Jinja fills in the texts (site language from LANGUAGE_CODE); {vars.*}, {re.*}, {err.*} and
+# {http.request.uuid} are Caddy placeholders, \{ \} literal braces for Caddy. Only our texts and the
+# request UUID get into the page, never anything from the request: Caddy does not escape placeholders.
+# @UPLOAD_MB@ and @PATH_UPLOAD_MB@ are replaced per site block below.
+_ROBBO_CADDY_ERRORS = r"""
+{%- set robbo_lang = "en" if LANGUAGE_CODE.startswith("en") else "ru" %}
+{%- set robbo_codes = ROBBO_ERRORS["codes"] %}
+{%- set robbo_ui = ROBBO_ERRORS["ui"] %}
+{%- set robbo_help_before, robbo_help_rest = robbo_ui["help_learner"][robbo_lang].split("[") %}
+{%- set robbo_help_link, robbo_help_after = robbo_help_rest.split("]") %}
+handle_errors {
+    route {
+        header X-Request-ID {http.request.uuid}
+        @robbo_err_cors header_regexp Origin ^https?://({{ MFE_HOST|replace(".", "\\.") }}|{{ LMS_HOST|replace(".", "\\.") }})(:[0-9]+)?$
+        header @robbo_err_cors {
+            Access-Control-Allow-Origin {http.request.header.Origin}
+            Access-Control-Allow-Credentials true
+            Access-Control-Expose-Headers X-Request-ID
+            Vary Origin
+        }
+        # SRV-ERROR unless a more exact code below matches (a route keeps this order).
+        vars {
+            robbo_code SRV-ERROR
+            robbo_title "{{ robbo_codes["SRV-ERROR"]["title"][robbo_lang] }}"
+            robbo_message "{{ robbo_codes["SRV-ERROR"]["message"][robbo_lang] }}"
+            robbo_action "location.reload()"
+            robbo_action_label "{{ robbo_ui["reload"][robbo_lang] }}"
+            robbo_hex ""
+            robbo_short ""
+        }
+        @robbo_err_restart expression `{err.status_code} in [502, 503, 504]`
+        vars @robbo_err_restart {
+            robbo_code SRV-RESTART
+            robbo_title "{{ robbo_codes["SRV-RESTART"]["title"][robbo_lang] }}"
+            robbo_message "{{ robbo_codes["SRV-RESTART"]["message"][robbo_lang] }}"
+        }
+        @robbo_err_upload expression `{err.status_code} == 413`
+        vars @robbo_err_upload {
+            robbo_code UPLOAD-SIZE
+            robbo_title "{{ robbo_codes["UPLOAD-SIZE"]["title"][robbo_lang] }}"
+            robbo_message "{{ robbo_codes["UPLOAD-SIZE"]["message"][robbo_lang]|replace("{limit}", "@UPLOAD_MB@") }}"
+            robbo_action "history.back()"
+            robbo_action_label "{{ robbo_ui["back"][robbo_lang] }}"
+        }
+        {%- for robbo_path, robbo_mb in @PATH_UPLOAD_MB@ %}
+        @robbo_err_upload_{{ loop.index }} {
+            expression `{err.status_code} == 413`
+            path {{ robbo_path }}
+        }
+        vars @robbo_err_upload_{{ loop.index }} robbo_message "{{ robbo_codes["UPLOAD-SIZE"]["message"][robbo_lang]|replace("{limit}", robbo_mb|string) }}"
+        {%- endfor %}
+        # The number shown to the user: first 8 hex of the UUID; the JSON gets all 32 without dashes.
+        @robbo_err_id vars_regexp robbo_id {http.request.uuid} ^([0-9a-f]{4})([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$
+        vars @robbo_err_id {
+            robbo_hex "{re.robbo_id.1}{re.robbo_id.2}{re.robbo_id.3}{re.robbo_id.4}{re.robbo_id.5}{re.robbo_id.6}"
+            robbo_short "{re.robbo_id.1}-{re.robbo_id.2}"
+        }
+        @robbo_err_html header Accept *text/html*
+        header @robbo_err_html Content-Type "text/html; charset=utf-8"
+        respond @robbo_err_html <<HTML
+            <!doctype html>
+            <html lang="{{ robbo_lang }}">
+            <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta name="robots" content="noindex">
+            <title>{vars.robbo_title}</title>
+            <style>
+            :root \{ --robbo-green: #00af41; --robbo-coal: #383838; --robbo-grey: #989898; --robbo-white: #ffffff; --robbo-gap: 1rem; \}
+            *, *::before, *::after \{ box-sizing: border-box; \}
+            body \{ margin: 0; min-height: 100vh; display: grid; place-items: center; padding: var(--robbo-gap); background: var(--robbo-white); color: var(--robbo-coal); font: 1rem/1.5 "Proxima Nova", Helvetica, Arial, sans-serif; \}
+            .robbo-error \{ width: 100%; max-width: 34rem; padding: calc(var(--robbo-gap) * 2); border: 1px solid var(--robbo-grey); border-radius: 0.75rem; \}
+            .robbo-error h1 \{ margin: 0 0 0.5rem; font-size: 1.5rem; line-height: 1.25; overflow-wrap: anywhere; \}
+            .robbo-error p \{ margin: 0 0 var(--robbo-gap); overflow-wrap: anywhere; \}
+            .robbo-error > :last-child \{ margin-bottom: 0; \}
+            .robbo-error a \{ color: var(--robbo-coal); \}
+            .robbo-error a:hover \{ color: var(--robbo-green); \}
+            .robbo-error :focus-visible \{ outline: 2px solid var(--robbo-green); outline-offset: 2px; \}
+            .robbo-error__actions \{ display: flex; flex-wrap: wrap; align-items: center; gap: var(--robbo-gap); margin: calc(var(--robbo-gap) * 1.5) 0; \}
+            .robbo-error__button \{ min-height: 2.75rem; padding: 0.5rem 1.25rem; border: 0; border-radius: 0.5rem; background: var(--robbo-green); color: var(--robbo-white); font: inherit; cursor: pointer; \}
+            .robbo-error__button:hover \{ filter: brightness(0.92); \}
+            .robbo-error__code \{ display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font-size: 0.875rem; \}
+            .robbo-error__number \{ font-family: ui-monospace, Menlo, Consolas, monospace; text-transform: uppercase; \}
+            .robbo-error__copy \{ min-height: 2.75rem; padding: 0 0.75rem; border: 1px solid var(--robbo-grey); border-radius: 0.5rem; background: transparent; color: var(--robbo-coal); font: inherit; cursor: pointer; \}
+            .robbo-error__help \{ font-size: 0.875rem; \}
+            </style>
+            </head>
+            <body>
+            <main class="robbo-error">
+            <h1>{vars.robbo_title}</h1>
+            <p>{vars.robbo_message}</p>
+            <div class="robbo-error__actions">
+            <button class="robbo-error__button" type="button" onclick="{vars.robbo_action}">{vars.robbo_action_label}</button>
+            <a href="/">{{ robbo_ui["home"][robbo_lang]|e }}</a>
+            </div>
+            <p class="robbo-error__code">{{ robbo_ui["code"][robbo_lang]|e }}: <span class="robbo-error__number" id="robbo-error-code">{vars.robbo_code} · {vars.robbo_short}</span>
+            <button class="robbo-error__copy" type="button" id="robbo-error-copy" hidden>{{ robbo_ui["copy"][robbo_lang]|e }}</button></p>
+            <p class="robbo-error__help">{{ robbo_help_before|e }}<a href="{{ robbo_ui["support_url"]|e }}">{{ robbo_help_link|e }}</a>{{ robbo_help_after|e }}</p>
+            </main>
+            <script>
+            (function () \{
+              var copy = document.getElementById("robbo-error-copy");
+              var code = document.getElementById("robbo-error-code");
+              if (!navigator.clipboard) return;
+              copy.hidden = false;
+              copy.addEventListener("click", function () \{
+                navigator.clipboard.writeText(code.textContent.toUpperCase()).then(function () \{
+                  copy.textContent = "{{ robbo_ui["copied"][robbo_lang]|e }}";
+                \});
+              \});
+            \})();
+            </script>
+            </body>
+            </html>
+            HTML {err.status_code}
+        header Content-Type application/json
+        respond <<JSON
+            \{"error_code":"{vars.robbo_code}","user_title":"{vars.robbo_title}","user_message":"{vars.robbo_message}","incident_id":"{vars.robbo_hex}","developer_message":"caddy {err.status_code}","error":"{vars.robbo_message}"\}
+            JSON {err.status_code}
+    }
+}
+"""
+
+_PATCH_CADDYFILE_LMS_ERRORS = _ROBBO_CADDY_ERRORS.replace("@UPLOAD_MB@", str(_ROBBO_LMS_UPLOAD_MB)).replace(
+    "@PATH_UPLOAD_MB@", json.dumps(_ROBBO_LMS_PATH_UPLOAD_MB)
+)
+_PATCH_CADDYFILE_CMS_ERRORS = _ROBBO_CADDY_ERRORS.replace("@UPLOAD_MB@", str(_ROBBO_CMS_UPLOAD_MB)).replace(
+    "@PATH_UPLOAD_MB@", "[]"
+)
 
 _PATCH_CADDYFILE_SCRATCH = """
 scratch-srv.robbo.world{$default_site_port} {
@@ -572,6 +727,17 @@ hooks.Filters.CONFIG_DEFAULTS.add_items(
     ]
 )
 
+# Translations only for Russian: Robbo sites are Russian (online, skill) and English (courses), and
+# English is the source language, built into the code. Without the filter every MFE bundled ~30
+# languages of Open edX messages: 78-86% of app.js (learning: 2.3 MB of 2.7 MB) parsed on every
+# page. ATLAS_OPTIONS goes to `atlas pull` of the MFE builds and of the openedx image (platform,
+# plugin and XBlock translations). A value set in config.yml still wins over this one.
+hooks.Filters.CONFIG_OVERRIDES.add_items(
+    [
+        ("ATLAS_OPTIONS", "--filter=ru"),
+    ]
+)
+
 hooks.Filters.ENV_PATCHES.add_items(
     [
         ("mfe-dockerfile-base", _PATCH_MFE_DOCKERFILE_NPM_RESILIENCE),
@@ -618,6 +784,9 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-production-settings", _PATCH_ROBBO_LK_BFF),
         ("openedx-dockerfile-post-python-requirements", _PATCH_OPENEDX_ROBBO_XBLOCKS),
         ("caddyfile", _PATCH_CADDYFILE_SCRATCH),
+        ("caddyfile-proxy", _PATCH_CADDYFILE_PROXY_REQUEST_ID),
+        ("caddyfile-lms", _PATCH_CADDYFILE_LMS_ERRORS),
+        ("caddyfile-cms", _PATCH_CADDYFILE_CMS_ERRORS),
         ("caddyfile-lms", _PATCH_CADDYFILE_LMS_ORA_UPLOADS),
         ("caddyfile-lms", _PATCH_CADDYFILE_HASHED_STATIC),
         ("caddyfile-cms", _PATCH_CADDYFILE_HASHED_STATIC),
