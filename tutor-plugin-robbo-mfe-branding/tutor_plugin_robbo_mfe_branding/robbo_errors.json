@@ -1,0 +1,82 @@
+{
+  "generated_from": "lms/djangoapps/robbo_errors/catalog.yaml",
+  "ui": {
+    "code": {
+      "ru": "Код",
+      "en": "Code"
+    },
+    "copy": {
+      "ru": "Скопировать",
+      "en": "Copy"
+    },
+    "copied": {
+      "ru": "Скопировано",
+      "en": "Copied"
+    },
+    "help_learner": {
+      "ru": "Покажите это сообщение преподавателю или [напишите в поддержку]",
+      "en": "Show this message to your teacher or [contact support]"
+    },
+    "help_staff": {
+      "ru": "Не получается? [Напишите в поддержку]",
+      "en": "Still not working? [Contact support]"
+    },
+    "retry": {
+      "ru": "Повторить",
+      "en": "Try again"
+    },
+    "reload": {
+      "ru": "Обновить страницу",
+      "en": "Reload the page"
+    },
+    "back": {
+      "ru": "Вернуться назад",
+      "en": "Go back"
+    },
+    "home": {
+      "ru": "На главную",
+      "en": "Go to the home page"
+    },
+    "login": {
+      "ru": "Войти",
+      "en": "Sign in"
+    },
+    "support_url": "https://support.robbo.world/"
+  },
+  "codes": {
+    "SRV-RESTART": {
+      "title": {
+        "ru": "Сайт временно не отвечает",
+        "en": "The site is temporarily unavailable"
+      },
+      "message": {
+        "ru": "Скорее всего, идёт обновление. Подождите минуту и повторите действие.",
+        "en": "It is probably being updated. Wait a minute and try again."
+      }
+    },
+    "SRV-ERROR": {
+      "title": {
+        "ru": "Не получилось выполнить действие",
+        "en": "Couldn't complete the action"
+      },
+      "message": {
+        "ru": "Это ошибка на нашей стороне, мы её записали. Попробуйте ещё раз позже.",
+        "en": "This is an error on our side, and we have logged it. Please try again later."
+      }
+    },
+    "UPLOAD-SIZE": {
+      "title": {
+        "ru": "Не удалось загрузить файл",
+        "en": "Couldn't upload the file"
+      },
+      "message": {
+        "ru": "Файл больше {limit} МБ. Уменьшите его или разделите на несколько частей.",
+        "en": "The file is larger than {limit} MB. Make it smaller or split it into parts."
+      },
+      "message_fallback": {
+        "ru": "Файл слишком большой. Уменьшите его или разделите на несколько частей.",
+        "en": "The file is too large. Make it smaller or split it into parts."
+      }
+    }
+  }
+}
