@@ -15,12 +15,17 @@ Django cache under a key that changes whenever the progress can change:
   completion. All of them are fetched with one indexed query (user, course_key, modified).
 
 The TTL only covers rare access changes (enrollment mode, cohorts, gating).
+
+``get_cached_courses_progress`` only reads the cache: the learner dashboard and the /courses
+catalog show their cards at once and ask for the missing progress separately
+(``learner_home.views.RobboProgressView``), so a course structure that has to be rebuilt no
+longer holds the whole page.
 """
 from __future__ import annotations
 
 import hashlib
 import logging
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from completion.models import BlockCompletion
 from django.core.cache import cache
@@ -57,11 +62,8 @@ def _compute_progress(user, course_key) -> Dict[str, int]:
     }
 
 
-def get_courses_progress(user, course_overviews: Iterable[Any]) -> Dict[Any, Optional[Dict[str, int]]]:
-    """
-    Progress by course key: ``{'completed', 'total', 'percent'}``, or None when the course
-    has no countable units or the summary could not be built.
-    """
+def _cache_keys(user, course_overviews: Iterable[Any]) -> Dict[Any, str]:
+    """Cache key by course key for the user's progress in these courses."""
     overviews = {co.id: co for co in course_overviews if co is not None}
     if not overviews or not getattr(user, 'id', None):
         return {}
@@ -72,10 +74,40 @@ def get_courses_progress(user, course_overviews: Iterable[Any]) -> Dict[Any, Opt
         .annotate(last=Max('modified'))
         .values_list('context_key', 'last')
     )
-    keys = {
+    return {
         course_key: _cache_key(user.id, course_key, getattr(co, 'modified', None), last_completions.get(course_key))
         for course_key, co in overviews.items()
     }
+
+
+def get_cached_courses_progress(
+    user, course_overviews: Iterable[Any],
+) -> Tuple[Dict[Any, Optional[Dict[str, int]]], List[Any]]:
+    """
+    Progress from the cache only, without building any course tree: the progress by course key
+    as in ``get_courses_progress``, and the course keys whose progress is not cached yet.
+    """
+    keys = _cache_keys(user, course_overviews)
+    cached = cache.get_many(list(keys.values()))
+    result: Dict[Any, Optional[Dict[str, int]]] = {}
+    missing: List[Any] = []
+    for course_key, key in keys.items():
+        progress = cached.get(key)
+        if progress is None:
+            missing.append(course_key)
+        else:
+            result[course_key] = progress if progress.get('total') else None
+    return result, missing
+
+
+def get_courses_progress(user, course_overviews: Iterable[Any]) -> Dict[Any, Optional[Dict[str, int]]]:
+    """
+    Progress by course key: ``{'completed', 'total', 'percent'}``, or None when the course
+    has no countable units or the summary could not be built.
+    """
+    keys = _cache_keys(user, course_overviews)
+    if not keys:
+        return {}
     cached = cache.get_many(list(keys.values()))
 
     result: Dict[Any, Optional[Dict[str, int]]] = {}

@@ -478,7 +478,7 @@ def build_robbo_catalog_course_cards(
     ``as_new_learner``: cards as a learner who is not enrolled yet sees them, without the current
     user's enrollment, progress and enroll-on-click (course card preview, ``robbo_card_preview``).
     """
-    from lms.djangoapps.courseware.robbo_course_progress import get_courses_progress  # pylint: disable=import-outside-toplevel
+    from lms.djangoapps.courseware.robbo_course_progress import get_cached_courses_progress  # pylint: disable=import-outside-toplevel
     from openedx.features.course_experience import course_home_url  # pylint: disable=import-outside-toplevel
 
     cards: List[Dict[str, Any]] = []
@@ -489,15 +489,19 @@ def build_robbo_catalog_course_cards(
 
     enrolled_ids = set()
     progress_by_course: Dict[Any, Optional[Dict[str, int]]] = {}
+    progress_pending = set()
     if is_active_user and courses_list:
         enrolled_ids = set(
             CourseEnrollment.objects.filter(
                 user=user, is_active=True, course_id__in=[course.id for course in courses_list],
             ).values_list('course_id', flat=True)
         )
-        progress_by_course = get_courses_progress(
+        # Only the cached progress: the rest follows the cards (robbo_courses_catalog.js asks
+        # /api/learner_home/robbo_progress), so building a course tree no longer holds the page.
+        progress_by_course, missing = get_cached_courses_progress(
             user, [course for course in courses_list if course.id in enrolled_ids]
         )
+        progress_pending = set(missing)
 
     for course in courses_list:
         title = course.display_name_with_default
@@ -531,6 +535,8 @@ def build_robbo_catalog_course_cards(
                 progress = progress_by_course.get(course.id)
                 if progress and progress['percent'] > 0:
                     card['progress_percent'] = progress['percent']
+                elif course.id in progress_pending:
+                    card['progress_pending'] = True
             else:
                 card['cta_enroll'] = True
                 card['change_enrollment_url'] = reverse('change_enrollment')

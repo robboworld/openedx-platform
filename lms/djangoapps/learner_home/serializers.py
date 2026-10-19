@@ -112,6 +112,17 @@ class CourseSerializer(serializers.Serializer):
         return self.context.get("course_share_urls", {}).get(instance.id)
 
 
+def serialize_course_progress(progress):
+    """Robbo: progress of one course card as the API sends it (``progress`` of init, robbo_progress), or None."""
+    if not progress:
+        return None
+    return {
+        "completedCount": progress["completed"],
+        "totalCount": progress["total"],
+        "percent": progress["percent"],
+    }
+
+
 class CourseRunSerializer(serializers.Serializer):
     """
     Information about a course run.
@@ -139,6 +150,8 @@ class CourseRunSerializer(serializers.Serializer):
     )
     progressUrl = serializers.SerializerMethodField()
     progress = serializers.SerializerMethodField()
+    # Robbo: the progress is not cached yet; the dashboard loads it from robbo_progress.
+    progressPending = serializers.SerializerMethodField()
     unenrollUrl = serializers.SerializerMethodField()
     upgradeUrl = serializers.SerializerMethodField()
     resumeUrl = serializers.SerializerMethodField()
@@ -181,14 +194,10 @@ class CourseRunSerializer(serializers.Serializer):
         return self.context.get("resume_course_urls", {}).get(instance.course_id)
 
     def get_progress(self, instance):
-        progress = self.context.get("course_progress", {}).get(instance.course_id)
-        if not progress:
-            return None
-        return {
-            "completedCount": progress["completed"],
-            "totalCount": progress["total"],
-            "percent": progress["percent"],
-        }
+        return serialize_course_progress(self.context.get("course_progress", {}).get(instance.course_id))
+
+    def get_progressPending(self, instance):
+        return instance.course_id in self.context.get("course_progress_pending", ())
 
     def get_resumeBlockTitle(self, instance):
         return self.context.get("resume_block_titles", {}).get(instance.course_id)

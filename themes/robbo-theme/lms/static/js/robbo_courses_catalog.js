@@ -1,5 +1,6 @@
 /**
- * /courses stub interest buttons and featured course enroll-then-redirect.
+ * /courses stub interest buttons and featured course enroll-then-redirect; progress of enrolled
+ * courses that is not cached yet, loaded after the cards.
  */
 (function () {
   'use strict';
@@ -258,6 +259,72 @@
   }
 
   fitCourseDescFontSizes();
+
+  function makeEl(tag, className) {
+    var el = document.createElement(tag);
+    el.className = className;
+    return el;
+  }
+
+  /**
+   * The placeholder becomes the same progress bar the template draws for cached progress.
+   */
+  function fillProgress(node, percent) {
+    var track = makeEl('div', 'robbo-courses-catalog__course-progress-track');
+    var label = makeEl('span', 'robbo-courses-catalog__course-progress-label');
+
+    track.appendChild(makeEl('div', 'robbo-courses-catalog__course-progress-bar'));
+    label.textContent = percent + '%';
+    node.classList.remove('is-pending');
+    node.removeAttribute('data-robbo-progress-pending');
+    node.removeAttribute('aria-busy');
+    node.style.setProperty('--robbo-cat-progress', String(percent));
+    node.setAttribute('role', 'progressbar');
+    node.setAttribute('aria-valuenow', String(percent));
+    node.setAttribute('aria-valuemin', '0');
+    node.setAttribute('aria-valuemax', '100');
+    node.setAttribute('aria-label', node.getAttribute('data-robbo-progress-label') || '');
+    node.removeAttribute('data-robbo-progress-label');
+    while (node.firstChild) {
+      node.removeChild(node.firstChild);
+    }
+    node.appendChild(track);
+    node.appendChild(label);
+  }
+
+  /**
+   * Progress the page could not take from the cache (as on «Мои курсы», the API builds it and
+   * caches it for the next visit). As in the template, 0% shows no bar; on an error the
+   * placeholders just go away.
+   */
+  function loadPendingProgress() {
+    var pending = root.querySelectorAll('[data-robbo-progress-pending]');
+
+    if (!pending.length || !window.fetch) {
+      return;
+    }
+    fetch('/api/learner_home/robbo_progress', {
+      credentials: 'same-origin',
+      headers: { Accept: 'application/json' }
+    }).then(function (response) {
+      return response.ok ? response.json() : {};
+    }).catch(function () {
+      return {};
+    }).then(function (data) {
+      var progress = (data && data.progress) || {};
+      Array.prototype.forEach.call(pending, function (node) {
+        var card = node.closest('[data-course-id]');
+        var value = card ? progress[card.getAttribute('data-course-id')] : null;
+        if (value && value.percent > 0) {
+          fillProgress(node, value.percent);
+        } else if (node.parentNode) {
+          node.parentNode.removeChild(node);
+        }
+      });
+    });
+  }
+
+  loadPendingProgress();
 
   document.addEventListener('click', function (e) {
     var enrollAnchor = e.target && e.target.closest && e.target.closest(
