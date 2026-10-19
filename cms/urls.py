@@ -20,6 +20,7 @@ from cms.djangoapps.contentstore import toggles
 from cms.djangoapps.contentstore import views as contentstore_views
 from cms.djangoapps.contentstore import robbo_group_access
 from lms.djangoapps.robbo_errors import handlers as robbo_errors_handlers
+from cms.djangoapps.contentstore import robbo_problem_settings
 from cms.djangoapps.contentstore.views.block import xblock_edit_view
 from cms.djangoapps.contentstore.views.organization import OrganizationListView
 from openedx.core.apidocs import api_info
@@ -155,6 +156,9 @@ urlpatterns = oauth2_urlpatterns + [
     # Robbo: «Сбросить ограничения доступа» in the section menu of the course outline
     re_path(fr'^robbo/group-access/reset/{settings.USAGE_KEY_PATTERN}$', robbo_group_access.reset_section_group_access,
             name='robbo_reset_section_group_access'),
+    # Robbo: «Настроить задачи» of a unit, subsection, section or course in the course outline sidebar
+    re_path(fr'^robbo/problem-settings/{settings.USAGE_KEY_PATTERN}$', robbo_problem_settings.problem_settings,
+            name='robbo_problem_settings'),
     re_path(fr'^xblock/outline/{settings.USAGE_KEY_PATTERN}$', contentstore_views.xblock_outline_handler,
             name='xblock_outline_handler'),
     re_path(fr'^xblock/container/{settings.USAGE_KEY_PATTERN}$', contentstore_views.xblock_container_handler,
