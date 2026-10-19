@@ -1,24 +1,27 @@
+{% comment %}Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.{% endcomment %}
 {% load i18n %}
 {% load django_markup %}
 <div style="padding: 1em">
     {% if block_count > 0 %}
+        {% comment %}
+        Robbo: trimmed msgids, and the two cases no longer share the singular msgid, so each
+        can be translated; the count of a partial selection is plain numbers, not a plural.
+        {% endcomment %}
         {% if max_count == -1 %}
             <p>
                 {% filter force_escape %}
-                {% blocktrans count num_selected=block_count %}
-                Learners will see the selected component:
+                {% blocktrans trimmed count num_selected=block_count %}
+                Each learner will see the component of the bank:
                 {% plural %}
-                Learners will see all of the {{ num_selected }} selected components, in random order:
+                Each learner will see all {{ num_selected }} components of the bank, in their own random order:
                 {% endblocktrans %}
                 {% endfilter %}
             </p>
         {% else %}
             <p>
                 {% filter force_escape %}
-                {% blocktrans with max_count=max_count count num_selected=block_count %}
-                Learners will see the selected component:
-                {% plural %}
-                Learners will see {{ max_count }} of the {{ num_selected }} selected components:
+                {% blocktrans trimmed with max_count=max_count num_selected=block_count %}
+                Each learner will see {{ max_count }} of the {{ num_selected }} components of the bank, picked at random:
                 {% endblocktrans %}
                 {% endfilter %}
             </p>

@@ -7394,3 +7394,110 @@ msgstr "Доступ ограничен: {list_of_groups}"
 #, python-brace-format
 msgid "everyone except {list_of_groups}"
 msgstr "всем, кроме {list_of_groups}"
+
+#: xmodule/item_bank_block.py, cms/djangoapps/contentstore/helpers.py — Robbo: problem bank
+msgid "Problem Bank"
+msgstr "Банк задач"
+
+#: xmodule/item_bank_block.py — Robbo: problem count is a list
+msgid "Problems per learner"
+msgstr "Количество задач для учащегося"
+
+#: xmodule/item_bank_block.py — Robbo: problem count is a list
+msgid ""
+"Each learner gets the problems of the bank in their own random order. Choose "
+"\"All problems, in random order\" to shuffle the questions, or a number to "
+"give each learner that many problems picked at random."
+msgstr ""
+"Каждый учащийся получает задачи банка в своём случайном порядке. Выберите "
+"«Все задачи в случайном порядке», чтобы перемешать вопросы, или число — "
+"тогда каждому достанется столько случайно выбранных задач."
+
+#: xmodule/item_bank_block.py — Robbo: problem count is a list
+msgid "All problems, in random order"
+msgstr "Все задачи в случайном порядке"
+
+#: xmodule/item_bank_block.py
+#, python-brace-format
+msgid ""
+"The problem bank has been configured to show {count} problems. Choose how "
+"many problems to show in the problem bank settings."
+msgstr ""
+"В банке задач указано неверное количество задач: {count}. Выберите его в "
+"настройках банка."
+
+#: xmodule/item_bank_block.py
+#, python-brace-format
+msgid ""
+"The problem bank has been configured to show {count} problems, but only "
+"{actual} have been selected."
+msgstr "Количество задач для учащегося — {count}, а в банке их всего {actual}."
+
+#: xmodule/item_bank_block.py
+msgid "Edit the problem bank configuration."
+msgstr "Изменить настройки банка задач"
+
+#: xmodule/item_bank_block.py (ItemBankMixin)
+msgid ""
+"Determines whether a 'Reset Problems' button is shown, so users may reset "
+"their answers and reshuffle selected items."
+msgstr ""
+"Показывать ли учащимся кнопку «Сбросить задачи»: она стирает их ответы и "
+"заново перемешивает задачи банка."
+
+#: lms/templates/vert_module.html — problem bank reset button
+msgid "Reset Problems"
+msgstr "Сбросить задачи"
+
+#: xmodule/templates/item_bank/author_view.html
+msgid "Each learner will see the component of the bank:"
+msgid_plural ""
+"Each learner will see all %(num_selected)s components of the bank, in their "
+"own random order:"
+msgstr[0] ""
+"Каждый учащийся увидит все задачи банка в своём случайном порядке (задач: "
+"%(num_selected)s):"
+msgstr[1] ""
+"Каждый учащийся увидит все задачи банка в своём случайном порядке (задач: "
+"%(num_selected)s):"
+msgstr[2] ""
+"Каждый учащийся увидит все задачи банка в своём случайном порядке (задач: "
+"%(num_selected)s):"
+msgstr[3] ""
+"Каждый учащийся увидит все задачи банка в своём случайном порядке (задач: "
+"%(num_selected)s):"
+
+#: xmodule/templates/item_bank/author_view.html
+#, python-format
+msgid ""
+"Each learner will see %(max_count)s of the %(num_selected)s components of "
+"the bank, picked at random:"
+msgstr ""
+"Каждый учащийся увидит %(max_count)s из %(num_selected)s задач банка, "
+"выбранных случайно:"
+
+#: xmodule/templates/item_bank/author_view.html
+msgid ""
+"Press {link_start}View{link_end} to preview, sync/update, and/or remove the "
+"selected components."
+msgstr ""
+"Нажмите «{link_start}Просмотр{link_end}», чтобы посмотреть задачи банка, "
+"обновить их из библиотеки или убрать."
+
+#: xmodule/templates/item_bank/author_view.html
+msgid ""
+"Press {link_start}Edit{link_end} to configure how many will be shown and "
+"other settings."
+msgstr ""
+"Нажмите «{link_start}Редактировать{link_end}», чтобы выбрать, сколько задач "
+"показывать, и задать другие настройки."
+
+#: xmodule/templates/item_bank/author_view.html
+msgid "You have not selected any components yet."
+msgstr "В банке пока нет задач."
+
+#: xmodule/templates/item_bank/author_view_add.html
+msgid ""
+"{button_start}Add components{button_end} from a content library to this "
+"problem bank."
+msgstr "{button_start}Добавить{button_end} задачи из библиотеки в этот банк."

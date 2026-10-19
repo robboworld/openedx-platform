@@ -1,5 +1,7 @@
 """
 Definitions for ItemBankMixin and ItemBankBlock.
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 from __future__ import annotations
 
@@ -456,6 +458,33 @@ class ItemBankBlock(ItemBankMixin, XBlock):
         default="Problem Bank",
         scope=Scope.settings,
     )
+    # Robbo: the count is a list (all problems in random order, or 1 to the number of problems
+    # in the bank) instead of a number field where -1 means "all".
+    max_count = Integer(
+        display_name=_("Problems per learner"),
+        help=_(
+            "Each learner gets the problems of the bank in their own random order. "
+            "Choose \"All problems, in random order\" to shuffle the questions, "
+            "or a number to give each learner that many problems picked at random."
+        ),
+        default=1,
+        scope=Scope.settings,
+        values_provider=lambda block: block.max_count_values(),
+    )
+
+    def max_count_values(self):
+        """
+        Options of the problem count in the settings: all problems, then 1 to the number of
+        problems in the bank (or to the current count, if the bank has fewer problems).
+        """
+        values = [{"display_name": _("All problems, in random order"), "value": -1}]
+        values += [
+            {"display_name": str(count), "value": count}
+            for count in range(1, max(len(self.children), self.max_count, 1) + 1)
+        ]
+        if self.max_count == 0 or self.max_count < -1:  # set outside the list, e.g. in imported OLX
+            values.append({"display_name": str(self.max_count), "value": self.max_count})
+        return values
 
     def validate(self):
         """
@@ -466,28 +495,30 @@ class ItemBankBlock(ItemBankMixin, XBlock):
             validation = StudioValidation.copy(validation)
         if not validation.empty:  # If there's already a validation error, leave it there.
             return validation
+        # Robbo: translate the messages (`_` only marks strings for extraction).
+        gettext = self.runtime.service(self, "i18n").gettext
         if self.max_count < -1 or self.max_count == 0:
             validation.set_summary(
                 StudioValidationMessage(
                     StudioValidationMessage.ERROR,
-                    _(
+                    gettext(
                         "The problem bank has been configured to show {count} problems. "
-                        "Please specify a positive number of problems, or specify -1 to show all problems."
+                        "Choose how many problems to show in the problem bank settings."
                     ).format(count=self.max_count),
                     action_class='edit-button',
-                    action_label=_("Edit the problem bank configuration."),
+                    action_label=gettext("Edit the problem bank configuration."),
                 )
             )
         elif 0 < len(self.children) < self.max_count:
             validation.set_summary(
                 StudioValidationMessage(
                     StudioValidationMessage.WARNING,
-                    _(
+                    gettext(
                         "The problem bank has been configured to show {count} problems, "
                         "but only {actual} have been selected."
                     ).format(count=self.max_count, actual=len(self.children)),
                     action_class='edit-button',
-                    action_label=_("Edit the problem bank configuration.")
+                    action_label=gettext("Edit the problem bank configuration.")
                 )
             )
         return validation
