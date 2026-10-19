@@ -37,10 +37,12 @@
   border-color: #00af41 !important;
 }
 
-.btn-primary:hover,
-.btn-primary:focus,
-.pgn__btn.btn-primary:hover,
-.pgn__btn.btn-primary:focus {
+/* Hover and focus only for working buttons: a disabled one (disabled, or .disabled with aria-disabled to keep
+   its tooltip) keeps its resting look instead of looking active. */
+.btn-primary:not(:disabled):not(.disabled):hover,
+.btn-primary:not(:disabled):not(.disabled):focus,
+.pgn__btn.btn-primary:not(:disabled):not(.disabled):hover,
+.pgn__btn.btn-primary:not(:disabled):not(.disabled):focus {
   background-color: #009638 !important;
   border-color: #009638 !important;
 }
@@ -51,8 +53,8 @@
   border-color: #00af41 !important;
 }
 
-.btn-outline-primary:hover,
-.pgn__btn.btn-outline-primary:hover {
+.btn-outline-primary:not(:disabled):not(.disabled):hover,
+.pgn__btn.btn-outline-primary:not(:disabled):not(.disabled):hover {
   background-color: #00af41 !important;
   color: #fff !important;
 }
