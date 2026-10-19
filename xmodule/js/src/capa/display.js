@@ -8,6 +8,42 @@
 (function() {
     'use strict';
 
+    // Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
+    // Robbo: what a failed request tells the learner (docs/human-errors.md §7 in the meta repo): the
+    // server's error text (lms/djangoapps/robbo_errors answers JSON with user_message) or ``fallback``,
+    // then the code with the incident number. Codes by status as in robbo_errors/catalog.py; the label
+    // is the catalog's ui.code. Escaped: gentle_alert() takes HTML.
+    var ROBBO_STATUS_CODES = {
+        0: 'NET-OFFLINE',
+        401: 'SESSION-EXPIRED',
+        403: 'ACCESS-DENIED',
+        404: 'NOT-FOUND',
+        413: 'UPLOAD-SIZE',
+        429: 'TOO-MANY',
+        502: 'SRV-RESTART',
+        503: 'SRV-RESTART',
+        504: 'SRV-RESTART'
+    };
+    var robboErrorMessage = function(xhr, fallback) {
+        var data = (xhr && xhr.responseJSON) || {},
+            status = (xhr && xhr.status) || 0,
+            code = data.error_code || ROBBO_STATUS_CODES[status] || (status >= 500 ? 'SRV-ERROR' : 'BAD-INPUT'),
+            header = xhr && xhr.getResponseHeader ? xhr.getResponseHeader('X-Request-ID') : '',
+            incident = String(data.incident_id || header || '').replace(/-/g, '').slice(0, 8).toUpperCase(),
+            label = (document.documentElement.lang || '').indexOf('en') === 0 ? 'Code' : 'Код',
+            text = (data.user_message || fallback) + ' (' + label + ': ' + code
+                + (incident.length === 8 ? ' · ' + incident.slice(0, 4) + '-' + incident.slice(4) : '') + ')';
+        return $('<div>').text(text).html();
+    };
+    // Robbo: ``request.fail(onFail)`` when ``request`` is a jqXHR (the specs stub $.postWithPrefix with
+    // objects that have only always/done).
+    var robboOnFail = function(request, onFail) {
+        if (request && typeof request.fail === 'function') {
+            request.fail(onFail);
+        }
+        return request;
+    };
+
     var indexOfHelper = [].indexOf
         || function(item) {
             var i, len;
@@ -621,7 +657,10 @@
                         return Logger.log('problem_graded', [that.answers, response.contents], that.id);
                     },
                     error: function(response) {
-                        that.gentle_alert(response.responseJSON.success);
+                        var data = response.responseJSON || {};
+                        that.gentle_alert(data.success || robboErrorMessage(
+                            response, gettext('Could not grade your answer. The submission was aborted.')
+                        ));
                     }
                 };
                 $.ajaxWithPrefix('' + this.url + '/problem_check', settings);
@@ -637,7 +676,7 @@
         Problem.prototype.submit_internal = function() {
             var that = this;
             Logger.log('problem_check', this.answers);
-            return $.postWithPrefix('' + this.url + '/problem_check', this.answers, function(response) {
+            return robboOnFail($.postWithPrefix('' + this.url + '/problem_check', this.answers, function(response) {
                 switch (response.success) {
                 case 'submitted':
                 case 'incorrect':
@@ -657,6 +696,11 @@
                     that.gentle_alert(response.success);
                 }
                 return Logger.log('problem_graded', [that.answers, response.contents], that.id);
+            }), function(xhr) {
+                that.saveNotification.hide();
+                that.gentle_alert(robboErrorMessage(
+                    xhr, gettext('Could not grade your answer. The submission was aborted.')
+                ));
             });
         };
 
@@ -702,7 +746,7 @@
         Problem.prototype.reset_internal = function() {
             var that = this;
             Logger.log('problem_reset', this.answers);
-            return $.postWithPrefix('' + this.url + '/problem_reset', {
+            return robboOnFail($.postWithPrefix('' + this.url + '/problem_reset', {
                 id: this.id
             }, function(response) {
                 if (response.success) {
@@ -713,6 +757,8 @@
                 } else {
                     return that.gentle_alert(response.msg);
                 }
+            }), function(xhr) {
+                that.gentle_alert(robboErrorMessage(xhr, gettext('An error has occurred. Please try again.')));
             });
         };
 
@@ -809,7 +855,7 @@
         Problem.prototype.save_internal = function() {
             var that = this;
             Logger.log('problem_save', this.answers);
-            return $.postWithPrefix('' + this.url + '/problem_save', this.answers, function(response) {
+            return robboOnFail($.postWithPrefix('' + this.url + '/problem_save', this.answers, function(response) {
                 var saveMessage;
                 saveMessage = response.msg;
                 if (response.success) {
@@ -825,6 +871,8 @@
                 } else {
                     that.gentle_alert(saveMessage);
                 }
+            }), function(xhr) {
+                that.gentle_alert(robboErrorMessage(xhr, gettext('An error has occurred. Please try again.')));
             });
         };
 
