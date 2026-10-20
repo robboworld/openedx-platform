@@ -542,7 +542,7 @@ class LoncapaProblem(object):
 
         # include solutions from <solution>...</solution> stanzas
         for entry in self.tree.xpath("//" + "|//".join(solution_tags)):
-            answer = etree.tostring(entry).decode('utf-8')
+            answer = etree.tostring(entry, encoding='unicode')
             if answer:
                 answer_map[entry.get('id')] = contextualize_text(answer, self.context)
 
@@ -809,8 +809,10 @@ class LoncapaProblem(object):
         Main method called externally to get the HTML to be rendered for this capa Problem.
         """
         self.do_targeted_feedback(self.tree)
+        # Robbo: encoding='unicode' keeps non-ASCII as is; the default ASCII output turns
+        # /static/сластина.png into /static/&#1089;…, and static_replace cuts the name at '#'.
         html = contextualize_text(
-            etree.tostring(self._extract_html(self.tree)).decode('utf-8'),
+            etree.tostring(self._extract_html(self.tree), encoding='unicode'),
             self.context
         )
         return html

@@ -1,6 +1,7 @@
 """
 Test capa problem.
 """
+import re
 import textwrap
 import unittest
 from unittest.mock import patch, MagicMock
@@ -11,10 +12,13 @@ import pytest
 import ddt
 from lxml import etree
 from markupsafe import Markup
+from opaque_keys.edx.keys import CourseKey
 
 from xmodule.capa.correctmap import CorrectMap
 from xmodule.capa.responsetypes import LoncapaProblemError
 from xmodule.capa.tests.helpers import new_loncapa_problem
+from xmodule.contentstore.content import StaticContent
+from xmodule.exceptions import NotFoundError
 from openedx.core.djangolib.markup import HTML
 
 
@@ -421,6 +425,37 @@ class CAPAProblemTest(unittest.TestCase):
         """
         problem = new_loncapa_problem(xml)
         assert problem is not None
+
+    def test_non_ascii_static_url_kept_in_html(self):
+        """
+        Robbo: a Cyrillic file name in /static/ stays as is in the problem HTML and its solution,
+        not as &#NNNN; entities that static_replace cuts at '#'.
+        """
+        xml = """
+        <problem>
+            <p><img src="/static/сластина.png"/></p>
+            <stringresponse answer="Пластина" type="ci">
+                <textline size="40"/>
+            </stringresponse>
+            <solution><p><img src="/static/ответ.png"/></p></solution>
+        </problem>
+        """
+        problem = new_loncapa_problem(xml)
+        html = problem.get_html()
+        assert '/static/сластина.png' in html
+        assert '&#' not in html
+        solutions = [answer for answer in problem.get_question_answers().values() if 'ответ' in answer]
+        assert solutions and '/static/ответ.png' in solutions[0]
+
+    def test_non_ascii_static_url_rewritten_to_asset(self):
+        """
+        Robbo: the src of a Cyrillic /static/ name in the problem HTML resolves to that asset, not to block/_.
+        """
+        problem = new_loncapa_problem('<problem><p><img src="/static/сластина.png"/></p></problem>')
+        src = re.search(r'src="([^"]+)"', problem.get_html()).group(1)
+        with patch('xmodule.contentstore.content.AssetManager.find', side_effect=NotFoundError(src)):
+            url = StaticContent.get_canonicalized_asset_path(CourseKey.from_string('course-v1:o+c+r'), src, '', [])
+        assert url == '/asset-v1:o+c+r+type@asset+block@%D1%81%D0%BB%D0%B0%D1%81%D1%82%D0%B8%D0%BD%D0%B0.png'
 
 
 @ddt.ddt
