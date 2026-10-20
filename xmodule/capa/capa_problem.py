@@ -77,6 +77,10 @@ html_problem_semantics = [
 
 log = logging.getLogger(__name__)
 
+# Robbo: the visual problem editor (frontend-app-authoring ReactStateOLXParser.addSolution) writes this
+# English title into the OLX of every solution and strips it again when it reopens the problem.
+SOLUTION_TITLE = 'Explanation'
+
 #-----------------------------------------------------------------------------
 # main class for this module
 
@@ -542,12 +546,30 @@ class LoncapaProblem(object):
 
         # include solutions from <solution>...</solution> stanzas
         for entry in self.tree.xpath("//" + "|//".join(solution_tags)):
+            entry = deepcopy(entry)
+            self._translate_solution_titles(entry)
             answer = etree.tostring(entry, encoding='unicode')
             if answer:
                 answer_map[entry.get('id')] = contextualize_text(answer, self.context)
 
         log.debug('answer_map = %s', answer_map)
         return answer_map
+
+    def _translate_solution_titles(self, tree):
+        """
+        Robbo: show the editor's English solution title in the learner's language («Пояснение»).
+        Only the first child of a detailed-solution div whose whole text is the title is changed.
+        """
+        title = self.capa_system.i18n.gettext(SOLUTION_TITLE)
+        if title == SOLUTION_TITLE:
+            return
+        solutions = tree.xpath(
+            "descendant-or-self::div[contains(concat(' ', normalize-space(@class), ' '), ' detailed-solution ')]"
+        )
+        for solution in solutions:
+            first = next(iter(solution), None)
+            if first is not None and len(first) == 0 and (first.text or '').strip() == SOLUTION_TITLE:
+                first.text = title
 
     def get_answer_ids(self):
         """
@@ -811,8 +833,10 @@ class LoncapaProblem(object):
         self.do_targeted_feedback(self.tree)
         # Robbo: encoding='unicode' keeps non-ASCII as is; the default ASCII output turns
         # /static/сластина.png into /static/&#1089;…, and static_replace cuts the name at '#'.
+        html_tree = self._extract_html(self.tree)
+        self._translate_solution_titles(html_tree)
         html = contextualize_text(
-            etree.tostring(self._extract_html(self.tree), encoding='unicode'),
+            etree.tostring(html_tree, encoding='unicode'),
             self.context
         )
         return html
