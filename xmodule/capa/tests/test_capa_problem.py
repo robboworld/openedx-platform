@@ -457,6 +457,39 @@ class CAPAProblemTest(unittest.TestCase):
             url = StaticContent.get_canonicalized_asset_path(CourseKey.from_string('course-v1:o+c+r'), src, '', [])
         assert url == '/asset-v1:o+c+r+type@asset+block@%D1%81%D0%BB%D0%B0%D1%81%D1%82%D0%B8%D0%BD%D0%B0.png'
 
+    def test_solution_title_translated(self):
+        """
+        Robbo: the editor's «Explanation» title of a solution is shown in the learner's language;
+        the author's own text that merely says Explanation is kept.
+        """
+        xml = """
+        <problem>
+            <multiplechoiceresponse targeted-feedback="alwaysShowCorrectChoiceExplanation">
+                <choicegroup type="MultipleChoice">
+                    <choice correct="true" explanation-id="feedback1">A</choice>
+                    <choice correct="false">B</choice>
+                </choicegroup>
+            </multiplechoiceresponse>
+            <targetedfeedbackset>
+                <targetedfeedback explanation-id="feedback1"><p>Right</p></targetedfeedback>
+            </targetedfeedbackset>
+            <solution explanation-id="feedback1">
+                <div class="detailed-solution"><p>Explanation</p><p>Explanation</p><p>Because.</p></div>
+            </solution>
+        </problem>
+        """
+        problem = new_loncapa_problem(xml)
+        problem.capa_system.i18n = MagicMock()
+        problem.capa_system.i18n.gettext.side_effect = lambda text: {'Explanation': 'Пояснение'}.get(text, text)
+
+        solution = [answer for answer in problem.get_question_answers().values() if 'Because' in answer][0]
+        assert '<p>Пояснение</p><p>Explanation</p><p>Because.</p>' in solution
+        problem.done = True
+        problem.student_answers = {'1_2_1': 'choice_1'}
+        assert '<p>Пояснение</p><p>Explanation</p>' in problem.get_html()
+        # the stored problem keeps the English marker the editor strips on reopening
+        assert problem.tree.xpath('//div[@class="detailed-solution"]/p')[0].text == 'Explanation'
+
 
 @ddt.ddt
 class CAPAMultiInputProblemTest(unittest.TestCase):
