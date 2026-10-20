@@ -63,23 +63,24 @@ class TextInputHintsTest(HintTest):
              'hints': [{'text': 'The red light is scattered by water molecules leaving only blue light.'}]}
         )
 
+    # Robbo: hint HTML keeps non-ASCII as is (Ω), not as &#937; — see LoncapaProblem.get_html.
     @data(
         {'problem_id': '1_2_1', 'choice': 'GermanyΩ',
-         'expected_string': '<div class="feedback-hint-incorrect"><div class="explanation-title">Answer</div><span class="hint-label">Incorrect: </span><div class="hint-text">I do not think so.&#937;</div></div>'},
+         'expected_string': '<div class="feedback-hint-incorrect"><div class="explanation-title">Answer</div><span class="hint-label">Incorrect: </span><div class="hint-text">I do not think so.Ω</div></div>'},
         {'problem_id': '1_2_1', 'choice': 'franceΩ',
-         'expected_string': '<div class="feedback-hint-correct"><div class="explanation-title">Answer</div><span class="hint-label">Correct: </span><div class="hint-text">Viva la France!&#937;</div></div>'},
+         'expected_string': '<div class="feedback-hint-correct"><div class="explanation-title">Answer</div><span class="hint-label">Correct: </span><div class="hint-text">Viva la France!Ω</div></div>'},
         {'problem_id': '1_2_1', 'choice': 'FranceΩ',
-         'expected_string': '<div class="feedback-hint-correct"><div class="explanation-title">Answer</div><span class="hint-label">Correct: </span><div class="hint-text">Viva la France!&#937;</div></div>'},
+         'expected_string': '<div class="feedback-hint-correct"><div class="explanation-title">Answer</div><span class="hint-label">Correct: </span><div class="hint-text">Viva la France!Ω</div></div>'},
         {'problem_id': '1_2_1', 'choice': 'Mexico',
          'expected_string': ''},
         {'problem_id': '1_2_1', 'choice': 'USAΩ',
-         'expected_string': '<div class="feedback-hint-correct"><div class="explanation-title">Answer</div><span class="hint-label">Correct: </span><div class="hint-text">Less well known, but yes, there is a Paris, Texas.&#937;</div></div>'},
+         'expected_string': '<div class="feedback-hint-correct"><div class="explanation-title">Answer</div><span class="hint-label">Correct: </span><div class="hint-text">Less well known, but yes, there is a Paris, Texas.Ω</div></div>'},
         {'problem_id': '1_2_1', 'choice': 'usaΩ',
-         'expected_string': '<div class="feedback-hint-correct"><div class="explanation-title">Answer</div><span class="hint-label">Correct: </span><div class="hint-text">Less well known, but yes, there is a Paris, Texas.&#937;</div></div>'},
+         'expected_string': '<div class="feedback-hint-correct"><div class="explanation-title">Answer</div><span class="hint-label">Correct: </span><div class="hint-text">Less well known, but yes, there is a Paris, Texas.Ω</div></div>'},
         {'problem_id': '1_2_1', 'choice': 'uSAxΩ',
          'expected_string': ''},
         {'problem_id': '1_2_1', 'choice': 'NICKLANDΩ',
-         'expected_string': '<div class="feedback-hint-incorrect"><div class="explanation-title">Answer</div><span class="hint-label">Incorrect: </span><div class="hint-text">The country name does not end in LAND&#937;</div></div>'},
+         'expected_string': '<div class="feedback-hint-incorrect"><div class="explanation-title">Answer</div><span class="hint-label">Incorrect: </span><div class="hint-text">The country name does not end in LANDΩ</div></div>'},
         {'problem_id': '1_3_1', 'choice': 'Blue',
          'expected_string': '<div class="feedback-hint-correct"><div class="explanation-title">Answer</div><span class="hint-label">Correct: </span><div class="hint-text">The red light is scattered by water molecules leaving only blue light.</div></div>'},
         {'problem_id': '1_3_1', 'choice': 'blue',
