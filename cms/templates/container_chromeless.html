@@ -229,31 +229,31 @@ from openedx.core.release import RELEASE_LINE
         // it will report the height of its contents to the parent window when the
         // document loads, window resizes, or DOM mutates.
         if (window !== window.parent) {
-            var lastHeight = window.parent[0].offsetHeight;
-            var lastWidth = window.parent[0].offsetWidth;
+            var lastHeight = null;
+            var lastWidth = null;
             var contentElement = document.getElementById('content');
+
+            // Monitor for messages and checks if the message contains an id. If
+            // there is an id, then the location of the selected focus element
+            // is sent through its offset attribute. The offset will allow the
+            // page to scroll to the location of the focus element so that it is
+            // at the top of the page. Unique ids and names are required for
+            // proper scrolling.
+            // Robbo: registered once, not on every resize (upstream added a listener per mutation).
+            window.addEventListener('message', function (event) {
+                if (event.data.hashName) {
+                    var targetId = event.data.hashName;
+                    var targetName = event.data.hashName.slice(1);
+                    // Checks if the target uses an id or name to focus and gets offset.
+                    var targetOffset = $(targetId).offset() || $(document.getElementsByName(targetName)[0]).offset();
+                    window.parent.postMessage({ 'offset': targetOffset.top }, document.referrer);
+                }
+            });
 
             function dispatchResizeMessage(event) {
                 // Note: event is actually an Array of MutationRecord objects when fired from the MutationObserver
-                var isLoadEvent = event.type === 'load';
                 var newHeight = contentElement.offsetHeight;
                 var newWidth = contentElement.offsetWidth;
-
-                // Monitor for messages and checks if the message contains an id. If
-                // there is an id, then the location of the selected focus element
-                // is sent through its offset attribute. The offset will allow the
-                // page to scroll to the location of the focus element so that it is
-                // at the top of the page. Unique ids and names are required for
-                // proper scrolling.
-                window.addEventListener('message', function (event) {
-                    if (event.data.hashName) {
-                        var targetId = event.data.hashName;
-                        var targetName = event.data.hashName.slice(1);
-                        // Checks if the target uses an id or name to focus and gets offset.
-                        var targetOffset = $(targetId).offset() || $(document.getElementsByName(targetName)[0]).offset();
-                        window.parent.postMessage({ 'offset': targetOffset.top }, document.referrer);
-                    }
-                })
 
                 window.parent.postMessage(
                     {
@@ -277,6 +277,16 @@ from openedx.core.release import RELEASE_LINE
                 window.scrollTo(0, 0);
             }
 
+            // Robbo: content can grow without a DOM mutation (an image, nested iframe or
+            // font finishes loading after the block was inserted), and the ResizeObserver
+            // does not always report it in the cross-origin iframe. Then the iframe stays
+            // short and the MFE footer covers the rest of the unit until the next click.
+            function dispatchIfChanged() {
+                if (contentElement.offsetHeight !== lastHeight || contentElement.offsetWidth !== lastWidth) {
+                    dispatchResizeMessage();
+                }
+            }
+
             // Create an observer instance linked to the callback function
             const observer = new MutationObserver(dispatchResizeMessage);
 
@@ -285,8 +295,18 @@ from openedx.core.release import RELEASE_LINE
 
             window.addEventListener('load', dispatchResizeMessage);
 
-            const resizeObserver = new ResizeObserver(dispatchResizeMessage);
+            const resizeObserver = new ResizeObserver(dispatchIfChanged);
             resizeObserver.observe(document.body);
+            resizeObserver.observe(contentElement);
+
+            // load/error of img, iframe, video do not bubble, so listen in the capture phase.
+            document.addEventListener('load', dispatchIfChanged, true);
+            document.addEventListener('error', dispatchIfChanged, true);
+            if (document.fonts && document.fonts.ready) {
+                document.fonts.ready.then(dispatchIfChanged);
+            }
+            // Safety net for growth no event reports (CSS transitions, lazy content).
+            setInterval(dispatchIfChanged, 1000);
         }
     }());
     </script>

@@ -152,6 +152,23 @@ ${HTML(fragment.foot_html())}
       var lastWidth = window.offsetWidth;
       var contentElement = document.getElementById('content');
 
+      // Monitor for messages and checks if the message contains an id. If
+      // there is an id, then the location of the selected focus element
+      // is sent through its offset attribute. The offset will allow the
+      // page to scroll to the location of the focus element so that it is
+      // at the top of the page. Unique ids and names are required for
+      // proper scrolling.
+      // Robbo: registered once, not on every resize (upstream added a listener per mutation).
+      window.addEventListener('message', function (event) {
+        if (event.data.hashName) {
+          var targetId = event.data.hashName;
+          var targetName = event.data.hashName.slice(1);
+          // Checks if the target uses an id or name to focus and gets offset.
+          var targetOffset = $(targetId).offset() || $(document.getElementsByName(targetName)[0]).offset();
+          window.parent.postMessage({ 'offset': targetOffset.top }, document.referrer);
+        }
+      });
+
       function dispatchResizeMessage(event) {
         // Note: event is actually an Array of MutationRecord objects when fired from the MutationObserver
         var isLoadEvent = event.type === 'load';
@@ -193,22 +210,6 @@ ${HTML(fragment.foot_html())}
             })
           return;
         }
-        // Monitor for messages and checks if the message contains an id. If
-        // there is an id, then the location of the selected focus element
-        // is sent through its offset attribute. The offset will allow the
-        // page to scroll to the location of the focus element so that it is
-        // at the top of the page. Unique ids and names are required for
-        // proper scrolling.
-        window.addEventListener('message', function (event) {
-          if (event.data.hashName) {
-            var targetId = event.data.hashName;
-            var targetName = event.data.hashName.slice(1);
-            // Checks if the target uses an id or name to focus and gets offset.
-            var targetOffset = $(targetId).offset() || $(document.getElementsByName(targetName)[0]).offset();
-            window.parent.postMessage({ 'offset': targetOffset.top }, document.referrer);
-          }
-        })
-
         window.parent.postMessage({
             type: 'plugin.resize',
             payload: {
@@ -240,6 +241,26 @@ ${HTML(fragment.foot_html())}
 
       const resizeObserver = new ResizeObserver(dispatchResizeMessage);
       resizeObserver.observe(document.body);
+      resizeObserver.observe(contentElement);
+
+      // Robbo: content can grow without a DOM mutation (an image, nested iframe or
+      // font finishes loading after the block was inserted), and the ResizeObserver
+      // does not always report it in the cross-origin iframe. Then the iframe stays
+      // short and the MFE footer covers the rest of the unit until the next click.
+      function dispatchIfChanged() {
+        if (contentElement.offsetHeight !== lastHeight || contentElement.offsetWidth !== lastWidth) {
+          dispatchResizeMessage([]);
+        }
+      }
+
+      // load/error of img, iframe, video do not bubble, so listen in the capture phase.
+      document.addEventListener('load', dispatchIfChanged, true);
+      document.addEventListener('error', dispatchIfChanged, true);
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(dispatchIfChanged);
+      }
+      // Safety net for growth no event reports (CSS transitions, lazy content).
+      setInterval(dispatchIfChanged, 1000);
     }
   }());
 </script>
