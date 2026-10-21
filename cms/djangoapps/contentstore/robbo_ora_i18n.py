@@ -353,6 +353,9 @@ ROBBO_ORA_JS_CATALOG = {
     "Upload failed. Check that the file is within the size limit and try again.": (
         "Не удалось загрузить файл. Проверьте размер файла и попробуйте снова."
     ),
+    "The file was not uploaded. Check your internet connection and upload it again.": (
+        "Файл не загрузился. Проверьте подключение к интернету и загрузите его ещё раз."
+    ),
     "Are you sure you want to delete the following file? It cannot be restored.\nFile: ": (
         "Удалить этот файл? Восстановить его будет нельзя.\nФайл: "
     ),
