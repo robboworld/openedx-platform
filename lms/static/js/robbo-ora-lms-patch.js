@@ -29,6 +29,9 @@
     'Upload failed. Check that the file is within the size limit and try again.': (
       'Не удалось загрузить файл. Проверьте размер файла и попробуйте снова.'
     ),
+    'The file was not uploaded. Check your internet connection and upload it again.': (
+      'Файл не загрузился. Проверьте подключение к интернету и загрузите его ещё раз.'
+    ),
     'Please provide a description for each file you are uploading.': (
       'Укажите описание для каждого загружаемого файла.'
     ),
@@ -488,6 +491,23 @@
     }
   }
 
+  // ORA puts the bare jQuery status ("error", "timeout", "canceled") under «Не удалось загрузить файлы»
+  // when the file PUT fails. The PUT is synchronous (async: false), so ajaxError fires before ORA's
+  // fail handler writes its text; replace it on the next tick.
+  function onFileUploadError(event, xhr, settings) {
+    if (!settings || String(settings.type).toUpperCase() !== 'PUT') {
+      return;
+    }
+    var message = xhr && xhr.status === 413
+      ? gettext('Upload failed. Check that the file is within the size limit and try again.')
+      : gettext('The file was not uploaded. Check your internet connection and upload it again.');
+    window.setTimeout(function () {
+      document.querySelectorAll('.step--response .upload__error.has--error').forEach(function (errorBox) {
+        showUploadError(findStepRoot(errorBox), message);
+      });
+    }, 0);
+  }
+
   function shouldRefreshForNode(node) {
     if (!node || node.nodeType !== 1) {
       return false;
@@ -527,6 +547,7 @@
     if (typeof window.jQuery !== 'undefined') {
       window.jQuery.ajaxPrefilter(patchSaveFilesDescriptionsPayload);
       window.jQuery(document).ajaxSuccess(onAjaxSuccess);
+      window.jQuery(document).ajaxError(onFileUploadError);
       // Failed uploads reset the input via jQuery .val(null) without a change event.
       // Only XBlock handler calls matter; Studio fires plenty of unrelated requests.
       window.jQuery(document).ajaxComplete(function (_event, _xhr, settings) {
