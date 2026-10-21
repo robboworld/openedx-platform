@@ -17,6 +17,11 @@ try:
 except ImportError:
     def _robbo_course_image(url):
         return url
+try:
+    from lms.djangoapps.courseware.robbo_catalog import course_org_display_name as _robbo_course_org
+except ImportError:
+    def _robbo_course_org(course):
+        return course.display_org_with_default
 %>
 
 <%inherit file="../main.html" />
@@ -91,7 +96,7 @@ except ImportError:
           <h1>
             ${course.display_name_with_default}
           </h1>
-          <span class="org">${course.display_org_with_default}</span>
+          <span class="org">${_robbo_course_org(course)}</span>
         </div>
       </div>
       <div class="main-cta">
@@ -166,11 +171,6 @@ except ImportError:
         <h2>${_("Course Summary")}</h2>
         <%block name="course_about_important_dates">
         <ol class="important-dates">
-          <li class="important-dates-item">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 3L1 9L5 11.18V17.18L12 21L19 17.18V11.18L21 10.09V17H23V9L12 3ZM18.8201 8.99997L12.0001 12.72L5.18007 8.99997L12.0001 5.27997L18.8201 8.99997ZM12 18.72L17 15.99V12.27L12 15L7 12.27V15.99L12 18.72Z" fill="currentColor"/>
-              </svg>
-            <p class="important-dates-item-title">${_("Course Number")}</p><span class="important-dates-item-text course-number">${course.display_number_with_default}</span></li>
           % if not course.start_date_is_still_default:
               <%
                   course_start_date = course.advertised_start or course.start
