@@ -77,6 +77,7 @@ from openedx.core.lib.robbo_course_key_case import (  # lint-amnesty, pylint: di
     check_course_key_case,
     course_key_case_error_message,
 )
+from openedx.core.lib.robbo_stack import ROBBO_STACK_PROFILE  # lint-amnesty, pylint: disable=wrong-import-order
 from xmodule.tabs import CourseTab, CourseTabList, InvalidTabsException  # lint-amnesty, pylint: disable=wrong-import-order
 
 from ..course_group_config import (
@@ -1004,6 +1005,10 @@ def create_new_course_in_store(store, user, org, number, run, fields):
     # New courses start hidden (no catalog, no about page); the team opens them in Advanced Settings.
     # Stored explicitly so existing courses keep the platform default ("both"). Reruns copy the source.
     fields.setdefault('catalog_visibility', CATALOG_VISIBILITY_NONE)
+    # The org of a course key is Latin only (ROBBO); learners read the organization from «Course
+    # Organization Display String» (about page, certificates), so new courses get «РОББО» there,
+    # «ROBBO» on courses (English by default).
+    fields.setdefault('display_organization', 'ROBBO' if ROBBO_STACK_PROFILE == 'courses' else 'РОББО')
 
     # Localize default assignment/cutoff labels for Russian courses.
     if 'grading_policy' not in fields:
