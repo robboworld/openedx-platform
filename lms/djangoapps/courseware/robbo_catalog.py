@@ -39,6 +39,8 @@ from django.core.cache import cache
 from django.urls import reverse
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
+from organizations import api as organizations_api
+from organizations.exceptions import InvalidOrganizationException
 from openedx.core.djangoapps.models.course_details import CourseDetails
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from openedx.core.djangolib.markup import HTML, Text
@@ -429,6 +431,24 @@ def course_image_or_placeholder(url: str) -> str:
     if _course_asset_is_missing(url):
         return CATALOG_PLACEHOLDER_IMAGE_URL
     return url
+
+
+def course_org_display_name(course) -> str:
+    """
+    The organization as learners read it on the course about page. The org of a course key is Latin
+    only (ROBBO), so: the course's own «Course Organization Display String» (Studio, Advanced
+    Settings); else the organization's name in the LMS admin (Organizations, e.g. «РОББО»); else the
+    org itself. The admin name is also what certificates print as the organization.
+    """
+    own = (getattr(course, 'display_organization', None) or '').strip()
+    if own:
+        return own
+    org = course.id.org
+    try:
+        name = (organizations_api.get_organization_by_short_name(org).get('name') or '').strip()
+    except InvalidOrganizationException:
+        name = ''
+    return name or org
 
 
 def _catalog_course_image_url(course) -> str:
