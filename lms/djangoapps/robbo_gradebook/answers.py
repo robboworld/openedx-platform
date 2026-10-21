@@ -6,7 +6,8 @@
 # correct answers and which of them were wrong. Scores come from the grades app (the numbers
 # behind the gradebook cell); capa answers are rebuilt from the learner's problem state the way
 # the problem responses report does it (ProblemBlock.generate_report_data), with correctness
-# from the state's correct map. Other scorable blocks (open response, drag and drop, SCORM)
+# from the state's correct map. Choices keep their pictures (`files`); open responses come with
+# the text and the files of the last submission. Other scorable blocks (drag and drop, SCORM)
 # get their score only.
 
 """Answers of one learner to the problems of a graded subsection, for the gradebook MFE."""
@@ -14,17 +15,22 @@
 import html
 import json
 import logging
+import mimetypes
 import re
+from copy import deepcopy
 
 from django.contrib.auth import get_user_model
 from django.utils.html import strip_tags
+from openassessment.data import OraSubmissionAnswerFactory
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import UsageKey
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from submissions import api as submissions_api
 
-from common.djangoapps.student.models import CourseEnrollment
+from common.djangoapps.static_replace import replace_static_urls
+from common.djangoapps.student.models import CourseEnrollment, anonymous_id_for_user
 from lms.djangoapps.courseware.user_state_client import DjangoXBlockUserStateClient
 from lms.djangoapps.grades.api import CourseGradeFactory
 from lms.djangoapps.grades.rest_api.v1.gradebook_views import (
@@ -48,6 +54,9 @@ CORRECTNESS_VALUES = (CORRECT, INCORRECT, PARTIALLY_CORRECT)
 CAPA_STATE_FIELDS = ('done', 'correct_map', 'student_answers', 'has_saved_answers', 'input_state')
 
 CHOICE_NAME = re.compile(r'^choice_(\d+)$')
+
+# Feedback written next to a choice for the learner, not a part of the choice.
+CHOICE_HINT_TAGS = ('choicehint',)
 
 
 def scorable_blocks(structure, subsection_key):
@@ -125,21 +134,77 @@ def _answer_text(lcp, answer_id, value):
     return json.dumps(value, ensure_ascii=False)
 
 
-def _correct_answer_text(lcp, answer_id, value):
+def _file(url, name, image, description=''):
+    """One file of an answer: a picture of a choice (named by its alt text) or an uploaded file."""
+    return {'url': url, 'name': name or '', 'description': description or '', 'image': image}
+
+
+def _image_url(src, course_key):
+    """Course asset links (/static/...) of a picture become the URLs of the assets."""
+    return replace_static_urls(f'"{src}"', course_id=course_key)[1:-1]
+
+
+def _choice_content(choice, course_key):
+    """Text and pictures of a choice; the hints written for the learner are left out."""
+    choice = deepcopy(choice)
+    for hint in choice.xpath('|'.join(f'.//{tag}' for tag in CHOICE_HINT_TAGS)):
+        hint.getparent().remove(hint)
+    text = ' '.join(''.join(choice.itertext()).split())
+    files = [
+        _file(_image_url(image.get('src'), course_key), image.get('alt', ''), True)
+        for image in choice.iter('img') if image.get('src')
+    ]
+    return text, files
+
+
+def _choices(lcp, answer_id, value):
+    """The <choice> elements of the stored choice names, in problem order; None for other answers."""
+    names = value if isinstance(value, (list, tuple, set)) else [value]
+    if not names or not all(isinstance(name, str) and CHOICE_NAME.match(name) for name in names):
+        return None
+    choices = []
+    for name in sorted(names, key=_choice_order):
+        found = lcp.tree.xpath(f'//*[@id="{answer_id}"]//*[@name="{name}"]')
+        if len(found) != 1:
+            return None
+        choices.append(found[0])
+    return choices
+
+
+def _answer_content(lcp, answer_id, value, course_key):
+    """
+    Readable answer and its files: chosen choices give their text and pictures (a choice can be
+    a picture only); other answers give their text.
+    """
+    choices = _choices(lcp, answer_id, value) if value not in (None, '', []) else None
+    if choices is None:
+        return _answer_text(lcp, answer_id, value), []
+    texts, files = [], []
+    for choice in choices:
+        text, images = _choice_content(choice, course_key)
+        if text:
+            texts.append(text)
+        files.extend(images)
+    return ', '.join(texts), files
+
+
+def _correct_answer_content(lcp, answer_id, value, course_key):
     """Readable correct answer: numerical and text answers come with markup («<b>or</b>»)."""
-    return html.unescape(strip_tags(_answer_text(lcp, answer_id, value))).strip()
+    text, files = _answer_content(lcp, answer_id, value, course_key)
+    return html.unescape(strip_tags(text)).strip(), files
 
 
 def capa_answers(block, state):
     """
     The learner's last answer to a capa problem, one entry per input in problem order:
-    [{question, answer, correctAnswer, correctness}]; [] without an answer.
+    [{question, answer, files, correctAnswer, correctFiles, correctness}]; [] without an answer.
 
     Saved but not submitted answers have no correctness: the correct map in the state is the
     one of the previous submission.
     """
     if not state.get('student_answers'):
         return []
+    course_key = block.location.course_key
     lcp = _loncapa_problem(block, state)
     correct_answers = lcp.get_question_answers()
     saved = bool(state.get('has_saved_answers'))
@@ -147,13 +212,79 @@ def capa_answers(block, state):
     for responder in lcp.responders.values():
         for answer_id in responder.answer_ids:
             correctness = None if saved else lcp.correct_map.get_correctness(answer_id)
+            answer, files = _answer_content(lcp, answer_id, lcp.student_answers.get(answer_id), course_key)
+            correct_answer, correct_files = _correct_answer_content(
+                lcp, answer_id, correct_answers.get(answer_id), course_key,
+            )
             answers.append({
                 'question': lcp.find_question_label(answer_id),
-                'answer': _answer_text(lcp, answer_id, lcp.student_answers.get(answer_id)),
-                'correctAnswer': _correct_answer_text(lcp, answer_id, correct_answers.get(answer_id)),
+                'answer': answer,
+                'files': files,
+                'correctAnswer': correct_answer,
+                'correctFiles': correct_files,
                 'correctness': correctness if correctness in CORRECTNESS_VALUES else None,
             })
     return answers
+
+
+def _prompt_text(prompt):
+    """Text of an open response prompt (html prompts too)."""
+    return ' '.join(html.unescape(strip_tags(prompt.get('description') or '')).split())
+
+
+def ora_submission(block, learner):
+    """The learner's last open response submission (None without one); team ones are not read."""
+    if getattr(block, 'teams_enabled', False):
+        return None
+    submissions = submissions_api.get_submissions({
+        'student_id': anonymous_id_for_user(learner, block.location.course_key),
+        'course_id': str(block.location.course_key),
+        'item_id': str(block.location),
+        'item_type': block.location.block_type,
+    }, limit=1)
+    return submissions[0] if submissions else None
+
+
+def ora_answers(block, submission):
+    """
+    The text of an open response submission, one entry per prompt, the files with the last one:
+    [{question, answer, files, correctAnswer: '', correctFiles: [], correctness: None}].
+    File links are the ones of the upload backend: they work for a while (ORA gives them so too).
+    """
+    if submission is None:
+        return []
+    answer = OraSubmissionAnswerFactory.parse_submission_raw_answer(submission.get('answer'))
+    texts = answer.get_text_responses()
+    prompts = block.prompts or []
+    files = [
+        _file(upload.url, upload.name, _is_image(upload.name), upload.description)
+        for upload in answer.get_file_uploads(missing_blank=True, generate_urls=True) if upload.url
+    ]
+    entries = [
+        {
+            'question': _prompt_text(prompts[index]) if index < len(prompts) else '',
+            'answer': (text or '').strip(),
+            'files': [],
+            'correctAnswer': '',
+            'correctFiles': [],
+            'correctness': None,
+        }
+        for index, text in enumerate(texts)
+    ]
+    if files:
+        if not entries:
+            entries.append({
+                'question': _prompt_text(prompts[0]) if prompts else '', 'answer': '', 'files': [],
+                'correctAnswer': '', 'correctFiles': [], 'correctness': None,
+            })
+        entries[-1]['files'] = files
+    return entries
+
+
+def _is_image(name):
+    """Pictures among the uploaded files, by their names."""
+    content_type, _ = mimetypes.guess_type(name or '')
+    return bool(content_type and content_type.startswith('image/'))
 
 
 def _score_correctness(score):
@@ -175,7 +306,7 @@ def _answers_correctness(answers):
     return INCORRECT if values == {INCORRECT} else PARTIALLY_CORRECT
 
 
-def _problem_entry(block, unit_name, score, state):
+def _problem_entry(block, unit_name, score, state, learner):
     """One problem of the subsection with the learner's score and answers (see the view)."""
     entry = {
         'id': str(block.location),
@@ -189,6 +320,7 @@ def _problem_entry(block, unit_name, score, state):
         'saved': bool(state.get('has_saved_answers')),
         'answers': None,
         'answersError': False,
+        'awaitingGrade': False,
     }
     if entry['type'] == 'problem':
         try:
@@ -200,6 +332,18 @@ def _problem_entry(block, unit_name, score, state):
             entry['answersError'] = True
         # A submission leaves a correct map; saving answers or opening the problem does not.
         submitted = bool(state.get('correct_map'))
+    elif entry['type'] == 'openassessment':
+        try:
+            submission = ora_submission(block, learner)
+            entry['answers'] = ora_answers(block, submission)
+        except Exception:  # pylint: disable=broad-except
+            log.exception('Robbo gradebook: cannot read the response to %s', block.location)
+            submission = None
+            entry['answers'] = []
+            entry['answersError'] = True
+        submitted = bool(score and score.first_attempted)
+        # Submitted, the score comes after the assessments.
+        entry['awaitingGrade'] = bool(submission) and not submitted
     else:
         submitted = bool(score and score.first_attempted)
 
@@ -227,7 +371,9 @@ def learner_subsection_answers(course_key, learner, subsection_key):
     store = modulestore()
     with store.bulk_operations(course_key):
         return [
-            _problem_entry(store.get_item(block_key), unit_name, scores.get(block_key), states.get(block_key, {}))
+            _problem_entry(
+                store.get_item(block_key), unit_name, scores.get(block_key), states.get(block_key, {}), learner,
+            )
             for unit_name, block_key in blocks
         ]
 
@@ -251,9 +397,13 @@ class LearnerAnswersView(DeveloperErrorViewMixin, APIView):
             saved: the learner saved answers without submitting them,
             correctness: correct | incorrect | partially-correct of the last submission, null when
                 nothing was submitted,
-            answers: capa problems only (null for other blocks), one per input:
-                [{question, answer, correctAnswer, correctness}], [] without an answer,
-            answersError: the problem could not be read (answers are then []).
+            answers: capa problems (one per input) and open responses (one per prompt), null
+                for other blocks, [] without an answer:
+                [{question, answer, files, correctAnswer, correctFiles, correctness}];
+                files, correctFiles: [{url, name, description, image}] — pictures of the choices
+                (name: alt text), files of an open response (urls may be relative to the LMS),
+            answersError: the problem could not be read (answers are then []),
+            awaitingGrade: an open response was submitted and is not graded yet.
 
     Only learners of this course (enrolled now or before): other user ids get the same 404 as
     unknown ones.
