@@ -279,6 +279,8 @@ def patch_ora_runtime_limits():
     )
     _patch_ora_auto_score(OpenAssessmentBlock)
     _patch_ora_staff_list_unknown_scorer()
+    _patch_ora_submission_files_in_storage()
+    _patch_ora_submit_required_parts()
     OpenAssessmentBlock._robbo_runtime_limits_patched = True
 
 
@@ -361,6 +363,67 @@ def _patch_ora_staff_list_unknown_scorer():
             return None
 
     SubmissionListSerializer.get_gradedBy = get_gradedBy
+
+
+def _patch_ora_submission_files_in_storage():
+    """
+    Only files that are in storage go into a submission.
+
+    ORA saves the file metadata (save_files_descriptions) before the file itself is uploaded and
+    builds file_keys from that metadata alone, so a failed upload left graders a file that cannot
+    be opened, and a direct handler call could "attach" a file that was never uploaded.
+    """
+    from openassessment.xblock.apis.submissions.file_api import FileAPI
+
+    original_get_uploads = FileAPI.get_uploads_for_submission
+
+    def get_uploads_for_submission(self):
+        uploads = original_get_uploads(self)
+        stored = [upload for upload in uploads if upload.download_url]
+        if len(stored) != len(uploads):
+            log.warning(
+                'Robbo ORA: %d of %d files are missing from storage and are left out of the submission',
+                len(uploads) - len(stored), len(uploads),
+            )
+        return stored
+
+    FileAPI.get_uploads_for_submission = get_uploads_for_submission
+
+
+def _patch_ora_submit_required_parts():
+    """
+    Server-side check of a required text and a required file.
+
+    edx-ora2 checks them only in the learner's browser (oa_response.js#isValidForSubmit), so direct
+    calls of the submit handler got answers without the required part accepted, and with
+    "Score on submit" they got full marks. Same rules and messages as the browser check; blank text
+    is judged the same way ($.trim).
+    """
+    from openassessment.xblock.apis.submissions import submissions_actions
+    from openassessment.xblock.apis.submissions.errors import SubmissionValidationException
+
+    original_submit = submissions_actions.submit
+
+    def submit(text_responses, block_config_data, block_submission_data, block_workflow_data):
+        # Malformed input, Studio preview and repeat submissions keep the stock errors.
+        if (
+            isinstance(text_responses, list)
+            and all(isinstance(part, str) for part in text_responses)
+            and not block_config_data.in_studio_preview
+            and not block_submission_data.has_submitted
+        ):
+            translate = block_config_data.translate
+            if block_config_data.text_response == 'required' and not any(part.strip() for part in text_responses):
+                raise SubmissionValidationException(translate('Please provide a response.'))
+            if (
+                block_config_data.file_upload_type
+                and block_config_data.file_upload_response == 'required'
+                and not block_submission_data.files.get_uploads_for_submission()
+            ):
+                raise SubmissionValidationException(translate('Please upload a file.'))
+        return original_submit(text_responses, block_config_data, block_submission_data, block_workflow_data)
+
+    submissions_actions.submit = submit
 
 
 def patch_ora_studio_editor():
