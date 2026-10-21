@@ -12,7 +12,9 @@ from urllib.parse import urlencode
 from django.urls import reverse
 from edx_toggles.toggles.testutils import override_waffle_flag
 
-from common.djangoapps.student.models import CourseEnrollment
+from submissions import api as submissions_api
+
+from common.djangoapps.student.models import CourseEnrollment, anonymous_id_for_user
 from common.djangoapps.student.tests.factories import TEST_PASSWORD, StaffFactory, UserFactory
 from lms.djangoapps.courseware.models import StudentModule
 from lms.djangoapps.grades.api import CourseGradeFactory
@@ -64,6 +66,17 @@ TWO_QUESTIONS_XML = '''<problem>
 </stringresponse>
 </problem>'''
 
+PICTURES_XML = '''<problem>
+<multiplechoiceresponse>
+<label>Which code is right?</label>
+<choicegroup type="MultipleChoice">
+<choice correct="true"><img src="/static/code_a.png" alt="Code A"/></choice>
+<choice correct="false">None of them <img src="https://example.com/code_b.png" alt="Code B"/>
+<choicehint>Look again</choicehint></choice>
+</choicegroup>
+</multiplechoiceresponse>
+</problem>'''
+
 
 @skip_unless_lms
 @override_waffle_flag(WRITABLE_GRADEBOOK, active=True)
@@ -83,6 +96,11 @@ class LearnerAnswersViewTests(SharedModuleStoreTestCase):
         cls.checkbox = BlockFactory.create(parent=unit, category='problem', display_name='Sensors', data=CHECKBOX_XML)
         cls.text = BlockFactory.create(parent=unit, category='problem', display_name='Lights', data=TEXT_XML)
         cls.two = BlockFactory.create(parent=unit, category='problem', display_name='Motors', data=TWO_QUESTIONS_XML)
+        cls.pictures = BlockFactory.create(parent=unit, category='problem', display_name='Code', data=PICTURES_XML)
+        cls.ora = BlockFactory.create(
+            parent=unit, category='openassessment', display_name='Robot photo',
+            prompt=json.dumps([{'description': '<p>Show your <b>robot</b></p>'}, {'description': 'What can it do?'}]),
+        )
         cls.url = reverse('robbo_gradebook:learner_answers', kwargs={'course_id': str(cls.course.id)})
 
     def setUp(self):
@@ -121,6 +139,15 @@ class LearnerAnswersViewTests(SharedModuleStoreTestCase):
             state=json.dumps(state),
         )
 
+    def submit_response(self, answer):
+        """The learner's open response submission (no assessments yet)."""
+        submissions_api.create_submission({
+            'student_id': anonymous_id_for_user(self.learner, self.course.id),
+            'course_id': str(self.course.id),
+            'item_id': str(self.ora.location),
+            'item_type': 'openassessment',
+        }, answer)
+
     def get(self, **params):
         query = {'user_id': self.learner.id, 'subsection': str(self.subsection.location), **params}
         return self.client.get(f'{self.url}?{urlencode(query)}')
@@ -139,7 +166,9 @@ class LearnerAnswersViewTests(SharedModuleStoreTestCase):
         self.answer(self.two, {1: 'choice_0', 2: '3'}, {1: 'correct', 2: 'incorrect'}, earned=1, possible=2)
 
         response = self.get()
-        assert [problem['name'] for problem in response.json()['problems']] == ['Wheels', 'Sensors', 'Lights', 'Motors']
+        assert [problem['name'] for problem in response.json()['problems']] == [
+            'Wheels', 'Sensors', 'Lights', 'Motors', 'Code', 'Robot photo',
+        ]
         problems = self.problems()
 
         wheels = problems['Wheels']
@@ -147,7 +176,8 @@ class LearnerAnswersViewTests(SharedModuleStoreTestCase):
         assert (wheels['earned'], wheels['possible'], wheels['attempts']) == (0, 1, 1)
         assert wheels['correctness'] == 'incorrect'
         assert wheels['answers'] == [{
-            'question': 'How many wheels?', 'answer': 'Two', 'correctAnswer': 'Four', 'correctness': 'incorrect',
+            'question': 'How many wheels?', 'answer': 'Two', 'files': [],
+            'correctAnswer': 'Four', 'correctFiles': [], 'correctness': 'incorrect',
         }]
         # Checkbox choices in problem order, whatever the stored order.
         assert problems['Sensors']['answers'][0]['answer'] == 'Line sensor, Motor'
@@ -163,6 +193,54 @@ class LearnerAnswersViewTests(SharedModuleStoreTestCase):
 
         lights = problems['Lights']
         assert (lights['correctness'], lights['answers'], lights['attempts']) == (None, [], 0)
+
+    def test_picture_choices(self):
+        self.answer(self.pictures, {1: 'choice_1'}, {1: 'incorrect'})
+        answer = self.problems()['Code']['answers'][0]
+        # The text of a choice without its hint; a picture only choice has no text.
+        assert answer['answer'] == 'None of them'
+        assert answer['files'] == [
+            {'url': 'https://example.com/code_b.png', 'name': 'Code B', 'description': '', 'image': True},
+        ]
+        assert answer['correctAnswer'] == ''
+        [picture] = answer['correctFiles']
+        # Course assets become asset URLs.
+        assert 'code_a.png' in picture['url'] and not picture['url'].startswith('/static/')
+        assert (picture['name'], picture['image']) == ('Code A', True)
+
+    @patch('openassessment.data.get_download_url', lambda key: f'/files/{key}')
+    def test_open_response_text_and_files(self):
+        self.submit_response({
+            'parts': [{'text': 'A robot '}, {'text': 'It follows a line'}],
+            'file_keys': ['k1', 'k2'],
+            'files_names': ['robot.jpg', 'program.sb3'],
+            'files_descriptions': ['Front view', 'Program'],
+            'files_sizes': [10, 20],
+        })
+        photo = self.problems()['Robot photo']
+        assert photo['type'] == 'openassessment'
+        # Submitted, waiting for the assessments.
+        assert (photo['correctness'], photo['awaitingGrade']) == (None, True)
+        assert [(a['question'], a['answer']) for a in photo['answers']] == [
+            ('Show your robot', 'A robot'), ('What can it do?', 'It follows a line'),
+        ]
+        assert photo['answers'][0]['files'] == []
+        assert photo['answers'][1]['files'] == [
+            {'url': '/files/k1', 'name': 'robot.jpg', 'description': 'Front view', 'image': True},
+            {'url': '/files/k2', 'name': 'program.sb3', 'description': 'Program', 'image': False},
+        ]
+
+    @patch('openassessment.data.get_download_url', lambda key: f'/files/{key}')
+    def test_open_response_files_only(self):
+        # An early submission shape: files without names.
+        self.submit_response({'parts': [], 'file_keys': ['k1'], 'files_descriptions': ['']})
+        [answer] = self.problems()['Robot photo']['answers']
+        assert (answer['question'], answer['answer']) == ('Show your robot', '')
+        assert [file['url'] for file in answer['files']] == ['/files/k1']
+
+    def test_open_response_without_submission(self):
+        photo = self.problems()['Robot photo']
+        assert (photo['answers'], photo['awaitingGrade'], photo['correctness']) == ([], False, None)
 
     def test_text_answer_alternatives_without_markup(self):
         self.answer(self.text, {1: 'lamp'}, {1: 'incorrect'})
