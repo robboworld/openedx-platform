@@ -10,7 +10,6 @@ import logging
 import os
 import re
 import shutil
-from wsgiref.util import FileWrapper
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -18,7 +17,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 from django.db import transaction
-from django.http import Http404, HttpResponse, HttpResponseNotFound, StreamingHttpResponse
+from django.http import FileResponse, Http404, HttpResponse, HttpResponseNotFound
 from django.shortcuts import redirect
 from django.utils.translation import gettext as _
 from django.views.decorators.cache import cache_control
@@ -298,11 +297,21 @@ def export_download_filename(course_key):
 def send_tarball(tarball, size, filename=None):
     """
     Renders a tarball to response, for use when sending a tar.gz file to the user.
+
+    Robbo: a FileResponse goes to uwsgi's wsgi.file_wrapper, and with `offload-threads` (Tutor
+    plugin robbo-mfe-branding, patch uwsgi-config) an offload thread sends the file, so the worker
+    is free in milliseconds. A StreamingHttpResponse kept the worker writing 8 KB chunks while the
+    browser read: a pause over uwsgi's socket-timeout (4 s), e.g. Firefox's "Save as" dialog, cut
+    the archive, and its import failed. Without a file_wrapper (runserver) Django streams it in
+    COURSE_EXPORT_DOWNLOAD_CHUNK_SIZE blocks.
     """
-    wrapper = FileWrapper(tarball, settings.COURSE_EXPORT_DOWNLOAD_CHUNK_SIZE)
-    response = StreamingHttpResponse(wrapper, content_type='application/x-tgz')
-    filename = filename or os.path.basename(tarball.name)
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    response = FileResponse(
+        tarball,
+        as_attachment=True,
+        filename=filename or os.path.basename(tarball.name),
+        content_type='application/x-tgz',
+    )
+    response.block_size = settings.COURSE_EXPORT_DOWNLOAD_CHUNK_SIZE
     response['Content-Length'] = size
     return response
 

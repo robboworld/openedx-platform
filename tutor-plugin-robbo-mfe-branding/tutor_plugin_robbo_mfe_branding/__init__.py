@@ -264,6 +264,22 @@ _PATCH_CADDYFILE_HASHED_STATIC = r"""
 header @robbo_hashed_static Cache-Control "public, max-age=31536000, immutable"
 """
 
+# Studio course export downloads (/export_output/…). When the browser stops reading for a while
+# (Firefox's "Save as" dialog, a network stall), a worker writing the file blocks, and after
+# uwsgi's socket-timeout of 4 s it drops the response: "uwsgi_response_write_body_do() TIMEOUT
+# !!!", Caddy "aborting with incomplete response". Firefox over HTTP/3 then saves the cut archive
+# as finished, and its import fails with "Compressed file ended before the end-of-stream marker".
+# The platform sends the archive as a FileResponse (send_tarball in contentstore/views/
+# import_export.py); with offload threads uwsgi hands such files to an async thread, and the worker
+# is free in milliseconds whatever the browser does. The http router in front of the workers (also
+# async, holds no worker) closes a connection idle for http-timeout (60 s): "Connection reset by
+# peer". 300 s lets the user answer the dialog. uwsgi.ini is mounted into lms/cms, so `tutor config
+# save` and a restart of lms/cms apply it.
+_PATCH_UWSGI_CONFIG = """
+offload-threads = 2
+http-timeout = 300
+"""
+
 _PATCH_MFE_CADDYFILE_HASHED_ASSETS = r"""
 @robbo_hashed_assets path_regexp ^/[^/]+/(.+[.-])?[0-9a-f]{20,32}\.(css|js|png|jpe?g|gif|svg|webp|ico|woff2?|ttf|eot|otf)$
 header @robbo_hashed_assets Cache-Control "public, max-age=31536000, immutable"
@@ -783,6 +799,7 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-lms-development-settings", _PATCH_ROBBO_LK_BFF),
         ("openedx-lms-production-settings", _PATCH_ROBBO_LK_BFF),
         ("openedx-dockerfile-post-python-requirements", _PATCH_OPENEDX_ROBBO_XBLOCKS),
+        ("uwsgi-config", _PATCH_UWSGI_CONFIG),
         ("caddyfile", _PATCH_CADDYFILE_SCRATCH),
         ("caddyfile-proxy", _PATCH_CADDYFILE_PROXY_REQUEST_ID),
         ("caddyfile-lms", _PATCH_CADDYFILE_LMS_ERRORS),
