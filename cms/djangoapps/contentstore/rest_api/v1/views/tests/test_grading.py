@@ -15,6 +15,7 @@ from cms.djangoapps.contentstore.utils import get_proctored_exam_settings_url
 from cms.djangoapps.models.settings.course_grading import CourseGradingModel
 from openedx.core.djangoapps.credit.tests.factories import CreditCourseFactory
 from xmodule.modulestore.tests.factories import BlockFactory
+from xmodule.partitions.partitions import Group, UserPartition
 
 from ...mixins import PermissionAccessMixin
 
@@ -43,6 +44,7 @@ class CourseGradingViewTest(CourseTestCase, PermissionAccessMixin):
             ),
             "course_assignment_lists": {},
             "unscored_assignment_lists": {},
+            "group_assignment_counts": {},
             "course_details": grading_data.__dict__,
             "show_credit_eligibility": False,
             "is_credit_course": False,
@@ -91,6 +93,47 @@ class CourseGradingViewTest(CourseTestCase, PermissionAccessMixin):
             response.data["unscored_assignment_lists"],
             {'Homework': ['Section - Empty', 'Section - Text'], 'Exam': ['Section - Zero']},
         )
+
+    def test_group_assignment_counts(self):
+        """
+        Robbo: subsections that give points to each content group, and to learners in none of the groups,
+        with «show to groups» and «hide from groups» rules (negative partition id) on any level.
+        """
+        self.course.user_partitions = [UserPartition(
+            id=1, name='Content groups', description='', groups=[Group(1, 'A'), Group(2, 'B')], scheme_id='cohort',
+        )]
+        self.course = self.update_course(self.course, self.user.id)
+        section = BlockFactory.create(parent=self.course, category='chapter', display_name='Section')
+
+        def subsection(name, assignment_type='Homework', group_access=None, problem_group_access=None):
+            block = BlockFactory.create(
+                parent=section, category='sequential', display_name=name, format=assignment_type, graded=True,
+                group_access=group_access or {},
+            )
+            BlockFactory.create(
+                parent=BlockFactory.create(parent=block, category='vertical'), category='problem',
+                group_access=problem_group_access or {},
+            )
+
+        subsection('Everyone')
+        subsection('Only A', group_access={1: [1]})
+        subsection('Hidden from A', group_access={-1: [1]})
+        subsection('Problem only for B', problem_group_access={1: [2]})
+        subsection('Exam for everyone', assignment_type='Exam')
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(response.data["group_assignment_counts"], {
+            'Homework': {
+                'everyone': 4,
+                'groups': [
+                    {'partition': 'Content groups', 'group': 'A', 'count': 2},
+                    {'partition': 'Content groups', 'group': 'B', 'count': 3},
+                    {'partition': 'Content groups', 'group': None, 'count': 2},
+                ],
+            },
+        })
 
     @patch("django.conf.settings.DEFAULT_GRADE_DESIGNATIONS", ['A', 'B'])
     def test_default_grade_designations_setting(self):

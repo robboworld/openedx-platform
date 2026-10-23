@@ -102,7 +102,7 @@ from openedx.core.djangoapps.site_configuration.models import SiteConfiguration
 from openedx.core.djangoapps.xblock.api import get_component_from_usage_key
 from openedx.core.lib.courses import course_image_url
 from openedx.core.lib.html_to_text import html_to_text
-from openedx.core.lib.robbo_group_access import deny_key
+from openedx.core.lib.robbo_group_access import deny_key, is_deny_key
 from openedx.core.lib.teams_config import CONTENT_GROUPS_FOR_TEAMS, TEAM_SCHEME
 from openedx.features.content_type_gating.models import ContentTypeGatingConfig
 from openedx.features.content_type_gating.partitions import CONTENT_TYPE_GATING_SCHEME
@@ -1216,6 +1216,96 @@ def get_unscored_subsections_by_assignment_type(course_key):
     return unscored_by_assignment_type
 
 
+# Robbo: group configurations left out of get_group_assignment_counts. Experiment groups pick one child block
+# instead of hiding blocks, and content type gating is applied by the LMS, it is not stored on blocks.
+_GROUP_COUNTS_SKIPPED_SCHEMES = ('random', CONTENT_TYPE_GATING_SCHEME)
+# Every learner has an enrollment track, so there are no learners outside its groups.
+_GROUP_COUNTS_NO_OUTSIDERS_SCHEMES = ('enrollment_track',)
+
+
+def _visible_to_group(block, partition_id, group_id):
+    """
+    Robbo: whether a learner in group group_id of the partition (None: in none of its groups) sees the
+    block, by the merged rules that lms/djangoapps/courseware/access.py checks, «hide from groups» rules
+    (openedx/core/lib/robbo_group_access.py) included. The rules of other partitions are taken as met.
+    """
+    if block.visible_to_staff_only:
+        return False
+    allow, deny = {}, {}
+    for key, group_ids in block.merged_group_access.items():
+        if is_deny_key(key):
+            deny[-key] = group_ids or []
+        else:
+            allow[key] = group_ids
+    if any(group_ids is False for group_ids in allow.values()):
+        return False
+    if allow.get(partition_id) and group_id not in allow[partition_id]:
+        return False
+    return group_id is None or group_id not in deny.get(partition_id, [])
+
+
+def _gives_points_to_group(block, partition_id, group_id):
+    """
+    Robbo: _gives_points, counting only the blocks that a learner in the group sees.
+    """
+    if not _visible_to_group(block, partition_id, group_id):
+        return False
+    if getattr(block, 'has_score', False) and getattr(block, 'weight', None) != 0:
+        return True
+    return block.has_children and any(
+        _gives_points_to_group(child, partition_id, group_id) for child in block.get_children()
+    )
+
+
+def get_group_assignment_counts(course_key):
+    """
+    Robbo: for each assignment type, how many of its subsections give points to the learners of each group of
+    a group configuration (content groups, enrollment tracks, teams) and to the learners in none of its groups.
+
+    The grade pads a learner's assignments of a type with zeros up to the type's «Total number» (min_count),
+    so a group that sees fewer subsections than that can't get 100% for the type: the grading page warns.
+    A configuration is listed for a type only if it changes a count. Returns {assignment type: {'everyone': n,
+    'groups': [{'partition': name, 'group': name or None, 'count': n}, …]}}, everyone: the subsections that give
+    points to someone, whatever the groups.
+    """
+    counts_by_assignment_type = {}
+
+    with modulestore().bulk_operations(course_key):
+        course = modulestore().get_course(course_key, depth=None)
+        subsections_by_type = defaultdict(list)
+        for section in course.get_children():
+            for subsection in section.get_children():
+                if subsection.format:
+                    subsections_by_type[subsection.format].append(subsection)
+        partitions = [
+            partition for partition in get_all_partitions_for_course(course, active_only=True)
+            if partition.scheme.name not in _GROUP_COUNTS_SKIPPED_SCHEMES
+        ]
+        for assignment_type, subsections in subsections_by_type.items():
+            everyone = sum(1 for subsection in subsections if _gives_points_to_group(subsection, None, None))
+            groups = []
+            for partition in partitions:
+                audiences = [(group.id, group.name) for group in partition.groups]
+                if partition.scheme.name not in _GROUP_COUNTS_NO_OUTSIDERS_SCHEMES:
+                    audiences.append((None, None))
+                entries = [
+                    {
+                        'partition': partition.name,
+                        'group': group_name,
+                        'count': sum(
+                            1 for subsection in subsections
+                            if _gives_points_to_group(subsection, partition.id, group_id)
+                        ),
+                    }
+                    for group_id, group_name in audiences
+                ]
+                if any(entry['count'] != everyone for entry in entries):
+                    groups.extend(entries)
+            if groups:
+                counts_by_assignment_type[assignment_type] = {'everyone': everyone, 'groups': groups}
+    return counts_by_assignment_type
+
+
 def update_course_discussions_settings(course):
     """
     Updates course provider_type when new course is created
@@ -1634,6 +1724,8 @@ def get_course_grading(course_key):
         'course_assignment_lists': dict(course_assignment_lists),
         # Robbo: graded subsections without anything that gives points, warned about on the grading page
         'unscored_assignment_lists': dict(get_unscored_subsections_by_assignment_type(course_key)),
+        # Robbo: subsections giving points to each group, for the «can't get 100%» warning of the grading page
+        'group_assignment_counts': get_group_assignment_counts(course_key),
         'default_grade_designations': settings.DEFAULT_GRADE_DESIGNATIONS
     }
 
