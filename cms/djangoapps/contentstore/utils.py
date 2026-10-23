@@ -1187,6 +1187,35 @@ def get_subsections_by_assignment_type(course_key):
     return subsections_by_assignment_type
 
 
+def _gives_points(block):
+    """
+    Robbo: whether the block, or a block inside it, gives points (a problem, an open response assessment,
+    an LTI with scores …). A weight of 0 gives none.
+    """
+    if getattr(block, 'has_score', False) and getattr(block, 'weight', None) != 0:
+        return True
+    return block.has_children and any(_gives_points(child) for child in block.get_children())
+
+
+def get_unscored_subsections_by_assignment_type(course_key):
+    """
+    Robbo: the subsections of get_subsections_by_assignment_type that have nothing giving points.
+    The grade leaves them out (CourseGrade.graded_subsections_by_format counts only possible > 0),
+    so the course has fewer assignments of the type than the subsections list shows.
+    """
+    unscored_by_assignment_type = defaultdict(list)
+
+    with modulestore().bulk_operations(course_key):
+        course = modulestore().get_course(course_key, depth=None)
+        for section in course.get_children():
+            for subsection in section.get_children():
+                if subsection.format and not _gives_points(subsection):
+                    unscored_by_assignment_type[subsection.format].append(
+                        f'{section.display_name} - {subsection.display_name}'
+                    )
+    return unscored_by_assignment_type
+
+
 def update_course_discussions_settings(course):
     """
     Updates course provider_type when new course is created
@@ -1603,6 +1632,8 @@ def get_course_grading(course_key):
         'is_credit_course': is_credit_course(course_key),
         'mfe_proctored_exam_settings_url': get_proctored_exam_settings_url(course_key),
         'course_assignment_lists': dict(course_assignment_lists),
+        # Robbo: graded subsections without anything that gives points, warned about on the grading page
+        'unscored_assignment_lists': dict(get_unscored_subsections_by_assignment_type(course_key)),
         'default_grade_designations': settings.DEFAULT_GRADE_DESIGNATIONS
     }
 

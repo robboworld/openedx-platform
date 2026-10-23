@@ -1,5 +1,7 @@
 """
 Unit tests for course grading views.
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 import json
 from unittest.mock import patch
@@ -12,6 +14,7 @@ from cms.djangoapps.contentstore.tests.utils import CourseTestCase
 from cms.djangoapps.contentstore.utils import get_proctored_exam_settings_url
 from cms.djangoapps.models.settings.course_grading import CourseGradingModel
 from openedx.core.djangoapps.credit.tests.factories import CreditCourseFactory
+from xmodule.modulestore.tests.factories import BlockFactory
 
 from ...mixins import PermissionAccessMixin
 
@@ -39,6 +42,7 @@ class CourseGradingViewTest(CourseTestCase, PermissionAccessMixin):
                 self.course.id
             ),
             "course_assignment_lists": {},
+            "unscored_assignment_lists": {},
             "course_details": grading_data.__dict__,
             "show_credit_eligibility": False,
             "is_credit_course": False,
@@ -47,6 +51,46 @@ class CourseGradingViewTest(CourseTestCase, PermissionAccessMixin):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(expected_response, response.data)
+
+    def test_unscored_assignment_lists(self):
+        """
+        Robbo: graded subsections without anything that gives points are listed by assignment type.
+        """
+        section = BlockFactory.create(parent=self.course, category='chapter', display_name='Section')
+        empty = BlockFactory.create(
+            parent=section, category='sequential', display_name='Empty', format='Homework', graded=True,
+        )
+        BlockFactory.create(parent=empty, category='vertical', display_name='Unit')
+        html_only = BlockFactory.create(
+            parent=section, category='sequential', display_name='Text', format='Homework', graded=True,
+        )
+        BlockFactory.create(
+            parent=BlockFactory.create(parent=html_only, category='vertical'), category='html',
+        )
+        zero_weight = BlockFactory.create(
+            parent=section, category='sequential', display_name='Zero', format='Exam', graded=True,
+        )
+        BlockFactory.create(
+            parent=BlockFactory.create(parent=zero_weight, category='vertical'), category='problem', weight=0,
+        )
+        scored = BlockFactory.create(
+            parent=section, category='sequential', display_name='Scored', format='Homework', graded=True,
+        )
+        BlockFactory.create(
+            parent=BlockFactory.create(parent=scored, category='vertical'), category='problem',
+        )
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.data["course_assignment_lists"]["Homework"],
+            ['Section - Empty', 'Section - Text', 'Section - Scored'],
+        )
+        self.assertDictEqual(
+            response.data["unscored_assignment_lists"],
+            {'Homework': ['Section - Empty', 'Section - Text'], 'Exam': ['Section - Zero']},
+        )
 
     @patch("django.conf.settings.DEFAULT_GRADE_DESIGNATIONS", ['A', 'B'])
     def test_default_grade_designations_setting(self):
