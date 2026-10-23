@@ -1,5 +1,7 @@
 """
 API Serializers for course grading
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 from rest_framework import serializers
@@ -33,6 +35,12 @@ class CourseGradingSerializer(serializers.Serializer):
     """ Serializer for course grading context data """
     mfe_proctored_exam_settings_url = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     course_assignment_lists = serializers.DictField(
+        child=serializers.ListSerializer(
+            child=serializers.CharField()
+        )
+    )
+    # Robbo: graded subsections without anything that gives points, by assignment type
+    unscored_assignment_lists = serializers.DictField(
         child=serializers.ListSerializer(
             child=serializers.CharField()
         )
