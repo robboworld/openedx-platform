@@ -59,27 +59,32 @@ CHOICE_NAME = re.compile(r'^choice_(\d+)$')
 CHOICE_HINT_TAGS = ('choicehint',)
 
 
-def scorable_blocks(structure, subsection_key):
+def scorable_blocks_in_units(structure, subsection_key):
     """
-    [(unit name, block key)] of the scorable blocks under the subsection in the learner's
-    course structure, in outline order. Blocks inside library, split test or conditional
-    blocks keep the name of their unit.
+    [(unit key, unit name, block key)] of the scorable blocks under the subsection in the
+    learner's course structure, in outline order. Blocks inside library, split test or
+    conditional blocks keep their unit; blocks outside any unit have no unit key and name.
     """
     found = []
 
-    def visit(block_key, unit_name):
+    def visit(block_key, unit_key, unit_name):
         if structure.get_xblock_field(block_key, 'has_score', False):
-            found.append((unit_name, block_key))
+            found.append((unit_key, unit_name, block_key))
             return
         if block_key.block_type == 'vertical':
-            unit_name = structure.get_xblock_field(block_key, 'display_name') or ''
+            unit_key, unit_name = block_key, structure.get_xblock_field(block_key, 'display_name') or ''
         for child_key in structure.get_children(block_key):
-            visit(child_key, unit_name)
+            visit(child_key, unit_key, unit_name)
 
     if subsection_key in structure:
         for child_key in structure.get_children(subsection_key):
-            visit(child_key, '')
+            visit(child_key, None, '')
     return found
+
+
+def scorable_blocks(structure, subsection_key):
+    """[(unit name, block key)] of the scorable blocks under the subsection, in outline order."""
+    return [(unit_name, block_key) for _, unit_name, block_key in scorable_blocks_in_units(structure, subsection_key)]
 
 
 def _loncapa_problem(block, state):
