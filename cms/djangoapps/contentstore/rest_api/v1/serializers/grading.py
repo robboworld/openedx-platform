@@ -31,6 +31,19 @@ class CourseGradingModelSerializer(serializers.Serializer):
     minimum_grade_credit = serializers.FloatField()
 
 
+class GroupAssignmentCountSerializer(serializers.Serializer):
+    """ Robbo: subsections of an assignment type that give points to the learners of one group """
+    partition = serializers.CharField()
+    group = serializers.CharField(allow_null=True)
+    count = serializers.IntegerField()
+
+
+class GroupAssignmentCountsSerializer(serializers.Serializer):
+    """ Robbo: subsections of an assignment type that give points to someone, and to each group """
+    everyone = serializers.IntegerField()
+    groups = GroupAssignmentCountSerializer(many=True)
+
+
 class CourseGradingSerializer(serializers.Serializer):
     """ Serializer for course grading context data """
     mfe_proctored_exam_settings_url = serializers.CharField(required=False, allow_null=True, allow_blank=True)
@@ -44,6 +57,11 @@ class CourseGradingSerializer(serializers.Serializer):
         child=serializers.ListSerializer(
             child=serializers.CharField()
         )
+    )
+    # Robbo: by assignment type, the subsections that give points to each group of a group configuration
+    # (group None: learners in none of its groups); only configurations that change a count
+    group_assignment_counts = serializers.DictField(
+        child=GroupAssignmentCountsSerializer()
     )
     course_details = CourseGradingModelSerializer()
     show_credit_eligibility = serializers.BooleanField()
