@@ -13,6 +13,7 @@ from user_tasks.signals import user_task_stopped
 from cms.djangoapps.contentstore.toggles import bypass_olx_failure_enabled
 from cms.djangoapps.contentstore.utils import course_import_olx_validation_is_enabled
 
+from . import robbo_task_email
 from .tasks import send_task_complete_email
 
 LOGGER = logging.getLogger(__name__)
@@ -94,6 +95,17 @@ def user_task_stopped_handler(sender, **kwargs):  # pylint: disable=unused-argum
 
         user_email = status.user.email
         olx_validation_text = get_olx_validation_from_artifact()
+        # Robbo: library export / import and the course link check get the letter in the Robbo frame and
+        # the user's language (robbo_task_email.py); a course import / export is left to the notification
+        # «Импорт или экспорт курса» and its settings; other tasks keep the stock letter below.
+        if robbo_task_email.handles(status):
+            if robbo_task_email.left_to_notifications(status):
+                return
+            try:
+                robbo_task_email.send_robbo_task_email.delay(str(status.uuid), olx_validation_text)
+            except Exception:  # pylint: disable=broad-except
+                LOGGER.exception("Unable to queue send_robbo_task_email")
+            return
         task_args = [task_name, str(status.state_text), user_email, detail_url,
                      olx_validation_text, is_course_optimizer_task]
         try:
