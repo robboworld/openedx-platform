@@ -1,17 +1,16 @@
 <%page expression_filter="h"/>
-<%inherit file="../main.html" />
-<%namespace name='static' file='../static_content.html'/>
-<%!
-from django.utils.translation import gettext as _
-%>
-<%block name="pagetitle">${_("Payment error")}</%block>
+<%doc>
+Copyright (C) 2024-2026 Robbo <https://robbo.ru>
+SPDX-License-Identifier: AGPL-3.0-only
+Part of the Robbo Open edX distribution (YooKassa checkout). See NOTICE at repository root.
 
-<%block name="bodyextra">
-<section class="robbo-payments-page container">
-  <div class="robbo-payments-card">
-    <h1 class="robbo-payments-title">${_("Could not start payment")}</h1>
-    <p class="robbo-payments-error-inline">${error_message | h}</p>
-    <a class="btn btn-secondary robbo-payments-submit" href="/dashboard">${_("Back to dashboard")}</a>
-  </div>
-</section>
-</%block>
+Checkout could not start (views/checkout.py): the error block of robbo_errors,
+texts — pages «payment_*» in lms/djangoapps/robbo_errors/upstream_pages.py.
+</%doc>
+<%inherit file="../main.html" />
+<%block name="pagetitle">${robbo_error['title']}</%block>
+<%block name="bodyclass">view-robbo-error</%block>
+
+<main id="main" aria-label="Content" tabindex="-1">
+  <%include file="/robbo_errors/_error_block.html" />
+</main>

@@ -1,0 +1,17 @@
+<%page expression_filter="h"/>
+<%doc>
+Copyright (C) 2026 Robbo <https://robbo.ru>
+SPDX-License-Identifier: AGPL-3.0-only
+Part of the Robbo Open edX distribution (robbo-theme). See NOTICE at repository root.
+
+The confirmation email of an email change could not be sent (student/views/management.py: confirm_email_change).
+The error block of robbo_errors; texts — page «email_change_failed» in lms/djangoapps/robbo_errors/upstream_pages.py.
+</%doc>
+<%! from lms.djangoapps.robbo_errors.upstream_pages import error_for %>
+<%inherit file="main.html" />
+<%block name="pagetitle">${error_for('email_change_failed', email=email)['title']}</%block>
+<%block name="bodyclass">view-robbo-error</%block>
+
+<main id="main" aria-label="Content" tabindex="-1">
+  <%include file="/robbo_errors/_error_block.html" args="robbo_error=error_for('email_change_failed', email=email)" />
+</main>
