@@ -4,10 +4,15 @@ Utils function for notifications app
 import copy
 from typing import Dict, List, Set
 
+from opaque_keys.edx.django.models import CourseKeyField
+
 from common.djangoapps.student.models import CourseAccessRole, CourseEnrollment
 from openedx.core.djangoapps.django_comment_common.models import Role
 from openedx.core.djangoapps.notifications.config.waffle import ENABLE_NOTIFICATIONS
 from openedx.core.lib.cache_utils import request_cached
+
+# Robbo: course roles that make a user part of the course team (notifications for the team).
+ROBBO_COURSE_TEAM_ROLES = ('staff', 'instructor', 'limited_staff')
 
 
 def find_app_in_normalized_apps(app_name, apps_list):
@@ -33,12 +38,21 @@ def find_pref_in_normalized_prefs(pref_name, app_name, prefs_list):
 def get_show_notifications_tray(user):
     """
     Returns show_notifications_tray as boolean for the courses in which user is enrolled
+
+    Robbo: notifications are for everyone — with the flag on for the whole site every signed-in user
+    gets the bell, the feed and the settings, enrolled or not. With per-course overrides only, the
+    courses where the user is in the course team count as well as enrollments.
     """
+    if ENABLE_NOTIFICATIONS.is_enabled():
+        return True
     show_notifications_tray = False
-    learner_enrollments_course_ids = CourseEnrollment.objects.filter(
+    learner_enrollments_course_ids = set(CourseEnrollment.objects.filter(
         user=user,
         is_active=True
-    ).values_list('course_id', flat=True)
+    ).values_list('course_id', flat=True))
+    learner_enrollments_course_ids |= set(CourseAccessRole.objects.filter(
+        user=user, role__in=ROBBO_COURSE_TEAM_ROLES,
+    ).exclude(course_id=CourseKeyField.Empty).values_list('course_id', flat=True))
 
     for course_id in learner_enrollments_course_ids:
         if ENABLE_NOTIFICATIONS.is_enabled(course_id):

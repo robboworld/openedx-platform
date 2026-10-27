@@ -3,9 +3,9 @@ Celery tasks for sending email notifications
 """
 from celery import shared_task
 from celery.utils.log import get_task_logger
+from django.conf import settings
 from django.contrib.auth import get_user_model
-from edx_ace import ace
-from edx_ace.recipient import Recipient
+from django.utils import translation
 from edx_django_utils.monitoring import set_code_owner_attribute
 
 from openedx.core.djangoapps.notifications.email_notifications import EmailCadence
@@ -14,10 +14,11 @@ from openedx.core.djangoapps.notifications.models import (
     Notification,
     get_course_notification_preference_config_version
 )
+from openedx.core.djangoapps.user_api.models import UserPreference
+
 from .events import send_user_email_digest_sent_event
-from .message_type import EmailNotificationMessageType
+from .robbo_digest import send_robbo_digest
 from .utils import (
-    add_headers_to_email_message,
     create_app_notifications_dict,
     create_email_digest_context,
     filter_notification_with_email_enabled_preferences,
@@ -98,14 +99,17 @@ def send_digest_email_to_user(user, cadence_type, start_date, end_date, course_l
         logger.info(f'<Email Cadence> No filtered notification for {user.username} ==Temp Log==')
         return
     apps_dict = create_app_notifications_dict(notifications)
-    message_context = create_email_digest_context(apps_dict, user.username, start_date, end_date,
-                                                  cadence_type, courses_data=courses_data)
-    recipient = Recipient(user.id, user.email)
-    message = EmailNotificationMessageType(
-        app_label="notifications", name="email_digest"
-    ).personalize(recipient, course_language, message_context)
-    message = add_headers_to_email_message(message, message_context)
-    ace.send(message)
+    # Robbo: notification texts in the recipient's language (robbo_texts.py).
+    with translation.override(UserPreference.get_value(user, 'pref-lang') or settings.LANGUAGE_CODE):
+        message_context = create_email_digest_context(apps_dict, user.username, start_date, end_date,
+                                                      cadence_type, courses_data=courses_data)
+    # Robbo: the digest in the Robbo design and the recipient's language (robbo_digest.py) instead of
+    # the stock English ACE template; message_context still feeds the analytics event.
+    language = UserPreference.get_value(user, 'pref-lang') or settings.LANGUAGE_CODE
+    send_robbo_digest(
+        user, cadence_type, notifications, start_date, end_date,
+        'ru' if language.lower().startswith('ru') else 'en', message_context.get('unsubscribe_url', ''),
+    )
     send_user_email_digest_sent_event(user, cadence_type, notifications, message_context)
     logger.info(f'<Email Cadence> Email sent to {user.username} ==Temp Log==')
 

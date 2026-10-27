@@ -138,6 +138,13 @@ def send_notifications(user_ids, course_key: str, app_name, notification_type, c
     sender_id = context.pop('sender_id', None)
     default_web_config = get_default_values_of_preference(app_name, notification_type).get('web', False)
     generated_notification_audience = []
+    # Robbo: users who get this type by email right away (email/robbo_immediate.py).
+    from openedx.core.djangoapps.notifications.email.robbo_immediate import (
+        send_immediate_notification_emails, type_cadence,
+    )
+    from openedx.core.djangoapps.notifications.email_notifications import EmailCadence
+    immediate_email_user_ids = []
+    created_after = datetime.now(UTC)
 
     if group_by_id and not grouping_enabled:
         logger.info(
@@ -190,6 +197,11 @@ def send_notifications(user_ids, course_key: str, app_name, notification_type, c
                     email='email' in notification_preferences,
                     group_by_id=group_by_id,
                 )
+                if (
+                    new_notification.email
+                    and type_cadence(preference, app_name, notification_type) == EmailCadence.IMMEDIATELY
+                ):
+                    immediate_email_user_ids.append(user_id)
                 if grouping_enabled and existing_notifications.get(user_id, None):
                     group_user_notifications(new_notification, existing_notifications[user_id])
                     if not notifications_generated:
@@ -204,6 +216,11 @@ def send_notifications(user_ids, course_key: str, app_name, notification_type, c
         if notification_objects and not notifications_generated:
             notifications_generated = True
             notification_content = notification_objects[0].content
+
+    if immediate_email_user_ids:
+        send_immediate_notification_emails.delay(
+            immediate_email_user_ids, str(course_key), notification_type, created_after.isoformat(),
+        )
 
     if notifications_generated:
         notification_generated_event(

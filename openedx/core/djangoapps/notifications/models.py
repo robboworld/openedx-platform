@@ -25,7 +25,9 @@ NOTIFICATION_CHANNELS = ['web', 'push', 'email']
 ADDITIONAL_NOTIFICATION_CHANNEL_SETTINGS = ['email_cadence']
 
 # Update this version when there is a change to any course specific notification type or app.
-COURSE_NOTIFICATION_CONFIG_VERSION = 13
+# Robbo: 14 — learner_progress app (learner_* types for the course team);
+# 15 — learning and authoring apps, more learner_progress types; 16 — learner_added_to_group removed.
+COURSE_NOTIFICATION_CONFIG_VERSION = 16
 
 
 def get_course_notification_preference_config():

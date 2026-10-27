@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+from django.utils.translation import get_language
 from pytz import utc
 from waffle import get_waffle_flag_model  # pylint: disable=invalid-django-waffle-import
 
@@ -19,6 +20,7 @@ from openedx.core.djangoapps.notifications.config.waffle import ENABLE_EMAIL_NOT
 from openedx.core.djangoapps.notifications.email import ONE_CLICK_EMAIL_UNSUB_KEY
 from openedx.core.djangoapps.notifications.email_notifications import EmailCadence
 from openedx.core.djangoapps.notifications.events import notification_preference_unsubscribe_event
+from openedx.core.djangoapps.notifications.robbo_texts import notification_html
 from openedx.core.djangoapps.notifications.models import (
     CourseNotificationPreference,
     get_course_notification_preference_config_version
@@ -238,7 +240,11 @@ def add_additional_attributes_to_notifications(notifications, courses_data=None)
         notification.course_name = course_info.get('name', '')
         notification.icon = get_icon_url_for_notification_type(notification_type)
         notification.time_ago = get_time_ago(notification.created)
-        notification.email_content = add_zero_margin_to_root(notification.content)
+        # Robbo: our text in the active (recipient's) language; stock English content otherwise.
+        notification.email_content = add_zero_margin_to_root(
+            notification_html(notification_type, notification.content_context, get_language())
+            or notification.content
+        )
         notification.details = add_zero_margin_to_root(notification.content_context.get('email_content', ''))
     return notifications
 
