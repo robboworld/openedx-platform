@@ -402,19 +402,23 @@
     var viewport = document.documentElement.clientWidth;
     var top = Math.round(rect.bottom + 10);
     var panel = state.panel;
+    var panelLeft = 8;
     panel.style.top = top + 'px';
     if (window.matchMedia(NARROW_QUERY).matches) {
       panel.style.left = '8px';
       panel.style.right = '8px';
       panel.style.width = 'auto';
     } else {
+      var right = Math.max(8, Math.round(viewport - rect.right - 4));
       panel.style.left = 'auto';
-      panel.style.right = Math.max(8, Math.round(viewport - rect.right - 4)) + 'px';
+      panel.style.right = right + 'px';
       panel.style.width = '';
+      // From the layout box: getBoundingClientRect() is still shifted by the opening scale(.98).
+      panelLeft = viewport - right - panel.offsetWidth;
     }
     panel.style.maxHeight = Math.max(240, window.innerHeight - top - 12) + 'px';
-    // The caret points at the middle of the button wherever the panel ends up.
-    var panelLeft = panel.getBoundingClientRect().left;
+    // The caret points at the middle of the button wherever the panel ends up (left is inside the 1px border).
+    panelLeft += 1;
     panel.style.setProperty('--robbo-wn-caret', Math.round(rect.left + rect.width / 2 - panelLeft - 7) + 'px');
   }
 
