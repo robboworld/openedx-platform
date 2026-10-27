@@ -61,6 +61,10 @@ class RobboErrorsMiddleware:
     def __call__(self, request):
         request_incident_id(request)
         response = self.get_response(request)
+        # Error pages of views that roll their transaction back journal only now (upstream_pages.py)
+        if '_robbo_deferred_journal' in request.__dict__:
+            from .upstream_pages import run_deferred_journal  # pylint: disable=import-outside-toplevel
+            run_deferred_journal(request)
         # Behind Caddy the number already is in the answer (Caddy adds X-Request-ID to all of them);
         # without Caddy, give errors the number this request got here.
         if response.status_code >= 400 and getattr(request, '_robbo_incident_generated', False):

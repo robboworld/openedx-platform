@@ -1,0 +1,16 @@
+<%page expression_filter="h"/>
+<%doc>
+Copyright (C) 2026 Robbo <https://robbo.ru>
+SPDX-License-Identifier: AGPL-3.0-only
+Part of the Robbo Open edX distribution (robbo-theme). See NOTICE at repository root.
+
+Old certificate link (/certificates/user/<id>/course/<course>, before web certificates by uuid):
+the error block of robbo_errors, texts in lms/djangoapps/robbo_certificates/errors.py.
+</%doc>
+<%inherit file="../main.html" />
+<%block name="pagetitle">${robbo_error['title']}</%block>
+<%block name="bodyclass">view-robbo-error</%block>
+
+<main id="main" aria-label="Content" tabindex="-1">
+  <%include file="/robbo_errors/_error_block.html" />
+</main>
