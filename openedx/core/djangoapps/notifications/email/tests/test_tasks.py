@@ -6,6 +6,7 @@ import ddt
 
 from unittest.mock import patch
 
+from django.core import mail
 from edx_toggles.toggles.testutils import override_waffle_flag
 
 from common.djangoapps.student.tests.factories import UserFactory
@@ -18,10 +19,24 @@ from openedx.core.djangoapps.notifications.email.tasks import (
 )
 from openedx.core.djangoapps.notifications.email.utils import get_start_end_date
 from openedx.core.djangoapps.notifications.models import CourseNotificationPreference
+from openedx.core.djangoapps.user_api.models import UserPreference
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from xmodule.modulestore.tests.factories import CourseFactory
 
 from .utils import create_notification
+
+# Robbo: digests are sent by send_robbo_digest (Robbo frame, recipient's language) instead of edx_ace.
+SEND_DIGEST = 'openedx.core.djangoapps.notifications.email.tasks.send_robbo_digest'
+
+
+def enable_core_discussion_email(user, course_id):
+    """
+    Robbo: the ROBBO default preset (2026-10-23) has discussion core_email off, so a new_comment
+    notification is not mailed by default; tests about the digest itself turn it on for the learner.
+    """
+    preference = CourseNotificationPreference.objects.create(user=user, course_id=course_id)
+    preference.notification_preference_config['discussion']['notification_types']['core']['email'] = True
+    preference.save()
 
 
 @ddt.ddt
@@ -37,8 +52,9 @@ class TestEmailDigestForUser(ModuleStoreTestCase):
         super().setUp()
         self.user = UserFactory()
         self.course = CourseFactory.create(display_name='test course', run="Testing_course")
+        enable_core_discussion_email(self.user, self.course.id)
 
-    @patch('edx_ace.ace.send')
+    @patch(SEND_DIGEST)
     def test_email_is_not_sent_if_no_notifications(self, mock_func):
         """
         Tests email is sent iff waffle flag is enabled
@@ -48,8 +64,36 @@ class TestEmailDigestForUser(ModuleStoreTestCase):
             send_digest_email_to_user(self.user, EmailCadence.DAILY, start_date, end_date)
         assert not mock_func.called
 
+    @patch(SEND_DIGEST)
+    def test_core_discussion_email_off_by_default(self, mock_func):
+        """
+        Robbo: with the ROBBO default preset a core discussion notification gets no digest email
+        """
+        user = UserFactory()
+        create_notification(user, self.course.id, created=datetime.datetime.now() - datetime.timedelta(hours=1))
+        start_date, end_date = get_start_end_date(EmailCadence.DAILY)
+        with override_waffle_flag(ENABLE_EMAIL_NOTIFICATIONS, True):
+            send_digest_email_to_user(user, EmailCadence.DAILY, start_date, end_date)
+        assert not mock_func.called
+
+    @ddt.data(('ru', 'РОББО'), ('en', 'ROBBO'))
+    @ddt.unpack
+    def test_robbo_digest_is_mailed_in_recipient_language(self, language, subject_part):
+        """
+        Robbo: the digest goes out by Django mail in the recipient's language, with an HTML part
+        """
+        UserPreference.objects.update_or_create(user=self.user, key='pref-lang', defaults={'value': language})
+        create_notification(self.user, self.course.id, created=datetime.datetime.now() - datetime.timedelta(hours=1))
+        start_date, end_date = get_start_end_date(EmailCadence.DAILY)
+        with override_waffle_flag(ENABLE_EMAIL_NOTIFICATIONS, True):
+            send_digest_email_to_user(self.user, EmailCadence.DAILY, start_date, end_date)
+        assert len(mail.outbox) == 1
+        assert mail.outbox[0].to == [self.user.email]
+        assert subject_part in mail.outbox[0].subject
+        assert len(mail.outbox[0].alternatives) == 1
+
     @ddt.data(True, False)
-    @patch('edx_ace.ace.send')
+    @patch(SEND_DIGEST)
     def test_email_is_sent_iff_flag_enabled(self, flag_value, mock_func):
         """
         Tests email is sent iff waffle flag is enabled
@@ -61,7 +105,7 @@ class TestEmailDigestForUser(ModuleStoreTestCase):
             send_digest_email_to_user(self.user, EmailCadence.DAILY, start_date, end_date)
         assert mock_func.called is flag_value
 
-    @patch('edx_ace.ace.send')
+    @patch(SEND_DIGEST)
     def test_notification_not_send_if_created_on_next_day(self, mock_func):
         """
         Tests email is not sent if notification is created on next day
@@ -73,7 +117,7 @@ class TestEmailDigestForUser(ModuleStoreTestCase):
         assert not mock_func.called
 
     @ddt.data(True, False)
-    @patch('edx_ace.ace.send')
+    @patch(SEND_DIGEST)
     def test_email_not_send_to_disable_user(self, value, mock_func):
         """
         Tests email is not sent to disabled user
@@ -89,7 +133,7 @@ class TestEmailDigestForUser(ModuleStoreTestCase):
             send_digest_email_to_user(self.user, EmailCadence.DAILY, start_date, end_date)
         assert mock_func.called is value
 
-    @patch('edx_ace.ace.send')
+    @patch(SEND_DIGEST)
     def test_notification_not_send_if_created_day_before_yesterday(self, mock_func):
         """
         Tests email is not sent if notification is created day before yesterday
@@ -112,7 +156,7 @@ class TestEmailDigestForUser(ModuleStoreTestCase):
         (EmailCadence.WEEKLY, datetime.datetime.now() + datetime.timedelta(minutes=20), False),
     )
     @ddt.unpack
-    @patch('edx_ace.ace.send')
+    @patch(SEND_DIGEST)
     def test_notification_content(self, cadence_type, created_time, notification_created, mock_func):
         """
         Tests email only contains notification created within date
@@ -137,6 +181,7 @@ class TestEmailDigestAudience(ModuleStoreTestCase):
         super().setUp()
         self.user = UserFactory()
         self.course = CourseFactory.create(display_name='test course', run="Testing_course")
+        enable_core_discussion_email(self.user, self.course.id)
 
     @patch('openedx.core.djangoapps.notifications.email.tasks.send_digest_email_to_user')
     def test_email_func_not_called_if_no_notification(self, mock_func):
@@ -170,7 +215,7 @@ class TestEmailDigestAudience(ModuleStoreTestCase):
             send_digest_email_to_all_users(EmailCadence.DAILY)
         assert not mock_func.called
 
-    @patch('edx_ace.ace.send')
+    @patch(SEND_DIGEST)
     def test_email_is_sent_to_user_when_task_is_called(self, mock_func):
         created_date = datetime.datetime.now() - datetime.timedelta(days=1)
         create_notification(self.user, self.course.id, created=created_date)
@@ -185,7 +230,7 @@ class TestEmailDigestAudience(ModuleStoreTestCase):
             list(audience)   # evaluating queryset
 
     @ddt.data(True, False)
-    @patch('edx_ace.ace.send')
+    @patch(SEND_DIGEST)
     def test_digest_should_contain_email_enabled_notifications(self, email_value, mock_func):
         """
         Tests email is sent only when notifications with email=True exists
@@ -214,7 +259,7 @@ class TestPreferences(ModuleStoreTestCase):
         created_date = datetime.datetime.now() - datetime.timedelta(hours=23)
         create_notification(self.user, self.course.id, notification_type='new_discussion_post', created=created_date)
 
-    @patch('edx_ace.ace.send')
+    @patch(SEND_DIGEST)
     def test_email_send_for_digest_preference(self, mock_func):
         """
         Tests email is send for digest notification preference
@@ -230,7 +275,7 @@ class TestPreferences(ModuleStoreTestCase):
         assert mock_func.called
 
     @ddt.data(True, False)
-    @patch('edx_ace.ace.send')
+    @patch(SEND_DIGEST)
     def test_email_send_for_email_preference_value(self, pref_value, mock_func):
         """
         Tests email is sent iff preference value is True
@@ -245,7 +290,7 @@ class TestPreferences(ModuleStoreTestCase):
             send_digest_email_to_user(self.user, EmailCadence.DAILY, start_date, end_date)
         assert mock_func.called is pref_value
 
-    @patch('edx_ace.ace.send')
+    @patch(SEND_DIGEST)
     def test_email_not_send_if_different_digest_preference(self, mock_func):
         """
         Tests email is not send if digest notification preference doesnot match
