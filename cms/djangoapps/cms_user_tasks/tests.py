@@ -336,3 +336,37 @@ class TestUserTaskStopped(APITestCase):
             user_task_stopped.send(sender=UserTaskStatus, status=self.status)
             self.assertTrue(mock_delay.called)
             self.assertEqual(hdlr.messages['error'][0], 'Unable to queue send_task_complete_email')
+
+    # Robbo: a course import / export is left to the notification «Импорт или экспорт курса» and its
+    # settings; the link check and libraries get the letter in the Robbo frame (robbo_task_email.py).
+    def test_no_letter_for_course_export_and_import(self):
+        for name in ('Export of course-v1:Org+Num+Run', 'Import of course-v1:Org+Num+Run from course.tar.gz'):
+            self.status.name = name
+            self.status.save()
+            user_task_stopped.send(sender=UserTaskStatus, status=self.status)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_robbo_letter_for_link_check(self):
+        self.status.name = 'Broken link check of course-v1:Org+Num+Run'
+        self.status.save()
+        self.status.succeed()
+        user_task_stopped.send(sender=UserTaskStatus, status=self.status)
+
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.subject, 'Link check of the course «course-v1:Org+Num+Run» is complete')
+        html, mimetype = msg.alternatives[0]
+        self.assertEqual(mimetype, 'text/html')
+        self.assertIn('РОББО', html)
+
+    def test_robbo_letter_for_failed_library_import_has_reason(self):
+        self.status.name = 'Import of library-v1:Org+Lib from library.tar.gz'
+        self.status.save()
+        self.status.fail('The archive has no library.xml')
+        user_task_stopped.send(sender=UserTaskStatus, status=self.status)
+
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.subject, 'Library import «library-v1:Org+Lib» failed')
+        self.assertIn('Reason: The archive has no library.xml', msg.body)
+        self.assertIn('/import/library-v1:Org+Lib', msg.body)
