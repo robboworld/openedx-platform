@@ -3,6 +3,8 @@ Handlers for notifications
 """
 import logging
 
+from crum import get_current_user
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError, transaction
 from django.dispatch import receiver
@@ -134,6 +136,16 @@ def generate_course_notifications(signal, sender, course_notification_data, meta
     sender_id = course_notification_data.get('content_context', {}).get('sender_id')
     if sender_id in user_ids:
         user_ids.remove(sender_id)
+
+    # Robbo: whoever caused the notification in this request (an ORA submission, a course update)
+    # does not get it; for «Новый ответ ждёт проверки» the course team gets it only about the
+    # learners each member follows (robbo_followers.py).
+    actor = get_current_user()
+    if actor is not None and getattr(actor, 'is_authenticated', False):
+        user_ids = [user_id for user_id in user_ids if user_id != actor.id]
+        if course_notification_data.get('notification_type') == 'ora_staff_notifications':
+            from openedx.core.djangoapps.notifications.robbo_followers import following
+            user_ids = following(course_notification_data['course_key'], actor.id, user_ids)
 
     notification_data = {
         'course_key': str(course_notification_data['course_key']),

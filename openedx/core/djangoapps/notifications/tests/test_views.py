@@ -47,6 +47,43 @@ from xmodule.modulestore.tests.factories import CourseFactory
 from ..base_notification import COURSE_NOTIFICATION_APPS, COURSE_NOTIFICATION_TYPES, NotificationAppManager
 from ..utils import get_notification_types_with_visibility_settings
 
+# Robbo: apps added on top of discussion/updates/grading (base_notification.py).
+ROBBO_APPS = ('learning', 'authoring', 'learner_progress')
+ROBBO_APPS_UNSEEN_COUNT = {app_name: 0 for app_name in ROBBO_APPS}
+
+
+def robbo_apps_expected_preferences():
+    """
+    Robbo: the learning, authoring and learner_progress apps as the preferences API returns them
+    (defaults from base_notification.py, types with visible_to are removed for learners as upstream ones).
+    """
+    channels = ('web', 'email', 'push', 'email_cadence', 'info')
+    apps = {}
+    for app_name in ROBBO_APPS:
+        app = COURSE_NOTIFICATION_APPS[app_name]
+        types = {'core': {
+            'web': app['core_web'],
+            'email': app['core_email'],
+            'push': app['core_push'],
+            'email_cadence': app['core_email_cadence'],
+            'info': app['core_info'],
+        }}
+        core_types = []
+        for name, type_config in COURSE_NOTIFICATION_TYPES.items():
+            if type_config.get('notification_app') != app_name:
+                continue
+            if type_config['is_core']:
+                core_types.append(name)
+            else:
+                types[name] = {channel: type_config[channel] for channel in channels}
+        apps[app_name] = {
+            'enabled': app['enabled'],
+            'core_notification_types': core_types,
+            'notification_types': types,
+            'non_editable': {},
+        }
+    return apps
+
 User = get_user_model()
 
 
@@ -328,7 +365,7 @@ class UserNotificationPreferenceAPITest(ModuleStoreTestCase):
                         },
                         'core': {
                             'web': True,
-                            'email': True,
+                            'email': False,  # Robbo: off by default (the ROBBO default preset, 2026-10-23)
                             'push': True,
                             'email_cadence': 'Daily',
                             'info': 'Notifications for responses and comments on your posts, and the ones you’re '
@@ -386,14 +423,15 @@ class UserNotificationPreferenceAPITest(ModuleStoreTestCase):
                         },
                         'ora_grade_assigned': {
                             'web': True,
-                            'email': True,
+                            'email': False,  # Robbo: off by default (the ROBBO default preset, 2026-10-23)
                             'push': False,
                             'email_cadence': 'Daily',
                             'info': ''
                         },
                     },
                     'non_editable': {}
-                }
+                },
+                **robbo_apps_expected_preferences(),
             }
         }
         return response
@@ -809,7 +847,8 @@ class NotificationCountViewSetTestCase(ModuleStoreTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['count'], 4)
         self.assertEqual(response.data['count_by_app_name'], {
-            'App Name 1': 2, 'App Name 2': 1, 'App Name 3': 1, 'discussion': 0, 'updates': 0, 'grading': 0})
+            'App Name 1': 2, 'App Name 2': 1, 'App Name 3': 1, 'discussion': 0, 'updates': 0, 'grading': 0,
+            **ROBBO_APPS_UNSEEN_COUNT})
         self.assertEqual(response.data['show_notifications_tray'], True)
 
     def test_get_unseen_notifications_count_for_unauthenticated_user(self):
@@ -830,7 +869,8 @@ class NotificationCountViewSetTestCase(ModuleStoreTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['count'], 0)
-        self.assertEqual(response.data['count_by_app_name'], {'discussion': 0, 'updates': 0, 'grading': 0})
+        self.assertEqual(response.data['count_by_app_name'], {
+            'discussion': 0, 'updates': 0, 'grading': 0, **ROBBO_APPS_UNSEEN_COUNT})
 
     def test_get_expiry_days_in_count_view(self):
         """

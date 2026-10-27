@@ -375,6 +375,10 @@
           ## Accounts not activated yet see no «Что нового» (robbo_changelog.access.can_view).
           % if user.is_active:
           <li class="nav-item robbo-header-whats-new" data-robbo-whats-new data-lang="${robbo_whats_new_lang()}" data-variant="on-dark"></li>
+          ## Notifications bell: the same LMS widget on Studio's copy of the API (robbo_notifications/studio_urls.py);
+          ## «Все уведомления» leads to the Account MFE on the LMS host.
+          <li class="nav-item robbo-header-notifications" data-robbo-notifications data-lang="${robbo_whats_new_lang()}"
+              data-variant="on-dark" data-feed-url="${settings.LMS_ROOT_URL.rstrip('/')}/account/notifications" hidden></li>
           % endif
           % if user_can_see_robbo_lms_header_link(user):
           <li class="nav-item robbo-header-lms-link">
@@ -388,6 +392,7 @@
       </nav>
       % if user.is_active:
       <script src="${reverse('robbo_changelog:widget')}" defer></script>
+      <script src="${reverse('robbo_notifications:widget')}" defer></script>
       % endif
 
     % else:
