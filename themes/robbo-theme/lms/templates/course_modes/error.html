@@ -1,0 +1,24 @@
+<%page expression_filter="h"/>
+<%doc>
+Copyright (C) 2026 Robbo <https://robbo.ru>
+SPDX-License-Identifier: AGPL-3.0-only
+Part of the Robbo Open edX distribution (robbo-theme). See NOTICE at repository root.
+
+Choosing the enrollment mode failed (course_modes/views.py: ChooseModeView.post): the error block of
+robbo_errors; texts — pages «enroll_closed» / «enroll_failed» in lms/djangoapps/robbo_errors/upstream_pages.py.
+The view passes only the translated message, so the closed enrollment is told apart by comparing it.
+</%doc>
+<%!
+from django.utils.translation import gettext as _
+from lms.djangoapps.robbo_errors.upstream_pages import error_for
+%>
+<%
+robbo_page = 'enroll_closed' if error == _("Enrollment is closed") else 'enroll_failed'
+%>
+<%inherit file="../main.html" />
+<%block name="pagetitle">${error_for('enroll_closed' if error == _("Enrollment is closed") else 'enroll_failed', course_name=course_name)['title']}</%block>
+<%block name="bodyclass">view-robbo-error</%block>
+
+<main id="main" aria-label="Content" tabindex="-1">
+  <%include file="/robbo_errors/_error_block.html" args="robbo_error=error_for(robbo_page, course_name=course_name)" />
+</main>

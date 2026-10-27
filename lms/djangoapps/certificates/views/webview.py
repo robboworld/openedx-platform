@@ -45,6 +45,7 @@ from lms.djangoapps.certificates.models import (
 )
 from lms.djangoapps.certificates.permissions import PREVIEW_CERTIFICATES
 from lms.djangoapps.robbo_certificates import designs as robbo_designs
+from lms.djangoapps.robbo_certificates import errors as robbo_cert_errors
 from lms.djangoapps.certificates.utils import (
     emit_certificate_event,
     get_certificate_url,
@@ -373,12 +374,13 @@ def _get_user_certificate(request, user, course_key, course_overview, preview_mo
                 modified_date = course_overview.end
             else:
                 modified_date = datetime.now().date()
-        user_certificate = GeneratedCertificate(
-            mode=preview_mode,
-            verify_uuid=str(uuid4().hex),
-            modified_date=modified_date,
-            created_date=datetime.now().date(),
-        )
+            # Robbo: inside the permission check, upstream failed on modified_date without the permission
+            user_certificate = GeneratedCertificate(
+                mode=preview_mode,
+                verify_uuid=str(uuid4().hex),
+                modified_date=modified_date,
+                created_date=datetime.now().date(),
+            )
     elif certificates_viewable_for_course(course_overview):
         # certificate is being viewed by learner or public
         try:
@@ -435,7 +437,8 @@ def unsupported_url(request, user_id, course_id):  # pylint: disable=unused-argu
     platform_name = configuration_helpers.get_value("platform_name", settings.PLATFORM_NAME)
     configuration = CertificateHtmlViewConfiguration.get_config()
     return _render_invalid_certificate(
-        request, course_id, platform_name, configuration, cert_path='certificates/url_unsupported.html'
+        request, course_id, platform_name, configuration, cert_path='certificates/url_unsupported.html',
+        robbo_reason=robbo_cert_errors.URL_UNSUPPORTED,
     )
 
 
@@ -480,7 +483,9 @@ def render_html_view(request, course_id, certificate=None):  # pylint: disable=t
 
     # Kick the user back to the "Invalid" screen if the feature is disabled globally
     if not settings.FEATURES.get('CERTIFICATES_HTML_VIEW', False):
-        return _render_invalid_certificate(request, course_id, platform_name, configuration)
+        return _render_invalid_certificate(
+            request, course_id, platform_name, configuration, robbo_reason=robbo_cert_errors.SITE_DISABLED,
+        )
 
     # Load the course and user objects
     try:
@@ -494,7 +499,9 @@ def render_html_view(request, course_id, certificate=None):  # pylint: disable=t
             "Specific error: %s"
         )
         log.info(error_str, course_id, str(exception))
-        return _render_invalid_certificate(request, course_id, platform_name, configuration)
+        return _render_invalid_certificate(
+            request, course_id, platform_name, configuration, robbo_reason=robbo_cert_errors.COURSE_NOT_FOUND,
+        )
 
     course_overview = get_course_overview_or_none(course_key)
 
@@ -505,7 +512,9 @@ def render_html_view(request, course_id, certificate=None):  # pylint: disable=t
             course_id,
             user_id,
         )
-        return _render_invalid_certificate(request, course_id, platform_name, configuration)
+        return _render_invalid_certificate(
+            request, course_id, platform_name, configuration, robbo_reason=robbo_cert_errors.COURSE_DISABLED,
+        )
 
     # Load user's certificate
     user_certificate = _get_user_certificate(request, user, course_key, course_overview, preview_mode)
@@ -515,7 +524,9 @@ def render_html_view(request, course_id, certificate=None):  # pylint: disable=t
             user_id,
             course_id,
         )
-        return _render_invalid_certificate(request, course_id, platform_name, configuration)
+        return _render_invalid_certificate(
+            request, course_id, platform_name, configuration, robbo_reason=robbo_cert_errors.NO_PREVIEW_ACCESS,
+        )
 
     # Get the active certificate configuration for this course
     # If we do not have an active certificate, we'll need to send the user to the "Invalid" screen
@@ -527,7 +538,9 @@ def render_html_view(request, course_id, certificate=None):  # pylint: disable=t
             course_id,
             user_id,
         )
-        return _render_invalid_certificate(request, course_id, platform_name, configuration)
+        return _render_invalid_certificate(
+            request, course_id, platform_name, configuration, robbo_reason=robbo_cert_errors.NOT_CREATED,
+        )
 
     # Get data from Discovery service that will be necessary for rendering this Certificate.
     catalog_data = _get_catalog_data_for_course(course_key)
@@ -681,11 +694,13 @@ def _get_custom_template_and_language(course_id, course_mode, course_language):
 
 
 def _render_invalid_certificate(request, course_id, platform_name, configuration,
-                                cert_path=INVALID_CERTIFICATE_TEMPLATE_PATH):
+                                cert_path=INVALID_CERTIFICATE_TEMPLATE_PATH, robbo_reason=robbo_cert_errors.NOT_FOUND):
     """
     Renders the invalid certificate view with default header and footer.
     """
     context = {}
+    # Robbo: the error page of the theme (robbo_certificates/errors.py) — why, for a Studio preview
+    context.update(robbo_cert_errors.error_context(request, course_id, robbo_reason))
     _update_context_with_basic_info(context, course_id, platform_name, configuration)
     # Add certificate header/footer data to current context
     context.update(get_certificate_header_context(is_secure=request.is_secure()))

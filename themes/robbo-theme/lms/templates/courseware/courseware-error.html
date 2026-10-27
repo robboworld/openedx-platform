@@ -1,0 +1,19 @@
+<%page expression_filter="h"/>
+<%doc>
+Copyright (C) 2026 Robbo <https://robbo.ru>
+SPDX-License-Identifier: AGPL-3.0-only
+Part of the Robbo Open edX distribution (robbo-theme). See NOTICE at repository root.
+
+A course tab crashed (courseware/views/views.py: CourseTabView.handle_exceptions, status 500): the error
+block of robbo_errors like every other error page — without the legacy course tabs and course styles, the
+course has its own navigation in the learning MFE. Texts — page «courseware_error» in
+lms/djangoapps/robbo_errors/upstream_pages.py, which also journals the crash (the view caught it).
+</%doc>
+<%! from lms.djangoapps.robbo_errors.upstream_pages import error_for %>
+<%inherit file="/main.html" />
+<%block name="bodyclass">view-robbo-error</%block>
+<%block name="pagetitle">${error_for('courseware_error')['title']}</%block>
+
+<main id="main" aria-label="Content" tabindex="-1">
+  <%include file="/robbo_errors/_error_block.html" args="robbo_error=error_for('courseware_error')" />
+</main>
