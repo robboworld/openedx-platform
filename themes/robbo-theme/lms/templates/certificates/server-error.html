@@ -1,0 +1,32 @@
+<%page expression_filter="h"/>
+<%doc>
+Copyright (C) 2026 Robbo <https://robbo.ru>
+SPDX-License-Identifier: AGPL-3.0-only
+Part of the Robbo Open edX distribution (robbo-theme). See NOTICE at repository root.
+
+A Studio preview of the certificate failed (handle_500 of certificates/views/webview.py renders this
+template without a context): the error block of robbo_errors, texts in robbo_certificates/errors.py.
+</%doc>
+<%!
+from crum import get_current_request
+from lms.djangoapps.robbo_certificates import errors as robbo_cert_errors
+
+
+def _robbo_error():
+    # Once per request: the page title and the body both need it, and it writes the journal
+    request = get_current_request()
+    if not hasattr(request, 'robbo_cert_error'):
+        match = getattr(request, 'resolver_match', None)
+        course_id = match.kwargs.get('course_id') if match else None
+        request.robbo_cert_error = robbo_cert_errors.error_context(
+            request, course_id, robbo_cert_errors.SERVER_ERROR,
+        )['robbo_error']
+    return request.robbo_cert_error
+%>
+<%inherit file="../main.html" />
+<%block name="pagetitle">${_robbo_error()['title']}</%block>
+<%block name="bodyclass">view-robbo-error</%block>
+
+<main id="main" aria-label="Content" tabindex="-1">
+  <%include file="/robbo_errors/_error_block.html" args="robbo_error=_robbo_error()" />
+</main>

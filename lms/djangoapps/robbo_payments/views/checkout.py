@@ -17,6 +17,7 @@ from django.views.decorators.http import require_http_methods
 from common.djangoapps.course_modes.models import CourseMode
 from common.djangoapps.edxmako.shortcuts import render_to_response
 from common.djangoapps.student.models import CourseEnrollment
+from lms.djangoapps.robbo_errors.upstream_pages import error_for
 from openedx.features.course_experience.url_helpers import make_learning_mfe_courseware_url
 
 from ..models import Order
@@ -46,6 +47,13 @@ def _customer_email(user):
     return user.email or ''
 
 
+def _error_page(request, page, **params):
+    """Checkout error: the error block of robbo_errors, texts in robbo_errors/upstream_pages.py."""
+    return render_to_response('robbo_payments/error.html', {
+        'robbo_error': error_for(page, request, **params),
+    })
+
+
 @login_required
 @require_http_methods(['GET', 'POST'])
 def basket_add(request):
@@ -60,31 +68,23 @@ def basket_add(request):
     course_run_key = request.GET.get('course_run_key') or request.POST.get('course_run_key')
 
     if not sku or not course_run_key:
-        return render_to_response('robbo_payments/error.html', {
-            'error_message': _('Course or product details are missing for checkout.'),
-        })
+        return _error_page(request, 'payment_details_missing')
 
     try:
         product = resolve_verified_product(course_run_key, sku)
     except CatalogError as exc:
         log.warning('Checkout catalog error for user=%s: %s', request.user.id, exc)
-        return render_to_response('robbo_payments/error.html', {
-            'error_message': _('This product is not available for purchase.'),
-        })
+        return _error_page(request, 'payment_unavailable')
 
     enrollment = CourseEnrollment.get_enrollment(request.user, product.course_key)
     if enrollment is None or not enrollment.is_active:
-        return render_to_response('robbo_payments/error.html', {
-            'error_message': _('Enroll in the course before purchasing full access.'),
-        })
+        return _error_page(request, 'payment_not_enrolled', course_key=product.course_key)
 
     if enrollment.mode == CourseMode.VERIFIED:
         return redirect(make_learning_mfe_courseware_url(str(product.course_key)))
 
     if enrollment.mode not in (CourseMode.AUDIT, CourseMode.HONOR):
-        return render_to_response('robbo_payments/error.html', {
-            'error_message': _('This enrollment cannot be upgraded to full access.'),
-        })
+        return _error_page(request, 'payment_cannot_upgrade')
 
     if request.method == 'GET':
         return render_to_response('robbo_payments/checkout.html', {
@@ -96,9 +96,7 @@ def basket_add(request):
         })
 
     if not is_yookassa_configured():
-        return render_to_response('robbo_payments/error.html', {
-            'error_message': _('Payment service is not configured. Contact support.'),
-        })
+        return _error_page(request, 'payment_not_configured')
 
     order = Order.objects.create(
         user=request.user,
@@ -119,8 +117,6 @@ def basket_add(request):
         )
     except (YooKassaNotConfigured, YooKassaPaymentError):
         order.delete()
-        return render_to_response('robbo_payments/error.html', {
-            'error_message': _('Could not start payment. Please try again later.'),
-        })
+        return _error_page(request, 'payment_failed')
 
     return redirect(confirmation_url)

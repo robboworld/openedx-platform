@@ -1,4 +1,4 @@
-<%page expression_filter="h"/>
+<%page expression_filter="h" args="robbo_error"/>
 <%doc>
 Copyright (C) 2026 Robbo <https://robbo.ru>
 SPDX-License-Identifier: AGPL-3.0-only
@@ -45,6 +45,8 @@ Brand tokens: docs/design/robbo-brand-guidelines.md.
       <button type="button" class="robbo-error-block__button" onclick="window.history.back()">${e['action_label']}</button>
     % elif e['action'] == 'login':
       <a class="robbo-error-block__button" href="${e['login_url']}">${e['action_label']}</a>
+    % elif e['action'] == 'link':
+      <a class="robbo-error-block__button" href="${e['action_url']}">${e['action_label']}</a>
     % else:
       <a class="robbo-error-block__button" href="/">${e['action_label']}</a>
     % endif
