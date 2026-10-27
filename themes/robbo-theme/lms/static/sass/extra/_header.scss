@@ -542,8 +542,9 @@ header.global-header {
     }
 }
 
-// «Что нового» button (LMS widget) — same spacing as the Studio pill next to it.
-header.global-header .robbo-main-header__trailing .robbo-header-whats-new {
+// «Что нового» and notifications buttons (LMS widgets) — same spacing as the Studio pill next to them.
+header.global-header .robbo-main-header__trailing .robbo-header-whats-new,
+header.global-header .robbo-main-header__trailing .robbo-header-notifications {
     margin-right: 10px;
 }
 
@@ -671,9 +672,10 @@ header.global-header .mobile-menu .mobile-nav-link .robbo-header-lk-locked {
         display: none !important;
     }
 
-    // «Что нового» stays in the bar on phones: logo | news button | hamburger.
-    // The leading wrapper dissolves so the button can sit between its two children.
-    header.global-header .main-header.robbo-main-header:has(.robbo-header-whats-new) {
+    // «Что нового» and the bell stay in the bar on phones: logo | buttons | hamburger.
+    // The leading wrapper dissolves so the buttons can sit between its two children.
+    header.global-header .main-header.robbo-main-header:has(.robbo-header-whats-new),
+    header.global-header .main-header.robbo-main-header:has(.robbo-header-notifications) {
         grid-template-columns: minmax(0, 1fr) auto auto;
         column-gap: 12px;
 
@@ -690,7 +692,7 @@ header.global-header .mobile-menu .mobile-nav-link .robbo-header-lk-locked {
             order: 2;
 
             // Studio pill and user menu stay in `#mobile-menu`, as before.
-            > :not(.robbo-header-whats-new) {
+            > :not(.robbo-header-whats-new):not(.robbo-header-notifications) {
                 display: none !important;
             }
         }
