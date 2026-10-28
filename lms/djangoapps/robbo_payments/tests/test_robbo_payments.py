@@ -17,8 +17,10 @@ from common.djangoapps.course_modes.tests.factories import CourseModeFactory
 from common.djangoapps.student.models import CourseEnrollment
 from common.djangoapps.student.tests.factories import TEST_PASSWORD, UserFactory
 from lms.djangoapps.commerce.models import CommerceConfiguration
+from lms.djangoapps.robbo_errors.models import ErrorIncident
 from lms.djangoapps.robbo_payments.constants import OrderStatus
 from lms.djangoapps.robbo_payments.models import Order
+from lms.djangoapps.robbo_payments.processors.yookassa import YooKassaPaymentError
 from lms.djangoapps.robbo_payments.services.catalog import ProductNotFound, get_first_sku_from_query, resolve_verified_product
 from lms.djangoapps.robbo_payments.services.fulfillment import fulfill_verified_upgrade
 from openedx.core.djangolib.testing.utils import skip_unless_lms
@@ -161,6 +163,32 @@ class CheckoutViewTests(ModuleStoreTestCase):
         assert response['Location'] == 'https://yookassa.test/pay'
         assert Order.objects.filter(user=self.user, course_key=self.course_key).exists()
 
+    def test_checkout_without_details_shows_error_block(self):
+        response = self.client.get(reverse('robbo_payments:basket_add'))
+        assert response.status_code == 200
+        self.assertContains(response, 'view-robbo-error')
+        self.assertContains(response, 'BAD-INPUT')
+        assert not ErrorIncident.objects.exists()
+
+    def test_checkout_not_enrolled_links_to_course_about(self):
+        CourseEnrollment.unenroll(self.user, self.course_key)
+        url = reverse('robbo_payments:basket_add')
+        response = self.client.get(url, {'sku': 'TEST-SKU-003', 'course_run_key': str(self.course_key)})
+        self.assertContains(response, 'ACCESS-DENIED')
+        self.assertContains(response, reverse('about_course', args=[str(self.course_key)]))
+
+    @patch(
+        'lms.djangoapps.robbo_payments.views.checkout.create_redirect_payment',
+        side_effect=YooKassaPaymentError('timeout'),
+    )
+    def test_checkout_payment_failure_is_journaled(self, _mock_create):
+        url = reverse('robbo_payments:basket_add')
+        response = self.client.post(url, {'sku': 'TEST-SKU-003', 'course_run_key': str(self.course_key)})
+        self.assertContains(response, 'SRV-ERROR')
+        assert not Order.objects.filter(user=self.user, course_key=self.course_key).exists()
+        row = ErrorIncident.objects.get()
+        assert (row.code, row.developer_message, row.path) == ('SRV-ERROR', 'payment_failed', url)
+
 
 @skip_unless_lms
 @override_settings(ROBBO_PAYMENTS_ENABLED=True)
@@ -260,4 +288,5 @@ class ReceiptSyncTests(ModuleStoreTestCase):
         enrollment = CourseEnrollment.get_enrollment(self.user, self.course_key)
         assert self.order.status == OrderStatus.PAID
         assert enrollment.mode == CourseMode.VERIFIED
-        assert 'Полный доступ к курсу активирован'.encode() in response.content
+        # The text is gettext-ed (ru: «Полный доступ к курсу активирован»); tests run in English (LANGUAGE_CODE)
+        assert b'Payment successful. Full course access is now active.' in response.content

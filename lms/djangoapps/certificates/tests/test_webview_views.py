@@ -37,6 +37,7 @@ from lms.djangoapps.certificates.tests.factories import (
 )
 from lms.djangoapps.certificates.views.webview import _get_user_certificate
 from lms.djangoapps.certificates.utils import get_certificate_url
+from lms.djangoapps.robbo_certificates import errors as robbo_cert_errors
 from openedx.core.djangoapps.dark_lang.models import DarkLangConfig
 from openedx.core.djangoapps.site_configuration.tests.test_util import (
     with_site_configuration,
@@ -1011,10 +1012,9 @@ class CertificatesViewsTests(CommonCertificatesTestCase, CacheIsolationTestCase)
             uuid=self.cert.verify_uuid
         )
 
-        if self_paced or self.course.certificate_available_date > today:
-            expected_date = today
-        else:
-            expected_date = self.course.certificate_available_date
+        # Robbo: the issued date is the generation date of the certificate, not the course's
+        # certificate available date (webview._update_certificate_context)
+        expected_date = self.cert.modified_date
         with override_waffle_switch(AUTO_CERTIFICATE_GENERATION, active=True):
             response = self.client.get(test_url)
         date = '{month} {day}, {year}'.format(
@@ -1059,10 +1059,9 @@ class CertificatesViewsTests(CommonCertificatesTestCase, CacheIsolationTestCase)
 
         if date_override:
             expected_date = self.cert.date_override.date
-        elif self_paced or self.course.certificate_available_date > today:
-            expected_date = today
         else:
-            expected_date = self.course.certificate_available_date
+            # Robbo: the generation date of the certificate, not the course's certificate available date
+            expected_date = self.cert.modified_date
 
         date = '{month} {day}, {year}'.format(
             month=strftime_localized(expected_date, "%B"),
@@ -1816,6 +1815,33 @@ class CertificatesViewsTests(CommonCertificatesTestCase, CacheIsolationTestCase)
 
         cert = _get_user_certificate(mock_request, self.user, self.course.id, self.course)
         assert cert is None
+
+    def test_get_user_certificate_preview_without_permission(self):
+        """
+        Robbo: a preview without PREVIEW_CERTIFICATES has no certificate (upstream raised UnboundLocalError
+        on modified_date, and the page was a 500).
+        """
+        mock_request = Mock()
+        mock_request.user.has_perm.return_value = False
+
+        cert = _get_user_certificate(mock_request, self.user, self.course.id, self.course, preview_mode='honor')
+        assert cert is None
+
+    @override_settings(FEATURES=FEATURES_WITH_CERTS_ENABLED)
+    def test_preview_without_permission_is_invalid_certificate(self):
+        """
+        Robbo: a learner who opens the Studio preview link gets the «no access to the preview» page, not a 500.
+        """
+        self._add_course_certificates(count=1, signatory_count=1)
+        test_url = reverse('certificates:preview_cert', kwargs={'course_id': self.course_id})
+        with patch(
+            'lms.djangoapps.certificates.views.webview.robbo_cert_errors.error_context',
+            wraps=robbo_cert_errors.error_context,
+        ) as error_context:
+            response = self.client.get(test_url + '?preview=honor')
+        assert response.status_code == 200
+        self.assertContains(response, 'Cannot Find Certificate')
+        assert error_context.call_args.args[2] == robbo_cert_errors.NO_PREVIEW_ACCESS
 
 
 class CertificateEventTests(CommonCertificatesTestCase, EventTrackingTestCase):
