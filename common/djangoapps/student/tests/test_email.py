@@ -14,7 +14,9 @@ from django.http import HttpResponse
 from django.test import TransactionTestCase, override_settings
 from django.test.client import RequestFactory
 from django.urls import reverse
+from django.utils import translation
 from django.utils.html import escape
+from django.utils.translation import gettext
 from testfixtures import LogCapture
 
 from common.djangoapps.edxmako.shortcuts import marketing_link
@@ -36,6 +38,15 @@ from openedx.core.djangolib.testing.utils import CacheIsolationMixin, CacheIsola
 from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase  # lint-amnesty, pylint: disable=wrong-import-order
 from xmodule.modulestore.tests.factories import CourseFactory  # lint-amnesty, pylint: disable=wrong-import-order
+
+
+def robbo_ace_text(msgid, **params):
+    """
+    Robbo: ACE emails render in Russian (ACE_EMAIL_DEFAULT_LANGUAGE = 'ru'). Upstream {% blocktrans %}
+    strings are compared with their Russian translation from the installed catalogs, whatever it is.
+    """
+    with translation.override('ru'):
+        return gettext(msgid) % params
 
 
 class TestException(Exception):
@@ -98,29 +109,29 @@ class ActivationEmailTests(EmailTemplateTagMixin, CacheIsolationTestCase):
     Test sending of the activation email.
     """
 
-    ACTIVATION_SUBJECT = f"Action Required: Activate your {settings.PLATFORM_NAME} account"
+    # Robbo: the activation email is Russian (ACTIVATION_EMAIL_LANGUAGE = 'ru'; the templates in
+    # common/templates/student/edx_ace/accountactivation are written in Russian, not translated)
+    ACTIVATION_SUBJECT = f"Требуется действие: активируйте учётную запись {settings.PLATFORM_NAME}"
 
     # Text fragments we expect in the body of an email
     # sent from an OpenEdX installation.
     OPENEDX_FRAGMENTS = [
         (
-            "Use the link below to activate your account to access engaging, "
-            "high-quality {platform_name} courses. Note that you will not be able to log back into your "
-            "account until you have activated it.".format(
+            "Вы почти у цели! Перейдите по ссылке ниже, чтобы активировать учётную запись и получить доступ "
+            "к курсам {platform_name}. Пока вы не активируете учётную запись, повторный вход будет невозможен.".format(
                 platform_name=settings.PLATFORM_NAME
             )
         ),
         f"{settings.LMS_ROOT_URL}/activate/",
-        "If you need help, please use our web form at ", (
-            settings.ACTIVATION_EMAIL_SUPPORT_LINK or settings.SUPPORT_SITE_LINK
-        ),
+        settings.ACTIVATION_EMAIL_SUPPORT_LINK or settings.SUPPORT_SITE_LINK,
         settings.CONTACT_EMAIL,
-        "This email message was automatically sent by ",
-        settings.LMS_ROOT_URL,
-        " because someone attempted to create an account on {platform_name}".format(
-            platform_name=settings.PLATFORM_NAME
+        (
+            "Это письмо автоматически отправлено с сайта {lms_url}, так как кто-то пытался создать учётную запись "
+            "на {platform_name}, указав этот адрес электронной почты.".format(
+                lms_url=settings.LMS_ROOT_URL,
+                platform_name=settings.PLATFORM_NAME,
+            )
         ),
-        " using this email address."
     ]
 
     @ddt.data('plain_text', 'html')
@@ -137,7 +148,8 @@ class ActivationEmailTests(EmailTemplateTagMixin, CacheIsolationTestCase):
             'username': 'test_user',
             'email': 'test_user@example.com',
             'password': 'Password1234',
-            'name': 'Test User',
+            # Robbo: registration requires a three-word full name (registration_form.validate_name)
+            'name': 'Test User Name',
             'honor_code': True,
             'terms_of_service': True
         }
@@ -402,18 +414,18 @@ class EmailChangeRequestTests(EventTestMixin, EmailTemplateTagMixin, CacheIsolat
 
         self.do_email_change(self.user, new_email, registration_key)
 
+        # Robbo: the email change templates (edx_ace/emailchange) are written in Russian
         self._assert_email(
-            subject='Request to change édX account e-mail',
+            subject='Запрос на смену email учётной записи édX',
             body_fragments=[
-                'We received a request to change the e-mail associated with',
-                'your édX account from {old_email} to {new_email}.'.format(
+                'Мы получили запрос сменить email учётной записи édX с {old_email} на {new_email}. '
+                'Если это верно, подтвердите новый адрес'.format(
                     old_email=old_email,
                     new_email=new_email,
                 ),
-                'If this is correct, please confirm your new e-mail address by visiting:',
                 f'http://edx.org/email_confirm/{registration_key}',
-                'Please do not reply to this e-mail; if you require assistance,',
-                'check the help section of the édX web site.',
+                'Если вы этого не делали, ничего предпринимать не нужно',
+                'Не отвечайте на это письмо;',
             ],
         )
 
@@ -461,21 +473,33 @@ class EmailChangeConfirmationTests(EmailTestMixin, EmailTemplateTagMixin, CacheI
         self.key = self.pending_change_request.activation_key
 
         # Expected subject of the email
-        self.email_subject = "Email Change Confirmation for {platform_name}".format(
+        # Robbo: the subject and the HTML part (edx_ace/emailchangeconfirmation) are written in Russian;
+        # the plain-text part is still upstream {% blocktrans %}, rendered in Russian.
+        self.email_subject = "Подтверждение смены email — {platform_name}".format(
             platform_name=settings.PLATFORM_NAME
         )
 
         # Text fragments we expect in the body of the confirmation email
-        self.email_fragments = [
-            "This is to confirm that you changed the e-mail associated with {platform_name}"
-            " from {old_email} to {new_email}. If you did not make this request, please contact us immediately."
-            " Contact information is listed at:".format(
-                platform_name=settings.PLATFORM_NAME,
-                old_email=self.user.email,
-                new_email=PendingEmailChange.objects.get(activation_key=self.key).new_email
-            ),
-            "We keep a log of old e-mails, so if this request was unintentional, we can investigate."
-        ]
+        format_kwargs = {
+            'platform_name': settings.PLATFORM_NAME,
+            'old_email': self.user.email,
+            'new_email': PendingEmailChange.objects.get(activation_key=self.key).new_email,
+        }
+        self.email_fragments = {
+            'plain_text': [
+                robbo_ace_text(
+                    "This is to confirm that you changed the e-mail associated with %(platform_name)s"
+                    " from %(old_email)s to %(new_email)s. If you did not make this request, please contact us"
+                    " immediately. Contact information is listed at:", **format_kwargs
+                ),
+                robbo_ace_text("We keep a log of old e-mails, so if this request was unintentional, we can investigate."),
+            ],
+            'html': [
+                "Это подтверждение того, что вы сменили email учётной записи {platform_name}"
+                " с {old_email} на {new_email}. Если это были не вы, срочно свяжитесь с нами:".format(**format_kwargs),
+                "Мы храним историю прежних адресов — при ошибочном запросе сможем разобраться.",
+            ],
+        }
 
     @classmethod
     def setUpClass(cls):
@@ -550,7 +574,7 @@ class EmailChangeConfirmationTests(EmailTestMixin, EmailTemplateTagMixin, CacheI
             assert test_body_type in body_text
 
             body_to_be_tested = body_text[test_body_type]
-            for fragment in self.email_fragments:
+            for fragment in self.email_fragments[test_body_type]:
                 assert fragment in body_to_be_tested
 
             assert contact_link in body_to_be_tested
@@ -692,11 +716,14 @@ class SecondaryEmailChangeRequestTests(EventTestMixin, EmailTemplateTagMixin, Ca
         self.do_secondary_email_change(self.user, new_email, registration_key)
 
         self._assert_email(
-            subject='Confirm your recovery email for édX',
+            # Robbo: upstream {% blocktrans %} templates, rendered in Russian
+            subject=robbo_ace_text('Confirm your recovery email for %(platform_name)s', platform_name='édX'),
             body_fragments=[
-                'You\'ve registered this recovery email address for édX.',
-                'If you set this email address, click "confirm email."',
-                'If you didn\'t request this change, you can disregard this email.',
+                robbo_ace_text('You\'ve registered this recovery email address for %(platform_name)s.', platform_name='édX'),
+                robbo_ace_text(
+                    'If you set this email address, click "confirm email."  '
+                    'If you didn\'t request this change, you can disregard this email.'
+                ),
                 f'http://edx.org/activate_secondary_email/{registration_key}',
 
             ],
