@@ -14,7 +14,7 @@ from django.http import (
     HttpResponseForbidden,
     HttpResponseNotFound,
     HttpResponseNotModified,
-    HttpResponsePermanentRedirect
+    HttpResponseRedirect
 )
 from django.views.decorators.http import require_safe
 from edx_django_utils.monitoring import set_custom_attribute
@@ -50,6 +50,9 @@ log = logging.getLogger(__name__)
 # to change this file so instead of using course_id_partial, we're just using asset keys
 
 HTTP_DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
+
+# Robbo: browser cache for versioned asset URLs (set_caching_headers), one year.
+VERSIONED_ASSET_MAX_AGE = 365 * 24 * 60 * 60
 
 # Robbo: course assets keep the Content-Type given at upload time, which the uploader controls and
 # the store does not verify. Without X-Content-Type-Options the browser may sniff an octet-stream or
@@ -107,9 +110,11 @@ def process_request(request):
 
         # If this was a versioned asset, and the digest doesn't match, redirect
         # them to the actual version.
+        # Robbo: a temporary redirect. Browsers keep a 301 forever, so after a file was replaced and
+        # then put back (the md5 returns), old -> new and new -> old would loop.
         if requested_digest is not None and actual_digest is not None and (actual_digest != requested_digest):
             actual_asset_path = StaticContent.add_version_to_asset_path(asset_path, actual_digest)
-            return HttpResponsePermanentRedirect(actual_asset_path)
+            return HttpResponseRedirect(actual_asset_path)
 
         # Set the basics for this request. Make sure that the course key for this
         # asset has a run, which old-style courses do not.  Otherwise, this will
@@ -218,14 +223,21 @@ def process_request(request):
         # middleware we have in place, there's no easy way to use the built-in Django
         # utilities and properly sanitize and modify a response to ensure that it is as
         # cacheable as possible, which is why we do it ourselves.
-        set_caching_headers(content, loc, response)
+        # Robbo: only a URL whose md5 matches the file is safe to cache for long.
+        versioned = requested_digest is not None and requested_digest == actual_digest
+        set_caching_headers(content, loc, response, versioned=versioned)
 
         return response
 
 
-def set_caching_headers(content, location, response):
+def set_caching_headers(content, location, response, versioned=False):
     """
     Sets caching headers based on whether or not the asset is restricted.
+
+    Robbo: with caching on (``CourseAssetCacheTtlConfig`` TTL > 0) the TTL value itself is not used.
+    A versioned URL (``/assets/courseware/v1/<md5>/…``) never changes its content — a new file gets a
+    new md5 — so it is cached for a year. A plain ``/asset-v1:…`` URL may get a replaced file under the
+    same name, so the browser keeps the file but asks each time (304 by ``Last-Modified``).
     """
     is_locked = getattr(content, "locked", False)
     is_pylib = location.path == course_code_library_asset_name()
@@ -243,8 +255,11 @@ def set_caching_headers(content, location, response):
     if cache_ttl > 0 and not is_restricted:
         set_custom_attribute('contentserver.cacheable', True)
 
-        response['Expires'] = get_expiration_value(datetime.datetime.utcnow(), cache_ttl)
-        response['Cache-Control'] = "public, max-age={ttl}, s-maxage={ttl}".format(ttl=cache_ttl)
+        if versioned:
+            response['Expires'] = get_expiration_value(datetime.datetime.utcnow(), VERSIONED_ASSET_MAX_AGE)
+            response['Cache-Control'] = f'public, max-age={VERSIONED_ASSET_MAX_AGE}, immutable'
+        else:
+            response['Cache-Control'] = 'public, no-cache'
     elif is_restricted:
         set_custom_attribute('contentserver.cacheable', False)
 

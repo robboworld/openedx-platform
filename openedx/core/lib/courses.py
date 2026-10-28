@@ -8,6 +8,8 @@ from django.http import Http404
 
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.locator import CourseKey
+from openedx.core.djangoapps.content.course_overviews.robbo_image_versions import versioned_asset_url
+from openedx.core.djangoapps.contentserver.caching import del_cached_content
 from xmodule.assetstore.assetmgr import AssetManager
 from xmodule.contentstore.content import StaticContent
 from xmodule.contentstore.django import contentstore
@@ -48,7 +50,10 @@ def create_course_image_thumbnail(course, dimensions):
 
     _content, thumb_loc = contentstore().generate_thumbnail(course_image, dimensions=dimensions)
 
-    return StaticContent.serialize_asset_key_with_slash(thumb_loc)
+    # Robbo: the thumbnail keeps its name when regenerated from a replaced cover: drop the old bytes
+    # from the contentserver cache and put the md5 into the URL (robbo_image_versions.py).
+    del_cached_content(thumb_loc)
+    return versioned_asset_url(StaticContent.serialize_asset_key_with_slash(thumb_loc))
 
 
 def clean_course_id(model_form, is_required=True):

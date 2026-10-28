@@ -31,6 +31,7 @@ from django.contrib.auth.decorators import login_required
 
 from common.djangoapps.util.json_request import JsonResponse
 from lms.djangoapps.robbo_errors.responses import robbo_error
+from openedx.core.djangoapps.content.course_overviews.robbo_image_versions import refresh_overview_for_cover
 from xmodule.contentstore.content import StaticContent
 from xmodule.contentstore.django import contentstore
 from xmodule.exceptions import NotFoundError
@@ -203,6 +204,9 @@ def upload_asset(request, course_key):
                 limit=settings.MAX_ASSET_UPLOAD_FILE_SIZE_IN_MB,
             )
         robbo_asset_folders.apply_upload_folder(request, content.location, created=status != STATUS_REPLACED)
+        if status in (STATUS_CREATED, STATUS_REPLACED):
+            # A new file under the cover's name: new versioned URLs and thumbnails without a publish.
+            refresh_overview_for_cover(course_key, content.location)
         if status != STATUS_CREATED:
             log.info('Robbo asset upload %s: %s -> %s (%s)', course_key, original_name, content.name, status)
         return _asset_response(course_key, content.location, status, original_name)

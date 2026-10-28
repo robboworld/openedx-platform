@@ -144,13 +144,14 @@ class ContentStoreToyCourseTest(SharedModuleStoreTestCase):
     def test_unlocked_versioned_asset_with_nonexistent_version(self):
         """
         Test that unlocked assets that are versioned, but have a nonexistent version,
-        are sent back as a 301 redirect which tells the caller the correct URL.
+        are sent back as a 302 redirect which tells the caller the correct URL.
+        (Robbo: temporary, upstream sends 301 — see views.process_request.)
         """
         url_unlocked_versioned_old = StaticContent.add_version_to_asset_path(self.url_unlocked, FAKE_MD5_HASH)
 
         self.client.logout()
         resp = self.client.get(url_unlocked_versioned_old)
-        assert resp.status_code == 301
+        assert resp.status_code == 302
         assert resp.url.endswith(self.url_unlocked_versioned)
 
     def test_locked_versioned_asset(self):
@@ -381,13 +382,47 @@ class ContentStoreToyCourseTest(SharedModuleStoreTestCase):
         """
         Tests that when a cache TTL is set, an unlocked asset will be sent back with
         the correct cache control/expires headers.
+
+        Robbo: a plain URL may get a replaced file under the same name, so the browser
+        revalidates it every time instead of keeping it for the TTL.
         """
         mock_get_cache_ttl.return_value = 10
 
         resp = self.client.get(self.url_unlocked)
         assert resp.status_code == 200
+        assert 'Expires' not in resp
+        assert 'public, no-cache' == resp['Cache-Control']
+        assert 'Last-Modified' in resp
+
+    @patch('openedx.core.djangoapps.contentserver.models.CourseAssetCacheTtlConfig.get_cache_ttl')
+    def test_robbo_cache_headers_versioned_unlocked(self, mock_get_cache_ttl):
+        """Robbo: a URL with the file's md5 never changes its content, so it is cached for a year."""
+        mock_get_cache_ttl.return_value = 10
+
+        resp = self.client.get(self.url_unlocked_versioned)
+        assert resp.status_code == 200
         assert 'Expires' in resp
-        assert 'public, max-age=10, s-maxage=10' == resp['Cache-Control']
+        assert f'public, max-age={views.VERSIONED_ASSET_MAX_AGE}, immutable' == resp['Cache-Control']
+
+    @patch('openedx.core.djangoapps.contentserver.models.CourseAssetCacheTtlConfig.get_cache_ttl')
+    def test_robbo_cache_headers_versioned_locked(self, mock_get_cache_ttl):
+        """Robbo: a locked asset is never cached, versioned URL or not."""
+        mock_get_cache_ttl.return_value = 10
+
+        CourseEnrollment.enroll(self.non_staff_usr, self.course_key)
+        self.client.login(username=self.non_staff_usr, password=self.TEST_PASSWORD)
+        resp = self.client.get(self.url_locked_versioned)
+        assert resp.status_code == 200
+        assert 'private, no-cache, no-store' == resp['Cache-Control']
+
+    @patch('openedx.core.djangoapps.contentserver.models.CourseAssetCacheTtlConfig.get_cache_ttl')
+    def test_robbo_plain_url_revalidates_with_304(self, mock_get_cache_ttl):
+        """Robbo: the revalidation of a plain URL costs a 304 while the file is unchanged."""
+        mock_get_cache_ttl.return_value = 10
+
+        first = self.client.get(self.url_unlocked)
+        resp = self.client.get(self.url_unlocked, HTTP_IF_MODIFIED_SINCE=first['Last-Modified'])
+        assert resp.status_code == 304
 
     @patch('openedx.core.djangoapps.contentserver.models.CourseAssetCacheTtlConfig.get_cache_ttl')
     def test_cache_headers_with_ttl_locked(self, mock_get_cache_ttl):
