@@ -9,6 +9,8 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
+from lms.djangoapps.robbo_changelog.access import can_view as can_view_whats_new, in_profile_menu
+from lms.djangoapps.robbo_changelog.labels import PAGE as WHATS_NEW_LABELS, pick as whats_new_label
 from openedx.core.djangoapps.user_api.accounts.image_helpers import get_profile_image_urls_for_user
 from openedx.features.enterprise_support.utils import get_enterprise_learner_generic_name
 %>
@@ -26,6 +28,7 @@ displayname = get_enterprise_learner_generic_name(request) or username
 <div class="nav-item hidden-mobile nav-item-dropdown" tabindex="-1">
     <div class="toggle-user-dropdown" role="button" aria-label=${_("Options Menu")} aria-expanded="false" tabindex="0" aria-controls="user-menu">
         <span data-hj-suppress class="username">${displayname}</span>
+        <span class="robbo-wn-dot" data-robbo-whats-new-dot hidden></span>
     </div>
     <div class="dropdown-user-menu hidden" aria-label=${_("More Options")} role="menu" id="user-menu" tabindex="-1">
         ## Dashboard link omitted (Robbo — same as MFE user menu: Profile, Account, Sign Out).
@@ -33,6 +36,11 @@ displayname = get_enterprise_learner_generic_name(request) or username
         <div class="mobile-nav-item dropdown-item dropdown-nav-item"><a href="${urljoin(settings.PROFILE_MICROFRONTEND_URL, f'{user.username}')}" role="menuitem">${_("Profile")}</a></div>
         % if settings.ACCOUNT_MICROFRONTEND_URL:
         <div class="mobile-nav-item dropdown-item dropdown-nav-item"><a href="${settings.ACCOUNT_MICROFRONTEND_URL}" role="menuitem">${_("Account")}</a></div>
+        % endif
+        ## «Что нового» for learners: the widget (robbo_whats_new_button.html) adds the unread count and opens
+        ## its panel under the menu button; without the widget the link leads to the page.
+        % if can_view_whats_new(self.real_user) and in_profile_menu(self.real_user):
+        <div class="mobile-nav-item dropdown-item dropdown-nav-item robbo-header-whats-new-item" data-robbo-whats-new-item><a href="${reverse('robbo_changelog:whats_new')}" role="menuitem">${whats_new_label(WHATS_NEW_LABELS['title'])}<span class="robbo-wn-count" data-robbo-whats-new-count hidden></span></a></div>
         % endif
         % if getattr(settings, 'ROBBO_BFF_LOGOUT_URL', None):
         <div class="mobile-nav-item dropdown-item dropdown-nav-item"><a href="${reverse('logout')}?redirect_url=${quote(settings.ROBBO_BFF_LOGOUT_URL, safe='')}" role="menuitem">${_("Sign Out")}</a></div>
