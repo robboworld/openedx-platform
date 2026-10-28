@@ -170,6 +170,8 @@ class CourseOverview(TimeStampedModel):
         from lms.djangoapps.certificates.api import get_active_web_certificate
         from openedx.core.lib.courses import course_image_url
 
+        from .robbo_image_versions import versioned_asset_url
+
         # Workaround for a problem discovered in https://openedx.atlassian.net/browse/TNL-2806.
         # If the course has a malformed grading policy such that
         # course._grading_policy['GRADE_CUTOFFS'] = {}, then
@@ -218,8 +220,9 @@ class CourseOverview(TimeStampedModel):
         course_overview.advertised_start = course.advertised_start
         course_overview.announcement = course.announcement
 
-        course_overview.banner_image_url = course_image_url(course, 'banner_image')
-        course_overview.course_image_url = course_image_url(course)
+        # Robbo: covers by md5-versioned URL, so a replaced file is not stale in browsers (robbo_image_versions.py)
+        course_overview.banner_image_url = versioned_asset_url(course_image_url(course, 'banner_image'))
+        course_overview.course_image_url = versioned_asset_url(course_image_url(course))
         course_overview.social_sharing_url = course.social_sharing_url
 
         updated_available_date, updated_display_behavior = CourseDetails.validate_certificate_settings(
