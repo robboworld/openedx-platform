@@ -1007,3 +1007,21 @@ header.global-header .mobile-menu:not(.hidden) .mobile-nav-link {
         animation: none;
     }
 }
+// «Что нового» for learners: item in the profile menu and a dot on the menu button / hamburger
+// (dot and count styles come from the widget, robbo_changelog/widget/robbo-whats-new.js).
+header.global-header .nav-links .secondary .toggle-user-dropdown,
+header.global-header .hamburger-menu {
+    position: relative;
+}
+
+header.global-header .hamburger-menu .robbo-wn-dot {
+    top: 7px;
+    right: 3px;
+}
+
+header.global-header .robbo-header-whats-new-item a,
+header.global-header .mobile-menu .robbo-header-whats-new-item a {
+    display: flex !important;
+    align-items: center;
+    gap: 12px;
+}
