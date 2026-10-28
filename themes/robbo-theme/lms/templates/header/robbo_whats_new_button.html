@@ -13,6 +13,8 @@ from lms.djangoapps.robbo_changelog.labels import current_lang
 %>
 ## Accounts not activated yet see no «Что нового» (robbo_changelog.access.can_view).
 % if user.is_authenticated and user.is_active:
-<span class="robbo-header-whats-new" data-robbo-whats-new data-lang="${current_lang()}" data-variant="on-dark"></span>
+## Learners get it in the profile menu instead (user_dropdown.html, dot on the menu button or hamburger).
+<span class="robbo-header-whats-new" data-robbo-whats-new data-lang="${current_lang()}" data-variant="on-dark"
+      data-profile-toggle=".global-header .toggle-user-dropdown, .global-header .hamburger-menu"></span>
 <script src="${reverse('robbo_changelog:widget')}" defer></script>
 % endif

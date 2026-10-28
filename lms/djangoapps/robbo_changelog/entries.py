@@ -23,7 +23,7 @@ from openedx.core.djangoapps.user_api.models import UserPreference
 from openedx.core.lib.robbo_stack import ROBBO_STACK_PROFILE
 
 from . import labels, schema
-from .access import is_platform_staff, viewer_audiences
+from .access import can_choose_placement, in_profile_menu, is_platform_staff, viewer_audiences
 
 log = logging.getLogger(__name__)
 
@@ -91,16 +91,27 @@ def mark_read(user, visible):
     UserPreference.objects.update_or_create(user=user, key=SEEN_PREFERENCE, defaults={'value': value})
 
 
+# Learner MFEs of ``link.to``: LMS setting and the path on the LMS host. Studio serves the same API
+# without those settings; Robbo serves the MFEs on the LMS host (robbo-mfe-branding), as the feed
+# link of the notifications bell in Studio's header does.
+MFE_LINKS = {
+    'account': ('ACCOUNT_MICROFRONTEND_URL', '/account/'),
+    'learning': ('LEARNING_MICROFRONTEND_URL', '/learning'),
+    'dashboard': ('LEARNER_HOME_MICROFRONTEND_URL', '/learner-dashboard/'),
+}
+
+
 def resolve_link(target):
     """``studio:/home`` → absolute URL of the current site, or ``None`` if not configured."""
     prefix, _, path = target.partition(':')
-    base = {
-        'lms': settings.LMS_ROOT_URL,
-        'studio': getattr(settings, 'CMS_ROOT_URL', ''),
-        'account': settings.ACCOUNT_MICROFRONTEND_URL,
-        'learning': settings.LEARNING_MICROFRONTEND_URL,
-        'dashboard': settings.LEARNER_HOME_MICROFRONTEND_URL,
-    }.get(prefix)
+    if prefix in MFE_LINKS:
+        setting, lms_path = MFE_LINKS[prefix]
+        base = getattr(settings, setting, None) or settings.LMS_ROOT_URL.rstrip('/') + lms_path
+    else:
+        base = {
+            'lms': settings.LMS_ROOT_URL,
+            'studio': getattr(settings, 'CMS_ROOT_URL', ''),
+        }.get(prefix)
     if not base:
         return None
     return base.rstrip('/') + (path or '/')
@@ -209,9 +220,20 @@ def texts(lang, unread_count=0):
 
 
 def status(user, lang):
-    """Header button state: how many visible entries ``user`` has not read."""
+    """
+    Header button state: how many visible entries ``user`` has not read.
+
+    ``in_menu``: «Что нового» as an item of the profile menu (with a dot on the menu button) instead of
+    a separate header button — always for learners, by choice for the course team and staff
+    (``can_choose_placement``, account settings).
+    """
     unread = unread_ids(user, visible_releases(user))
-    return {'unread': len(unread), 'texts': texts(lang, len(unread))}
+    return {
+        'unread': len(unread),
+        'in_menu': in_profile_menu(user),
+        'can_choose_placement': can_choose_placement(user),
+        'texts': texts(lang, len(unread)),
+    }
 
 
 def panel(user, lang):

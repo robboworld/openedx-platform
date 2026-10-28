@@ -1,0 +1,54 @@
+## mako
+<%!
+# Copyright (C) 2026 Robbo <https://robbo.ru>
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# Part of the Robbo Open edX distribution (site changelog). See NOTICE at repository root.
+%>
+## Robbo: «Что нового» as a menu item with a dot on the username for staff who chose it in account
+## settings (widget: lms/djangoapps/robbo_changelog/widget, mounted in widgets/header.html).
+<%page expression_filter="h"/>
+<%namespace name='static' file='../static_content.html'/>
+<%!
+  from django.conf import settings
+  from django.urls import reverse
+  from django.utils.translation import gettext as _
+  from edx_django_utils.monitoring import set_custom_attribute
+  from common.djangoapps.student.roles import GlobalStaff
+  from lms.djangoapps.robbo_changelog.access import can_view as can_view_whats_new, in_profile_menu
+  from lms.djangoapps.robbo_changelog.labels import PAGE as WHATS_NEW_LABELS, pick as whats_new_label
+%>
+<% whats_new_in_menu = can_view_whats_new(user) and in_profile_menu(user) %>
+
+<h3 class="title robbo-wn-dot-host">
+  <span class="label">
+    <span class="label-prefix sr-only">${_("Currently signed in as:")}</span>
+    <span class="account-username" title="${ user.username }">${ user.username }</span>
+  </span>
+  <span class="icon fa fa-caret-down ui-toggle-dd" aria-hidden="true"></span>
+  % if whats_new_in_menu:
+  <span class="robbo-wn-dot" data-robbo-whats-new-dot hidden></span>
+  % endif
+</h3>
+<div class="wrapper wrapper-nav-sub">
+  <div class="nav-sub">
+    <ul>
+      <li class="nav-item nav-account-dashboard">
+        <a href="/">${_("{studio_name} Home").format(studio_name=settings.STUDIO_SHORT_NAME)}</a>
+      </li>
+      % if GlobalStaff().has_user(user):
+      <li class="nav-item">
+        <a href="${reverse('maintenance:maintenance_index')}">${_("Maintenance")}</a>
+      </li>
+      % endif
+      % if whats_new_in_menu:
+      <li class="nav-item robbo-header-whats-new-item" data-robbo-whats-new-item>
+        <a class="robbo-wn-item" href="${settings.LMS_ROOT_URL.rstrip('/')}/whats-new">${whats_new_label(WHATS_NEW_LABELS['title'])}<span class="robbo-wn-count" data-robbo-whats-new-count hidden></span></a>
+      </li>
+      % endif
+      <li class="nav-item nav-account-signout">
+        <a class="action action-signout" href="${settings.FRONTEND_LOGOUT_URL}">${_("Sign Out")}</a>
+      </li>
+    </ul>
+  </div>
+</div>
