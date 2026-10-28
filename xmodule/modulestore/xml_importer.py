@@ -63,6 +63,7 @@ from xmodule.util.misc import escape_invalid_characters
 from xmodule.x_module import XModuleMixin
 
 from .inheritance import own_metadata
+from .robbo_import_asset_links import ImportAssetLinks
 from .store_utilities import rewrite_nonportable_content_links
 
 log = logging.getLogger(__name__)
@@ -293,6 +294,8 @@ class ImportManager:
         self.do_import_python_lib = do_import_python_lib
         self.create_if_not_present = create_if_not_present
         self.raise_on_failure = raise_on_failure
+        # Robbo: full links to course files in the imported content (robbo_import_asset_links.py)
+        self.robbo_asset_links = None
         self.xml_module_store = self.store_class(
             data_dir,
             default_class=default_class,
@@ -437,6 +440,14 @@ class ImportManager:
 
         log.debug('course data_dir=%s', source_courselike.data_dir)
 
+        # Robbo: the course block is imported before the files, so the archive's static/ tells which files come
+        import_files = self.do_import_static and self.static_content_store is not None
+        self.robbo_asset_links = ImportAssetLinks(
+            courselike_key, dest_id,
+            static_dir=course_data_path / self.static_content_subdir if import_files else None,
+            content_store=self.static_content_store if import_files else None,
+        )
+
         with self.store.branch_setting(ModuleStoreEnum.Branch.draft_preferred, dest_id):
             course = _update_and_import_block(
                 source_courselike, self.store, self.user_id,
@@ -444,6 +455,7 @@ class ImportManager:
                 dest_id,
                 do_import_static=self.do_import_static,
                 runtime=runtime,
+                asset_links=self.robbo_asset_links,
             )
             self.static_updater(course, source_courselike, courselike_key, dest_id, runtime)
             self.store.update_item(course, self.user_id)
@@ -526,6 +538,7 @@ class ImportManager:
                             dest_id,
                             do_import_static=self.do_import_static,
                             runtime=courselike.runtime,
+                            asset_links=self.robbo_asset_links,
                         )
                     except Exception:
                         log.exception(
@@ -550,6 +563,7 @@ class ImportManager:
                     dest_id,
                     do_import_static=self.do_import_static,
                     runtime=courselike.runtime,
+                    asset_links=self.robbo_asset_links,
                 )
             except Exception:
                 log.exception(
@@ -732,7 +746,8 @@ class CourseImportManager(ImportManager):
                 data_path,
                 courselike_key,
                 dest_id,
-                courselike.runtime
+                courselike.runtime,
+                asset_links=self.robbo_asset_links,
             )
 
         # Importing the drafts potentially triggered a new structure version.
@@ -751,6 +766,11 @@ class CourseImportManager(ImportManager):
         """
         Trigger celery task to create upstream links for newly imported blocks.
         """
+        if self.robbo_asset_links is not None and self.robbo_asset_links.rewritten:
+            log.info(
+                'Course import %s: robbo asset links: %s full links to course files rewritten',
+                dest_id, self.robbo_asset_links.rewritten,
+            )
         # Robbo: signature images keep the exported course's path; point them at the imported files
         relink_course_signatures(self.store, self.static_content_store or contentstore(), dest_id, self.user_id)
 
@@ -861,10 +881,12 @@ def import_library_from_xml(*args, **kwargs):
 def _update_and_import_block(  # pylint: disable=too-many-statements
         block, store, user_id,
         source_course_id, dest_course_id,
-        do_import_static=True, runtime=None):
+        do_import_static=True, runtime=None, asset_links=None):
     """
     Update all the block reference fields to the destination course id,
     then import the block into the destination course.
+
+    Robbo: ``asset_links`` (``ImportAssetLinks``) rewrites full links to course files in the field values.
     """
     logging.debug('processing import of blocks %s...', str(block.location))
 
@@ -931,6 +953,8 @@ def _update_and_import_block(  # pylint: disable=too-many-statements
         )
 
     fields = _update_block_references(block, source_course_id, dest_course_id)
+    if asset_links is not None:
+        asset_links.rewrite_fields(block, fields)
     asides = block.get_asides() if isinstance(block, XModuleMixin) else None
 
     if block.location.block_type == 'library_content':
@@ -1001,7 +1025,8 @@ def _import_course_draft(
         course_data_path,
         source_course_id,
         target_id,
-        mongo_runtime
+        mongo_runtime,
+        asset_links=None,
 ):
     """
     This method will import all the content inside of the 'drafts' folder, if content exists.
@@ -1071,6 +1096,7 @@ def _import_course_draft(
             source_course_id,
             target_id,
             runtime=mongo_runtime,
+            asset_links=asset_links,
         )
         for child in block.get_children():
             _import_block(child)
