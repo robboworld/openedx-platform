@@ -140,7 +140,9 @@ header.global-header .main-header {
 // Reference: text links (not pills); undo edx negative margins.
 header.global-header .nav-links .main .nav-tab a.tab-nav-link {
   margin-bottom: 0 !important;
-  display: inline-block !important;
+  // Flex: the tab icon (robbo-theme header/nav_tab_icon.html) is centred on the label, not on the baseline.
+  display: inline-flex !important;
+  align-items: center;
   border: none !important;
   border-radius: 0 !important;
   padding: 6px 0 !important;
