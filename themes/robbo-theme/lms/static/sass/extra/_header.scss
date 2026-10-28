@@ -29,6 +29,10 @@ body {
 $robbo-header-green: #00b140;
 // Wordmark (РОББО): 30px; primary tabs — same as MFE `$robbo-mfe-header-nav-fs` (20px)
 $robbo-header-nav-font: 20px;
+$robbo-header-nav-icon: 0.9em; // MFE $robbo-mfe-header-nav-icon
+// Proxima Nova sits high in its line box (room for descenders below), so a box-centred icon
+// looks low next to the label: shift it to the middle of the capitals.
+$robbo-header-nav-icon-shift: -0.1em; // MFE $robbo-mfe-header-nav-icon-shift
 $robbo-header-wordmark: 30px;
 // Admin-only stack profile letter (O / S / C) left of the wordmark.
 $robbo-stack-badge-size: 28px;
@@ -38,6 +42,9 @@ $robbo-stack-badge-fs: 16px;
 $robbo-stack-badge-lift: 0.05 * $robbo-header-wordmark;
 $robbo-header-user-menu-fs: 1.125rem; // Sign in / Register
 $robbo-header-profile-toggle-fs: 1rem; // 16px: −2px vs 18px for .toggle-user-dropdown
+// Longest user name in the menu button before the ellipsis (MFE $robbo-mfe-user-menu-label-max):
+// a wrapped name made the button several lines tall and squeezed the centred nav at 992px.
+$robbo-header-user-label-max: 10em;
 $robbo-dropdown-enter-duration: 200ms;
 $robbo-dropdown-enter-ease: ease-out;
 $robbo-profile-chevron-size: 5px;
@@ -80,9 +87,11 @@ header.global-header {
     .main-header.robbo-main-header {
         box-sizing: border-box;
         display: grid;
-        // Equal side columns keep the nav centred on the bar, not between logo and user menu;
-        // `1fr` keeps its min-content minimum, so a wide side pushes the nav instead of overlapping it.
-        grid-template-columns: 1fr auto 1fr;
+        // Equal side columns keep the nav centred on the bar, not between logo and user menu. The sides
+        // have `min-width: 0`, so a bare `1fr` shrinks below their buttons and the nav runs under them
+        // (MFE at 992-1050px): `min-content` keeps each side at least as wide as its buttons (the user name
+        // is ellipsised), and where the bar is too narrow to centre, the nav shifts towards the narrower side.
+        grid-template-columns: minmax(min-content, 1fr) auto minmax(min-content, 1fr);
         align-items: center;
         column-gap: 16px;
         row-gap: 8px;
@@ -373,8 +382,14 @@ header.global-header {
                 }
 
                 .username {
+                    display: inline-block;
+                    max-width: $robbo-header-user-label-max;
+                    overflow: hidden;
                     font: inherit;
                     color: inherit;
+                    text-overflow: ellipsis;
+                    vertical-align: middle;
+                    white-space: nowrap;
                 }
             }
 
@@ -548,6 +563,30 @@ header.global-header {
 header.global-header .robbo-main-header__trailing .robbo-header-whats-new,
 header.global-header .robbo-main-header__trailing .robbo-header-notifications {
     margin-right: 10px;
+}
+
+// Main nav tab icons (header/nav_tab_icon.html): in the bar from xl (1200px) only, below that the tab row
+// with icons squeezes the user menu; the hamburger clones keep plain labels.
+.robbo-header-tab-icon {
+    position: relative;
+    top: $robbo-header-nav-icon-shift;
+    flex: none;
+    width: $robbo-header-nav-icon;
+    height: $robbo-header-nav-icon;
+    margin-right: 0.3em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    @include media-breakpoint-down(lg) {
+        display: none;
+    }
+}
+
+header.global-header .mobile-menu .robbo-header-tab-icon {
+    display: none;
 }
 
 @include media-breakpoint-down(md) {
