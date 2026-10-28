@@ -473,8 +473,7 @@ class EmailChangeConfirmationTests(EmailTestMixin, EmailTemplateTagMixin, CacheI
         self.key = self.pending_change_request.activation_key
 
         # Expected subject of the email
-        # Robbo: the subject and the HTML part (edx_ace/emailchangeconfirmation) are written in Russian;
-        # the plain-text part is still upstream {% blocktrans %}, rendered in Russian.
+        # Robbo: the subject and both body parts (edx_ace/emailchangeconfirmation) are written in Russian.
         self.email_subject = "Подтверждение смены email — {platform_name}".format(
             platform_name=settings.PLATFORM_NAME
         )
@@ -485,20 +484,14 @@ class EmailChangeConfirmationTests(EmailTestMixin, EmailTemplateTagMixin, CacheI
             'old_email': self.user.email,
             'new_email': PendingEmailChange.objects.get(activation_key=self.key).new_email,
         }
+        robbo_fragments = [
+            "Это подтверждение того, что вы сменили email учётной записи {platform_name}"
+            " с {old_email} на {new_email}. Если это были не вы, срочно свяжитесь с нами:".format(**format_kwargs),
+            "Мы храним историю прежних адресов — при ошибочном запросе сможем разобраться.",
+        ]
         self.email_fragments = {
-            'plain_text': [
-                robbo_ace_text(
-                    "This is to confirm that you changed the e-mail associated with %(platform_name)s"
-                    " from %(old_email)s to %(new_email)s. If you did not make this request, please contact us"
-                    " immediately. Contact information is listed at:", **format_kwargs
-                ),
-                robbo_ace_text("We keep a log of old e-mails, so if this request was unintentional, we can investigate."),
-            ],
-            'html': [
-                "Это подтверждение того, что вы сменили email учётной записи {platform_name}"
-                " с {old_email} на {new_email}. Если это были не вы, срочно свяжитесь с нами:".format(**format_kwargs),
-                "Мы храним историю прежних адресов — при ошибочном запросе сможем разобраться.",
-            ],
+            'plain_text': robbo_fragments,
+            'html': robbo_fragments,
         }
 
     @classmethod
