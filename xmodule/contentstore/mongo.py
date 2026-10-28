@@ -27,6 +27,17 @@ from .content import ContentStore, StaticContent, StaticContentStream
 from .robbo_asset_attrs import copied_attrs, kept_attrs, project_fields
 
 
+def _content_digest(fp):
+    """
+    md5 of a stored file: ``custom_md5`` written by ``save``, else the md5 GridFS kept for files
+    uploaded before ``custom_md5`` existed.
+
+    Robbo: without the fallback those older files (most images of Koa-era courses) had no digest, so
+    their URLs stayed unversioned and could not be cached for long (contentserver.views).
+    """
+    return getattr(fp, 'custom_md5', None) or fp._file.get('md5')  # pylint: disable=protected-access
+
+
 class MongoContentStore(ContentStore):
     """
     MongoDB-backed ContentStore.
@@ -193,7 +204,7 @@ class MongoContentStore(ContentStore):
                     thumbnail_location=thumbnail_location,
                     import_path=getattr(fp, 'import_path', None),
                     length=fp.length, locked=getattr(fp, 'locked', False),
-                    content_digest=getattr(fp, 'custom_md5', None),
+                    content_digest=_content_digest(fp),
                 )
             else:
                 with self.fs.get(content_id) as fp:
@@ -213,7 +224,7 @@ class MongoContentStore(ContentStore):
                         thumbnail_location=thumbnail_location,
                         import_path=getattr(fp, 'import_path', None),
                         length=fp.length, locked=getattr(fp, 'locked', False),
-                        content_digest=getattr(fp, 'custom_md5', None),
+                        content_digest=_content_digest(fp),
                     )
         except NoFile:
             if throw_on_not_found:  # lint-amnesty, pylint: disable=no-else-raise

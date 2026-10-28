@@ -387,7 +387,8 @@ class CourseOverviewTestCase(CatalogIntegrationMixin, ModuleStoreTestCase, Cache
         # Because the course overview now has an old version number, it should
         # be thrown out after being loaded from the cache, which results in
         # a call to get_course.
-        with check_mongo_calls_range(max_finds=2, min_finds=2):
+        # Robbo: +2 finds — the md5 of the course image and banner for the versioned URLs.
+        with check_mongo_calls_range(max_finds=4, min_finds=4):
             _course_overview_2 = CourseOverview.get_from_id(course.id)
 
     # The CourseOverviewTab and CourseOverviewImageSet objects can't be filtered with course overview object as it is
@@ -907,7 +908,8 @@ class CourseOverviewImageSetTestCase(ModuleStoreTestCase):
 
         # Now make sure our thumbnails are of the sizes we expect...
         for image_url, expected_size in [(image_urls['small'], config.small), (image_urls['large'], config.large)]:
-            image_key = StaticContent.get_location_from_path(image_url)
+            # Robbo: thumbnail URLs carry the md5 (robbo_image_versions.py)
+            image_key = StaticContent.get_location_from_path(StaticContent.parse_versioned_asset_path(image_url)[1])
             image_content = AssetManager.find(image_key)
             image = Image.open(BytesIO(image_content.data))
             assert image.size == expected_size
@@ -959,7 +961,8 @@ class CourseOverviewImageSetTestCase(ModuleStoreTestCase):
         image_urls = course_overview.image_urls
 
         for image_url, target in [(image_urls['small'], config.small), (image_urls['large'], config.large)]:
-            image_key = StaticContent.get_location_from_path(image_url)
+            # Robbo: thumbnail URLs carry the md5 (robbo_image_versions.py)
+            image_key = StaticContent.get_location_from_path(StaticContent.parse_versioned_asset_path(image_url)[1])
             image_content = AssetManager.find(image_key)
             image = Image.open(BytesIO(image_content.data))
 

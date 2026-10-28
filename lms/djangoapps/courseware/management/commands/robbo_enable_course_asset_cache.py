@@ -11,8 +11,11 @@ With ``CourseAssetCacheTtlConfig.cache_ttl`` at 0 (upstream default) the content
 no ``Cache-Control``, so the catalog and the learner dashboard revalidate every course image
 on each visit. Locked assets stay ``private, no-cache`` regardless of this setting.
 
-Asset URLs are not versioned: a file replaced under the same name in Studio may stay stale
-in a browser for up to the TTL, hence a short default.
+A TTL above 0 only switches caching on; the value itself is not used (contentserver
+``set_caching_headers``). URLs with the file's md5 — lesson images (``/static/…``) and course covers
+(``course_overviews/robbo_image_versions.py``) — are cached for a year; plain ``/asset-v1:…`` URLs
+are kept by the browser but revalidated on each view, so a file replaced under the same name in
+Studio shows up at once.
 
 Idempotent: does nothing when the current config already matches.
 """
