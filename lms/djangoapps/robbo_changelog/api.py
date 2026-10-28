@@ -10,6 +10,7 @@ Plain Django views on the LMS session: MFEs call them with ``credentials: 'inclu
 accounts not activated yet 403, and the button stays hidden for both.
 """
 
+import json
 from pathlib import Path
 
 from django.http import HttpResponse, JsonResponse
@@ -56,6 +57,26 @@ def mark_read(request):
         return _denied(request.user)
     entries.mark_read(request.user, entries.visible_releases(request.user))
     return JsonResponse({'unread': 0})
+
+
+@never_cache
+@require_POST
+def set_placement(request):
+    """Course team and staff: «Что нового» as a header button or a profile menu item (form or JSON ``placement``)."""
+    if not access.can_view(request.user):
+        return _denied(request.user)
+    if not access.can_choose_placement(request.user):
+        return JsonResponse({'error': 'not available'}, status=403)
+    value = request.POST.get('placement')
+    if value is None and request.content_type == 'application/json':
+        try:
+            value = json.loads(request.body or b'{}').get('placement')
+        except (ValueError, AttributeError):
+            value = None
+    if value not in access.PLACEMENTS:
+        return JsonResponse({'error': 'placement must be one of: ' + ', '.join(access.PLACEMENTS)}, status=400)
+    access.set_placement(request.user, value)
+    return JsonResponse({'placement': value, 'in_menu': access.in_profile_menu(request.user)})
 
 
 @require_safe

@@ -374,7 +374,8 @@
           ## «Что нового»: the LMS widget mounts here and calls Studio's copy of its API (same origin).
           ## Accounts not activated yet see no «Что нового» (robbo_changelog.access.can_view).
           % if user.is_active:
-          <li class="nav-item robbo-header-whats-new" data-robbo-whats-new data-lang="${robbo_whats_new_lang()}" data-variant="on-dark"></li>
+          <li class="nav-item robbo-header-whats-new" data-robbo-whats-new data-lang="${robbo_whats_new_lang()}" data-variant="on-dark"
+              data-profile-toggle=".nav-account-user > .title"></li>
           ## Notifications bell: the same LMS widget on Studio's copy of the API (robbo_notifications/studio_urls.py);
           ## «Все уведомления» leads to the Account MFE on the LMS host.
           <li class="nav-item robbo-header-notifications" data-robbo-notifications data-lang="${robbo_whats_new_lang()}"

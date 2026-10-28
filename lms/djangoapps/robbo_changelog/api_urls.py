@@ -17,5 +17,6 @@ urlpatterns = [
     path('api/robbo/v1/whats-new/status', api.status, name='api_status'),
     path('api/robbo/v1/whats-new/entries', api.panel, name='api_entries'),
     path('api/robbo/v1/whats-new/read', api.mark_read, name='api_read'),
+    path('api/robbo/v1/whats-new/placement', api.set_placement, name='api_placement'),
     path('api/robbo/v1/whats-new/widget.js', api.widget, name='widget'),
 ]

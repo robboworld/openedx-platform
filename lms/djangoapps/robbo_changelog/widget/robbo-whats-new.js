@@ -10,9 +10,18 @@
  * robbo_changelog API on the LMS session (guests get 401, accounts not activated yet 403: no button). Studio's Mako
  * pages load the same file from Studio, which serves a copy of the API (no cross-origin calls).
  *
- *   RobboWhatsNew.mount(container, {lmsUrl, lang, variant})
+ *   RobboWhatsNew.mount(container, {lmsUrl, lang, variant, profileToggle}) → {open, subscribe, unmount}
  *       lmsUrl — host of the API (default: this page's origin); links in the panel come from the API.
- *   <span data-robbo-whats-new data-lms-url data-lang data-variant> mounts itself (LMS and Studio pages).
+ *       profileToggle — the profile menu button (element, selector list — the first visible one wins —
+ *       or a function). With it, learners (status `in_menu`) get no header button: the header shows
+ *       «Что нового» as a profile menu item and a dot on the menu button (`.robbo-wn-dot`, `.robbo-wn-count`
+ *       come from here), and `open()` opens the panel under the menu button. Without it — the button for all.
+ *       subscribe(fn) — fn({inMenu, unread, label}) now and on every change; returns unsubscribe.
+ *   window event `robbo-whats-new:refresh` — every mounted widget asks the status again (the placement
+ *       setting changed in account settings).
+ *   <span data-robbo-whats-new data-lms-url data-lang data-variant data-profile-toggle> mounts itself
+ *       (LMS and Studio pages) and fills `[data-robbo-whats-new-item]` (menu item the server renders for
+ *       learners, `[data-robbo-whats-new-count]` inside) and `[data-robbo-whats-new-dot]` anywhere on the page.
  *
  * variant: "on-dark" — white icon for the green Robbo header (default); "on-light" — white headers.
  */
@@ -28,6 +37,7 @@
   var NARROW_QUERY = '(max-width: 575.98px)';
   var REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
   var CLOSE_DELAY = 160;
+  var REFRESH_EVENT = 'robbo-whats-new:refresh';
   var counter = 0;
 
   function svg(paths, size) {
@@ -58,7 +68,8 @@
   var CSS = [
     '.robbo-wn{--robbo-wn-green:#00af41;--robbo-wn-green-dark:#007e2f;',
     'display:inline-flex;align-items:center;flex:0 0 auto;position:relative;vertical-align:middle}',
-    '.robbo-wn[hidden]{display:none}',
+    // !important: Studio's `.nav-account .nav-item` sets display on the header list items.
+    '.robbo-wn[hidden]{display:none!important}',
     '.robbo-wn.robbo-wn .robbo-wn__button{appearance:none;-webkit-appearance:none;background:transparent;',
     'background-image:none;border:1px solid currentColor;border-radius:999px;box-shadow:none;box-sizing:border-box;',
     'color:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;',
@@ -85,6 +96,17 @@
     '.robbo-wn--on-light .robbo-wn__badge{background:var(--robbo-wn-green);box-shadow:0 0 0 2px #fff;color:#fff}',
     '.robbo-wn .robbo-wn__badge[hidden]{display:none}',
     '@keyframes robbo-wn-pop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}',
+    // Learners: dot on the profile menu button (the host makes the button position:relative) and the
+    // unread count in the «Что нового» menu item.
+    '.robbo-wn-dot{animation:robbo-wn-pop .25s ease-out;background:#fff;border-radius:50%;',
+    'box-shadow:0 0 0 2px #00af41;height:10px;pointer-events:none;position:absolute;right:-2px;top:-2px;width:10px}',
+    '.robbo-wn-dot[hidden],.robbo-wn-count[hidden]{display:none}',
+    // Hosts without their own styles (Studio pages): the dot's button and the menu item link.
+    '.robbo-wn-dot-host{position:relative}',
+    '.robbo-wn-item.robbo-wn-item{align-items:center;display:flex!important;gap:12px}',
+    '.robbo-wn-count{background:#00af41;border-radius:999px;box-sizing:border-box;color:#fff;display:inline-block;',
+    'flex:0 0 auto;font:800 11px/18px var(--robbo-font-body,"Proxima Nova","ProximaNova",Helvetica,Arial,sans-serif);',
+    'height:18px;margin-left:auto;min-width:18px;padding:0 6px;text-align:center}',
 
     '.robbo-wn-panel{--robbo-wn-green:#00af41;--robbo-wn-green-dark:#007e2f;--robbo-wn-green-tint:#effaf3;',
     '--robbo-wn-green-soft:#dcf3e4;--robbo-wn-coal:#383838;--robbo-wn-text:#1f2328;--robbo-wn-muted:#5f6670;',
@@ -215,7 +237,7 @@
     '@keyframes robbo-wn-shimmer{50%{opacity:.45}}',
     '.robbo-wn-panel .robbo-wn__sr{border:0;clip:rect(0 0 0 0);height:1px;margin:-1px;overflow:hidden;padding:0;',
     'position:absolute;white-space:nowrap;width:1px}',
-    '@media (prefers-reduced-motion:reduce){.robbo-wn-panel,.robbo-wn .robbo-wn__badge,',
+    '@media (prefers-reduced-motion:reduce){.robbo-wn-panel,.robbo-wn .robbo-wn__badge,.robbo-wn-dot,',
     '.robbo-wn-panel .robbo-wn__skeleton i{animation:none;transition:none}}',
     'body.indigo-dark-theme .robbo-wn-panel{--robbo-wn-surface:#1b2a22;--robbo-wn-text:#f8f8f8;',
     '--robbo-wn-muted:#c8d5cd;--robbo-wn-line:#3a4a41;--robbo-wn-hover:#24382d;--robbo-wn-chip:#2c3b33;',
@@ -288,6 +310,41 @@
       : (state.texts.title || state.button.getAttribute('aria-label'));
     state.button.setAttribute('aria-label', label);
     state.button.title = label;
+    state.label = label;
+    notify(state);
+  }
+
+  function snapshot(state) {
+    return {inMenu: state.inMenu, unread: state.inMenu ? state.unread : 0, label: state.label};
+  }
+
+  function notify(state) {
+    state.subscribers.forEach(function (fn) { fn(snapshot(state)); });
+  }
+
+  function isVisible(node) {
+    return Boolean(node && node.getClientRects().length);
+  }
+
+  // The element the panel hangs from: the header button, or for learners the profile menu button.
+  function anchorOf(state) {
+    var toggle = state.profileToggle;
+    if (!state.inMenu || !toggle) {
+      return state.button;
+    }
+    if (typeof toggle === 'function') {
+      return toggle() || null;
+    }
+    if (typeof toggle === 'string') {
+      var nodes = document.querySelectorAll(toggle);
+      for (var i = 0; i < nodes.length; i += 1) {
+        if (isVisible(nodes[i])) {
+          return nodes[i];
+        }
+      }
+      return null;
+    }
+    return toggle;
   }
 
   function renderEntry(entry, texts) {
@@ -398,7 +455,7 @@
   }
 
   function place(state) {
-    var rect = state.button.getBoundingClientRect();
+    var rect = state.anchor.getBoundingClientRect();
     var viewport = document.documentElement.clientWidth;
     var top = Math.round(rect.bottom + 10);
     var panel = state.panel;
@@ -459,8 +516,9 @@
     state.button.setAttribute('aria-controls', panel.id);
   }
 
+  // A press on the profile menu button closes the panel and opens the menu, as any press outside.
   function onDocumentPointer(state, event) {
-    if (!state.panel.contains(event.target) && !state.button.contains(event.target)) {
+    if (!state.panel.contains(event.target) && !(state.anchor === state.button && state.button.contains(event.target))) {
       close(state, false);
     }
   }
@@ -472,13 +530,19 @@
   }
 
   function open(state) {
+    state.anchor = anchorOf(state);
+    if (!state.anchor) {
+      return;
+    }
     if (!state.panel) {
       buildPanel(state);
     }
     window.clearTimeout(state.closeTimer);
     state.isOpen = true;
     state.panel.hidden = false;
-    state.button.setAttribute('aria-expanded', 'true');
+    if (state.anchor === state.button) {
+      state.button.setAttribute('aria-expanded', 'true');
+    }
     place(state);
     window.requestAnimationFrame(function () {
       if (state.isOpen) {
@@ -525,8 +589,8 @@
         state.panel.hidden = true;
       }
     }, prefersReducedMotion() ? 0 : CLOSE_DELAY);
-    if (returnFocus) {
-      state.button.focus();
+    if (returnFocus && state.anchor) {
+      state.anchor.focus();
     }
   }
 
@@ -542,6 +606,10 @@
     var state = {
       id: counter,
       lmsUrl: String(options.lmsUrl || window.location.origin).replace(/\/+$/, ''),
+      profileToggle: options.profileToggle || null,
+      inMenu: false,
+      label: '',
+      subscribers: [],
       lang: String(options.lang || document.documentElement.lang || 'ru').toLowerCase().split('-')[0],
       texts: {},
       unread: 0,
@@ -574,15 +642,38 @@
     setUnread(state, 0);
     container.hidden = true;
     container.appendChild(state.button);
-    request(state, 'status', 'GET').then(function (data) {
-      container.hidden = false;
-      setUnread(state, data.unread, data.texts);
-    }).catch(function () {
-      // Guests (401), accounts not activated yet (403) and a broken API: no button at all.
-      container.hidden = true;
-    });
+    function loadStatus() {
+      request(state, 'status', 'GET').then(function (data) {
+        var inMenu = Boolean(data.in_menu && state.profileToggle);
+        if (state.isOpen && inMenu !== state.inMenu) {
+          close(state, false);
+        }
+        state.inMenu = inMenu;
+        container.hidden = state.inMenu;
+        setUnread(state, data.unread, data.texts);
+      }).catch(function () {
+        // Guests (401), accounts not activated yet (403) and a broken API: no button at all.
+        container.hidden = true;
+      });
+    }
+    loadStatus();
+    window.addEventListener(REFRESH_EVENT, loadStatus);
     return {
+      open: function () {
+        if (!state.isOpen) {
+          open(state);
+        }
+      },
+      subscribe: function (fn) {
+        state.subscribers.push(fn);
+        fn(snapshot(state));
+        return function () {
+          state.subscribers = state.subscribers.filter(function (other) { return other !== fn; });
+        };
+      },
       unmount: function () {
+        window.removeEventListener(REFRESH_EVENT, loadStatus);
+        state.subscribers = [];
         close(state, false);
         window.clearTimeout(state.closeTimer);
         if (state.panel) {
@@ -594,14 +685,54 @@
     };
   }
 
+  // Server-rendered pages: the menu item and the dots are in the markup (hidden); the LMS mobile menu
+  // clones the item, so every copy on the page is updated.
+  function bindPageMenu(widget, toggleSelector) {
+    widget.subscribe(function (info) {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-robbo-whats-new-item]'), function (item) {
+        if (info.label) {
+          item.setAttribute('aria-label', info.label);
+        }
+        var count = item.querySelector('[data-robbo-whats-new-count]');
+        if (count) {
+          count.hidden = !info.unread;
+          count.textContent = info.unread > 9 ? '9+' : String(info.unread || '');
+        }
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('[data-robbo-whats-new-dot]'), function (dot) {
+        dot.hidden = !info.unread;
+      });
+    });
+    // Capture: Studio's menu items stop the click from bubbling (they close the menu themselves).
+    document.addEventListener('click', function (event) {
+      var item = event.target.closest && event.target.closest('[data-robbo-whats-new-item]');
+      if (!item) {
+        return;
+      }
+      event.preventDefault();
+      // Close the open profile (or mobile) menu with its own button, then open the panel under it.
+      Array.prototype.forEach.call(document.querySelectorAll(toggleSelector), function (toggle) {
+        if (toggle.getAttribute('aria-expanded') === 'true') {
+          toggle.click();
+        }
+      });
+      widget.open();
+    }, true);
+  }
+
   function autoMount() {
     var nodes = document.querySelectorAll('[data-robbo-whats-new]:not([data-robbo-wn-mounted])');
     Array.prototype.forEach.call(nodes, function (node) {
-      mount(node, {
+      var toggleSelector = node.getAttribute('data-profile-toggle');
+      var widget = mount(node, {
         lmsUrl: node.getAttribute('data-lms-url'),
         lang: node.getAttribute('data-lang'),
         variant: node.getAttribute('data-variant'),
+        profileToggle: toggleSelector,
       });
+      if (widget && toggleSelector) {
+        bindPageMenu(widget, toggleSelector);
+      }
     });
   }
 
