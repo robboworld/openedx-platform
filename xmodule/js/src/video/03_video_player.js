@@ -1,6 +1,7 @@
 /* eslint-disable no-console, no-param-reassign */
 (function(requirejs, require, define) {
 // VideoPlayer module.
+// Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
     define(
         'video/03_video_player.js',
         ['video/02_html5_video.js', 'video/02_html5_hls_video.js', 'video/00_resizer.js', 'hls', 'underscore', '../time.js'],
@@ -279,11 +280,18 @@
             }
 
             function _resize(state, videoWidth, videoHeight) {
+                var qualityControl = state.videoQualityControl;
+
                 state.resizer = new Resizer({
                     element: state.videoEl,
                     elementRatio: videoWidth / videoHeight,
                     container: state.container
                 })
+                    // Robbo: HD mode of the YouTube player (05_video_quality_control.js).
+                    .setScale(
+                        qualityControl ? qualityControl.scale() : 1,
+                        qualityControl && qualityControl.maxScaledHeight
+                    )
                     .callbacks.once(function() {
                         state.el.trigger('caption:resize');
                     })
