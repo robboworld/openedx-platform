@@ -3255,6 +3255,7 @@ INSTALLED_APPS = [
     'lms.djangoapps.robbo_lk_handoff.apps.RobboLkHandoffConfig',
     'lms.djangoapps.robbo_ora.apps.RobboOraConfig',
     'lms.djangoapps.robbo_certificates.apps.RobboCertificatesConfig',
+    'lms.djangoapps.robbo_paid_content.apps.RobboPaidContentConfig',
     'lms.djangoapps.robbo_groups.apps.RobboGroupsConfig',
     'lms.djangoapps.robbo_errors.apps.RobboErrorsConfig',
 
@@ -4376,6 +4377,18 @@ ROBBO_PAYMENTS_RECEIPT_PAYMENT_SUBJECT = 'service'
 ROBBO_PAYMENTS_RECEIPT_PAYMENT_MODE = 'full_payment'
 # v1: do not route paid verified upgrades through legacy ID verification.
 ROBBO_PAYMENTS_SKIP_ID_VERIFICATION = True
+
+##### Robbo paid certificates (lms.djangoapps.robbo_certificates.offers) #####
+# Turned on by the waffle switch robbo_certificates.paid_certificates; the filter step below stops
+# certificate creation until the learner buys the certificate. RobboCertificatesConfig.ready() adds
+# the step again if a deployment's YAML replaces this setting.
+ROBBO_PAID_CERTIFICATE_FILTER_STEP = 'lms.djangoapps.robbo_certificates.filters.RequirePaidCertificate'
+OPEN_EDX_FILTERS_CONFIG = {
+    'org.openedx.learning.certificate.creation.requested.v1': {
+        'fail_silently': False,
+        'pipeline': [ROBBO_PAID_CERTIFICATE_FILTER_STEP],
+    },
+}
 
 # Exam Service
 EXAMS_SERVICE_URL = 'http://localhost:18740/api/v1'

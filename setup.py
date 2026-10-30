@@ -1,5 +1,7 @@
 """  # lint-amnesty, pylint: disable=django-not-configured
 Setup script for the Open edX package.
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 from setuptools import setup
@@ -124,6 +126,7 @@ setup(
             "completion = lms.djangoapps.course_api.blocks.transformers.block_completion:BlockCompletionTransformer",
             "load_override_data = lms.djangoapps.course_blocks.transformers.load_override_data:OverrideDataTransformer",
             "content_type_gate = openedx.features.content_type_gating.block_transformers:ContentTypeGateTransformer",
+            "robbo_paid_content = lms.djangoapps.robbo_paid_content.transformers:RobboPaidContentTransformer",
             "access_denied_message_filter = lms.djangoapps.course_blocks.transformers.access_denied_filter:AccessDeniedMessageFilterTransformer",  # lint-amnesty, pylint: disable=line-too-long
             "open_assessment_transformer = lms.djangoapps.courseware.transformers:OpenAssessmentDateTransformer",
             'effort_estimation = openedx.features.effort_estimation.api:EffortEstimationTransformer',

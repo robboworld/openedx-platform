@@ -616,6 +616,14 @@ def _has_access_to_block(user, action, block, course_key=None):
         if not group_access_response:
             return group_access_response
 
+        # Robbo: paid content is for learners with full access (lms/djangoapps/robbo_paid_content);
+        # course staff, as in _has_group_access, are not limited unless masquerading as a learner.
+        if get_user_role(user, course_key) not in ['staff', 'instructor']:
+            from lms.djangoapps.robbo_paid_content.access import check_load as check_paid_content
+            paid_content_error = check_paid_content(block, user, course_key)
+            if paid_content_error is not None:
+                return paid_content_error
+
         # If the user has staff access, they can load the block and checks below are not needed.
         staff_access_response = _has_staff_access_to_block(user, block, course_key)
         if staff_access_response:

@@ -1,40 +1,51 @@
 <%page expression_filter="h"/>
+<%doc>
+Copyright (C) 2024-2026 Robbo <https://robbo.ru>
+SPDX-License-Identifier: AGPL-3.0-only
+Part of the Robbo Open edX distribution (YooKassa checkout). See NOTICE at repository root.
+
+Checkout of full access (views/checkout.py) and of a paid certificate (views/certificate.py):
+what is bought, what it includes, the price, the button to YooKassa. Context — pages.checkout_context;
+styles — .robbo-pay in the robbo-theme _extras.scss (the look of the robbo_errors pages).
+</%doc>
 <%inherit file="../main.html" />
-<%namespace name='static' file='../static_content.html'/>
-<%!
-from django.utils.translation import gettext as _
-%>
-<%block name="pagetitle">${_("Payment")}</%block>
+<%block name="pagetitle">${product_label}</%block>
+<%block name="bodyclass">view-robbo-payments</%block>
 
-<%block name="bodyextra">
-<section class="robbo-payments-page container">
-  <div class="robbo-payments-card">
-    <h1 class="robbo-payments-title">${_("Purchase full access")}</h1>
-    <p class="robbo-payments-course-name">${product.course_name | h}</p>
+<main id="main" class="robbo-pay" aria-labelledby="robbo-pay-title" tabindex="-1">
+  <section class="robbo-pay__card">
+    <p class="robbo-pay__eyebrow">${texts['eyebrow']}</p>
+    <h1 id="robbo-pay-title" class="robbo-pay__title">${product_label}</h1>
+    <p class="robbo-pay__course">${course_name}</p>
 
-    <dl class="robbo-payments-summary">
-      <div class="robbo-payments-summary__row">
-        <dt>${_("Product")}</dt>
-        <dd>${_("Full course access")}</dd>
-      </div>
-      <div class="robbo-payments-summary__row robbo-payments-summary__row--total">
-        <dt>${_("Total")}</dt>
-        <dd>${product.amount} ${product.currency}</dd>
-      </div>
-    </dl>
+    % if includes:
+    <h2 class="robbo-pay__subtitle">${texts['includes_title']}</h2>
+    <ul class="robbo-pay__includes">
+      % for item in includes:
+      <li>${item}</li>
+      % endfor
+    </ul>
+    % endif
+
+    <p class="robbo-pay__total">
+      <span>${texts['total']}</span>
+      <strong>${price_display}</strong>
+    </p>
 
     % if yookassa_configured:
-    <form class="robbo-payments-form" method="post" action="${checkout_url | h}">
-      <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token | h}">
-      <input type="hidden" name="sku" value="${sku | h}">
-      <input type="hidden" name="course_run_key" value="${course_run_key | h}">
-      <button type="submit" class="btn btn-primary robbo-payments-submit">
-        ${_("Pay with YooKassa")}
-      </button>
+    <form class="robbo-pay__form" method="post" action="${checkout_url}">
+      <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token}">
+      % if sku:
+      <input type="hidden" name="sku" value="${sku}">
+      <input type="hidden" name="course_run_key" value="${course_run_key}">
+      % endif
+      <button type="submit" class="robbo-pay__button">${texts['pay']}</button>
     </form>
+    <p class="robbo-pay__note">${pay_note}</p>
     % else:
-    <p class="robbo-payments-error-inline">${_("The payment service is temporarily unavailable.")}</p>
+    <p class="robbo-pay__alert" role="alert">${texts['not_configured']}</p>
     % endif
-  </div>
-</section>
-</%block>
+
+    <p class="robbo-pay__back"><a href="${course_url}">${texts['back_to_course']}</a></p>
+  </section>
+</main>

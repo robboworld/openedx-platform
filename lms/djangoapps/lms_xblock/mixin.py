@@ -1,5 +1,7 @@
 """
 Namespace that defines fields common to all blocks used in the LMS
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 #from django.utils.translation import gettext_noop as _
@@ -90,6 +92,14 @@ class LmsBlockMixin(XBlockMixin):
     )
     visible_to_staff_only = Boolean(
         help=_("If true, can be seen only by course staff, regardless of start date."),
+        default=False,
+        scope=Scope.settings,
+    )
+    # Robbo: «Только полный доступ» on a section or subsection — everything inside is for learners with
+    # full access only (lms/djangoapps/robbo_paid_content). Takes effect when the course's paid content
+    # policy is on; the access rule itself is computed at run time, nothing is written into group_access.
+    robbo_paid_only = Boolean(
+        help="Robbo: only learners with full access see this section or subsection.",
         default=False,
         scope=Scope.settings,
     )

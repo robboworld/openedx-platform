@@ -2,6 +2,8 @@
 All Course Outline related business logic. Do not import from this module
 directly. Use openedx.core.djangoapps.content.learning_sequences.api -- that
 __init__.py imports from here, and is a more stable place to import from.
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 import logging
 from collections import defaultdict
@@ -319,6 +321,9 @@ def _get_user_course_outline_and_processors(course_key: CourseKey,  # lint-amnes
     full_course_outline = get_course_outline(course_key)
     user_can_see_all_content = can_see_all_content(user, course_key)
 
+    # Robbo: imported here, the processor module imports this package (processors.base)
+    from lms.djangoapps.robbo_paid_content.outline_processor import RobboPaidContentOutlineProcessor
+
     # These are processors that alter which sequences are visible to students.
     # For instance, certain sequences that are intentionally hidden or not yet
     # released. These do not need to be run for staff users. This is where we
@@ -333,6 +338,8 @@ def _get_user_course_outline_and_processors(course_key: CourseKey,  # lint-amnes
         ('enrollment_track_partitions', EnrollmentTrackPartitionGroupsOutlineProcessor),
         ('cohorts_partitions', CohortPartitionGroupsOutlineProcessor),
         ('teams_partitions', TeamPartitionGroupsOutlineProcessor),
+        # Robbo: paid sections/subsections hidden from the free path (lms/djangoapps/robbo_paid_content)
+        ('robbo_paid_content', RobboPaidContentOutlineProcessor),
     ]
 
     # Run each OutlineProcessor in order to figure out what items we have to

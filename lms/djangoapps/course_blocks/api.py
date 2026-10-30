@@ -1,6 +1,8 @@
 """
 API entry point to the course_blocks app with top-level
 get_course_blocks function.
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 
@@ -8,6 +10,7 @@ from django.conf import settings
 from edx_when import field_data
 
 from lms.djangoapps.course_api.blocks.transformers.block_completion import BlockCompletionTransformer
+from lms.djangoapps.robbo_paid_content.transformers import RobboPaidContentTransformer
 from openedx.core.djangoapps.content.block_structure.api import get_block_structure_manager
 from openedx.core.djangoapps.content.block_structure.transformers import BlockStructureTransformers
 from openedx.features.content_type_gating.block_transformers import ContentTypeGateTransformer
@@ -28,7 +31,7 @@ def has_individual_student_override_provider():
     return INDIVIDUAL_STUDENT_OVERRIDE_PROVIDER in getattr(settings, 'FIELD_OVERRIDE_PROVIDERS', ())
 
 
-def get_course_block_access_transformers(user):
+def get_course_block_access_transformers(user, robbo_for_grades=False):
     """
     Default list of transformers for manipulating course block structures
     based on the user's access to the course blocks.
@@ -44,6 +47,8 @@ def get_course_block_access_transformers(user):
         start_date.StartDateTransformer(),
         ContentTypeGateTransformer(),
         user_partitions.UserPartitionTransformer(),
+        # Robbo: paid content hidden from the free path, or left out of its grade (robbo_paid_content)
+        RobboPaidContentTransformer(for_grades=robbo_for_grades),
         visibility.VisibilityTransformer(),
         field_data.DateOverrideTransformer(user),
     ]
@@ -62,6 +67,7 @@ def get_course_blocks(
         allow_start_dates_in_future=False,
         include_completion=False,
         include_has_scheduled_content=False,
+        robbo_for_grades=False,
 ):
     """
     A higher order function implemented on top of the
@@ -94,7 +100,7 @@ def get_course_blocks(
             access.
     """
     if not transformers:
-        transformers = BlockStructureTransformers(get_course_block_access_transformers(user))
+        transformers = BlockStructureTransformers(get_course_block_access_transformers(user, robbo_for_grades))
     if include_completion:
         transformers += [BlockCompletionTransformer()]
     transformers.usage_info = CourseUsageInfo(

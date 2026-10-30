@@ -1351,6 +1351,9 @@ def create_xblock_info(  # lint-amnesty, pylint: disable=too-many-statements
             own_group_access = get_own_group_access_info(xblock, course=course)
             if own_group_access:
                 xblock_info["own_group_access"] = own_group_access
+        # Robbo: «Только полный доступ» on a section/subsection (lms/djangoapps/robbo_paid_content)
+        if xblock.category in ("chapter", "sequential"):
+            xblock_info["robbo_paid_only"] = bool(getattr(xblock, "robbo_paid_only", False))
 
         if course_outline or is_xblock_unit:
             # Previously, ENABLE_COPY_PASTE_UNITS was a feature flag; now it's always on.

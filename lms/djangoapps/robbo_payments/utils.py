@@ -20,7 +20,7 @@ def payments_enabled() -> bool:
 
 def format_checkout_price_display(amount, currency):
     """
-    Human-readable price for checkout CTA (RUB → «100 ₽»).
+    Human-readable price (RUB → «1 990 ₽», no-break spaces).
 
     Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
     """
@@ -28,6 +28,7 @@ def format_checkout_price_display(amount, currency):
     if code == 'RUB':
         numeric = amount
         if numeric == int(numeric):
-            numeric = int(numeric)
-        return f'{numeric} ₽'
+            # No-break spaces between thousands and before the sign: «1 990 ₽» never wraps
+            return f'{int(numeric):,}'.replace(',', '\u00a0') + '\u00a0₽'
+        return f'{numeric}\u00a0₽'
     return f'{amount} {code}'
