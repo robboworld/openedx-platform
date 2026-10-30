@@ -1,5 +1,11 @@
 (function(requirejs, require, define) {
 // VideoQualityControl module.
+// Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
+//
+// Robbo: YouTube ignores setPlaybackQuality and picks the quality by the size of its iframe, so with
+// the small player of a unit the learner got 480p. In HD mode the iframe is rendered HD_SCALE times
+// larger and shrunk back with a CSS transform (00_resizer.js), up to HD_MAX_HEIGHT device pixels.
+// HD is on by default; the learner's choice is kept in localStorage.
 
     'use strict';
 
@@ -7,6 +13,10 @@
         'video/05_video_quality_control.js',
         ['edx-ui-toolkit/js/utils/html-utils'],
         function(HtmlUtils) {
+            var HD_SCALE = 2,
+                HD_MAX_HEIGHT = 1080,
+                HD_STORAGE_KEY = 'robbo.video.hd';
+
             var template = HtmlUtils.interpolateHtml(
                 HtmlUtils.HTML([
                     '<button class="control quality-control is-hidden" aria-disabled="false" title="',
@@ -59,6 +69,7 @@
                     destroy: destroy,
                     fetchAvailableQualities: fetchAvailableQualities,
                     onQualityChange: onQualityChange,
+                    scale: scale,
                     showQualityControl: showQualityControl,
                     toggleQuality: toggleQuality
                 };
@@ -84,8 +95,35 @@
             function _renderElements(state) {
                 // eslint-disable-next-line no-multi-assign
                 var element = state.videoQualityControl.el = $(template.toString());
-                state.videoQualityControl.quality = 'large';
+                state.videoQualityControl.quality = null;
+                state.videoQualityControl.isHD = _loadHD();
+                state.videoQualityControl.maxScaledHeight = HD_MAX_HEIGHT;
                 HtmlUtils.append(state.el.find('.secondary-controls'), HtmlUtils.HTML(element));
+                _renderHD(state);
+            }
+
+            function _loadHD() {
+                try {
+                    return window.localStorage.getItem(HD_STORAGE_KEY) !== 'off';
+                } catch (e) {
+                    return true;
+                }
+            }
+
+            function _saveHD(isHD) {
+                try {
+                    window.localStorage.setItem(HD_STORAGE_KEY, isHD ? 'on' : 'off');
+                } catch (e) {
+                    // Private mode or blocked storage: the choice lives until the page reloads.
+                }
+            }
+
+            function _renderHD(state) {
+                var isHD = state.videoQualityControl.isHD;
+                state.videoQualityControl.el
+                    .toggleClass('active', isHD)
+                    .find('.control-text')
+                    .text(isHD ? gettext('on') : gettext('off'));
             }
 
             // function _bindHandlers(state)
@@ -136,46 +174,33 @@
                 // HD qualities are available, show video quality control.
                 if (this.config.availableHDQualities.length > 0) {
                     this.trigger('videoQualityControl.showQualityControl');
-                    this.trigger('videoQualityControl.onQualityChange', this.videoQualityControl.quality);
                 }
-                // On initialization, force the video quality to be 'large' instead of
-                // 'default'. Otherwise, the player will sometimes switch to HD
-                // automatically, for example when the iframe resizes itself.
-                this.trigger('videoPlayer.handlePlaybackQualityChange',
-                    this.videoQualityControl.quality
-                );
             }
 
+            /*
+     * @desc How many times larger the YouTube iframe is rendered (see 00_resizer.js).
+     *
+     * @public
+     */
+            function scale() {
+                return this.videoQualityControl.isHD ? HD_SCALE : 1;
+            }
+
+            // The quality YouTube actually plays; the button shows the HD mode, not this value.
             function onQualityChange(value) {
-                var controlStateStr;
                 this.videoQualityControl.quality = value;
-                if (_.contains(this.config.availableHDQualities, value)) {
-                    controlStateStr = gettext('on');
-                    this.videoQualityControl.el
-                        .addClass('active')
-                        .find('.control-text')
-                        .text(controlStateStr);
-                } else {
-                    controlStateStr = gettext('off');
-                    this.videoQualityControl.el
-                        .removeClass('active')
-                        .find('.control-text')
-                        .text(controlStateStr);
-                }
             }
 
-            // This function toggles the quality of video only if HD qualities are
-            // available.
             function toggleQuality(event) {
-                var newQuality,
-                    value = this.videoQualityControl.quality,
-                    isHD = _.contains(this.config.availableHDQualities, value);
-
                 event.preventDefault();
 
-                newQuality = isHD ? 'large' : 'highres';
+                this.videoQualityControl.isHD = !this.videoQualityControl.isHD;
+                _saveHD(this.videoQualityControl.isHD);
+                _renderHD(this);
 
-                this.trigger('videoPlayer.handlePlaybackQualityChange', newQuality);
+                if (this.resizer) {
+                    this.resizer.setScale(this.videoQualityControl.scale()).align();
+                }
             }
         });
 }(RequireJS.requirejs, RequireJS.require, RequireJS.define));

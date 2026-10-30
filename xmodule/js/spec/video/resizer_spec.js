@@ -1,6 +1,8 @@
 (function(require) {
     'use strict';
 
+    // Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
+
     require(
         ['video/00_resizer.js', 'underscore'],
         function(Resizer, _) {
@@ -107,6 +109,32 @@
                     new Resizer(config).setElement($newElement).alignByHeightOnly();
                     expect($element.height()).not.toBe(expectedHeight);
                     expect($newElement.height()).toBe(expectedHeight);
+                });
+
+                it('`setScale` renders the element larger and shrinks it back', function() {
+                    var resizer = new Resizer(config).setScale(2).alignByWidthOnly(),
+                        rect;
+
+                    // jQuery reports the layout size, getBoundingClientRect the visible one.
+                    expect($element.width()).toBe(2 * $container.width());
+                    rect = $element[0].getBoundingClientRect();
+                    expect(rect.width).toBe($container.width());
+                    expect($element[0].offsetHeight + parseFloat($element.css('margin-bottom')))
+                        .toBe(rect.height);
+
+                    resizer.setScale(1).alignByWidthOnly();
+                    expect($element.width()).toBe($container.width());
+                    expect($element[0].style.transform).toBe('');
+                });
+
+                it('`setScale` keeps the element within the maximum height', function() {
+                    spyOnProperty(window, 'devicePixelRatio', 'get').and.returnValue(1);
+                    // Visible 200x300: four times larger would be 1200 high, the limit is 600.
+                    // eslint-disable-next-line no-new
+                    new Resizer(config).setScale(4, 600).alignByWidthOnly();
+
+                    expect($element.height()).toBe(600);
+                    expect($element[0].getBoundingClientRect().height).toBe(300);
                 });
 
                 describe('Callbacks', function() {
