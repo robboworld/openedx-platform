@@ -72,6 +72,9 @@ ROBBO_ORA_RU_STRINGS = {
         "чтобы задать ограничение для каждого типа файлов (до %(cap_mb)s МБ)."
     ),
     "Larger file sizes": "Увеличенный размер файлов",
+    "To make the text response optional, enable file uploads below (required or optional).": (
+        "Чтобы сделать текстовый ответ необязательным, сначала включите загрузку файлов ниже."
+    ),
     "Score on submit": "Засчитывать сразу после отправки",
     (
         "Learners get the maximum score for every rubric criterion as soon as they submit a response. "
