@@ -86,8 +86,8 @@
                 });
 
             it('toggles HD mode, rescales the player and remembers the choice', function() {
+                // state.resizer is the spy stub from spec/helper.js.
                 videoPlayer.onPlay();
-                spyOn(state.resizer, 'setScale').and.callThrough();
 
                 qualityControl.el.click();
                 expect(qualityControl.isHD).toBe(false);
