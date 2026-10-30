@@ -615,9 +615,17 @@ _ROBBO_NO_PARAGON_CDN_MFE_APP_IDS: frozenset[str] = frozenset(("gradebook", "com
 
 _EMPTY_CSS_URL = "data:text/css,"
 
+# Upstream-built MFEs on Paragon 23.x ship the theme in their own dist (PARAGON_THEME.paragon.themeUrls
+# in index.html). Without `default` frontend-platform 8.x links those local files and keeps the
+# brandOverride from the config, so the page no longer waits for jsDelivr.
+_ROBBO_BUNDLED_PARAGON_MFE_APP_IDS: frozenset[str] = frozenset(("authoring",))
+
 
 def _patch_mfe_overrides_paragon_no_cdn() -> str:
-    """Per-MFE PARAGON_THEME_URLS: MFE_CONFIG's brandOverride URLs, empty inline `default`."""
+    """
+    Per-MFE PARAGON_THEME_URLS with MFE_CONFIG's brandOverride URLs: empty inline `default` for
+    Paragon 22 MFEs, no `default` (bundled theme files) for Paragon 23 MFEs.
+    """
     parts = [
         '_robbo_paragon_urls = MFE_CONFIG["PARAGON_THEME_URLS"]',
         "_robbo_paragon_urls_no_cdn = {",
@@ -628,15 +636,26 @@ def _patch_mfe_overrides_paragon_no_cdn() -> str:
         '        for name, variant in _robbo_paragon_urls["variants"].items()',
         "    },",
         "}",
+        "_robbo_paragon_urls_bundled = {",
+        "    **_robbo_paragon_urls,",
+        '    "core": {"urls": {"brandOverride": _robbo_paragon_urls["core"]["urls"]["brandOverride"]}},',
+        '    "variants": {',
+        '        name: {"urls": {"brandOverride": variant["urls"]["brandOverride"]}}',
+        '        for name, variant in _robbo_paragon_urls["variants"].items()',
+        "    },",
+        "}",
         "MFE_CONFIG_OVERRIDES = {",
         "    **MFE_CONFIG_OVERRIDES,",
     ]
-    for app in sorted(_ROBBO_NO_PARAGON_CDN_MFE_APP_IDS):
+    apps = [(app, "_robbo_paragon_urls_no_cdn") for app in _ROBBO_NO_PARAGON_CDN_MFE_APP_IDS] + [
+        (app, "_robbo_paragon_urls_bundled") for app in _ROBBO_BUNDLED_PARAGON_MFE_APP_IDS
+    ]
+    for app, urls in sorted(apps):
         parts.extend(
             [
                 f'    "{app}": {{',
                 f'        **MFE_CONFIG_OVERRIDES.get("{app}", {{}}),',
-                '        "PARAGON_THEME_URLS": _robbo_paragon_urls_no_cdn,',
+                f'        "PARAGON_THEME_URLS": {urls},',
                 "    },",
             ]
         )
