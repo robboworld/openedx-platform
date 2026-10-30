@@ -1,5 +1,7 @@
 """
 Tests for Blocks api.py
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 
@@ -212,11 +214,11 @@ class TestGetBlocksQueryCounts(TestGetBlocksQueryCountsBase):
         self._get_blocks(
             course,
             expected_mongo_queries=0,
-            expected_sql_queries=14,
+            expected_sql_queries=15,  # Robbo: + the paid content policy of the course (robbo_paid_content)
         )
 
     @ddt.data(
-        (ModuleStoreEnum.Type.split, 2, 24),
+        (ModuleStoreEnum.Type.split, 2, 25),  # Robbo: + the paid content policy of the course
     )
     @ddt.unpack
     def test_query_counts_uncached(self, store_type, expected_mongo_queries, num_sql_queries):

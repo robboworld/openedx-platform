@@ -99,6 +99,7 @@ def create_redirect_payment(order: Order, product_description: str, customer_ema
         'description': product_description[:128],
         'metadata': {
             'order_number': order.order_number,
+            'product': order.product,
             'course_run_key': str(order.course_key),
             'user_id': str(order.user_id),
         },

@@ -1765,119 +1765,272 @@ body.indigo-dark-theme {
 @import '../../../views/wiki';
 @import '../../../courseware/responsive-nav';
 
-.robbo-payments-page {
-  max-width: 720px;
+// Robbo: checkout and receipt (lms/templates/robbo_payments, lms/djangoapps/robbo_payments/pages.py) —
+// the look of the robbo_errors pages: a bordered card, brand green button, Proxima Nova.
+.robbo-pay {
+  --robbo-pay-gap: 1rem;
+  --robbo-pay-radius: 0.75rem;
+  --robbo-pay-control-radius: 0.5rem;
+
+  box-sizing: border-box;
   width: 100%;
-  margin: 1.5rem auto;
-  padding: 0 1rem;
+  max-width: 36rem;
+  margin: calc(var(--robbo-pay-gap) * 3) auto;
+  padding: 0 var(--robbo-pay-gap);
+  color: $robbo-brand-coal;
+  font-family: $robbo-font-body;
+  font-size: 1rem;
+  line-height: 1.5;
 
-  @media (min-width: 768px) {
-    margin: 2rem auto;
-    padding: 0 1.5rem;
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
   }
-}
 
-.robbo-payments-card {
-  background: $body-bg;
-  border: 1px solid $border-color;
-  border-radius: $border-radius-lg;
-  padding: 1.25rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-
-  @media (min-width: 768px) {
-    padding: 2rem;
+  &__card {
+    padding: calc(var(--robbo-pay-gap) * 2);
+    border: 1px solid $robbo-brand-grey;
+    border-radius: var(--robbo-pay-radius);
+    background: $robbo-brand-white;
   }
-}
 
-.robbo-payments-title {
-  margin: 0 0 0.75rem;
-  font-size: 1.35rem;
-  font-weight: 600;
-
-  @media (min-width: 768px) {
-    font-size: 1.75rem;
+  &__eyebrow {
+    margin: 0 0 0.25rem;
+    color: $robbo-brand-grey;
+    font-size: 0.875rem;
+    letter-spacing: 0.02em;
   }
-}
 
-.robbo-payments-page {
-  .robbo-payments-course-name {
-    margin: 0 0 1.25rem;
-    color: #000;
+  &__title {
+    margin: 0 0 0.5rem;
+    color: $robbo-brand-coal;
+    font-family: $robbo-font-headline;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.25;
+    // The LMS centres h1 everywhere; the card reads from the left
+    text-align: left;
+    text-transform: none;
+    letter-spacing: normal;
     overflow-wrap: anywhere;
   }
 
-  .robbo-payments-form {
+  &__course,
+  &__lead {
+    margin: 0 0 calc(var(--robbo-pay-gap) * 1.5);
+    overflow-wrap: anywhere;
+  }
+
+  &__subtitle {
+    margin: 0 0 0.5rem;
+    color: $robbo-brand-coal;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+
+  &__includes {
+    margin: 0 0 calc(var(--robbo-pay-gap) * 1.5);
+    padding: 0;
+    list-style: none;
+
+    li {
+      position: relative;
+      margin: 0 0 0.5rem;
+      padding-left: 1.75rem;
+
+      // A check mark drawn in brand green
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0.3em;
+        left: 0.25rem;
+        width: 0.75rem;
+        height: 0.4rem;
+        border-left: 2px solid $robbo-brand-green;
+        border-bottom: 2px solid $robbo-brand-green;
+        transform: rotate(-45deg);
+      }
+    }
+  }
+
+  &__total {
     display: flex;
-    justify-content: center;
-    width: 100%;
-    margin: 1rem 0 0;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--robbo-pay-gap);
+    margin: 0 0 calc(var(--robbo-pay-gap) * 1.5);
+    padding-top: var(--robbo-pay-gap);
+    border-top: 1px solid $robbo-ui-primary-light;
+
+    strong {
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
   }
 
-  .robbo-payments-submit {
-    min-height: 44px;
-    max-width: 320px;
-    width: 100%;
-    margin-inline: auto;
-    flex: 0 1 320px;
+  &__form {
+    margin: 0;
   }
 
-  .robbo-payments-status {
-    margin: 0 0 1.25rem;
-    color: #000;
-    max-width: 52ch;
-  }
-
-  .robbo-payments-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
-    width: 100%;
-    margin-top: 1rem;
-  }
-
-  .robbo-payments-receipt-btn {
+  // a.robbo-pay__button and button.robbo-pay__button: the LMS gives both its own button styles
+  a.robbo-pay__button,
+  button.robbo-pay__button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    box-sizing: border-box;
-    min-height: 44px;
-    height: auto;
-    width: auto;
-    max-width: none;
-    margin: 0;
-    padding: 0.625rem 1.25rem;
+    min-height: 2.75rem;
+    padding: 0.5rem 1.5rem;
+    border: 0;
+    border-radius: var(--robbo-pay-control-radius);
+    background: $robbo-ui-primary;
+    box-shadow: none;
+    color: $robbo-brand-white;
+    font: inherit;
+    font-weight: 700;
     line-height: 1.25;
     text-align: center;
+    text-decoration: none;
     text-transform: none;
-    white-space: nowrap;
-    flex: none;
+    letter-spacing: normal;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      background: $robbo-ui-primary-dark;
+      color: $robbo-brand-white;
+      text-decoration: none;
+    }
   }
 
-  .robbo-payments-secondary-link {
+  &__form button.robbo-pay__button {
+    width: 100%;
+  }
+
+  &__note {
+    margin: 0.75rem 0 0;
+    color: $robbo-brand-grey;
+    font-size: 0.875rem;
+  }
+
+  &__alert {
+    margin: 0;
+    padding: 0.75rem var(--robbo-pay-gap);
+    border-radius: var(--robbo-pay-control-radius);
+    background: $robbo-ui-primary-light;
+  }
+
+  &__back {
+    margin: calc(var(--robbo-pay-gap) * 1.5) 0 0;
+    font-size: 0.875rem;
+  }
+
+  a:not(.robbo-pay__button) {
     color: $robbo-brand-coal;
     text-decoration: underline;
-  }
-}
 
-.robbo-payments-summary {
-  margin: 0 0 1.5rem;
+    &:hover {
+      color: $robbo-brand-green;
+    }
+  }
+
+  :focus-visible {
+    outline: 2px solid $robbo-brand-green;
+    outline-offset: 2px;
+  }
+
+  // Receipt
+  &__status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    margin: 0 0 var(--robbo-pay-gap);
+    border-radius: 50%;
+    background: $robbo-ui-primary-light;
+
+    svg {
+      width: 1.75rem;
+      height: 1.75rem;
+      fill: none;
+      stroke: $robbo-brand-green;
+      stroke-width: 2.25;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+  }
+
+  &--pending &__status svg,
+  &--refunded &__status svg {
+    stroke: $robbo-brand-grey;
+  }
+
+  &--pending &__status,
+  &--refunded &__status,
+  &--failed &__status {
+    background: mix($robbo-brand-white, $robbo-brand-grey, 85%);
+  }
+
+  &--failed &__status svg {
+    stroke: $robbo-brand-coal;
+  }
+
+  &__details {
+    margin: 0 0 calc(var(--robbo-pay-gap) * 1.5);
+  }
 
   &__row {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    gap: 1rem;
-    padding: 0.65rem 0;
-    border-bottom: 1px solid $border-color;
+    gap: 0.25rem var(--robbo-pay-gap);
+    padding: 0.6rem 0;
+    border-bottom: 1px solid $robbo-ui-primary-light;
 
-    dt,
-    dd {
+    dt {
       margin: 0;
+      color: $robbo-brand-grey;
+      font-weight: 400;
     }
 
-    &--total {
-      font-weight: 600;
-      font-size: 1.05rem;
+    dd {
+      min-width: 0;
+      margin: 0;
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--robbo-pay-gap) calc(var(--robbo-pay-gap) * 1.5);
+    margin: 0 0 calc(var(--robbo-pay-gap) * 1.5);
+  }
+
+  &__help {
+    margin: 0;
+    color: $robbo-brand-grey;
+    font-size: 0.875rem;
+  }
+
+  @media (max-width: 575.98px) {
+    margin: var(--robbo-pay-gap) auto;
+
+    &__card {
+      padding: calc(var(--robbo-pay-gap) * 1.25);
+    }
+
+    &__actions a.robbo-pay__button,
+    &__actions button.robbo-pay__button {
+      width: 100%;
     }
   }
 }

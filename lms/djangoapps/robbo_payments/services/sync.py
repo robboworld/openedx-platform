@@ -10,7 +10,7 @@ import logging
 from ..constants import OrderStatus, PaymentAttemptStatus
 from ..models import Order, PaymentAttempt
 from ..processors.yookassa import YooKassaNotConfigured, YooKassaPaymentError, get_payment
-from .fulfillment import FulfillmentError, fulfill_verified_upgrade
+from .fulfillment import FulfillmentError, fulfill_order
 
 log = logging.getLogger(__name__)
 
@@ -45,7 +45,7 @@ def sync_order_from_yookassa(order: Order, *, source_ip=None) -> Order:
             payload={'payment_id': order.yookassa_payment_id, 'source': 'receipt_sync'},
         )
         try:
-            order = fulfill_verified_upgrade(order)
+            order = fulfill_order(order)
             PaymentAttempt.objects.create(
                 order=order,
                 event_type='payment.succeeded',

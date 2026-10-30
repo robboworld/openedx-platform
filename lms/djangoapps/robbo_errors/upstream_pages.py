@@ -152,6 +152,22 @@ PAGES = {
         'ru': 'Платёжная система не ответила. Деньги не списаны. Попробуйте ещё раз через несколько минут.',
         'en': 'The payment service didn\'t answer. No money was charged. Try again in a few minutes.',
     }, 'dashboard', True),
+
+    # lms/djangoapps/robbo_payments/views/certificate.py
+    'certificate_unavailable': Page('NOT-FOUND', {
+        'ru': 'Сертификат этого курса не продаётся',
+        'en': 'The certificate of this course is not for sale',
+    }, {
+        'ru': 'Сейчас сертификат этого курса нельзя оплатить. Если вы ждали оплату, напишите в поддержку.',
+        'en': 'The certificate of this course can\'t be paid for now. If you expected to pay, contact support.',
+    }, 'dashboard'),
+    'certificate_not_enrolled': Page('ACCESS-DENIED', {
+        'ru': 'Сначала запишитесь на курс',
+        'en': 'Enroll in the course first',
+    }, {
+        'ru': 'Сертификат можно оформить только по курсу, на который вы записаны и который прошли.',
+        'en': 'A certificate can only be bought for a course you are enrolled in and have passed.',
+    }, 'course_about'),
 }
 
 

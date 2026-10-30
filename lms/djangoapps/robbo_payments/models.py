@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from opaque_keys.edx.django.models import CourseKeyField
 
-from .constants import OrderStatus, PaymentAttemptStatus
+from .constants import OrderStatus, PaymentAttemptStatus, Product
 
 User = get_user_model()
 
@@ -23,7 +23,7 @@ def generate_order_number():
 
 class Order(models.Model):
     """
-    A checkout order for a verified course upgrade.
+    A checkout order: a verified course upgrade or a paid certificate (``product``).
 
     .. no_pii:
     """
@@ -31,6 +31,7 @@ class Order(models.Model):
     order_number = models.CharField(max_length=32, unique=True, default=generate_order_number, db_index=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='robbo_payment_orders')
     course_key = CourseKeyField(max_length=255, db_index=True)
+    product = models.CharField(max_length=32, choices=Product.CHOICES, default=Product.COURSE_ACCESS)
     sku = models.CharField(max_length=255, db_index=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     currency = models.CharField(max_length=8, default='RUB')

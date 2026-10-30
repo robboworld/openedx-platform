@@ -20,6 +20,7 @@ from .robbo_certificate_design import (
     CourseCertificateDesignView,
 )
 from .robbo_course_delete import CourseDeleteView
+from .robbo_course_type import CourseTypeView
 from .proctoring import ProctoredExamSettingsView, ProctoringErrorsView
 from .settings import CourseSettingsView
 from .textbooks import CourseTextbooksView

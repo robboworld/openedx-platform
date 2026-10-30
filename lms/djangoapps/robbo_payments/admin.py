@@ -23,18 +23,20 @@ class OrderAdmin(admin.ModelAdmin):
         'order_number',
         'user',
         'course_key',
+        'product',
         'amount',
         'currency',
         'status',
         'created_at',
         'paid_at',
     )
-    list_filter = ('status', 'currency', 'created_at')
+    list_filter = ('status', 'product', 'currency', 'created_at')
     search_fields = ('order_number', 'user__username', 'user__email', 'sku', 'yookassa_payment_id')
     readonly_fields = (
         'order_number',
         'user',
         'course_key',
+        'product',
         'sku',
         'amount',
         'currency',

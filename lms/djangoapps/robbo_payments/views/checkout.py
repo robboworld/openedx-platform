@@ -20,7 +20,9 @@ from common.djangoapps.student.models import CourseEnrollment
 from lms.djangoapps.robbo_errors.upstream_pages import error_for
 from openedx.features.course_experience.url_helpers import make_learning_mfe_courseware_url
 
+from ..constants import Product
 from ..models import Order
+from ..pages import checkout_context
 from ..processors.yookassa import (
     YooKassaNotConfigured,
     YooKassaPaymentError,
@@ -33,7 +35,7 @@ from ..services.catalog import (
     get_first_sku_from_query,
     resolve_verified_product,
 )
-from ..utils import payments_enabled
+from ..utils import format_checkout_price_display, payments_enabled
 
 log = logging.getLogger(__name__)
 
@@ -87,13 +89,16 @@ def basket_add(request):
         return _error_page(request, 'payment_cannot_upgrade')
 
     if request.method == 'GET':
-        return render_to_response('robbo_payments/checkout.html', {
-            'product': product,
-            'course_run_key': str(product.course_key),
-            'sku': product.sku,
-            'checkout_url': reverse('robbo_payments:basket_add'),
-            'yookassa_configured': is_yookassa_configured(),
-        })
+        return render_to_response('robbo_payments/checkout.html', checkout_context(
+            product=Product.COURSE_ACCESS,
+            course_key=product.course_key,
+            course_name=product.course_name,
+            price_display=format_checkout_price_display(product.amount, product.currency),
+            email=_customer_email(request.user),
+            checkout_url=reverse('robbo_payments:basket_add'),
+            yookassa_configured=is_yookassa_configured(),
+            sku=product.sku,
+        ))
 
     if not is_yookassa_configured():
         return _error_page(request, 'payment_not_configured')

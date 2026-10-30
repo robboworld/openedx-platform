@@ -24,6 +24,18 @@ class OrderStatus:
     )
 
 
+class Product:
+    """What an order buys."""
+
+    COURSE_ACCESS = 'course_access'  # audit/honor → verified (/basket/add/)
+    CERTIFICATE = 'certificate'      # paid certificate (robbo_certificates.CertificateOffer)
+
+    CHOICES = (
+        (COURSE_ACCESS, 'Course access'),
+        (CERTIFICATE, 'Certificate'),
+    )
+
+
 class PaymentAttemptStatus:
     """Webhook / payment attempt outcomes."""
 
