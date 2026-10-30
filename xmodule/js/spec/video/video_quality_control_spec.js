@@ -1,9 +1,11 @@
+// Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 // eslint-disable-next-line no-shadow-restricted-names
 (function(undefined) {
     describe('VideoQualityControl', function() {
         var state, qualityControl, videoPlayer, player;
 
         afterEach(function() {
+            window.localStorage.removeItem('robbo.video.hd');
             $('source').remove();
             if (state.storage) {
                 state.storage.clear();
@@ -57,10 +59,13 @@
                     .toEqual(1);
             });
 
-            it('initializes with a quality equal to large', function() {
+            it('starts in HD mode and does not call setPlaybackQuality', function() {
                 videoPlayer.onPlay();
 
-                expect(player.setPlaybackQuality).toHaveBeenCalledWith('large');
+                expect(qualityControl.isHD).toBe(true);
+                expect(qualityControl.scale()).toBe(2);
+                expect(qualityControl.el).toHaveClass('active');
+                expect(player.setPlaybackQuality).not.toHaveBeenCalled();
             });
 
             it('shows the quality control on play if HD is available',
@@ -80,30 +85,30 @@
                     expect(qualityControl.el).toHaveClass('is-hidden');
                 });
 
-            it('switch to HD if it is available', function() {
+            it('toggles HD mode, rescales the player and remembers the choice', function() {
                 videoPlayer.onPlay();
+                spyOn(state.resizer, 'setScale').and.callThrough();
 
-                qualityControl.quality = 'large';
                 qualityControl.el.click();
-                expect(player.setPlaybackQuality)
-                    .toHaveBeenCalledWith('highres');
+                expect(qualityControl.isHD).toBe(false);
+                expect(qualityControl.el).not.toHaveClass('active');
+                expect(state.resizer.setScale).toHaveBeenCalledWith(1);
+                expect(window.localStorage.getItem('robbo.video.hd')).toBe('off');
 
-                qualityControl.quality = 'highres';
                 qualityControl.el.click();
-                expect(player.setPlaybackQuality).toHaveBeenCalledWith('large');
+                expect(qualityControl.isHD).toBe(true);
+                expect(qualityControl.el).toHaveClass('active');
+                expect(state.resizer.setScale).toHaveBeenCalledWith(2);
+                expect(window.localStorage.getItem('robbo.video.hd')).toBe('on');
             });
 
-            it('quality control is active if HD is available',
-                function() {
-                    player.getAvailableQualityLevels.and.returnValue(
-                        ['highres', 'hd1080', 'hd720']
-                    );
+            it('keeps the button state when YouTube reports a quality', function() {
+                videoPlayer.onPlay();
 
-                    qualityControl.quality = 'highres';
-
-                    videoPlayer.onPlay();
-                    expect(qualityControl.el).toHaveClass('active');
-                });
+                qualityControl.onQualityChange('large');
+                expect(qualityControl.quality).toBe('large');
+                expect(qualityControl.el).toHaveClass('active');
+            });
 
             it('can destroy itself', function() {
                 state.videoQualityControl.destroy();
