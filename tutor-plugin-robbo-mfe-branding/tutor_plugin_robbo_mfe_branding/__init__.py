@@ -606,6 +606,47 @@ def _patch_mfe_overrides_paragon_null() -> str:
 
 _PATCH_ROBBO_BINDMOUNT_MFES_SKIP_RUNTIME_PARAGON = _patch_mfe_overrides_paragon_null()
 
+# Upstream-built MFEs on Paragon 22.17.0: jsDelivr has no dist/core.min.css / light.min.css for it
+# (404), so the CDN never styled them — only brandOverride (paragon-brand-robbo.css) does. Still,
+# AppProvider renders nothing until the core link fires load/error, and from Russia jsDelivr can
+# take tens of seconds → white page. `default` becomes an empty inline stylesheet: no request, load
+# fires at once, brandOverride stays. Without `default` frontend-platform drops brandOverride too.
+_ROBBO_NO_PARAGON_CDN_MFE_APP_IDS: frozenset[str] = frozenset(("gradebook", "communications"))
+
+_EMPTY_CSS_URL = "data:text/css,"
+
+
+def _patch_mfe_overrides_paragon_no_cdn() -> str:
+    """Per-MFE PARAGON_THEME_URLS: MFE_CONFIG's brandOverride URLs, empty inline `default`."""
+    parts = [
+        '_robbo_paragon_urls = MFE_CONFIG["PARAGON_THEME_URLS"]',
+        "_robbo_paragon_urls_no_cdn = {",
+        "    **_robbo_paragon_urls,",
+        f'    "core": {{"urls": {{**_robbo_paragon_urls["core"]["urls"], "default": "{_EMPTY_CSS_URL}"}}}},',
+        '    "variants": {',
+        f'        name: {{"urls": {{**variant["urls"], "default": "{_EMPTY_CSS_URL}"}}}}',
+        '        for name, variant in _robbo_paragon_urls["variants"].items()',
+        "    },",
+        "}",
+        "MFE_CONFIG_OVERRIDES = {",
+        "    **MFE_CONFIG_OVERRIDES,",
+    ]
+    for app in sorted(_ROBBO_NO_PARAGON_CDN_MFE_APP_IDS):
+        parts.extend(
+            [
+                f'    "{app}": {{',
+                f'        **MFE_CONFIG_OVERRIDES.get("{app}", {{}}),',
+                '        "PARAGON_THEME_URLS": _robbo_paragon_urls_no_cdn,',
+                "    },",
+            ]
+        )
+    parts.append("}")
+    return "\n".join(parts) + "\n"
+
+
+# Rendered right after the final MFE_CONFIG["PARAGON_THEME_URLS"] (same mfe-lms-*-settings patch).
+_PATCH_ROBBO_MFES_PARAGON_NO_CDN = _patch_mfe_overrides_paragon_no_cdn()
+
 # Harden npm against flaky registry.npmjs.org (ECONNRESET / EIDLETIMEOUT on weak links).
 # Applied once in the MFE `base` stage; inherited by every *-common / Indigo npm install.
 _PATCH_MFE_DOCKERFILE_NPM_RESILIENCE = """
@@ -764,8 +805,10 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("mfe-env-config-runtime-definitions-authoring", _PATCH_AUTHORING_ROBBO_FOOTER_IMPORT),
         ("mfe-lms-common-settings", _PARAGON_THEME_URLS),
         ("mfe-lms-development-settings", _PATCH_MFE_DEV),
+        ("mfe-lms-development-settings", _PATCH_ROBBO_MFES_PARAGON_NO_CDN),
         ("mfe-lms-production-settings", _PATCH_MFE_PROD),
         ("mfe-lms-production-settings", _PARAGON_THEME_URLS_PROD),
+        ("mfe-lms-production-settings", _PATCH_ROBBO_MFES_PARAGON_NO_CDN),
         ("openedx-lms-development-settings", _PATCH_ROBBO_LMS_SERVER_CATALOG),
         ("openedx-lms-production-settings", _PATCH_ROBBO_LMS_SERVER_CATALOG),
         ("openedx-lms-development-settings", _PATCH_ROBBO_LMS_LANGUAGE),
