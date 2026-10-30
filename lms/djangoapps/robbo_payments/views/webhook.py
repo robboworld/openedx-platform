@@ -15,7 +15,7 @@ from ipware import get_client_ip
 from ..constants import OrderStatus, PaymentAttemptStatus
 from ..models import Order, PaymentAttempt
 from ..processors.yookassa import is_trusted_webhook_ip, parse_webhook_notification
-from ..services.fulfillment import FulfillmentError, fulfill_verified_upgrade
+from ..services.fulfillment import FulfillmentError, fulfill_order
 from ..utils import payments_enabled
 
 log = logging.getLogger(__name__)
@@ -69,7 +69,7 @@ def yookassa_webhook(request):
     event = notification.event
     if event == 'payment.succeeded':
         try:
-            fulfill_verified_upgrade(order)
+            fulfill_order(order)
             PaymentAttempt.objects.create(
                 order=order,
                 event_type=event,

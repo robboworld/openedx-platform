@@ -1,5 +1,7 @@
 """
 Code used to get and cache the requested course-data
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 
@@ -60,6 +62,8 @@ class CourseData:
                 self.user,
                 self.location,
                 collected_block_structure=self._collected_block_structure,
+                # Robbo: the paid content policy decides whether paid problems count (robbo_paid_content)
+                robbo_for_grades=True,
             )
         return self._structure
 

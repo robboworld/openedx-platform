@@ -2,6 +2,8 @@
 """
 Course Home Course Metadata Serializers. Returns Course Metadata used for all
 Course Home pages.
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 
 
@@ -61,7 +63,14 @@ class CourseHomeMetadataSerializer(VerifiedModeSerializer):
     is_new_discussion_sidebar_view_enabled = serializers.BooleanField()
     has_course_author_access = serializers.BooleanField()
     enrollment_mode = serializers.SerializerMethodField()
+    # Robbo: what full access gives in this course — «paid_content», «certificate» (robbo_payments/pages.py),
+    # for the Learning MFE «Полный доступ» tab
+    robbo_full_access_includes = serializers.SerializerMethodField()
 
     def get_enrollment_mode(self, _):
         enrollment = self.context.get('enrollment')
         return getattr(enrollment, 'mode', None)
+
+    def get_robbo_full_access_includes(self, data):
+        from lms.djangoapps.robbo_payments.pages import full_access_includes  # pylint: disable=import-outside-toplevel
+        return full_access_includes(data['course_id'])

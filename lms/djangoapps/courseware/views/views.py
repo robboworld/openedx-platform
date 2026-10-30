@@ -152,6 +152,9 @@ from openedx.features.course_experience.utils import dates_banner_should_display
 from openedx.features.course_experience.waffle import ENABLE_COURSE_ABOUT_SIDEBAR_HTML
 from openedx.features.enterprise_support.api import data_sharing_consent_required
 
+from lms.djangoapps.robbo_certificates import offers as robbo_certificate_offers
+from lms.djangoapps.robbo_changelog.labels import pick as robbo_pick
+
 from ..robbo_card_preview import build_catalog_card_preview
 from ..robbo_catalog import (
     build_robbo_catalog_course_cards,
@@ -180,6 +183,10 @@ CertData = namedtuple(
     "CertData", ["cert_status", "title", "msg", "download_url", "cert_web_view_url", "certificate_available_date"]
 )
 EARNED_BUT_NOT_AVAILABLE_CERT_STATUS = 'earned_but_not_available'
+# Robbo: a passed course whose certificate is sold (robbo_certificates.offers); ``robbo_offer`` has
+# the state, price and checkout link for the Learning MFE progress page.
+ROBBO_PURCHASE_CERT_STATUS = 'robbo_purchase'
+RobboCertData = namedtuple('RobboCertData', CertData._fields + ('robbo_offer',))
 
 AUDIT_PASSING_CERT_DATA = CertData(
     CertificateStatuses.audit_passing,
@@ -1169,7 +1176,37 @@ def get_cert_data(student, course, enrollment_mode, course_grade=None):
     if not certs_api.get_active_web_certificate(course) and not certs_api.is_valid_pdf_certificate(cert_data):
         return
 
+    # Robbo: a paid certificate is offered instead of «Request certificate»
+    if cert_data.cert_status == CertificateStatuses.requesting:
+        return _robbo_paid_certificate_data(student, course, enrollment_mode, course_grade) or cert_data
+
     return cert_data
+
+
+def _robbo_paid_certificate_data(student, course, enrollment_mode, course_grade):
+    """
+    Robbo: RobboCertData for a learner who passed a course with a paid certificate not bought yet,
+    else None. Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
+    """
+    try:
+        state = robbo_certificate_offers.purchase_state(student, course.id, enrollment_mode, course_grade)
+    except Exception:  # pylint: disable=broad-except
+        log.exception('Paid certificate state failed for user %s in %s', student.id, course.id)
+        return None
+    if state is None:
+        return None
+    return RobboCertData(
+        ROBBO_PURCHASE_CERT_STATUS,
+        robbo_pick({'ru': 'Сертификат можно оформить', 'en': 'You can get a certificate'}),
+        robbo_pick({
+            'ru': 'Сертификат этого курса платный. Оформить его можно на странице прогресса.',
+            'en': 'The certificate of this course is paid. You can get it on the Progress page.',
+        }),
+        download_url=None,
+        cert_web_view_url=None,
+        certificate_available_date=None,
+        robbo_offer=robbo_certificate_offers.offer_payload(state),
+    )
 
 
 def credit_course_requirements(course_key, student):

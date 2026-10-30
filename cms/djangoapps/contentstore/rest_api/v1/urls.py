@@ -20,6 +20,7 @@ from .views import (
     CourseDetailsView,
     CourseTeamView,
     CourseTextbooksView,
+    CourseTypeView,
     CourseIndexView,
     CourseGradingView,
     CourseGroupConfigurationsView,
@@ -155,6 +156,11 @@ urlpatterns = [
         fr'^robbo/courses/{COURSE_ID_PATTERN}$',
         CourseDeleteView.as_view(),
         name="robbo_course_delete"
+    ),
+    re_path(
+        fr'^robbo/course-type/{COURSE_ID_PATTERN}$',
+        CourseTypeView.as_view(),
+        name="robbo_course_type"
     ),
     re_path(
         fr'^group_configurations/{COURSE_ID_PATTERN}$',
