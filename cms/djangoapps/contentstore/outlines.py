@@ -2,11 +2,15 @@
 This is where Studio interacts with the learning_sequences application, which
 is responsible for holding course outline data. Studio _pushes_ that data into
 learning_sequences at publish time.
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 from datetime import timezone
 from typing import List, Tuple
 
 from edx_django_utils.monitoring import function_trace, set_custom_attribute
+
+from lms.djangoapps.robbo_paid_content import policy as paid_content_policy
 
 from openedx.core.djangoapps.content.learning_sequences.api import replace_course_outline
 from openedx.core.djangoapps.content.learning_sequences.data import (
@@ -241,6 +245,11 @@ def _make_section_data(section, unique_sequences):
     section_user_partition_groups, error = _make_user_partition_groups(
         section.location, section.group_access
     )
+    # Robbo: a paid section (lms/djangoapps/robbo_paid_content) — the LMS hides it from the free path when
+    # the course policy says «hidden»
+    section_user_partition_groups.update(
+        paid_content_policy.outline_partition_groups(section, paid_content_policy.get_policy(section.location.course_key))
+    )
     # Invalid user partition errors aren't fatal. Just log and continue on.
     if error:
         section_errors.append(error)
@@ -264,6 +273,12 @@ def _make_section_data(section, unique_sequences):
             unique_sequences[sequence.location] = section
         seq_user_partition_groups, error = _make_user_partition_groups(
             sequence.location, sequence.group_access
+        )
+        # Robbo: a paid subsection (lms/djangoapps/robbo_paid_content)
+        seq_user_partition_groups.update(
+            paid_content_policy.outline_partition_groups(
+                sequence, paid_content_policy.get_policy(sequence.location.course_key),
+            )
         )
         if error:
             section_errors.append(error)

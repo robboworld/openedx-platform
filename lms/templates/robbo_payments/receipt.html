@@ -1,35 +1,59 @@
 <%page expression_filter="h"/>
+<%doc>
+Copyright (C) 2024-2026 Robbo <https://robbo.ru>
+SPDX-License-Identifier: AGPL-3.0-only
+Part of the Robbo Open edX distribution (YooKassa checkout). See NOTICE at repository root.
+
+The receipt after YooKassa (views/receipt.py): paid / pending (refreshes itself) / failed or canceled
+(«Попробовать ещё раз») / refunded, the order details and what to do next. Context —
+pages.receipt_context; styles — .robbo-pay in the robbo-theme _extras.scss.
+</%doc>
 <%inherit file="../main.html" />
-<%namespace name='static' file='../static_content.html'/>
-<%!
-from django.utils.translation import gettext as _
-%>
-<%block name="pagetitle">${_("Payment receipt")}</%block>
+<%block name="pagetitle">${title}</%block>
+<%block name="bodyclass">view-robbo-payments</%block>
+<%block name="headextra">
+  % if auto_refresh_seconds:
+  <meta http-equiv="refresh" content="${auto_refresh_seconds}">
+  % endif
+</%block>
 
-<%block name="bodyextra">
-<section class="robbo-payments-page container">
-  <div class="robbo-payments-card">
-    <h1 class="robbo-payments-title">${_("Payment receipt")}</h1>
-    <p class="robbo-payments-status">${status_message | h}</p>
+<main id="main" class="robbo-pay robbo-pay--${state}" aria-labelledby="robbo-pay-title" tabindex="-1">
+  <section class="robbo-pay__card">
+    <span class="robbo-pay__status" aria-hidden="true">
+      % if state == 'paid':
+      <svg viewBox="0 0 24 24" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+      % elif state == 'pending':
+      <svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg>
+      % elif state == 'refunded':
+      <svg viewBox="0 0 24 24" focusable="false"><path d="M9 7L5 11l4 4"/><path d="M5 11h9a5 5 0 010 10h-2"/></svg>
+      % else:
+      <svg viewBox="0 0 24 24" focusable="false"><path d="M7 7l10 10M17 7L7 17"/></svg>
+      % endif
+    </span>
+    <h1 id="robbo-pay-title" class="robbo-pay__title">${title}</h1>
+    <p class="robbo-pay__lead" role="status">${body}</p>
 
-    <dl class="robbo-payments-summary">
-      <div class="robbo-payments-summary__row">
-        <dt>${_("Order number")}</dt>
-        <dd>${order.order_number | h}</dd>
+    <dl class="robbo-pay__details">
+      % for label, value in rows:
+      <div class="robbo-pay__row">
+        <dt>${label}</dt>
+        <dd>${value}</dd>
       </div>
-      <div class="robbo-payments-summary__row">
-        <dt>${_("Amount")}</dt>
-        <dd>${order.amount} ${order.currency | h}</dd>
-      </div>
+      % endfor
     </dl>
 
-    % if is_paid:
-    <div class="robbo-payments-actions">
-      <a class="btn btn-primary robbo-payments-receipt-btn" href="${course_outline_url | h}">
-        ${_("Go to course content")}
-      </a>
+    % if actions:
+    <div class="robbo-pay__actions">
+      % for index, (url, label) in enumerate(actions):
+        % if not url:
+      <button type="button" class="robbo-pay__button" onclick="window.location.reload()">${label}</button>
+        % else:
+      <a class="${'robbo-pay__button' if index == 0 else 'robbo-pay__link'}" href="${url}">${label}</a>
+        % endif
+      % endfor
     </div>
     % endif
-  </div>
-</section>
-</%block>
+
+    <p class="robbo-pay__help">${help[0]}<a href="${help[1]}" target="_blank" rel="noopener noreferrer">${help[2]}</a>${help[3]}</p>
+  </section>
+</main>

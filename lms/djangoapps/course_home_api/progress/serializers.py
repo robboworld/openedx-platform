@@ -1,5 +1,7 @@
 """
 Progress Tab Serializers
+
+Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
 """
 from datetime import datetime
 
@@ -116,6 +118,11 @@ class CertificateDataSerializer(ReadOnlySerializer):
     cert_web_view_url = serializers.CharField()
     download_url = serializers.CharField()
     certificate_available_date = serializers.DateTimeField()
+    # Robbo: paid certificate state, price and checkout link (courseware.views.views.RobboCertData)
+    robbo_offer = serializers.SerializerMethodField()
+
+    def get_robbo_offer(self, cert_data):
+        return getattr(cert_data, 'robbo_offer', None)
 
 
 class VerificationDataSerializer(ReadOnlySerializer):

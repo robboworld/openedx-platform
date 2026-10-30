@@ -1761,6 +1761,7 @@ INSTALLED_APPS = [
     'lms.djangoapps.verify_student.apps.VerifyStudentConfig',
     # Robbo: certificate designs uploaded in Studio (rendered by the LMS)
     'lms.djangoapps.robbo_certificates.apps.RobboCertificatesConfig',
+    'lms.djangoapps.robbo_paid_content.apps.RobboPaidContentConfig',
     # Robbo: group invite links (LMS); here only so deleting a user or a cohort in Studio cascades
     'lms.djangoapps.robbo_groups.apps.RobboGroupsConfig',
     # Robbo: Studio errors go to the same error journal as the LMS ones

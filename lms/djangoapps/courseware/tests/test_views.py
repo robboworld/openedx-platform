@@ -1,5 +1,7 @@
 """
 Tests courseware views.py
+
+Modifications Copyright (C) 2024-2026 Robbo. See NOTICE at repository root.
 """
 
 from contextlib import contextmanager
@@ -1471,9 +1473,10 @@ class ProgressPageTests(ProgressPageBaseTests):
             self.assertContains(resp, "Your certificate is available")
             self.assertContains(resp, "earned a certificate for this course.")
 
+    # Robbo: 55, + the paid content policy of the course (robbo_paid_content)
     @ddt.data(
-        (True, 54),
-        (False, 54),
+        (True, 55),
+        (False, 55),
     )
     @ddt.unpack
     def test_progress_queries_paced_courses(self, self_paced, query_count):
@@ -1488,13 +1491,13 @@ class ProgressPageTests(ProgressPageBaseTests):
         ContentTypeGatingConfig.objects.create(enabled=True, enabled_as_of=datetime(2018, 1, 1))
         self.setup_course()
         with self.assertNumQueries(
-            54, table_ignorelist=QUERY_COUNT_TABLE_IGNORELIST
+            55, table_ignorelist=QUERY_COUNT_TABLE_IGNORELIST  # Robbo: + the paid content policy
         ), check_mongo_calls(2):
             self._get_progress_page()
 
         for _ in range(2):
             with self.assertNumQueries(
-                39, table_ignorelist=QUERY_COUNT_TABLE_IGNORELIST
+                40, table_ignorelist=QUERY_COUNT_TABLE_IGNORELIST  # Robbo: + the paid content policy
             ), check_mongo_calls(2):
                 self._get_progress_page()
 

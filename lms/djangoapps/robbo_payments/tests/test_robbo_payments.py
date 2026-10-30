@@ -288,5 +288,64 @@ class ReceiptSyncTests(ModuleStoreTestCase):
         enrollment = CourseEnrollment.get_enrollment(self.user, self.course_key)
         assert self.order.status == OrderStatus.PAID
         assert enrollment.mode == CourseMode.VERIFIED
-        # The text is gettext-ed (ru: «Полный доступ к курсу активирован»); tests run in English (LANGUAGE_CODE)
-        assert b'Payment successful. Full course access is now active.' in response.content
+        # Texts are Russian and English (pages.py); tests run in English (LANGUAGE_CODE)
+        self.assertContains(response, 'Payment successful')
+        self.assertContains(response, 'Full access to the course is open.')
+        self.assertContains(response, 'Go to the course')
+
+
+@skip_unless_lms
+@override_settings(
+    ROBBO_PAYMENTS_ENABLED=True,
+    YOOKASSA_SHOP_ID='shop-id',
+    YOOKASSA_SECRET_KEY='secret',
+)
+class CheckoutAndReceiptPagesTests(ModuleStoreTestCase):
+    """What the checkout and receipt pages say (pages.py)."""
+
+    def setUp(self):
+        super().setUp()
+        _enable_robbo_commerce()
+        self.client = Client()
+        self.user = UserFactory.create()
+        self.client.login(username=self.user.username, password=TEST_PASSWORD)
+        self.course = CourseFactory.create(display_name='Робототехника')
+        self.course_key = self.course.id
+        CourseModeFactory.create(course_id=self.course_key, mode_slug=CourseMode.HONOR)
+        CourseModeFactory.create(
+            course_id=self.course_key, mode_slug=CourseMode.VERIFIED, sku='SKU-PAGES', min_price=1990, currency='rub',
+        )
+        CourseEnrollment.enroll(self.user, self.course_key, CourseMode.HONOR)
+
+    def _order(self, status, **kwargs):
+        return Order.objects.create(
+            user=self.user, course_key=self.course_key, sku='SKU-PAGES', amount=Decimal('1990.00'),
+            currency='RUB', status=status, idempotency_key=f'pages-{status}', **kwargs,
+        )
+
+    def _receipt(self, order):
+        return self.client.get(reverse('robbo_payments:receipt'), {'order_number': order.order_number})
+
+    def test_checkout_page(self):
+        response = self.client.get(reverse('robbo_payments:basket_add'), {
+            'sku': 'SKU-PAGES', 'course_run_key': str(self.course_key),
+        })
+        self.assertContains(response, 'Full access to the course')
+        self.assertContains(response, 'Робототехника')
+        self.assertContains(response, '1\u00a0990\u00a0₽')
+        self.assertContains(response, 'Full access to the whole course')  # nothing more specific in this course
+        self.assertContains(response, f'The receipt is sent to {self.user.email}')
+        self.assertContains(response, 'name="sku" value="SKU-PAGES"')
+
+    def test_pending_refreshes_itself(self):
+        response = self._receipt(self._order(OrderStatus.PENDING))
+        self.assertContains(response, 'Payment is processing')
+        self.assertContains(response, '<meta http-equiv="refresh" content="10">', html=False)
+
+    def test_failed_offers_to_try_again(self):
+        response = self._receipt(self._order(OrderStatus.CANCELED))
+        self.assertContains(response, 'The payment did not go through')
+        self.assertContains(response, 'No money was charged')
+        self.assertContains(response, 'Try again')
+        self.assertContains(response, 'sku=SKU-PAGES')
+        self.assertNotContains(response, 'http-equiv="refresh"')
