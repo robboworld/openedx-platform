@@ -50,5 +50,10 @@ tutor local launch   # или: tutor dev restart mfe
 - **`mfe-lms-production-settings`**: те же пути с `http(s)://{{ LMS_HOST }}`
   (без порта)
 - **`mfe-lms-common-settings`**: `PARAGON_THEME_URLS` только с `light`
-  (Paragon + `@openedx/brand-openedx` с jsDelivr, wildcard `$paragonVersion` /
-  `$brandVersion`)
+  (ядро Paragon с jsDelivr, wildcard `$paragonVersion`; `brandOverride` —
+  `paragon-brand-robbo.css` из `robbo-theme`)
+- **`mfe-lms-{development,production}-settings`**: gradebook и communications
+  (Paragon 22.17.0, на jsDelivr его `core`/`light` — 404) получают те же URL, но
+  `default` — пустой `data:text/css,`. Иначе `AppProvider` держит белую страницу,
+  пока jsDelivr не ответит (из России — десятки секунд). Bind-mounted MFE —
+  `PARAGON_THEME_URLS: None` (`openedx-lms-*-settings`), Authoring — CDN как есть
