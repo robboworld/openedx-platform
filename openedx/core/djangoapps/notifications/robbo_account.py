@@ -202,6 +202,18 @@ def set_all_off(user):
     _store(user, values)
 
 
+def all_off(user):
+    """
+    The user turned every notification off («Отключить все уведомления»): the stored settings exist
+    and no type is on for the site or email. A type added later gets its platform default in the
+    course settings, so senders of one-off notices ask this first.
+    """
+    values = _stored(user)
+    if not values:
+        return False
+    return not any(channels.get('web') or channels.get('email') for channels in values.values())
+
+
 @receiver(post_save, sender=CourseNotificationPreference, dispatch_uid='robbo_account_new_course_preference')
 def new_course_starts_with_account_settings(sender, instance, created, **kwargs):  # pylint: disable=unused-argument
     """A new course preference (enrollment, joining a course team) takes the stored settings."""
