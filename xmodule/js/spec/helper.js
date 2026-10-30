@@ -264,7 +264,9 @@
                     'alignByHeightOnly',
                     'setParams',
                     'setMode',
-                    'setElement'
+                    'setElement',
+                    // Robbo: HD mode of the YouTube player (video/00_resizer.js).
+                    'setScale'
                 ],
                 obj = {},
                 delta = {
