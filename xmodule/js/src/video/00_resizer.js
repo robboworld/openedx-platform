@@ -1,4 +1,5 @@
 (function(requirejs, require, define) {
+    // Modifications Copyright (C) 2026 Robbo. See NOTICE at repository root.
     define(
         'video/00_resizer.js',
         [],
@@ -17,6 +18,11 @@
                     },
                     module = {},
                     mode = null,
+                    // Robbo: the element is rendered ``scale`` times larger and shrunk back with a CSS
+                    // transform, so it keeps its place on the page. YouTube picks the quality by the size
+                    // of its iframe and ignores setPlaybackQuality, so this is how the HD button works.
+                    scale = 1,
+                    maxScaledHeight = Infinity,
                     config;
 
                 // eslint-disable-next-line no-shadow
@@ -88,11 +94,49 @@
                     return module;
                 };
 
+                // Robbo: negative right/bottom margins give back the extra layout space, the transform
+                // origin at the top left corner keeps ``top``/``left`` as computed for the visible box.
+                var setSize = function($element, size) {
+                    // No larger than ``maxScaledHeight`` device pixels: YouTube already counts them.
+                    var factor = Math.min(scale, Math.max(1,
+                        maxScaledHeight / (size.height * (window.devicePixelRatio || 1))
+                    ));
+
+                    if (factor === 1) {
+                        $element.css($.extend(size, {
+                            transform: '', transformOrigin: '', marginRight: '', marginBottom: ''
+                        }));
+                        return;
+                    }
+
+                    $element.css({
+                        height: size.height * factor,
+                        width: size.width * factor,
+                        top: size.top,
+                        left: size.left,
+                        transform: 'scale(' + (1 / factor) + ')',
+                        transformOrigin: '0 0',
+                        marginRight: size.width * (1 - factor),
+                        marginBottom: size.height * (1 - factor)
+                    });
+                };
+
+                var setScale = function(value, maxHeight) {
+                    if (_.isNumber(value) && value >= 1) {
+                        scale = value;
+                    }
+                    if (_.isNumber(maxHeight) && maxHeight > 0) {
+                        maxScaledHeight = maxHeight;
+                    }
+
+                    return module;
+                };
+
                 var alignByWidthOnly = function() {
                     var data = getData(),
                         height = data.containerWidth / data.elementRatio;
 
-                    data.element.css({
+                    setSize(data.element, {
                         height: height,
                         width: data.containerWidth,
                         top: 0.5 * (data.containerHeight - height),
@@ -106,7 +150,7 @@
                     var data = getData(),
                         width = data.containerHeight * data.elementRatio;
 
-                    data.element.css({
+                    setSize(data.element, {
                         height: data.containerHeight,
                         width: data.containerHeight * data.elementRatio,
                         top: 0,
@@ -202,7 +246,14 @@
                 var destroy = function() {
                     var data = getData();
                     data.element.css({
-                        height: '', width: '', top: '', left: ''
+                        height: '',
+                        width: '',
+                        top: '',
+                        left: '',
+                        transform: '',
+                        transformOrigin: '',
+                        marginRight: '',
+                        marginBottom: ''
                     });
                     removeCallbacks();
                     resetDelta();
@@ -219,6 +270,7 @@
                     setParams: initialize,
                     setMode: setMode,
                     setElement: setElement,
+                    setScale: setScale,
                     callbacks: {
                         add: addCallback,
                         once: addOnceCallback,
