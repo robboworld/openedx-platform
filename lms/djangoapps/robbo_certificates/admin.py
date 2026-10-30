@@ -14,7 +14,7 @@ from simple_history.admin import SimpleHistoryAdmin
 
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 
-from .models import CertificateDesign, CertificateEntitlement, CertificateOffer
+from .models import CertificateDesign, CertificateEntitlement, CertificateOffer, CertificateOfferNotice
 from .offers import min_percent_error
 
 
@@ -97,3 +97,14 @@ class CertificateEntitlementAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'user__email', 'course_key', 'order_number')
     raw_id_fields = ('user', 'granted_by')
     readonly_fields = ('order_number', 'created', 'modified')
+
+
+@admin.register(CertificateOfferNotice)
+class CertificateOfferNoticeAdmin(admin.ModelAdmin):
+    """Who was told the certificate can be bought; deleting a row lets the notification go out once more."""
+
+    list_display = ('user', 'course_key', 'source', 'created')
+    list_filter = ('source',)
+    search_fields = ('user__username', 'user__email', 'course_key')
+    raw_id_fields = ('user',)
+    readonly_fields = ('user', 'course_key', 'source', 'created', 'modified')

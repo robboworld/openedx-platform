@@ -126,3 +126,30 @@ class CertificateEntitlement(TimeStampedModel):
 
     def __str__(self):
         return f'{self.user_id}:{self.course_key} ({self.source})'
+
+
+class CertificateOfferNotice(TimeStampedModel):
+    """
+    The learner was told «Курс пройден — сертификат можно оформить за N ₽» (bell and email): once per
+    learner and course, however many times the grade is recalculated and the command is run
+    (notifications.py). Kept when the platform deletes old notifications.
+
+    .. no_pii:
+    """
+
+    SOURCE_PASSED = 'passed'
+    SOURCE_COMMAND = 'command'
+    SOURCE_CHOICES = (
+        (SOURCE_PASSED, 'Passed the course'),
+        (SOURCE_COMMAND, 'robbo_certificate_offer_notify'),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='+')
+    course_key = CourseKeyField(max_length=255, db_index=True)
+    source = models.CharField(max_length=16, choices=SOURCE_CHOICES)
+
+    class Meta:
+        unique_together = (('user', 'course_key'),)
+
+    def __str__(self):
+        return f'{self.user_id}:{self.course_key} ({self.source})'
