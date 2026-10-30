@@ -457,7 +457,7 @@ def patch_ora_studio_editor():
             ROBBO_ORA_NECESSITY_OPTIONS_EN,
             ROBBO_ORA_NECESSITY_OPTIONS_RU,
         )
-        from .robbo_ora_i18n import effective_ora_ui_language, get_robbo_ora_runtime_catalog
+        from .robbo_ora_i18n import effective_ora_ui_language, robbo_ora_catalog_message
 
         context = original_editor_context(self)
         context['max_files_count'] = _effective_max_files_count(self)
@@ -470,11 +470,14 @@ def patch_ora_studio_editor():
             context['necessity_options'] = dict(ROBBO_ORA_NECESSITY_OPTIONS_RU)
         else:
             context['necessity_options'] = dict(ROBBO_ORA_NECESSITY_OPTIONS_EN)
-        catalog = get_robbo_ora_runtime_catalog()
-        context['file_upload_max_size_help'] = catalog[
+        # The Russian catalog is empty for an English UI (courses, en users), so look strings up
+        # with an English fallback instead of indexing it.
+        context['file_upload_max_size_help'] = robbo_ora_catalog_message(
             'By default each file may be up to %(max_mb)s MB. Turn on "Larger file sizes" to set a limit '
-            'for each file type (up to %(cap_mb)s MB).'
-        ] % {'max_mb': max_upload_mb, 'cap_mb': ROBBO_ORA_LARGE_FILE_MB_CAP}
+            'for each file type (up to %(cap_mb)s MB).',
+            max_mb=max_upload_mb,
+            cap_mb=ROBBO_ORA_LARGE_FILE_MB_CAP,
+        )
         context['robbo_large_files'] = bool(getattr(self, 'robbo_large_files', False))
         context['robbo_auto_score'] = bool(getattr(self, 'robbo_auto_score', False))
         context['robbo_default_file_mb'] = _default_file_mb()
@@ -486,9 +489,9 @@ def patch_ora_studio_editor():
             'image': list(self.ALLOWED_IMAGE_EXTENSIONS),
             'pdf-and-image': list(self.ALLOWED_FILE_EXTENSIONS),
         })
-        context['file_upload_description_help'] = catalog[
+        context['file_upload_description_help'] = robbo_ora_catalog_message(
             'Learners may leave file descriptions empty; a dash is saved when no description is provided.'
-        ]
+        )
         return context
 
     OpenAssessmentBlock.editor_context = editor_context
