@@ -55,5 +55,8 @@ tutor local launch   # или: tutor dev restart mfe
 - **`mfe-lms-{development,production}-settings`**: gradebook и communications
   (Paragon 22.17.0, на jsDelivr его `core`/`light` — 404) получают те же URL, но
   `default` — пустой `data:text/css,`. Иначе `AppProvider` держит белую страницу,
-  пока jsDelivr не ответит (из России — десятки секунд). Bind-mounted MFE —
-  `PARAGON_THEME_URLS: None` (`openedx-lms-*-settings`), Authoring — CDN как есть
+  пока jsDelivr не ответит (из России — десятки секунд). Authoring (Paragon
+  23.20.3) получает только `brandOverride`, без `default`: frontend-platform 8.x
+  тогда берёт ядро и `light` из своего dist (`PARAGON_THEME.paragon.themeUrls`
+  в `index.html`), вид тот же, что с CDN. Bind-mounted MFE —
+  `PARAGON_THEME_URLS: None` (`openedx-lms-*-settings`)
