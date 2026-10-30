@@ -386,6 +386,27 @@ COURSE_NOTIFICATION_TYPES = {
         'email_template': '',
         'filters': [],
     },
+    # Robbo: passed a course whose certificate is sold (robbo_certificates/notifications.py); once per
+    # learner and course, so the letter goes right away.
+    'learner_certificate_offer': {
+        'notification_app': 'learning',
+        'name': 'learner_certificate_offer',
+        'is_core': False,
+        'info': '',
+        'web': True,
+        'email': True,
+        'push': False,
+        'email_cadence': EmailCadence.IMMEDIATELY,
+        'non_editable': [],
+        'content_template': _('<{p}>You passed <{strong}>{course_name}</{strong}>: the certificate is available '
+                              'for {price_display}</{p}>'),
+        'content_context': {
+            'course_name': 'course_name',
+            'price_display': 'price_display',
+        },
+        'email_template': '',
+        'filters': [],
+    },
     'learner_grade_changed': {
         'notification_app': 'learning',
         'name': 'learner_grade_changed',

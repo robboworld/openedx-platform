@@ -24,6 +24,7 @@ class RobboCertificatesConfig(AppConfig):
 
     def ready(self):
         _ensure_paid_certificate_filter()
+        _connect_offer_notification()
 
 
 def _ensure_paid_certificate_filter():
@@ -42,3 +43,12 @@ def _ensure_paid_certificate_filter():
     if step not in pipeline:
         pipeline.append(step)
         log.warning('OPEN_EDX_FILTERS_CONFIG had no %s step; added', step)
+
+
+def _connect_offer_notification():
+    """«Сертификат можно оформить» when a learner passes a course with a paid certificate (LMS only)."""
+    if not getattr(settings, 'ROBBO_PAID_CERTIFICATE_FILTER_STEP', None):  # Studio: no course grades there
+        return
+    from openedx.core.djangoapps.signals.signals import COURSE_GRADE_NOW_PASSED
+    from .notifications import on_course_grade_passed
+    COURSE_GRADE_NOW_PASSED.connect(on_course_grade_passed, dispatch_uid='robbo_certificate_offer_notification')

@@ -71,6 +71,7 @@
       + '<path d="M12 13v3l2 1"/>', 16),
     learner_section_released: svg('<path d="M4 5h6a2 2 0 012 2v12a2 2 0 00-2-2H4z"/><path d="M20 5h-6a2 2 0 00-2 2v12a2 2 0 012-2h6z"/>', 16),
     learner_certificate_issued: svg('<circle cx="12" cy="9" r="5"/><path d="M9 13.5L8 21l4-2 4 2-1-7.5"/>', 16),
+    learner_certificate_offer: svg('<circle cx="12" cy="9" r="5"/><path d="M9 13.5L8 21l4-2 4 2-1-7.5"/>', 16),
     learner_grade_changed: svg('<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 12.5l2 2 4-4.5"/>', 16),
     learner_added_to_course: svg('<path d="M3 9l9-5 9 5-9 5z"/><path d="M7 11v5c0 1.5 2.2 3 5 3s5-1.5 5-3v-5"/>', 16),
     learner_enrolled: svg('<circle cx="10" cy="8" r="3.5"/><path d="M4 20a6 6 0 0112 0"/><path d="M19 8v6M16 11h6"/>', 16),
@@ -152,6 +153,7 @@
         learner_deadline_soon: 'Скоро срок',
         learner_section_released: 'Новый раздел',
         learner_certificate_issued: 'Сертификат',
+        learner_certificate_offer: 'Сертификат',
         learner_grade_changed: 'Оценка изменена',
         learner_added_to_course: 'Запись на курс',
         learner_enrolled: 'Новый ученик',
@@ -226,6 +228,9 @@
         },
         learner_section_released: function (c) { return ['Открылся новый раздел: ', {b: c.section_name}]; },
         learner_certificate_issued: function (c) { return ['Сертификат по курсу ', {b: c.course_name}, ' готов']; },
+        learner_certificate_offer: function (c) {
+          return ['Курс ', {b: c.course_name}, ' пройден — сертификат можно оформить за ' + c.price_display];
+        },
         learner_grade_changed: function (c) {
           var possible = Number(c.points_possible);
           return ['Преподаватель изменил оценку за ', {b: c.item_name}, ': ' + c.points_earned + ' из ' + c.points_possible + ' '
@@ -291,6 +296,7 @@
         learner_deadline_soon: 'Deadline soon',
         learner_section_released: 'New section',
         learner_certificate_issued: 'Certificate',
+        learner_certificate_offer: 'Certificate',
         learner_grade_changed: 'Grade changed',
         learner_added_to_course: 'Enrollment',
         learner_enrolled: 'New learner',
@@ -364,6 +370,9 @@
         },
         learner_section_released: function (c) { return ['A new section is open: ', {b: c.section_name}]; },
         learner_certificate_issued: function (c) { return ['Your certificate for ', {b: c.course_name}, ' is ready']; },
+        learner_certificate_offer: function (c) {
+          return ['You passed ', {b: c.course_name}, ': the certificate is available for ' + c.price_display];
+        },
         learner_grade_changed: function (c) {
           return ['Your grade for ', {b: c.item_name}, ' was changed: ' + c.points_earned + ' of ' + c.points_possible];
         },
