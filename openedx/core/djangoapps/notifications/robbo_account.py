@@ -9,7 +9,10 @@ stored per user (a UserPreference with {"app.type": {web, email, email_cadence}}
 * a course «has its own settings» when a type it shows differs from them;
 * changing them changes only the courses that still follow them on that type and channel; courses
   with their own value keep it;
-* resetting a course gives it exactly these settings; a new course preference starts with them.
+* resetting a course gives it exactly these settings; a new course preference starts with them;
+* a notification type added to the platform later starts with its default here, but off for a user
+  who turned everything off («Отключить все уведомления»); in the user's courses it takes the value
+  from here when the course settings move to the new config version (models.py).
 
 The first read builds them from the user's courses (the most common value of every channel).
 Push and channels the LMS marks non-editable are left alone.
@@ -85,15 +88,31 @@ def _initial(user, template):
     return values
 
 
+def _all_off(values):
+    return bool(values) and not any(channels.get('web') or channels.get('email') for channels in values.values())
+
+
 def account_values(user):
-    """{"app.type": {web, email, email_cadence}} — stored, built on the first call, new types from defaults."""
+    """
+    {"app.type": {web, email, email_cadence}} — stored, built on the first call. Types added to the
+    platform since then are stored with their defaults, or off when everything was off.
+    """
     template = _template()
     values = _stored(user)
     if values is None:
         values = _initial(user, template)
         _store(user, values)
+    everything_off = _all_off(values)
+    added = False
     for app, type_id, type_config, _ in _types(template):
-        values.setdefault(_key(app, type_id), {channel: type_config.get(channel) for channel in CHANNELS})
+        key = _key(app, type_id)
+        if key not in values:
+            values[key] = {channel: type_config.get(channel) for channel in CHANNELS}
+            if everything_off:
+                values[key].update(web=False, email=False)
+            added = True
+    if added:
+        _store(user, values)
     return values
 
 
@@ -205,23 +224,39 @@ def set_all_off(user):
 def all_off(user):
     """
     The user turned every notification off («Отключить все уведомления»): the stored settings exist
-    and no type is on for the site or email. A type added later gets its platform default in the
-    course settings, so senders of one-off notices ask this first.
+    and no type is on for the site or email.
     """
-    values = _stored(user)
-    if not values:
-        return False
-    return not any(channels.get('web') or channels.get('email') for channels in values.values())
+    return _all_off(_stored(user))
+
+
+def new_types_follow_account(user, old_config, new_config, email_opt_out=False):
+    """
+    A course config moved to a new config version (models.py): the types it did not have take the
+    stored settings instead of the platform defaults, so «Отключить все уведомления» covers types
+    added later. Nothing changes for a user without stored settings. With the one-click email
+    unsubscribe, email is never turned on. Changes and returns ``new_config``.
+    """
+    if _stored(user) is None:
+        return new_config
+    known = {_key(app, type_id) for app, type_id, _, _ in _types(old_config)}
+    values = account_values(user)
+    wanted = {}
+    for key, channels in values.items():
+        if key in known:
+            continue
+        wanted[key] = dict(channels)
+        if email_opt_out:
+            wanted[key].pop('email', None)
+    _apply(new_config, wanted)
+    return new_config
 
 
 @receiver(post_save, sender=CourseNotificationPreference, dispatch_uid='robbo_account_new_course_preference')
 def new_course_starts_with_account_settings(sender, instance, created, **kwargs):  # pylint: disable=unused-argument
     """A new course preference (enrollment, joining a course team) takes the stored settings."""
-    if not created:
+    if not created or not _stored(instance.user):
         return
-    values = _stored(instance.user)
-    if not values:
-        return
+    values = account_values(instance.user)  # with the types added since they were stored
     config = copy.deepcopy(instance.notification_preference_config)
     if _apply(config, values):
         CourseNotificationPreference.objects.filter(pk=instance.pk).update(notification_preference_config=config)

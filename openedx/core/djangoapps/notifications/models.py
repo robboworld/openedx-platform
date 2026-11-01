@@ -31,6 +31,15 @@ ADDITIONAL_NOTIFICATION_CHANNEL_SETTINGS = ['email_cadence']
 COURSE_NOTIFICATION_CONFIG_VERSION = 17
 
 
+def _robbo_new_types_follow_account(user, old_config, new_config, email_opt_out):
+    """
+    Robbo: types added in a new config version take the user's stored settings «Для всех курсов»
+    instead of the platform defaults, so «Отключить все уведомления» covers them (robbo_account.py).
+    """
+    from openedx.core.djangoapps.notifications.robbo_account import new_types_follow_account
+    return new_types_follow_account(user, old_config, new_config, email_opt_out)
+
+
 def get_course_notification_preference_config():
     """
     Returns the course specific notification preference config.
@@ -167,6 +176,7 @@ class CourseNotificationPreference(TimeStampedModel):
             try:
                 current_prefs = preferences.notification_preference_config
                 new_prefs = NotificationPreferenceSyncManager.update_preferences(current_prefs, email_opt_out)
+                new_prefs = _robbo_new_types_follow_account(preferences.user, current_prefs, new_prefs, email_opt_out)
                 preferences.config_version = current_config_version
                 preferences.notification_preference_config = new_prefs
                 preferences.save()
@@ -191,6 +201,7 @@ class CourseNotificationPreference(TimeStampedModel):
                 if preference.config_version != current_config_version:
                     current_prefs = preference.notification_preference_config
                     new_prefs = NotificationPreferenceSyncManager.update_preferences(current_prefs, email_opt_out)
+                    new_prefs = _robbo_new_types_follow_account(user, current_prefs, new_prefs, email_opt_out)
                     preference.config_version = current_config_version
                     preference.notification_preference_config = new_prefs
                     preferences_to_update.append(preference)
