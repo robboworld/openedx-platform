@@ -60,3 +60,8 @@ tutor local launch   # или: tutor dev restart mfe
   тогда берёт ядро и `light` из своего dist (`PARAGON_THEME.paragon.themeUrls`
   в `index.html`), вид тот же, что с CDN. Bind-mounted MFE —
   `PARAGON_THEME_URLS: None` (`openedx-lms-*-settings`)
+- **`caddyfile`**: каждый хост из `ROBBO_REDIRECT_HOSTS` (по умолчанию `[]`)
+  отвечает постоянным редиректом (301) на `LMS_HOST` с тем же путём и параметрами;
+  сертификат для него Caddy получает сам. На online — `ROBBO_REDIRECT_HOSTS:
+  [edu.robbo.ru]`. Блоки, вписанные в `env/apps/caddy/Caddyfile` руками,
+  `tutor config save` стирает

@@ -469,6 +469,17 @@ scratch-gui.robbo.world{$default_site_port} {
 }
 """
 
+# Old site addresses (online: edu.robbo.ru) answer with a permanent redirect to LMS_HOST, path kept.
+# Caddy issues their certificates itself. Hand-written blocks in env/apps/caddy/Caddyfile are lost on
+# every `tutor config save`, so the list lives in config.yml: ROBBO_REDIRECT_HOSTS: [edu.robbo.ru].
+_PATCH_CADDYFILE_REDIRECT_HOSTS = """
+{% for robbo_host in ROBBO_REDIRECT_HOSTS %}
+{{ robbo_host }}{$default_site_port} {
+    redir {% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS_HOST }}{uri} 301
+}
+{% endfor %}
+"""
+
 # Local Tutor (ENABLE_HTTPS=false): MFE URLs on LMS_HOST, not apps.* — avoids browser
 # HTTPS-Only upgrading http://apps.local… to https://… (connection refused on :443).
 _PATCH_LOCAL_MFE_ON_LMS_HOST = """
@@ -800,6 +811,7 @@ hooks.Filters.CONFIG_DEFAULTS.add_items(
         ("ROBBO_RS_URL", ""),
         ("ROBBO_ORA_GRADING_CSP", "enforce"),
         ("ROBBO_CSP_REPORT_URI", ""),
+        ("ROBBO_REDIRECT_HOSTS", []),
     ]
 )
 
@@ -863,6 +875,7 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("openedx-dockerfile-post-python-requirements", _PATCH_OPENEDX_ROBBO_XBLOCKS),
         ("uwsgi-config", _PATCH_UWSGI_CONFIG),
         ("caddyfile", _PATCH_CADDYFILE_SCRATCH),
+        ("caddyfile", _PATCH_CADDYFILE_REDIRECT_HOSTS),
         ("caddyfile-proxy", _PATCH_CADDYFILE_PROXY_REQUEST_ID),
         ("caddyfile-lms", _PATCH_CADDYFILE_LMS_ERRORS),
         ("caddyfile-cms", _PATCH_CADDYFILE_CMS_ERRORS),
