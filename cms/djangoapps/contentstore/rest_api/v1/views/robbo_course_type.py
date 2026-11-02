@@ -6,7 +6,9 @@
 Studio API for the «Тип курса» settings page: what is paid in a course.
 
 * Full access — the «verified» course mode (robbo_payments sells the upgrade at /basket/add/).
-* Certificate — robbo_certificates.CertificateOffer (docs/paid-certificates.md in the meta repo).
+* Certificate — whether the course issues one at all (the «honor» mode, robbo_certificates.modes;
+  turning it on moves «audit» to «honor»), and whether it is sold (robbo_certificates.CertificateOffer,
+  docs/paid-certificates.md in the meta repo; only for a course that issues certificates).
 * Paid content — robbo_paid_content.PaidContentPolicy: what of the course needs full access, what the
   free path sees instead and how its grade counts (docs/paid-content.md). The «Только полный доступ»
   lock itself is set on sections/subsections in the course outline.
@@ -29,6 +31,7 @@ from common.djangoapps.course_modes.models import CourseMode
 from common.djangoapps.student.auth import has_studio_read_access
 from common.djangoapps.student.models import CourseEnrollment
 from common.djangoapps.student.roles import GlobalStaff
+from lms.djangoapps.robbo_certificates import modes as certificate_modes
 from lms.djangoapps.robbo_certificates import offers
 from lms.djangoapps.robbo_certificates.models import CertificateOffer
 from lms.djangoapps.robbo_paid_content import policy as paid_content_policy
@@ -81,6 +84,8 @@ def course_type_payload(user, course_key):
         'paid_certificates_switch': offers.PAID_CERTIFICATES.is_enabled(),
         'passing_percent': offers.course_min_percent(course_key),
         'certificate': {
+            'issued': certificate_modes.issues_certificates(course_key),
+            'audit_learners': certificate_modes.audit_learners(course_key),
             'paid': certificate_paid,
             'price': int(offer.price) if offer else None,
             'min_percent': offer.min_percent if offer else None,
@@ -153,6 +158,9 @@ def _save_full_access(course_key, data):
 
 
 def _save_certificate(user, course_key, data):
+    # Turning certificates on only: off is not offered here (learners in «honor» would lose them)
+    if data.get('issued'):
+        certificate_modes.enable_certificates(course_key, user)
     offer = CertificateOffer.objects.filter(course_key=course_key).first()
     if not data.get('paid'):
         if offer is not None and offer.is_enabled:
@@ -161,6 +169,10 @@ def _save_certificate(user, course_key, data):
             offer.save()
         return
 
+    if not certificate_modes.issues_certificates(course_key):
+        raise CourseTypeError(
+            'Платный сертификат возможен только у курса, который выдаёт сертификат: сначала включите «Курс выдаёт сертификат».'
+        )
     price = _price(data.get('price'))
     min_percent = data.get('min_percent')
     if min_percent in ('', None):
@@ -193,7 +205,6 @@ def _save_certificate(user, course_key, data):
     offer.updated_by = user
     offer.save()
     offer.free_for_cohorts.set(cohorts)
-    _ensure_free_mode(course_key)
 
 
 def _save_paid_content(user, course_key, data):
@@ -247,7 +258,8 @@ class CourseTypeView(DeveloperErrorViewMixin, APIView):
     """
     GET  /api/contentstore/v1/robbo/course-type/{course_id}
         {"can_edit": bool, "paid_certificates_switch": bool, "passing_percent": 50,
-         "certificate": {"paid", "price", "min_percent", "free_for_verified", "free_for_cohorts": [id]},
+         "certificate": {"issued", "audit_learners", "paid", "price", "min_percent", "free_for_verified",
+                         "free_for_cohorts": [id]},
          "full_access": {"paid", "price", "learners"},
          "cohorts": [{"id", "name"}],
          "paid_content": {"enabled", "free_sections", "graded_paid", "display": "locked" | "hidden",
