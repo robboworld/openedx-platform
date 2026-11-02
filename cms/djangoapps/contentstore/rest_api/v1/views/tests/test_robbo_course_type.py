@@ -39,6 +39,7 @@ class CourseTypeViewTest(CourseTestCase):
         assert response.data['can_edit'] is True
         assert response.data['passing_percent'] == 50
         assert response.data['certificate'] == {
+            'issued': False, 'audit_learners': 0,
             'paid': False, 'price': None, 'min_percent': None, 'free_for_verified': True, 'free_for_cohorts': [],
         }
         assert response.data['full_access'] == {'paid': False, 'price': None, 'learners': 0}
@@ -55,6 +56,7 @@ class CourseTypeViewTest(CourseTestCase):
         assert response.status_code == status.HTTP_200_OK, response.data
         assert response.data['full_access']['paid'] and response.data['full_access']['price'] == 1990
         assert response.data['certificate'] == {
+            'issued': True, 'audit_learners': 0,
             'paid': True, 'price': 990, 'min_percent': 80, 'free_for_verified': False,
             'free_for_cohorts': [cohort.id],
         }
@@ -90,18 +92,39 @@ class CourseTypeViewTest(CourseTestCase):
 
     def test_validation(self):
         for body, text in (
-            ({'certificate': {'paid': True, 'price': 0}}, 'Цена'),
-            ({'certificate': {'paid': True, 'price': '99.5'}}, 'Цена'),
+            ({'certificate': {'issued': True, 'paid': True, 'price': 0}}, 'Цена'),
+            ({'certificate': {'issued': True, 'paid': True, 'price': '99.5'}}, 'Цена'),
             ({'full_access': {'paid': True, 'price': 'abc'}}, 'Цена'),
-            ({'certificate': {'paid': True, 'price': 990, 'min_percent': 30}}, 'проходного балла курса (50 %)'),
-            ({'certificate': {'paid': True, 'price': 990, 'free_for_cohorts': [999999]}}, 'группы этого курса'),
+            ({'certificate': {'issued': True, 'paid': True, 'price': 990, 'min_percent': 30}}, 'проходного балла курса (50 %)'),
+            ({'certificate': {'issued': True, 'paid': True, 'price': 990, 'free_for_cohorts': [999999]}}, 'группы этого курса'),
+            ({'certificate': {'paid': True, 'price': 990}}, 'сначала включите «Курс выдаёт сертификат»'),
         ):
             response = self._put(body)
             assert response.status_code == status.HTTP_400_BAD_REQUEST, body
             assert text in response.data['error'], response.data
-        # Nothing was half-saved
+        # Nothing was half-saved: not even «honor» from «issued»
         assert not CertificateOffer.objects.exists()
+        assert not CourseMode.objects.filter(course_id=self.course.id, mode_slug='honor').exists()
         assert not CourseMode.objects.filter(course_id=self.course.id, mode_slug='verified').exists()
+
+    def test_turning_certificates_on(self):
+        CourseMode.objects.create(course_id=self.course.id, mode_slug='audit', mode_display_name='Audit')
+        CourseMode.objects.create(course_id=self.course.id, mode_slug='verified', mode_display_name='V', min_price=10)
+        free, paid = UserFactory(), UserFactory()
+        CourseEnrollment.enroll(free, self.course.id, 'audit')
+        CourseEnrollment.enroll(paid, self.course.id, 'verified')
+        assert self.client.get(self.url).data['certificate']['audit_learners'] == 1
+        response = self._put({'certificate': {'issued': True, 'paid': False}})
+        assert response.status_code == status.HTTP_200_OK, response.data
+        assert response.data['certificate']['issued'] is True
+        assert response.data['certificate']['audit_learners'] == 0
+        slugs = set(CourseMode.objects.filter(course_id=self.course.id).values_list('mode_slug', flat=True))
+        assert slugs == {'honor', 'verified'}
+        assert CourseEnrollment.get_enrollment(free, self.course.id).mode == 'honor'
+        assert CourseEnrollment.get_enrollment(paid, self.course.id).mode == 'verified'
+        # «issued»: False does not take certificates away
+        self._put({'certificate': {'issued': False, 'paid': False}})
+        assert CourseMode.objects.filter(course_id=self.course.id, mode_slug='honor').exists()
 
     def test_course_team_reads_but_cannot_change(self):
         client, author = self.create_non_staff_authed_user_client()
