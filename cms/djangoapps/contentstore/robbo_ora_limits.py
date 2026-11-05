@@ -1,18 +1,21 @@
 # Copyright (C) 2024-2026 Robbo <https://robbo.ru>
 # SPDX-License-Identifier: AGPL-3.0-only
 
-"""Robbo ORA: per-block file count/size limits, score on submit, and Studio template overrides."""
+"""Robbo ORA: per-block file count/size limits, score on submit, retake option, and Studio template overrides."""
 
 import json
 import logging
 from pathlib import Path
 
+import yaml
 from django.conf import settings
 from django.utils import translation
 from voluptuous import Optional, Schema
 from xblock.fields import Boolean, Dict, Integer, Scope
 
 from xmodule.course_metadata_utils import is_russian_language
+
+from .robbo_ora_retake import insert_retake_block, patch_ora_retake
 
 ROBBO_ORA_DEFAULT_MAX_FILES_COUNT = getattr(settings, 'ROBBO_ORA_DEFAULT_MAX_FILES_COUNT', 1)
 ROBBO_ORA_MAX_FILES_COUNT_CAP = getattr(settings, 'ROBBO_ORA_MAX_FILES_COUNT_CAP', 20)
@@ -22,6 +25,9 @@ ROBBO_ORA_DEFAULT_MAX_FILE_BYTES = 5 * 1000 * 1000  # 5 MB
 ROBBO_ORA_LARGE_FILE_MB_CAP = getattr(settings, 'ROBBO_ORA_LARGE_FILE_MB_CAP', 50)
 # Scorer of the automatic staff assessment ("Score on submit"); not a real user, so no username is shown.
 ROBBO_ORA_AUTO_SCORER_ID = 'robbo-auto-score'
+_OLX_FIELDS = (
+    'max_files_count', 'robbo_large_files', 'robbo_file_size_limits', 'robbo_auto_score', 'robbo_allow_retake',
+)
 
 log = logging.getLogger(__name__)
 
@@ -245,6 +251,16 @@ class _RobboOraFilesLimitMixin:
         default=False,
         scope=Scope.settings,
     )
+    robbo_allow_retake = Boolean(
+        display_name='Retake after grading',
+        default=False,
+        scope=Scope.settings,
+    )
+    robbo_retake_granted = Boolean(
+        help='The current attempt is a retake the grader allowed: the deadline does not apply to it.',
+        default=False,
+        scope=Scope.user_state,
+    )
 
 
 def _register_max_files_count_field(open_assessment_block):
@@ -254,7 +270,10 @@ def _register_max_files_count_field(open_assessment_block):
     Assigning Integer() into fields{} at runtime leaves field.name='unknown' and
     breaks LMS staff preview (KeyError in add_staff_markup).
     """
-    for field_name in ('max_files_count', 'robbo_large_files', 'robbo_file_size_limits', 'robbo_auto_score'):
+    for field_name in (
+        'max_files_count', 'robbo_large_files', 'robbo_file_size_limits', 'robbo_auto_score',
+        'robbo_allow_retake', 'robbo_retake_granted',
+    ):
         existing = open_assessment_block.fields.get(field_name)
         if existing is not None and getattr(existing, 'name', None) == 'unknown':
             del open_assessment_block.fields[field_name]
@@ -278,10 +297,44 @@ def patch_ora_runtime_limits():
         lambda self: _effective_max_files_count(self),
     )
     _patch_ora_auto_score(OpenAssessmentBlock)
+    patch_ora_retake(OpenAssessmentBlock)
+    _patch_ora_olx(OpenAssessmentBlock)
     _patch_ora_staff_list_unknown_scorer()
     _patch_ora_submission_files_in_storage()
     _patch_ora_submit_required_parts()
     OpenAssessmentBlock._robbo_runtime_limits_patched = True
+
+
+def _patch_ora_olx(open_assessment_block):
+    """
+    Keep our settings in OLX. ORA writes and reads only its own fields there, so without this they
+    are lost on course export and import and on copy and paste (a rerun copies fields directly).
+    """
+    original_parse_xml = open_assessment_block.parse_xml.__func__
+    original_add_xml_to_node = open_assessment_block.add_xml_to_node
+
+    def add_xml_to_node(self, node):
+        original_add_xml_to_node(self, node)
+        for name in _OLX_FIELDS:
+            field = self.fields[name]
+            if field.is_set_on(self):
+                node.set(name, field.to_string(getattr(self, name)))
+
+    def parse_xml(cls, node, runtime, keys):
+        block = original_parse_xml(cls, node, runtime, keys)
+        for name in _OLX_FIELDS:
+            serialized = node.get(name)
+            if serialized is None:
+                continue
+            try:
+                setattr(block, name, block.fields[name].from_string(serialized))
+            except (TypeError, ValueError, yaml.YAMLError):
+                # One bad setting must not stop the import of a whole course.
+                log.warning('Robbo ORA: ignoring invalid %s=%r in %s', name, serialized, keys.usage_id)
+        return block
+
+    open_assessment_block.add_xml_to_node = add_xml_to_node
+    open_assessment_block.parse_xml = classmethod(parse_xml)
 
 
 def _max_points_options(criteria):
@@ -445,6 +498,7 @@ def patch_ora_studio_editor():
     schema_dict[Optional('robbo_large_files')] = bool
     schema_dict[Optional('robbo_file_size_limits')] = dict
     schema_dict[Optional('robbo_auto_score')] = bool
+    schema_dict[Optional('robbo_allow_retake')] = bool
     updated_schema = Schema(schema_dict)
     # studio_mixin imports EDITOR_UPDATE_SCHEMA at load time; patch both bindings.
     schema_module.EDITOR_UPDATE_SCHEMA = updated_schema
@@ -480,6 +534,7 @@ def patch_ora_studio_editor():
         )
         context['robbo_large_files'] = bool(getattr(self, 'robbo_large_files', False))
         context['robbo_auto_score'] = bool(getattr(self, 'robbo_auto_score', False))
+        context['robbo_allow_retake'] = bool(getattr(self, 'robbo_allow_retake', False))
         context['robbo_default_file_mb'] = _default_file_mb()
         context['robbo_large_file_mb_cap'] = ROBBO_ORA_LARGE_FILE_MB_CAP
         context['robbo_file_size_limits_json'] = json.dumps(
@@ -511,6 +566,7 @@ def patch_ora_studio_editor():
         raw_large_files = payload.pop('robbo_large_files', None)
         raw_size_limits = payload.pop('robbo_file_size_limits', None)
         raw_auto_score = payload.pop('robbo_auto_score', None)
+        raw_allow_retake = payload.pop('robbo_allow_retake', None)
         result = original_update(self, payload, suffix=suffix)
         if result.get('success'):
             if raw_count is not None:
@@ -527,6 +583,8 @@ def patch_ora_studio_editor():
                 self.robbo_file_size_limits = _normalize_size_limits(raw_size_limits)
             if raw_auto_score is not None:
                 self.robbo_auto_score = bool(raw_auto_score)
+            if raw_allow_retake is not None:
+                self.robbo_allow_retake = bool(raw_allow_retake)
         return result
 
     OpenAssessmentBlock.update_editor_context = XBlock.json_handler(_robbo_update_editor_context)
@@ -680,11 +738,13 @@ def patch_ora_student_view():
             context_dict['robbo_file_size_limits'] = _group_size_limits(size_limits)
             context_dict['robbo_file_size_limits_json'] = json.dumps(size_limits)
         response = original_render_assessment(self, path, context_dict)
+        html = insert_retake_block(self, path, response.text)
         if is_response_step and ROBBO_ORA_RESPONSE_STEP_CSS:
-            styled = f'<style type="text/css">{ROBBO_ORA_RESPONSE_STEP_CSS}</style>{response.text}'
+            html = f'<style type="text/css">{ROBBO_ORA_RESPONSE_STEP_CSS}</style>{html}'
+        if html != response.text:
             charset = response.charset or 'utf-8'
             return Response(
-                body=styled.encode(charset),
+                body=html.encode(charset),
                 content_type=response.content_type,
                 charset=charset,
             )

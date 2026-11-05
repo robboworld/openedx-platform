@@ -1,0 +1,37 @@
+{% load i18n %}
+{% if robbo_retake_kind %}
+<div class="robbo-ora-retake">
+    <h5 class="robbo-ora-retake__title">{% trans "You can retake this assignment" %}</h5>
+    <p class="robbo-ora-retake__text">
+        {% if robbo_retake_kind == 'granted' %}{% trans "The instructor allowed you to send a new response." %} {% endif %}
+        {% trans "Your grade stays until the new response is graded. The new grade replaces it, even if it is lower." %}
+    </p>
+    <div class="robbo-ora-retake__error" role="alert" hidden></div>
+    <button type="button" class="action action--submit robbo-ora-retake__start"
+            data-url="{{ robbo_retake_url }}"
+            data-confirm="{% trans 'Start a retake? Your response opens for editing, and the grade stays until the new response is graded.' %}"
+            data-error="{% trans 'Could not start the retake. Reload the page and try again.' %}">
+        {% trans "Retake" %}
+    </button>
+</div>
+{% elif robbo_retake_grade %}
+<div class="robbo-ora-retake">
+    <h5 class="robbo-ora-retake__title">{% trans "Retaking the assignment" %}</h5>
+    <p class="robbo-ora-retake__text">{{ robbo_retake_grade }}</p>
+    {% if robbo_retake_feedback %}
+    <p class="robbo-ora-retake__text">
+        <strong>{% trans "Instructor's comment:" %}</strong> {{ robbo_retake_feedback|linebreaksbr }}
+    </p>
+    {% endif %}
+    {% if robbo_retake_criteria %}
+    <ul class="robbo-ora-retake__criteria">
+        {% for criterion in robbo_retake_criteria %}
+        <li>
+            <strong>{{ criterion.label }}</strong>{% if criterion.option %}: {{ criterion.option }}{% endif %}
+            {% if criterion.feedback %}<div>{{ criterion.feedback|linebreaksbr }}</div>{% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+{% endif %}

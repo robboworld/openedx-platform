@@ -214,7 +214,7 @@ class TestFetchSubmissionView(BaseViewTest):
         expected_assessment_keys = (
             set(["score", "overallFeedback", "criteria"]) if has_assessment else set()
         )
-        assert response.data["gradeData"].keys() == expected_assessment_keys
+        assert response.data["gradeData"].keys() == expected_assessment_keys | {"allowRetake"}
 
     @patch("lms.djangoapps.ora_staff_grader.views.get_submission_info")
     @patch("lms.djangoapps.ora_staff_grader.views.get_assessment_info")
@@ -389,7 +389,7 @@ class TestFetchSubmissionStatusView(BaseViewTest):
         expected = {
             "gradeStatus": "graded" if has_assessment else "ungraded",
             "lockStatus": mock_check_submission_lock.return_value["lock_status"],
-            "gradeData": {}
+            "gradeData": {"allowRetake": False}
             if not has_assessment
             else {
                 "score": test_data.example_assessment["score"],
@@ -402,6 +402,7 @@ class TestFetchSubmissionStatusView(BaseViewTest):
                         "feedback": "Feedback 1",
                     },
                 ],
+                "allowRetake": False,
             },
         }
         assert actual == expected
@@ -806,6 +807,7 @@ class TestUpdateGradeView(BaseViewTest):
                         "feedback": "Feedback 1",
                     },
                 ],
+                "allowRetake": False,
             },
         }
 

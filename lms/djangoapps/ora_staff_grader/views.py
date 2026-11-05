@@ -24,6 +24,7 @@ from rest_framework.viewsets import ViewSet
 from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.exceptions import ItemNotFoundError
 
+from cms.djangoapps.contentstore.robbo_ora_retake import retake_granted, set_retake_grant
 from lms.djangoapps.ora_staff_grader.constants import (
     PARAM_ORA_LOCATION,
     PARAM_SUBMISSION_ID,
@@ -300,6 +301,7 @@ class SubmissionFetchView(StaffGraderBaseView):
                     "lock_info": lock_info,
                 }
             ).data
+            response_data["gradeData"]["allowRetake"] = retake_granted(submission_uuid)
 
             log.info(response_data)
             return Response(response_data)
@@ -357,6 +359,7 @@ class SubmissionStatusFetchView(StaffGraderBaseView):
                     "lock_info": lock_info,
                 }
             ).data
+            response_data["gradeData"]["allowRetake"] = retake_granted(submission_uuid)
 
             log.info(response_data)
             return Response(response_data)
@@ -431,6 +434,7 @@ class UpdateGradeView(StaffGraderBaseView):
             },
             ... (one per criteria)
         ]
+        allowRetake: (bool, optional) the learner may send a new response for a new grade
     }
 
     Response: {
@@ -480,6 +484,7 @@ class UpdateGradeView(StaffGraderBaseView):
             context = {"submission_uuid": submission_uuid}
             grade_data = StaffAssessSerializer(request.data, context=context).data
             submit_grade(request, ora_location, grade_data)
+            set_retake_grant(ora_location, submission_uuid, request.data.get("allowRetake"), request.user)
 
             # Clear the lock on the graded submission
             delete_submission_lock(request, ora_location, submission_uuid)
@@ -495,6 +500,7 @@ class UpdateGradeView(StaffGraderBaseView):
                     "lock_info": lock_info,
                 }
             ).data
+            response_data["gradeData"]["allowRetake"] = retake_granted(submission_uuid)
 
             log.info(response_data)
             return Response(response_data)
