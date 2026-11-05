@@ -16,22 +16,26 @@ robbo-guest-landing-page
 
 <%block name="headextra">
 % if not user.is_authenticated:
-  ## Фон main: #f0fdf4 (start `.robbo-guest-hero` gradient); карточки курсов остаются белыми.
+  ## Внешние слои — база #f6f6f6, внутренние прозрачны: фон с узором лежит в `.robbo-guest-landing::before`; карточки курсов остаются белыми.
 <style>
   body.robbo-guest-landing-page,
   body.indigo-dark-theme.robbo-guest-landing-page,
   body.robbo-guest-landing-page .window-wrap,
   body.indigo-dark-theme.robbo-guest-landing-page .window-wrap,
   body.robbo-guest-landing-page #content.content-wrapper,
-  body.robbo-guest-landing-page #main,
+  body.robbo-guest-landing-page #main {
+    background: #f6f6f6 !important;
+    background-color: #f6f6f6 !important;
+    background-image: none !important;
+  }
   body.robbo-guest-landing-page .robbo-guest-landing,
   body.robbo-guest-landing-page .robbo-guest-main,
   body.robbo-guest-landing-page section#courses.home,
   body.robbo-guest-landing-page .home.robbo-guest-home,
   body.robbo-guest-landing-page .home > header,
   body.robbo-guest-landing-page section#courses.home > header {
-    background: #f0fdf4 !important;
-    background-color: #f0fdf4 !important;
+    background: transparent !important;
+    background-color: transparent !important;
     background-image: none !important;
   }
   body.robbo-guest-landing-page .home > header .title {
@@ -95,8 +99,8 @@ robbo-guest-landing-page
   }
   body.robbo-guest-landing-page .robbo-guest-home > header,
   body.robbo-guest-landing-page section#courses.home > header {
-    background: #f0fdf4 !important;
-    background-color: #f0fdf4 !important;
+    background: transparent !important;
+    background-color: transparent !important;
     background-image: none !important;
     box-shadow: none !important;
   }

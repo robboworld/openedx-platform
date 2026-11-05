@@ -8,7 +8,8 @@ $robbo-guest-topbar-bg-alpha: 0.25;
 $robbo-tilda-orange-hero: #ff6600;
 $robbo-tilda-orange-cta: #e84c15;
 $robbo-guest-max-width: 1200px;
-$robbo-guest-hero-gradient-start: #f0fdf4;
+// База фона как у `.products` на robbo.ru; узор — слой `.robbo-guest-landing::before`.
+$robbo-guest-hero-gradient-start: #f6f6f6;
 $robbo-guest-pad: clamp(1rem, 4vw, 2.5rem);
 // Как в экспорте Tilda page133250156 (@media screen and (max-width:980px) для t228).
 $robbo-guest-topbar-mobile-max: 980px;
@@ -54,7 +55,8 @@ $robbo-guest-topbar-logo-intrinsic-h: 635;
     --robbo-guest-section-gap: clamp(2rem, 5vw, 3.5rem);
     --robbo-guest-section-pad-x: #{$robbo-guest-pad};
     --robbo-guest-content-max: #{$robbo-guest-max-width};
-    --robbo-guest-page-bg: #{$robbo-guest-hero-gradient-start};
+    // Внутри лендинга слои прозрачны: под ними фиксированный фон `::before`.
+    --robbo-guest-page-bg: transparent;
     --robbo-guest-body-muted: #515661;
     // Course cards on guest home (unified vertical grid).
     --robbo-guest-card-radius: 10px;
@@ -72,6 +74,19 @@ $robbo-guest-topbar-logo-intrinsic-h: 635;
     --robbo-guest-course-grid-max: #{"min(100%, 960px)"};
     --robbo-guest-transition: 0.2s ease;
     margin: 0 auto;
+    isolation: isolate;
+
+    // Фон секции `.products` с robbo.ru. Фиксированный слой, а не `cover` на всю страницу:
+    // иначе на длинном каталоге картинка 1672×941 растягивается в разы.
+    &::before {
+        background: url("../images/guest-landing/products-bg.avif") center / cover no-repeat, $robbo-guest-hero-gradient-start;
+        background-blend-mode: multiply;
+        content: "";
+        inset: 0;
+        pointer-events: none;
+        position: fixed;
+        z-index: -1;
+    }
 }
 
 .robbo-guest-skip-target {
@@ -762,7 +777,7 @@ a.robbo-guest-topbar__tagline {
     min-height: 0;
 }
 
-// Hero: первый экран — заголовок, lede, CTA; фон страницы (#f0fdf4 — start hero gradient).
+// Hero: первый экран — заголовок, lede, CTA; фон страницы (слой `.robbo-guest-landing::before`).
 .robbo-guest-hero {
     background: transparent;
     box-sizing: border-box;
