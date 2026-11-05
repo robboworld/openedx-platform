@@ -8,6 +8,7 @@ from urllib.parse import urljoin
 from django.conf import settings
 from rest_framework import serializers
 
+from cms.djangoapps.contentstore.robbo_ora_retake import retake_supported
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 
 
@@ -92,6 +93,10 @@ class OpenResponseMetadataSerializer(serializers.Serializer):
     textResponseEditor = serializers.CharField(source='text_response_editor')
     fileUploadResponseConfig = serializers.SerializerMethodField()
     rubricConfig = RubricConfigSerializer(source="*")
+    retakeSupported = serializers.SerializerMethodField()
+
+    def get_retakeSupported(self, instance):
+        return retake_supported(instance)
 
     def get_textResponseConfig(self, instance):
         return instance.text_response or "none"
@@ -111,6 +116,7 @@ class OpenResponseMetadataSerializer(serializers.Serializer):
             "textResponseEditor",
             "fileUploadResponseConfig",
             "rubricConfig",
+            "retakeSupported",
         ]
         read_only_fields = fields
 

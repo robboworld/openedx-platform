@@ -107,6 +107,7 @@ class TestOpenResponseMetadataSerializer(TestCase):
                 "<p>In your own words, explain a famous time travel paradox</p>"
             ],
             "teams_enabled": False,
+            "assessment_steps": ["staff-assessment"],
             "text_response": None,
             "text_response_editor": "text",
             "file_upload_response": None,
@@ -126,6 +127,7 @@ class TestOpenResponseMetadataSerializer(TestCase):
             "textResponseConfig": "none",
             "textResponseEditor": "text",
             "fileUploadResponseConfig": "none",
+            "retakeSupported": True,
             "rubricConfig": {
                 "feedbackPrompt": "How did this student do?",
                 "criteria": [
@@ -161,6 +163,7 @@ class TestOpenResponseMetadataSerializer(TestCase):
             "textResponseConfig": "none",
             "textResponseEditor": "text",
             "fileUploadResponseConfig": "none",
+            "retakeSupported": False,
             "rubricConfig": {
                 "feedbackPrompt": "How did this student do?",
                 "criteria": [
@@ -341,6 +344,7 @@ class TestInitializeSerializer(TestCase):
                 "<p>In your own words, explain a famous time travel paradox</p>"
             ],
             "teams_enabled": False,
+            "assessment_steps": ["staff-assessment"],
         }
 
         # Add rubric data here for succinctness

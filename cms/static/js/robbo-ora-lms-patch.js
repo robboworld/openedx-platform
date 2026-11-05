@@ -585,6 +585,43 @@
     }, 250);
   }
 
+  function startRetake(button) {
+    if (!window.confirm(button.getAttribute('data-confirm'))) {
+      return;
+    }
+    var errorBox = button.parentNode.querySelector('.robbo-ora-retake__error');
+    var fail = function (message) {
+      errorBox.textContent = message;
+      errorBox.hidden = false;
+      button.disabled = false;
+    };
+    button.disabled = true;
+    errorBox.hidden = true;
+    window.jQuery.ajax({
+      type: 'POST',
+      url: button.getAttribute('data-url'),
+      data: '{}',
+      contentType: 'application/json',
+      dataType: 'json',
+    }).done(function (result) {
+      if (result.success) {
+        window.location.reload();
+      } else {
+        fail(result.msg);
+      }
+    }).fail(function () {
+      fail(button.getAttribute('data-error'));
+    });
+  }
+
+  document.addEventListener('click', function (event) {
+    var button = event.target.closest && event.target.closest('.robbo-ora-retake__start');
+    if (button) {
+      event.preventDefault();
+      startRetake(button);
+    }
+  });
+
   window.RobboOraUploadPatch = {
     installed: true,
     refresh: refreshUploadUi,

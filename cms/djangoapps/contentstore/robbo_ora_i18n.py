@@ -83,6 +83,34 @@ ROBBO_ORA_RU_STRINGS = {
         "Учащийся получает максимальный балл по всем критериям сразу после отправки ответа. "
         "Шаги оценки пропускаются. Команда курса может изменить оценку позже."
     ),
+    "Retake after grading": "Пересдача после оценки",
+    (
+        "After every grade learners can send a new response, until the submission deadline. "
+        "The grade stays until the new response is graded; the new grade replaces it, even if it is lower. "
+        "Does not work with peer assessment and team assignments."
+    ): (
+        "После каждой оценки учащийся может отправить новый ответ, пока не прошёл срок сдачи. "
+        "Оценка сохраняется, пока новый ответ не проверят, и новая оценка заменит её, даже если будет ниже. "
+        "Не работает со взаимной оценкой и в командных заданиях."
+    ),
+    "You can retake this assignment": "Задание можно пересдать",
+    "The instructor allowed you to send a new response.": "Преподаватель разрешил отправить новый ответ.",
+    "Your grade stays until the new response is graded. The new grade replaces it, even if it is lower.": (
+        "Оценка сохранится, пока новый ответ не проверят. Новая оценка заменит её, даже если будет ниже."
+    ),
+    "Start a retake? Your response opens for editing, and the grade stays until the new response is graded.": (
+        "Начать пересдачу? Ответ откроется для правки, а оценка сохранится, пока новый ответ не проверят."
+    ),
+    "Could not start the retake. Reload the page and try again.": (
+        "Не получилось начать пересдачу. Обновите страницу и попробуйте ещё раз."
+    ),
+    "Retake": "Пересдать",
+    "Retaking the assignment": "Пересдача",
+    "Instructor's comment:": "Комментарий преподавателя:",
+    "This response cannot be retaken now.": "Этот ответ сейчас нельзя пересдать.",
+    "Your current grade is %(earned)s out of %(possible)s. It stays until the new response is graded.": (
+        "Текущая оценка — %(earned)s из %(possible)s. Она сохранится, пока новый ответ не проверят."
+    ),
     "Maximum file size by type": "Максимальный размер файла по типам",
     "File type": "Тип файла",
     "Size, MB": "Вес, МБ",
@@ -510,6 +538,64 @@ ROBBO_ORA_INLINE_CSS = """
 # Sizes are in px on purpose: the Studio iframe has html { font-size: 62.5% } (10px) and LMS 16px,
 # so rem renders differently in the two contexts; edx-ora2 itself uses px (14px labels/buttons).
 ROBBO_ORA_RESPONSE_STEP_CSS = """
+.openassessment .robbo-ora-retake {
+  margin: 0 0 16px;
+  padding: 16px;
+  border-radius: 4px;
+  background: #e8f8ef;
+  color: #383838;
+  font-family: 'ProximaNova', 'Proxima Nova', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.openassessment .robbo-ora-retake .robbo-ora-retake__title {
+  margin: 0 0 8px;
+  padding: 0;
+  color: #383838;
+  font-size: 14px;
+  font-weight: 700;
+}
+.openassessment .robbo-ora-retake .robbo-ora-retake__text {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+.openassessment .robbo-ora-retake .robbo-ora-retake__criteria {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.openassessment .robbo-ora-retake .robbo-ora-retake__criteria li {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+}
+.openassessment .robbo-ora-retake .robbo-ora-retake__error {
+  margin: 0 0 8px;
+  color: #b4231f;
+}
+.openassessment .robbo-ora-retake .robbo-ora-retake__start {
+  min-height: 40px;
+  margin: 8px 0 0;
+  padding: 0 24px;
+  border: 1px solid #00af41;
+  border-radius: 4px;
+  background: #00af41;
+  box-shadow: none;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-shadow: none;
+}
+.openassessment .robbo-ora-retake .robbo-ora-retake__start:hover,
+.openassessment .robbo-ora-retake .robbo-ora-retake__start:focus-visible {
+  border-color: #007a2e;
+  background: #007a2e;
+  color: #fff;
+}
+.openassessment .robbo-ora-retake .robbo-ora-retake__start:disabled {
+  border-color: #edf1ee;
+  background: #edf1ee;
+  color: #7d8b83;
+}
 .step--response {
   --robbo-ora-green: #00af41;
   --robbo-ora-green-dark: #007a2e;

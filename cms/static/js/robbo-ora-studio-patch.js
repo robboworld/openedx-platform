@@ -471,6 +471,10 @@
         if (autoScore) {
           payload.robbo_auto_score = autoScore.checked;
         }
+        var allowRetake = document.getElementById('robbo_ora_allow_retake_toggle');
+        if (allowRetake) {
+          payload.robbo_allow_retake = allowRetake.checked;
+        }
         options.data = JSON.stringify(payload);
       } catch (e) {
         // leave request unchanged
