@@ -362,6 +362,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
         * username:  (optional) A string representation of a user's username.
         * user_contains: (optional) A substring against which a case-insensitive substring filter will be performed
           on the USER_MODEL.username, or the USER_MODEL.email, or the PROGRAM_ENROLLMENT.external_user_key fields.
+          Robbo: also on UserProfile.name, every word of the substring in any order.
         * username_contains: (optional) A substring against which a case-insensitive substring filter will be performed
           on the USER_MODEL.username field.
         * cohort_id: (optional) The id of a cohort in this course.  If present, will return grades
@@ -558,10 +559,15 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
             annotations = {}
             if request.GET.get('user_contains'):
                 search_term = request.GET.get('user_contains')
+                # Robbo: «Иван Иванов» finds «Иванов Иван Петрович».
+                full_name_filter = Q()
+                for word in search_term.split():
+                    full_name_filter &= Q(user__profile__name__icontains=word)
                 q_objects.append(
                     Q(user__username__icontains=search_term) |
                     Q(programcourseenrollment__program_enrollment__external_user_key__icontains=search_term) |
-                    Q(user__email__icontains=search_term)
+                    Q(user__email__icontains=search_term) |
+                    full_name_filter
                 )
             if request.GET.get('username_contains'):
                 q_objects.append(Q(user__username__icontains=request.GET.get('username_contains')))

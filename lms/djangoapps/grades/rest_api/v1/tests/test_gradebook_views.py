@@ -9,6 +9,7 @@ from collections import OrderedDict, namedtuple
 from contextlib import contextmanager
 from datetime import datetime
 from unittest.mock import MagicMock, patch
+from common.djangoapps.student.models import UserProfile
 from common.djangoapps.student.models.course_enrollment import CourseEnrollment
 
 import ddt
@@ -942,6 +943,39 @@ class GradebookViewTest(GradebookViewTestBase):
                 assert expected_results == actual_data['results']
                 assert actual_data['total_users_count'] == num_enrollments
                 assert actual_data['filtered_users_count'] == 2
+
+    @ddt.data(
+        'Иванов',
+        'Иван Иванов',  # words in another order
+        'Петрович Иванов',
+    )
+    def test_gradebook_data_filter_full_name(self, search_term):
+        """Robbo: the search also matches the full name, word by word."""
+        UserProfile.objects.filter(user=self.other_student).update(name='Иванов Иван Петрович')
+        with patch('lms.djangoapps.grades.course_grade_factory.CourseGradeFactory.read') as mock_grade:
+            mock_grade.return_value = self.mock_course_grade(
+                self.other_student, passed=True, percent=0.85
+            )
+
+            with override_waffle_flag(self.waffle_flag, active=True):
+                self.login_staff()
+                resp = self.client.get(
+                    self.get_url(course_key=self.course.id, user_contains=search_term)
+                )
+
+                assert status.HTTP_200_OK == resp.status_code
+                assert [self.other_student.username] == [row['username'] for row in resp.data['results']]
+                assert resp.data['filtered_users_count'] == 1
+
+    def test_gradebook_data_filter_full_name_all_words_required(self):
+        """Robbo: a name that has only some of the words is not a match."""
+        UserProfile.objects.filter(user=self.other_student).update(name='Иванов Иван Петрович')
+        with override_waffle_flag(self.waffle_flag, active=True):
+            self.login_staff()
+            resp = self.client.get(
+                self.get_url(course_key=self.course.id, user_contains='Иванов Сергей')
+            )
+            self._assert_empty_response(resp)
 
     @ddt.data(
         'login_staff',
