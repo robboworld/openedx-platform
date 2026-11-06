@@ -5,8 +5,8 @@
 **header/footer Indigo** перекрашивались под LMS `robbo-theme` через
 `robbo-mfe-shell.css`, внедряемый при **`tutor images build mfe`**.
 
-**Authoring (Studio):** при сборке образа Authoring MFE ставит локальный brand-пакет
-`robbo-brand-openedx` как `@edx/brand` (`$primary: #00af41`). После правок brand SCSS
+**Authoring (Studio), обсуждения, ORA grading:** при сборке образа эти MFE ставят локальный
+brand-пакет `robbo-brand-openedx` как `@edx/brand` (`$primary: #00af41`). После правок brand SCSS
 пересоберите `mfe`.
 
 ## Документация
@@ -43,8 +43,8 @@ tutor local launch   # или: tutor dev restart mfe
 
 ## Что делает
 
-- **`mfe-dockerfile-post-npm-install-authoring`**: `COPY` +
-  `npm install @edx/brand@file:…/robbo-brand-openedx` (зелёные токены Paragon для Studio)
+- **`mfe-dockerfile-post-npm-install-{authoring,discussions,ora-grading}`**: `COPY` +
+  `npm install @edx/brand@file:…/robbo-brand-openedx` (зелёные токены Paragon)
 - **`mfe-lms-development-settings`**: `LOGO_*`, `FAVICON_URL` на
   `http://{{ LMS_HOST }}:8000/static/robbo-theme/...`
 - **`mfe-lms-production-settings`**: те же пути с `http(s)://{{ LMS_HOST }}`
