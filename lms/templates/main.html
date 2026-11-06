@@ -84,6 +84,13 @@ from common.djangoapps.pipeline_mako import render_require_js_path_overrides
     ## Provides a fallback for gettext functions in development environment
     <script type="text/javascript" src="${static.url('js/src/gettext_fallback.js')}"></script>
   % endif
+  ## Robbo: the edx-ora2 bundle checks window.ngetgext (typo) and replaces ngettext with an English stub on every page
+  ## with an ORA block, so plurals stay in English. Keep the catalog's function; the setter ignores the assignment.
+  <script type="text/javascript">
+    if (window.django && window.django.ngettext) {
+      Object.defineProperty(window, 'ngettext', {get: function() { return window.django.ngettext; }, set: function() {}});
+    }
+  </script>
   <script type="text/javascript" src="${static.url(ie11_fix_path)}"></script>
   <% favicon_url = branding_api.get_favicon_url() %>
   <link rel="icon" type="image/x-icon" href="${favicon_url}"/>
