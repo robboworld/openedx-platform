@@ -19,13 +19,13 @@ from django.utils.translation import gettext as _
   <p>
     ${_("Choose the graded subsection:")}
     <select name="url">
-      <option value="">Choose one</option>
+      <option value="">${_("Choose one")}</option>
       %for title, url in section_data['units_with_due_dates']:
       <option value="${url}">${title}</option>
       %endfor
     </select>
   </p>
-  <% format_string="MM/DD/YYYY HH:MM" %>
+  <% format_string=_("MM/DD/YYYY HH:MM") %>
   <p>
     ## Translators: "format_string" is the string MM/DD/YYYY HH:MM, as that is the format the system requires.
     ${_("Specify the extension due date and time (in UTC; please specify {format_string}).").format(format_string=format_string)}</p>
@@ -54,7 +54,7 @@ from django.utils.translation import gettext as _
   <p>
     ${_("Choose the graded subsection:")}
     <select name="url">
-      <option value="">Choose one</option>
+      <option value="">${_("Choose one")}</option>
       %for title, url in section_data['units_with_due_dates']:
       <option value="${url}">${title}</option>
       %endfor
@@ -97,7 +97,7 @@ from django.utils.translation import gettext as _
   <p>
     ${_("Choose the graded subsection:")}
     <select name="url">
-      <option value="">Choose one</option>
+      <option value="">${_("Choose one")}</option>
       %for title, url in section_data['units_with_due_dates']:
       <option value="${url}">${title}</option>
       %endfor

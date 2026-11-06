@@ -7,7 +7,7 @@
         createEmailContentTable, createEmailMessageViews,
         findAndAssert, pWrapper, plantInterval, plantTimeout,
         sentToFormatter, setupCopyEmailButton, subjectFormatter,
-        unknownIfNullFormatter, unknownP,
+        taskStateLabels, taskTypeLabels, unknownIfNullFormatter, unknownP,
         anyOf = [].indexOf || function(item) {
             var i, l;
             for (i = 0, l = this.length; i < l; i++) {
@@ -41,6 +41,45 @@
         return function(jqXHR, textStatus, errorThrown) { //  eslint-disable-line no-unused-vars
             return handler.apply(this, arguments);
         };
+    };
+
+    // Robbo: the backend sends raw task_type / task_state values; these are their labels.
+    taskTypeLabels = {
+        bulk_course_email: gettext('Course email'),
+        cohort_students: gettext('Assign learners to groups'),
+        course_survey_report: gettext('Survey report'),
+        delete_problem_state: gettext('Delete problem state'),
+        detailed_enrollment_report: gettext('Detailed enrollment report'),
+        exec_summary_report: gettext('Executive summary report'),
+        export_ora2_data: gettext('Open response data'),
+        export_ora2_submission_files: gettext('Open response submissions and attachments'),
+        export_ora2_summary: gettext('Open response summary'),
+        generate_anonymous_ids_for_course: gettext('Anonymized learner IDs'),
+        generate_certificates_all_student: gettext('Certificates for all learners'),
+        generate_certificates_certain_student: gettext('Certificates for selected learners'),
+        generate_certificates_student_set: gettext('Certificates for a group of learners'),
+        grade_course: gettext('Grade report'),
+        grade_problems: gettext('Problem grade report'),
+        may_enroll_info_csv: gettext('Learners who can enroll'),
+        override_problem_score: gettext('Score override'),
+        problem_responses_csv: gettext('Problem responses'),
+        proctored_exam_results_report: gettext('Proctored exam results'),
+        profile_info_csv: gettext('Learner profile information'),
+        robbo_extended_profile_info_csv: gettext('Extended learner profile information'),
+        regenerate_certificates_all_student: gettext('Reissue certificates'),
+        rescore_problem: gettext('Rescore problem'),
+        rescore_problem_if_higher: gettext('Rescore problem if the score improves'),
+        reset_problem_attempts: gettext('Reset problem attempts')
+    };
+
+    taskStateLabels = {
+        FAILURE: gettext('Failed'),
+        PENDING: gettext('Pending'),
+        PROGRESS: gettext('In progress'),
+        QUEUING: gettext('Queued'),
+        REVOKED: gettext('Cancelled'),
+        SCHEDULED: gettext('Scheduled'),
+        SUCCESS: gettext('Done')
     };
 
     this.createTaskListTable = function($tableTasks, tasksData) {
@@ -137,7 +176,14 @@
                 minWidth: 120
             }
         ];
-        tableData = tasksData;
+        // Robbo: the backend sends raw task_type / task_state values; show them translated.
+        tableData = _.map(tasksData, function(task) {
+            return _.extend({}, task, {
+                task_type: taskTypeLabels[task.task_type] || task.task_type,
+                task_state: taskStateLabels[task.task_state] || task.task_state,
+                duration_sec: task.duration_sec === 'unknown' ? gettext('unknown') : task.duration_sec
+            });
+        });
         $tablePlaceholder = $('<div/>', {
             class: 'slickgrid'
         });
@@ -507,7 +553,8 @@
                         return edx.HtmlUtils.joinHtml(edx.HtmlUtils.HTML(
                             '<a rel="noopener" target="_blank" href="'), dataContext.url,
                         edx.HtmlUtils.HTML('">'), dataContext.name,
-                        edx.HtmlUtils.HTML('<span class="sr-only">Opens in a new tab</span></a>'));
+                        edx.HtmlUtils.HTML('<span class="sr-only">'), gettext('Opens in a new tab'),
+                        edx.HtmlUtils.HTML('</span></a>'));
                     }
                 }
             ];

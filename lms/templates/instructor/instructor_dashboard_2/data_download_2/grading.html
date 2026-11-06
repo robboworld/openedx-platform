@@ -9,17 +9,17 @@ from openedx.core.djangolib.markup import HTML, Text
 <section id="grading" class="idash-section tab-data" aria-labelledby="header-grading">
     <h6 class="mb-15 font-size-100" id="header-grading">
         <strong>${_("Note")}: </strong>
-        Please select learner status and then click "Download Course Grade Report" button.
+        ${_("Please select learner status and then click the Download Course Grade Report button.")}
     </h6>
-    <p>Learner status</p>
+    <p>${_("Learner status")}</p>
     <select class="learner-status selector">
-        <option value="true">Verified Learners Only</option>
-        <option value="false">All Learners</option>
+        <option value="true">${_("Verified Learners Only")}</option>
+        <option value="false">${_("All Learners")}</option>
     </select>
 
     <input data-endpoint="${ section_data['calculate_grades_csv_url'] }"
        type="button"
-       value="Download Course Grade Report"
+       value="${_("Download Course Grade Report")}"
        class="mb-20 grade-report-download">
     <div>
         <p>${_("Click to generate a CSV grade report for all currently enrolled students.")}</p>

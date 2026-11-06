@@ -8,24 +8,23 @@ from openedx.core.djangolib.markup import HTML, Text
 <section id="certificate" class="idash-section tab-data" aria-labelledby="header-cert">
         <h6 class="mb-15 font-size-100" id="header-cert">
             <strong>${_("Note")}: </strong>
-            Please certificate report type option and then click Download Report button.
+            ${_("Please select the certificate report type and then click the Download Report button.")}
         </h6>
 
         <select class="report-type selector">
             <option value="viewCertificates" data-csv="false"
                     data-datatable="true"
-                    data-endpoint="${ section_data['get_issued_certificates_url'] }">View certificates
+                    data-endpoint="${ section_data['get_issued_certificates_url'] }">${_("View certificates")}
             </option>
             <option value="downloadCertificates"
                     data-csv="true"
                     data-directdownload="true"
-                    data-endpoint="${ section_data['get_issued_certificates_url'] }">Download csv of
-                certificates
+                    data-endpoint="${ section_data['get_issued_certificates_url'] }">${_("Download CSV of certificates")}
             </option>
         </select>
 
             <input type="button"
-                   value="Download Report"
+                   value="${_("Download Report")}"
                    class="mb-20 download-report">
         <div>
             <p>${_("Click to list certificates that are issued for this course:")}</p>

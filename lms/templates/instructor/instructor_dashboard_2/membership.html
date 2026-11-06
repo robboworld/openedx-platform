@@ -167,7 +167,8 @@ from openedx.core.djangolib.markup import HTML, Text
   %if section_data['access']['instructor']:
     <div class="auth-list-container"
       data-rolename="staff"
-      data-display-name="${_("Staff")}"
+      ## Robbo: pgettext because bare "Staff" resolves to django.contrib.auth's catalog, which the theme cannot override.
+      data-display-name="${pgettext('course team role', 'Staff')}"
       data-info-text="
         ${_("Course team members with the Staff role help you manage your course. "
         "Staff can enroll and unenroll learners, as well as modify their grades and "

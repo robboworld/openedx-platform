@@ -1149,7 +1149,7 @@ msgstr "Определяет тип выполняемой задачи, нап�
 
 #: lms/djangoapps/instructor/views/api.py
 msgid "The celery ID for the task."
-msgstr "Идентификатор сельдерея для задачи."
+msgstr "Идентификатор задачи в Celery."
 
 #: lms/djangoapps/instructor/views/api.py
 msgid ""
@@ -1163,7 +1163,7 @@ msgstr ""
 
 #: lms/djangoapps/instructor/views/api.py
 msgid "The last knows state of the celery task."
-msgstr "Последний знает состояние задачи сельдерея."
+msgstr "Последнее известное состояние задачи в Celery."
 
 #: lms/djangoapps/instructor/views/api.py
 msgid "Task duration information, if known"
@@ -1187,27 +1187,17 @@ msgstr ""
 
 #: lms/djangoapps/instructor/views/api.py
 #, python-brace-format
-msgid ""
-"Student {user} is already on the certificate invalidation list and cannot be"
-" added to the certificate exception list."
-msgstr ""
-"Студент {user} уже находится в списке недействительных сертификатов и не "
-"может быть добавлен в список исключений сертификатов."
+msgid "Student {user} is already on the certificate invalidation list and cannot be added to the certificate exception list."
+msgstr "Слушатель {user} уже в списке аннулированных сертификатов, поэтому его нельзя добавить в список исключений."
 
 #: lms/djangoapps/instructor/views/api.py
 msgid "Certificate generation started for students on the allowlist."
-msgstr "Началась генерация сертификатов для учащихся из белого списка."
+msgstr "Начат выпуск сертификатов для слушателей из списка исключений."
 
 #: lms/djangoapps/instructor/views/api.py
 #, python-brace-format
-msgid ""
-"The student {student} appears on the Certificate Exception list in course "
-"{course}. Please remove them from the Certificate Exception list before "
-"attempting to invalidate their certificate."
-msgstr ""
-"Студент {student} появляется в списке исключений из сертификата курса "
-"{course}. Пожалуйста, удалите их из списка исключений сертификатов, прежде "
-"чем пытаться аннулировать их сертификат."
+msgid "The student {student} appears on the Certificate Exception list in course {course}. Please remove them from the Certificate Exception list before attempting to invalidate their certificate."
+msgstr "Слушатель {student} есть в списке исключений курса {course}. Уберите его из списка, прежде чем аннулировать сертификат."
 
 #: lms/djangoapps/instructor/views/instructor_task_helpers.py
 #, python-brace-format
@@ -4224,12 +4214,8 @@ msgid "Paid Bootcamp"
 msgstr "Платный учебный курс"
 
 #: lms/templates/instructor/instructor_dashboard_2/data_download.html
-msgid ""
-"The CSV of anonymized student IDs download has been relocated to the Reports"
-" section below."
-msgstr ""
-"CSV-файл с загрузкой анонимных студенческих билетов был перенесен в раздел "
-"«Отчеты» ниже."
+msgid "The CSV of anonymized student IDs download has been relocated to the Reports section below."
+msgstr "Скачивание анонимных идентификаторов слушателей в формате CSV перенесено в раздел «Отчёты» ниже."
 
 #: lms/templates/instructor/instructor_dashboard_2/data_download.html
 msgid ""
@@ -4326,12 +4312,8 @@ msgstr ""
 "чтобы назначить задание для конкретного учащегося, сдаваемое раньше."
 
 #: lms/templates/instructor/instructor_dashboard_2/extensions.html
-msgid ""
-"Here you can see what extensions have been granted on particular subsection "
-"or for a particular student."
-msgstr ""
-"Здесь вы можете увидеть, какие продления были предоставлены по конкретному "
-"подразделу или конкретному студенту."
+msgid "Here you can see what extensions have been granted on particular subsection or for a particular student."
+msgstr "Здесь видно, какие продления выданы по конкретному подразделу или конкретному слушателю."
 
 #: lms/templates/instructor/instructor_dashboard_2/extensions.html
 msgid ""
@@ -4498,7 +4480,7 @@ msgstr ""
 
 #: lms/templates/instructor/instructor_dashboard_2/send_email.html
 msgid "To use the email tool, visit the"
-msgstr "Чтобы использовать инструмент электронной почты, посетите"
+msgstr "Чтобы отправлять письма, откройте"
 
 #: lms/templates/instructor/instructor_dashboard_2/send_email.html
 msgid ""
@@ -7137,3 +7119,268 @@ msgid ""
 "{button_start}Add components{button_end} from a content library to this "
 "problem bank."
 msgstr "{button_start}Добавить{button_end} задачи из библиотеки в этот банк."
+
+msgid "User {user_id} is not enrolled in the course {course_key}"
+msgstr "Пользователь {user_id} не зачислен на курс {course_key}"
+
+msgid "The requesting user lacks access to the course."
+msgstr "У вас нет доступа к этому курсу."
+
+msgid "Birth Year"
+msgstr "Год рождения"
+
+msgid "Last Login"
+msgstr "Последний вход"
+
+msgid "Date Joined"
+msgstr "Дата регистрации"
+
+msgid "External User Key"
+msgstr "Внешний идентификатор пользователя"
+
+msgid "An error occurred while attempting to reset for all students."
+msgstr "Не удалось выполнить сброс для всех слушателей."
+
+msgid "The date and time when the task was created."
+msgstr "Дата и время создания задачи."
+
+msgid "The username of the user who initiated this task."
+msgstr "Имя пользователя, запустившего задачу."
+
+msgid "User-friendly task status information, if available."
+msgstr "Понятное описание состояния задачи, если оно есть."
+
+msgid "List of instructor tasks."
+msgstr "Список задач панели преподавателя."
+
+msgid "The requested course does not exist."
+msgstr "Запрошенный курс не существует."
+
+msgid "URL from which report can be downloaded."
+msgstr "Адрес для скачивания отчёта."
+
+msgid "Name of report."
+msgstr "Название отчёта."
+
+msgid "ID for the course whose reports need to be listed."
+msgstr "Идентификатор курса, отчёты которого нужно показать."
+
+msgid "ORA summary"
+msgstr "Сводный отчёт по заданиям с ответами в свободной форме"
+
+msgid "ORA data"
+msgstr "Отчёт по заданиям с ответами в свободной форме"
+
+msgid "Attachments archive is being created."
+msgstr "Создаётся архив с вложениями."
+
+msgid "Student {user} is not enrolled in this course. Please check your spelling and retry."
+msgstr "Слушатель {user} не зачислен на этот курс. Проверьте написание и повторите попытку."
+
+msgid "Error occurred removing the allowlist entry for student {student}. Please refresh the page and try again"
+msgstr "Не удалось убрать слушателя {student} из списка исключений. Обновите страницу и повторите попытку."
+
+msgid "Role name"
+msgstr "Название роли"
+
+msgid "Invalid role name."
+msgstr "Недопустимое название роли."
+
+msgid "The URL name of the problem to reset."
+msgstr "Адресное имя задачи для сброса."
+
+msgid "Problem URL name cannot be blank."
+msgstr "Укажите адресное имя задачи."
+
+msgid "Whether to reset the problem for all students."
+msgstr "Сбросить задачу для всех слушателей или нет."
+
+msgid "unique student identifier."
+msgstr "Уникальный идентификатор слушателя."
+
+msgid "Could not find student enrollment in the course."
+msgstr "Запись слушателя на этот курс не найдена."
+
+msgid "Loading"
+msgstr "Загрузка"
+
+msgid "Learners who can enroll"
+msgstr "Слушатели, которым доступна запись"
+
+msgid "Proctored exam results"
+msgstr "Результаты наблюдаемых испытаний"
+
+msgid "Opens in a new tab"
+msgstr "Открывается в новой вкладке"
+
+msgid "Executive Education"
+msgstr "Программа для руководителей"
+
+msgid "Paid Executive Education"
+msgstr "Платная программа для руководителей"
+
+msgid "Master's"
+msgstr "Магистратура"
+
+msgid "Generate ORA Summary Report"
+msgstr "Создать сводный отчёт по заданиям с ответами в свободной форме"
+
+msgid "Problem Report"
+msgstr "Отчёт по задачам"
+
+msgid "Note"
+msgstr "Примечание"
+
+msgid "Please select the certificate report type and then click the Download Report button."
+msgstr "Выберите тип отчёта и нажмите кнопку «Скачать отчёт»."
+
+msgid "View certificates"
+msgstr "Показать сертификаты"
+
+msgid "Download CSV of certificates"
+msgstr "Скачать CSV-файл с сертификатами"
+
+msgid "Download Report"
+msgstr "Скачать отчёт"
+
+msgid "Please select learner status and then click the Download Course Grade Report button."
+msgstr "Выберите статус слушателей и нажмите кнопку «Скачать оценочный лист»."
+
+msgid "Learner status"
+msgstr "Статус слушателей"
+
+msgid "Verified Learners Only"
+msgstr "Только подтверждённые слушатели"
+
+msgid "Download Course Grade Report"
+msgstr "Скачать оценочный лист"
+
+msgid "Please select the report type and then click the Download Report button."
+msgstr "Выберите тип отчёта и нажмите кнопку «Скачать отчёт»."
+
+msgid "Anonymized Student IDs"
+msgstr "Анонимные идентификаторы слушателей"
+
+msgid "Profile Information"
+msgstr "Данные профилей"
+
+msgid "List enrolled students profile information"
+msgstr "Показать профили зачисленных слушателей"
+
+msgid "Survey Result report"
+msgstr "Отчёт о результатах опроса"
+
+msgid "ORA Data report"
+msgstr "Отчёт по заданиям с ответами в свободной форме"
+
+msgid "Problem Grade report"
+msgstr "Оценочный лист с подробными оценками задач"
+
+msgid "Choose the graded subsection:"
+msgstr "Выберите оцениваемый подраздел:"
+
+msgid "Choose one"
+msgstr "Выберите подраздел"
+
+msgid "MM/DD/YYYY HH:MM"
+msgstr "ММ/ДД/ГГГГ ЧЧ:ММ"
+
+msgid "Reason for extension"
+msgstr "Причина продления"
+
+msgid "Reason for reset"
+msgstr "Причина сброса"
+
+msgid "If this option is {em_start}checked{em_end}, users who have not enrolled in your course will be automatically enrolled."
+msgstr "Если этот вариант {em_start}отмечен{em_end}, пользователи, ещё не зачисленные на курс, будут зачислены автоматически."
+
+msgid "Course team members with the Staff role help you manage your course. Staff can enroll and unenroll learners, as well as modify their grades and access all course data. Staff also have access to your course in Studio and Insights. Any users not yet enrolled in the course will be automatically enrolled when added as Staff."
+msgstr "Сотрудники помогают вести курс: зачисляют и отчисляют слушателей, меняют их оценки и видят все данные курса. Им также доступен курс в редакторе курсов. Пользователи, ещё не зачисленные на курс, будут зачислены автоматически при добавлении в эту роль."
+
+msgid "Limited Staff"
+msgstr "Ограниченный доступ к материалам"
+
+msgid "Course team members with the Limited Staff role help you manage your course. Limited Staff can enroll and unenroll learners, as well as modify their grades and access all course data. Limited Staff don't have access to your course in Studio. Any users not yet enrolled in the course will be automatically enrolled when added as Limited Staff."
+msgstr "Члены команды с ограниченным доступом помогают вести курс: зачисляют и отчисляют слушателей, меняют их оценки и видят все данные курса. В редакторе курсов этот курс им недоступен. Пользователи, ещё не зачисленные на курс, будут зачислены автоматически при добавлении в эту роль."
+
+msgid "Add Limited Staff"
+msgstr "Добавить с ограниченным доступом"
+
+msgid "Course team members with the Admin role help you manage your course. They can do all of the tasks that Staff can do, and can also add and remove the Staff and Admin roles, discussion moderation roles, and the beta tester role to manage course team membership. Any users not yet enrolled in the course will be automatically enrolled when added as Admin."
+msgstr "Администраторы помогают вести курс: могут всё то же, что и сотрудники, а ещё назначают и снимают роли сотрудника, администратора, модераторов обсуждений и бета-тестера. Пользователи, ещё не зачисленные на курс, будут зачислены автоматически при добавлении в эту роль."
+
+msgid "Beta Testers can see course content before other learners. They can make sure that the content works, but have no additional privileges. Any users not yet enrolled in the course will be automatically enrolled when added as Beta Tester."
+msgstr "Бета-тестеры видят материалы курса раньше остальных слушателей и могут проверить, что всё работает. Других прав у них нет. Пользователи, ещё не зачисленные на курс, будут зачислены автоматически при добавлении в эту роль."
+
+msgid "Discussion Admins can edit or delete any post, clear misuse flags, close and re-open threads, endorse responses, and see posts from all groups. Their posts are marked as 'staff'. They can also add and remove the discussion moderation roles to manage course team membership. Any users not yet enrolled in the course will be automatically enrolled when added as Discussion Admin"
+msgstr "Администраторы форума могут редактировать и удалять любые сообщения, снимать отметки о нарушениях, закрывать и снова открывать темы, отмечать лучшие ответы и видеть сообщения всех групп. Их сообщения помечаются как сообщения сотрудника. Ещё они назначают и снимают роли модераторов обсуждений. Пользователи, ещё не зачисленные на курс, будут зачислены автоматически при добавлении в эту роль."
+
+msgid "Course Data Researcher"
+msgstr "Исследователь данных курса"
+
+msgid "Add Course Data Researcher"
+msgstr "Добавить исследователя данных курса"
+
+msgid "Course Data Researchers can access the data download tab. Any users not yet enrolled in the course will be automatically enrolled when added as Course Data Researcher."
+msgstr "Исследователям данных курса доступна вкладка «Скачивание данных». Пользователи, ещё не зачисленные на курс, будут зачислены автоматически при добавлении в эту роль."
+
+msgid "Discussion Moderators can edit or delete any post, clear misuse flags, close and re-open threads, endorse responses, and see posts from all groups. Their posts are marked as 'staff'. They cannot manage course team membership by adding or removing discussion moderation roles. Any users not yet enrolled in the course will be automatically enrolled when added as Discussion Moderator"
+msgstr "Модераторы форума могут редактировать и удалять любые сообщения, снимать отметки о нарушениях, закрывать и снова открывать темы, отмечать лучшие ответы и видеть сообщения всех групп. Их сообщения помечаются как сообщения сотрудника. Назначать и снимать роли модераторов они не могут. Пользователи, ещё не зачисленные на курс, будут зачислены автоматически при добавлении в эту роль."
+
+msgid "Group Community TAs are members of the community who help course teams moderate discussions. Group Community TAs see only posts by learners in their assigned group. They can edit or delete posts, clear flags, close and re-open threads, and endorse responses, but only for posts by learners in their group. Their posts are marked as 'Community TA'. Any users not yet enrolled in the course will be automatically enrolled when added as Group Community TA"
+msgstr "Старосты группы — участники сообщества, которые помогают команде курса модерировать обсуждения. Они видят только сообщения слушателей своей группы и только с ними работают: редактируют и удаляют, снимают отметки о нарушениях, закрывают и снова открывают темы, отмечают лучшие ответы. Их сообщения помечаются как сообщения старосты. Пользователи, ещё не зачисленные на курс, будут зачислены автоматически при добавлении в эту роль."
+
+msgid "Community TAs are members of the community who help course teams moderate discussions. They can see posts by learners in their assigned cohort or enrollment track, and can edit or delete posts, clear flags, close or re-open threads, and endorse responses. Their posts are marked as 'Community TA'. Any users not yet enrolled in the course will be automatically enrolled when added as Community TA"
+msgstr "Старосты сообщества — участники сообщества, которые помогают команде курса модерировать обсуждения. Они видят сообщения слушателей своей группы или формы обучения, могут редактировать и удалять сообщения, снимать отметки о нарушениях, закрывать и снова открывать темы и отмечать лучшие ответы. Их сообщения помечаются как сообщения старосты. Пользователи, ещё не зачисленные на курс, будут зачислены автоматически при добавлении в эту роль."
+
+msgid "new experience"
+msgstr "новый раздел"
+
+msgid "Student Onboarding Status"
+msgstr "Статус подготовки слушателей к испытанию"
+
+msgid "Review Dashboard"
+msgstr "Панель проверки"
+
+msgid "View a specific learner's enrollment status"
+msgstr "Статус записи конкретного слушателя"
+
+msgid "Learner's {platform_name} email address or username *"
+msgstr "Электронная почта или имя пользователя слушателя в {platform_name} *"
+
+msgid "View Enrollment Status"
+msgstr "Показать статус записи"
+
+msgid "Score Override"
+msgstr "Замена балла"
+
+msgid "For the specified problem, override the learner's score."
+msgstr "Заменить балл слушателя за указанную задачу."
+
+msgid "Override Learner's Score"
+msgstr "Заменить балл слушателя"
+
+msgid "Learner's {platform_name} email address or username:"
+msgstr "Электронная почта или имя пользователя слушателя в {platform_name}:"
+
+msgid "Enter the learner email address or username"
+msgstr "Введите электронную почту или имя пользователя слушателя"
+
+msgid "{platform_name} Content Quality Assessment"
+msgstr "Оценка качества материалов {platform_name}"
+
+msgid "View Course in Studio"
+msgstr "Открыть курс в редакторе курсов"
+
+msgid "Add Discussion Admin"
+msgstr "Добавить администратора обсуждений"
+
+msgid "Click to display the grading configuration for the course. The grading configuration is the breakdown of graded subsections of the course (such as exams and problem sets), and can be changed on the 'Grading' page (under 'Settings') in Studio."
+msgstr "Нажмите на кнопку ниже, чтобы показать настройки оценивания этого курса. Настройки оценивания задаются оцениваемыми подразделами курса (например, вступительными испытаниями и промежуточными заданиями) и могут быть изменены на странице «Оценивание» (в меню «Настройки») в Studio."
+
+msgid "The answer distribution report listed below is generated periodically by an automated background process. The report is cumulative, so answers submitted after the process starts are included in a subsequent report. The report is generated several times per day."
+msgstr "Отчёт по распределению ответов, показанный ниже, генерируется периодически автоматическим фоновым процессом. Отчёт кумулятивный, так что ответы, опубликованные после старта процесса, включаются в последующий отчёт. Отчёты создаются несколько раз в день."
+
+msgctxt "course team role"
+msgid "Staff"
+msgstr "Сотрудник"
