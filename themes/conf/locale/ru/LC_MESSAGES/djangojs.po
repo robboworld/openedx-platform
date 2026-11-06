@@ -236,7 +236,7 @@ msgstr ""
 
 #: lms/static/js/certificates/views/certificate_allowlist.js
 msgid "Student Removed from certificate allowlist successfully."
-msgstr "Студент успешно удален из белого списка сертификатов."
+msgstr "Слушатель удалён из списка исключений."
 
 #: lms/static/js/certificates/views/certificate_allowlist_editor.js
 msgid ""
@@ -425,42 +425,30 @@ msgstr ""
 #: lms/static/js/groups/views/cohort_editor.js
 msgid "{numMoved} learner was moved from {prevCohort}"
 msgid_plural "{numMoved} learners were moved from {prevCohort}"
-msgstr[0] "Учащийся {numMoved} был перенесен из {prevCohort}."
-msgstr[1] "Учащиеся {numMoved} были переведены из {prevCohort}."
-msgstr[2] "Учащиеся {numMoved} были переведены из {prevCohort}."
-msgstr[3] "Учащиеся {numMoved} были переведены из {prevCohort}."
+msgstr[0] "{numMoved} слушатель переведён из группы «{prevCohort}»"
+msgstr[1] "{numMoved} слушателя переведены из группы «{prevCohort}»"
+msgstr[2] "{numMoved} слушателей переведено из группы «{prevCohort}»"
+msgstr[3] "{numMoved} слушателей переведено из группы «{prevCohort}»"
 
 #: lms/static/js/groups/views/cohort_editor.js
 msgid "{numPresent} learner was already in the cohort"
 msgid_plural "{numPresent} learners were already in the cohort"
-msgstr[0] "Учащийся {numPresent} уже был в когорте"
-msgstr[1] "{numPresent} учащихся уже были в когорте"
-msgstr[2] "{numPresent} учащихся уже были в когорте"
-msgstr[3] "{numPresent} учащихся уже были в когорте"
+msgstr[0] "{numPresent} слушатель уже был в этой группе"
+msgstr[1] "{numPresent} слушателя уже были в этой группе"
+msgstr[2] "{numPresent} слушателей уже были в этой группе"
+msgstr[3] "{numPresent} слушателей уже были в этой группе"
 
 #: lms/static/js/groups/views/cohort_editor.js
 msgid "{email}"
 msgstr "{email}"
 
 #: lms/static/js/groups/views/cohort_editor.js
-msgid ""
-"{numPreassigned} learner was pre-assigned for this cohort. This learner will"
-" automatically be added to the cohort when they enroll in the course."
-msgid_plural ""
-"{numPreassigned} learners were pre-assigned for this cohort. These learners "
-"will automatically be added to the cohort when they enroll in the course."
-msgstr[0] ""
-"В эту группу заранее был назначен учащийся {numPreassigned}. Этот учащийся "
-"будет автоматически добавлен в группу при зачислении на курс."
-msgstr[1] ""
-"В эту группу заранее были включены {numPreassigned} учащихся. Эти учащиеся "
-"будут автоматически добавлены в группу при зачислении на курс."
-msgstr[2] ""
-"В эту группу заранее были включены {numPreassigned} учащихся. Эти учащиеся "
-"будут автоматически добавлены в группу при зачислении на курс."
-msgstr[3] ""
-"В эту группу заранее были включены {numPreassigned} учащихся. Эти учащиеся "
-"будут автоматически добавлены в группу при зачислении на курс."
+msgid "{numPreassigned} learner was pre-assigned for this cohort. This learner will automatically be added to the cohort when they enroll in the course."
+msgid_plural "{numPreassigned} learners were pre-assigned for this cohort. These learners will automatically be added to the cohort when they enroll in the course."
+msgstr[0] "{numPreassigned} слушатель заранее назначен в эту группу. Он будет добавлен в неё автоматически при зачислении на курс."
+msgstr[1] "{numPreassigned} слушателя заранее назначены в эту группу. Они будут добавлены в неё автоматически при зачислении на курс."
+msgstr[2] "{numPreassigned} слушателей заранее назначено в эту группу. Они будут добавлены в неё автоматически при зачислении на курс."
+msgstr[3] "{numPreassigned} слушателей заранее назначено в эту группу. Они будут добавлены в неё автоматически при зачислении на курс."
 
 #: lms/static/js/groups/views/cohort_editor.js
 msgid "Cohort assignment not allowed: {email_or_username}"
@@ -3008,3 +2996,223 @@ msgstr "Группу по умолчанию удалить нельзя."
 
 msgid "This is the default group: everyone not placed in another group comes here, so it cannot be deleted."
 msgstr "Это группа по умолчанию: сюда попадают все, кого не распределили по другим группам, поэтому удалить её нельзя."
+
+msgid "Select a section or problem"
+msgstr "Выберите раздел или задачу"
+
+msgid "Your report is being generated..."
+msgstr "Отчёт формируется…"
+
+msgid "Your report has been successfully generated."
+msgstr "Отчёт готов."
+
+msgid "View Report"
+msgstr "Открыть отчёт"
+
+msgid "There was an error generating the report link."
+msgstr "Не удалось получить ссылку на отчёт."
+
+msgid "There was an error generating your report."
+msgstr "Не удалось сформировать отчёт."
+
+msgid "Could not find Certificate Exception in the allowlist. Please refresh the page and try again"
+msgstr "Исключение не найдено в списке. Обновите страницу и повторите попытку."
+
+msgid "<%- user %> already in exception list."
+msgstr "<%- user %> уже в списке исключений."
+
+msgid "Error generating anonymous IDs. Please try again."
+msgstr "Не удалось сформировать анонимные идентификаторы. Попробуйте ещё раз."
+
+msgid "Loading"
+msgstr "Загрузка"
+
+msgid "Error changing due date"
+msgstr "Не удалось изменить срок сдачи"
+
+msgid "Error reseting due date"
+msgstr "Не удалось сбросить срок сдачи"
+
+msgid "Error getting due dates"
+msgstr "Не удалось получить сроки сдачи"
+
+msgid "This field must not be blank"
+msgstr "Заполните это поле"
+
+msgid "There was an error enrolling:"
+msgstr "Не удалось зачислить:"
+
+msgid "There was an error unenrolling:"
+msgstr "Не удалось отчислить:"
+
+msgid "There was an error processing:"
+msgstr "Не удалось обработать:"
+
+msgid "Email was sent to the following users. They will be allowed to enroll once they register:"
+msgstr "Письмо отправлено этим пользователям. Они смогут записаться на курс после регистрации:"
+
+msgid "Email was sent to the following users. They will be enrolled once they register:"
+msgstr "Письмо отправлено этим пользователям. Они будут зачислены на курс после регистрации:"
+
+msgid "First Name"
+msgstr "Имя"
+
+msgid "Revoke"
+msgstr "Отозвать"
+
+msgid "Revoke Access"
+msgstr "Отозвать доступ"
+
+msgid "Error fetching list for '<%- rolename %>'"
+msgstr "Не удалось получить список для роли «<%- rolename %>»"
+
+msgid "Error getting enrollment status for '<%- student_id %>'. Make sure that the student identifier is spelled correctly."
+msgstr "Не удалось узнать статус записи для «<%- student_id %>». Проверьте, правильно ли указан слушатель."
+
+msgid "Retrieving enrollment status..."
+msgstr "Получаем статус записи…"
+
+msgid "Error resetting problem attempts for problem '<%- problem_id %>' and student '<%- student_id %>'. Make sure that the problem and student identifiers are complete and correct."
+msgstr "Не удалось сбросить попытки по задаче «<%- problem_id %>» для слушателя «<%- student_id %>». Проверьте, что задача и слушатель указаны полностью и без ошибок."
+
+msgid "Please enter a score."
+msgstr "Введите балл."
+
+msgid "Started task to override the score for problem '<%- problem_id %>' and student '<%- student_id %>'. Click the 'Show Task Status' button to see the status of the task."
+msgstr "Запущена замена балла по задаче «<%- problem_id %>» для слушателя «<%- student_id %>». Чтобы увидеть ход выполнения, нажмите «Показать состояние процессов»."
+
+msgid "Error starting a task to override score for problem '<%- problem_id %>' for student '<%- student_id %>'. Make sure that the the score and the problem and student identifiers are complete and correct."
+msgstr "Не удалось запустить замену балла по задаче «<%- problem_id %>» для слушателя «<%- student_id %>». Проверьте, что балл, задача и слушатель указаны полностью и без ошибок."
+
+msgid "Course email"
+msgstr "Рассылка по курсу"
+
+msgid "Assign learners to groups"
+msgstr "Распределение слушателей по группам"
+
+msgid "Survey report"
+msgstr "Отчёт по опросу"
+
+msgid "Delete problem state"
+msgstr "Удаление состояния задачи"
+
+msgid "Detailed enrollment report"
+msgstr "Подробный отчёт о зачислении"
+
+msgid "Executive summary report"
+msgstr "Сводный отчёт"
+
+msgid "Open response data"
+msgstr "Данные ответов в свободной форме"
+
+msgid "Open response submissions and attachments"
+msgstr "Ответы в свободной форме и вложения"
+
+msgid "Open response summary"
+msgstr "Сводка ответов в свободной форме"
+
+msgid "Anonymized learner IDs"
+msgstr "Анонимные идентификаторы слушателей"
+
+msgid "Certificates for all learners"
+msgstr "Сертификаты для всех слушателей"
+
+msgid "Certificates for selected learners"
+msgstr "Сертификаты для выбранных слушателей"
+
+msgid "Certificates for a group of learners"
+msgstr "Сертификаты для группы слушателей"
+
+msgid "Grade report"
+msgstr "Оценочный лист"
+
+msgid "Problem grade report"
+msgstr "Оценочный лист с подробными оценками задач"
+
+msgid "Learners who can enroll"
+msgstr "Слушатели, которым доступна запись"
+
+msgid "Score override"
+msgstr "Замена балла"
+
+msgid "Problem responses"
+msgstr "Ответы на задачу"
+
+msgid "Proctored exam results"
+msgstr "Результаты наблюдаемых испытаний"
+
+msgid "Learner profile information"
+msgstr "Данные профилей слушателей"
+
+msgid "Extended learner profile information"
+msgstr "Расширенные данные профилей слушателей"
+
+msgid "Reissue certificates"
+msgstr "Повторный выпуск сертификатов"
+
+msgid "Rescore problem"
+msgstr "Пересчёт баллов за задачу"
+
+msgid "Rescore problem if the score improves"
+msgstr "Пересчёт баллов за задачу, если балл вырастет"
+
+msgid "Reset problem attempts"
+msgstr "Сброс попыток"
+
+msgid "Failed"
+msgstr "Ошибка"
+
+msgid "Pending"
+msgstr "Ожидает"
+
+msgid "In progress"
+msgstr "Выполняется"
+
+msgid "Queued"
+msgstr "В очереди"
+
+msgid "Cancelled"
+msgstr "Отменено"
+
+msgid "Scheduled"
+msgstr "Запланировано"
+
+msgid "Done"
+msgstr "Готово"
+
+msgid "unknown"
+msgstr "неизвестно"
+
+msgid "Opens in a new tab"
+msgstr "Открывается в новой вкладке"
+
+msgid "Successfully overrode problem score for {user}"
+msgstr "Балл за задачу для {user} изменён"
+
+msgid "Could not override problem score for {user}."
+msgstr "Не удалось изменить балл за задачу для {user}."
+
+msgid "More..."
+msgstr "Ещё…"
+
+msgid "Student email or username"
+msgstr "Электронная почта или имя пользователя слушателя"
+
+msgid "Everyone who has staff privileges in this course"
+msgstr "Все члены команды курса"
+
+msgid "Only properly formatted .csv files will be accepted."
+msgstr "Принимаются только правильно оформленные файлы CSV."
+
+msgid "Submitted"
+msgstr "Отправлено"
+
+msgid "Unknown"
+msgstr "Неизвестно"
+
+msgid "{numUsersAdded} learner has been added to this cohort. "
+msgid_plural "{numUsersAdded} learners have been added to this cohort. "
+msgstr[0] "{numUsersAdded} слушатель добавлен в группу. "
+msgstr[1] "{numUsersAdded} слушателя добавлены в группу. "
+msgstr[2] "{numUsersAdded} слушателей добавлено в группу. "
+msgstr[3] "{numUsersAdded} слушателей добавлено в группу. "

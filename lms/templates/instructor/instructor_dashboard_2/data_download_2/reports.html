@@ -8,7 +8,7 @@ from openedx.core.djangolib.markup import HTML, Text
 <section id="reports" class="idash-section tab-data" aria-labelledby="header-reports">
         <h6  class="mb-15 font-size-100" id="header-reports">
             <strong>${_("Note")}: </strong>
-            Please select the report type and then click "Download Report" button
+            ${_("Please select the report type and then click the Download Report button.")}
         </h6>
         <div class="mb-15">
 
@@ -16,18 +16,18 @@ from openedx.core.djangolib.markup import HTML, Text
                 <select class="report-type selector">
                     <option value="gradingConfiguration"
                             data-endpoint="${ section_data['get_grading_config_url'] }">
-                        Grading Configuration
+                        ${_("Grading Configuration")}
                     </option>
                     <option value="listAnonymizeStudentIDs"
                             data-endpoint="${ section_data['get_anon_ids_url'] }"
                             data-directdownload="true"
                             class="${'is-disabled' if disable_buttons else ''}"
-                            aria-disabled="${'true' if disable_buttons else 'false'}">Anonymized Student IDs
+                            aria-disabled="${'true' if disable_buttons else 'false'}">${_("Anonymized Student IDs")}
                     </option>
                     %if settings.FEATURES.get('ENABLE_GRADE_DOWNLOADS'):
                     <option value="profileInformation"
                             data-endpoint="${ section_data['get_students_features_url'] + '/csv' }"
-                            data-csv="true">Profile Information
+                            data-csv="true">${_("Profile Information")}
                     </option>
                     <option value="robboExtendedProfileInformation"
                             data-endpoint="${ section_data['get_robbo_extended_students_features_url'] + '/csv' }"
@@ -35,37 +35,35 @@ from openedx.core.djangolib.markup import HTML, Text
                     </option>
                     <option value="learnerWhoCanEnroll"
                             data-endpoint="${ section_data['get_students_who_may_enroll_url'] }" data-csv="true">
-                        Learner
-                        who can enroll
+                        ${_("Learners who can enroll")}
                     </option>
                     <option value="listEnrolledPeople"
                             data-endpoint="${ section_data['get_students_features_url'] }"
                             data-datatable="true">
-                        List enrolled students profile information
+                        ${_("List enrolled students profile information")}
                     </option>
                     %if section_data['show_generate_proctored_exam_report_button']:
                     <option value="proctoredExamResults"
-                            data-endpoint="${ section_data['list_proctored_results_url'] }">Proctored exam results
+                            data-endpoint="${ section_data['list_proctored_results_url'] }">${_("Proctored exam results")}
                     </option>
                     %endif
                     %if section_data['course_has_survey']:
                     <option value="surveyResultReport"
                             data-endpoint="${ section_data['course_survey_results_url'] }">
-                        Survey Result report
+                        ${_("Survey Result report")}
                     </option>
                     %endif
                     %if settings.FEATURES.get('ALLOW_COURSE_STAFF_GRADE_DOWNLOADS') or section_data['access']['admin']:
                     <option value="ORADataReport" data-graderelated="true"
-                            data-endpoint="${ section_data['export_ora2_data_url'] }">ORA Data
-                        report
+                            data-endpoint="${ section_data['export_ora2_data_url'] }">${_("ORA Data report")}
                     </option>
                     <option data-graderelated="true" value="problemGradeReport"
-                    data-endpoint="${ section_data['problem_grade_report_url'] }">Problem Grade report
+                    data-endpoint="${ section_data['problem_grade_report_url'] }">${_("Problem Grade report")}
                     </option>
                     %endif
                     %endif
                 </select>
-                <input type="button" value="Download Report" class="download-report ml-10">
+                <input type="button" value="${_("Download Report")}" class="download-report ml-10">
             </div>
 
         </div>

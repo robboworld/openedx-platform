@@ -21,7 +21,7 @@ $(document).ready(function () {
     var $more = $(
       '<li class="more '+ moreListItemClass +'" id="more">' +
         '<button class="more-button ' + moreButtonClass + '" type="button" aria-haspopup="true" aria-expanded="false" id="learn.course.' + menuType + '.navigation.overflow.menu">' +
-        'More... <i class="fa fa-angle-down" aria-hidden="true"></i></button>' +
+        gettext('More...') + ' <i class="fa fa-angle-down" aria-hidden="true"></i></button>' +
         '<ul class="more-menu more-responsive-menu" role="menu" aria-labelledby="learn.course.' + menuType + '.navigation.overflow.menu"></ul>' +
       '</li>'
     );

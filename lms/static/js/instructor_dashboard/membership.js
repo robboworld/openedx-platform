@@ -741,12 +741,12 @@ such that the value can be defined later than this assignment (file load order).
             if (errors.length) {
                 errorsLabel = (function() {
                     if (dataFromServer.action === 'enroll') {
-                        return 'There was an error enrolling:';
+                        return gettext('There was an error enrolling:');
                     } else if (dataFromServer.action === 'unenroll') {
-                        return 'There was an error unenrolling:';
+                        return gettext('There was an error unenrolling:');
                     } else {
                         console.warn("unknown action from server '" + dataFromServer.action + "'"); // eslint-disable-line no-console, max-len
-                        return 'There was an error processing:';
+                        return gettext('There was an error processing:');
                     }
                 }());
                 renderIdsLists = function(errs) {
@@ -912,21 +912,21 @@ such that the value can be defined later than this assignment (file load order).
                     {
                         id: 'username',
                         field: 'username',
-                        name: 'Username'
+                        name: gettext('Username')
                     }, {
                         id: 'email',
                         field: 'email',
-                        name: 'Email'
+                        name: gettext('Email')
                     }, {
                         id: 'first_name',
                         field: 'first_name',
-                        name: 'First Name'
+                        name: gettext('First Name')
                     }, {
                         id: 'revoke',
                         field: 'revoke',
-                        name: 'Revoke',
+                        name: gettext('Revoke'),
                         formatter: function() {
-                            return "<span class='revoke-link'>Revoke Access</span>";
+                            return "<span class='revoke-link'>" + _.escape(gettext('Revoke Access')) + '</span>';
                         }
                     }
                 ];
@@ -956,7 +956,9 @@ such that the value can be defined later than this assignment (file load order).
                 },
                 success: loadAuthList,
                 error: statusAjaxError(function() {
-                    return ths.$request_response_error.text("Error fetching list for '" + ths.rolename + "'");
+                    return ths.$request_response_error.text(_.template(
+                        gettext("Error fetching list for '<%- rolename %>'")
+                    )({rolename: ths.rolename}));
                 })
             });
         };

@@ -45,7 +45,7 @@ export default class Main extends React.Component {
                     onClick={this.handleToggleDropdown}
                     className={['problem-selector']}
                 >
-                    <span>{selectedBlock || 'Select a section or problem'}</span>
+                    <span>{selectedBlock || gettext('Select a section or problem')}</span>
                     <span className={['pull-right']}>
                         <Icon
                             className={['fa', 'fa-sort']}
