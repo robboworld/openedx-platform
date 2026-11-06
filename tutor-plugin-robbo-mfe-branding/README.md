@@ -52,8 +52,8 @@ tutor local launch   # или: tutor dev restart mfe
 - **`mfe-lms-common-settings`**: `PARAGON_THEME_URLS` только с `light`
   (ядро Paragon с jsDelivr, wildcard `$paragonVersion`; `brandOverride` —
   `paragon-brand-robbo.css` из `robbo-theme`)
-- **`mfe-lms-{development,production}-settings`**: gradebook и communications
-  (Paragon 22.17.0, на jsDelivr его `core`/`light` — 404) получают те же URL, но
+- **`mfe-lms-{development,production}-settings`**: gradebook, communications и
+  ora-grading (Paragon 22.17.0, на jsDelivr его `core`/`light` — 404) получают те же URL, но
   `default` — пустой `data:text/css,`. Иначе `AppProvider` держит белую страницу,
   пока jsDelivr не ответит (из России — десятки секунд). Authoring (Paragon
   23.20.3) получает только `brandOverride`, без `default`: frontend-platform 8.x

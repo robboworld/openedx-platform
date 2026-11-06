@@ -269,8 +269,9 @@ header @robbo_hashed_assets Cache-Control "public, max-age=31536000, immutable"
 # site locally and next to it in production. Its Content-Security-Policy limits what such content could
 # do if a sanitizer ever let something through: scripts only from the MFE itself (its build has no
 # inline scripts, see frontend-app-ora-grading webpack.prod.config.js; the pdf.js worker comes with the
-# app), requests and media only to the LMS, Paragon theme CSS from jsdelivr, no plugins, no framing by
-# other sites. ROBBO_ORA_GRADING_CSP: "enforce" (default), "report-only" (try a change on a server
+# app), requests and media only to the LMS, no CDN (data: in style-src is the empty Paragon `default`,
+# see _ROBBO_NO_PARAGON_CDN_MFE_APP_IDS), no plugins, no framing by other sites.
+# ROBBO_ORA_GRADING_CSP: "enforce" (default), "report-only" (try a change on a server
 # first: violations only reported, nothing blocked) or "off"; ROBBO_CSP_REPORT_URI: where browsers
 # POST violation reports (empty: no reports).
 _PATCH_MFE_CADDYFILE_ORA_GRADING_CSP = """
@@ -278,7 +279,7 @@ _PATCH_MFE_CADDYFILE_ORA_GRADING_CSP = """
 {% set robbo_lms = ("https://" if ENABLE_HTTPS else "http://") + LMS_HOST %}
 @robbo_ora_grading path /ora-grading /ora-grading/*
 header @robbo_ora_grading {
-    {% if ROBBO_ORA_GRADING_CSP == "report-only" %}Content-Security-Policy-Report-Only{% else %}Content-Security-Policy{% endif %} "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' {{ robbo_lms }} https://cdn.jsdelivr.net; img-src 'self' data: {{ robbo_lms }}; font-src 'self' data: {{ robbo_lms }} https://cdn.jsdelivr.net; media-src 'self' {{ robbo_lms }}; connect-src 'self' {{ robbo_lms }}; worker-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' {{ robbo_lms }}; frame-ancestors 'self' {{ robbo_lms }}{% if ENABLE_HTTPS %}; upgrade-insecure-requests{% endif %}{% if ROBBO_CSP_REPORT_URI %}; report-uri {{ ROBBO_CSP_REPORT_URI }}{% endif %}"
+    {% if ROBBO_ORA_GRADING_CSP == "report-only" %}Content-Security-Policy-Report-Only{% else %}Content-Security-Policy{% endif %} "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' data: {{ robbo_lms }}; img-src 'self' data: {{ robbo_lms }}; font-src 'self' data: {{ robbo_lms }}; media-src 'self' {{ robbo_lms }}; connect-src 'self' {{ robbo_lms }}; worker-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' {{ robbo_lms }}; frame-ancestors 'self' {{ robbo_lms }}{% if ENABLE_HTTPS %}; upgrade-insecure-requests{% endif %}{% if ROBBO_CSP_REPORT_URI %}; report-uri {{ ROBBO_CSP_REPORT_URI }}{% endif %}"
     X-Content-Type-Options "nosniff"
     Referrer-Policy "strict-origin-when-cross-origin"
 }
@@ -591,7 +592,9 @@ _PATCH_ROBBO_BINDMOUNT_MFES_SKIP_RUNTIME_PARAGON = _patch_mfe_overrides_paragon_
 # AppProvider renders nothing until the core link fires load/error, and from Russia jsDelivr can
 # take tens of seconds → white page. `default` becomes an empty inline stylesheet: no request, load
 # fires at once, brandOverride stays. Without `default` frontend-platform drops brandOverride too.
-_ROBBO_NO_PARAGON_CDN_MFE_APP_IDS: frozenset[str] = frozenset(("gradebook", "communications"))
+_ROBBO_NO_PARAGON_CDN_MFE_APP_IDS: frozenset[str] = frozenset(
+    ("communications", "gradebook", "ora-grading")
+)
 
 _EMPTY_CSS_URL = "data:text/css,"
 
