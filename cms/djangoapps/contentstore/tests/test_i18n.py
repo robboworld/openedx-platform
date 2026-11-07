@@ -151,7 +151,8 @@ class TestXBlockI18nService(ModuleStoreTestCase):
         with mock.patch('gettext.translation', return_value=_translator(domain='text', localedir=localedir,
                                                                         languages=[get_language()])):
             i18n_service = self.get_block_i18n_service(self.block)
-            self.assertEqual(i18n_service.gettext('Hello'), 'Hello')
+            # Robbo: a string missing from the block catalog falls back to the platform one (mocked gettext here).
+            self.assertEqual(i18n_service.gettext('Hello'), 'XYZ-TEST-LANGUAGE')
             self.assertNotEqual(i18n_service.gettext('Hello'), 'fr-hello-world')
             self.assertNotEqual(i18n_service.gettext('Hello'), 'es-hello-world')
 

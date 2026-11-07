@@ -7384,3 +7384,33 @@ msgstr "Отчёт по распределению ответов, показа�
 msgctxt "course team role"
 msgid "Staff"
 msgstr "Сотрудник"
+
+#. drag-and-drop-v2, режим «Оценивание»: итог попытки. В Atlas ru для блока нет
+#. plural-строк, XBlockI18nService берёт их отсюда.
+msgid "Correctly placed {correct_count} item"
+msgid_plural "Correctly placed {correct_count} items"
+msgstr[0] "Верно расположен {correct_count} элемент"
+msgstr[1] "Верно расположено {correct_count} элемента"
+msgstr[2] "Верно расположено {correct_count} элементов"
+msgstr[3] "Верно расположено {correct_count} элементов"
+
+msgid "Misplaced {misplaced_count} item"
+msgid_plural "Misplaced {misplaced_count} items"
+msgstr[0] "Неверно расположен {misplaced_count} элемент"
+msgstr[1] "Неверно расположено {misplaced_count} элемента"
+msgstr[2] "Неверно расположено {misplaced_count} элементов"
+msgstr[3] "Неверно расположено {misplaced_count} элементов"
+
+msgid "Misplaced {misplaced_count} item (misplaced item was returned to the item bank)"
+msgid_plural "Misplaced {misplaced_count} items (misplaced items were returned to the item bank)"
+msgstr[0] "Неверно расположен {misplaced_count} элемент, он возвращён в банк элементов"
+msgstr[1] "Неверно расположено {misplaced_count} элемента, они возвращены в банк элементов"
+msgstr[2] "Неверно расположено {misplaced_count} элементов, они возвращены в банк элементов"
+msgstr[3] "Неверно расположено {misplaced_count} элементов, они возвращены в банк элементов"
+
+msgid "Did not place {missing_count} required item"
+msgid_plural "Did not place {missing_count} required items"
+msgstr[0] "Не размещён {missing_count} обязательный элемент"
+msgstr[1] "Не размещено {missing_count} обязательных элемента"
+msgstr[2] "Не размещено {missing_count} обязательных элементов"
+msgstr[3] "Не размещено {missing_count} обязательных элементов"

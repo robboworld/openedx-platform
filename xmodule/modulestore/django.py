@@ -55,6 +55,10 @@ except ImportError:
 log = logging.getLogger(__name__)
 ASSET_IGNORE_REGEX = getattr(settings, "ASSET_IGNORE_REGEX", r"(^\._.*$)|(^\.DS_Store$)|(^.*~$)")
 
+# Robbo: the Atlas ru catalog of drag_and_drop_v2 has no plural strings, so the points label stays in English.
+# The catalog bundled in the package has every Atlas string with the same text, plus the plurals.
+ROBBO_BUNDLED_JS_CATALOG_LOCALES = {'drag_and_drop_v2': ('ru',)}
+
 
 class SwitchedSignal(django.dispatch.Signal):
     """
@@ -397,6 +401,10 @@ class XBlockI18nService:
                         xblock_locale_dir,
                         [to_locale(selected_language if selected_language else settings.LANGUAGE_CODE)]
                     )
+                    # Robbo: strings missing from the XBlock catalog (the Atlas ru catalog of drag_and_drop_v2
+                    # has no plurals) come from the platform and theme catalogs instead of staying in English.
+                    if isinstance(self.translator, gettext.NullTranslations):
+                        self.translator.add_fallback(django.utils.translation)
                 except OSError:
                     # Fall back to the default Django translator if the XBlock translator is not found.
                     pass
@@ -436,6 +444,11 @@ class XBlockI18nService:
         xblock_module_name = get_xblock_root_module_name(block)
         language_name = get_language()  # Returns language name e.g. `de` or `de-de`.
         locale = to_locale(language_name)  # Use the `de` or `de_DE` format for the locale directory.
+
+        if locale in ROBBO_BUNDLED_JS_CATALOG_LOCALES.get(xblock_module_name, ()):
+            bundled_catalog = f'public/js/translations/{locale}/text.js'
+            if (resources.files(xblock_module_name) / bundled_catalog).is_file():
+                return block.runtime.local_resource_url(block, bundled_catalog)
 
         if get_javascript_i18n_file_path(xblock_module_name, locale).exists():
             relative_file_path = get_javascript_i18n_file_name(xblock_module_name, locale)
