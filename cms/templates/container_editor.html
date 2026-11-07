@@ -53,6 +53,7 @@ from openedx.core.release import RELEASE_LINE
     % if settings.DEBUG:
         <script type="text/javascript" src="${static.url('js/src/gettext_fallback.js')}"></script>
     % endif
+    <%include file="/robbo_ngettext_guard.html" />
 
     <%static:css group='style-vendor'/>
     <%static:css group='style-vendor-tinymce-content'/>

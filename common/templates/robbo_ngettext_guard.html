@@ -1,0 +1,14 @@
+<%page expression_filter="h"/>
+<%doc>
+Copyright (C) 2026 Robbo <https://robbo.ru>
+SPDX-License-Identifier: AGPL-3.0-only
+Part of the Robbo Open edX distribution. See NOTICE at repository root.
+</%doc>
+## Robbo: the edx-ora2 bundle checks window.ngetgext (typo) and replaces ngettext with an English stub on every page
+## with an ORA block, so plurals stay in English. Keep the catalog's function; the setter ignores the assignment.
+## Include right after the jsi18n script, before anything that loads the bundle.
+<script type="text/javascript">
+  if (window.django && window.django.ngettext) {
+    Object.defineProperty(window, 'ngettext', {get: function() { return window.django.ngettext; }, set: function() {}});
+  }
+</script>
