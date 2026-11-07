@@ -42,6 +42,41 @@
     return isRussianStudioUi() ? ru : en;
   }
 
+  // «Хорошо — 3 балла»: forms follow django.pluralidx of the Russian catalog.
+  function trainingOptionLabel(label, points) {
+    var forms = ['балл', 'балла', 'баллов', 'балла'];
+    return label + ' — ' + points + ' ' + forms[django.pluralidx(Number(points))];
+  }
+
+  // ORA builds the msgid from the option itself (`Good - 5 point`), so no catalog can hold it.
+  // It calls window.ngettext, which the guard in the base templates resolves to django.ngettext.
+  function installTrainingOptionNgettext() {
+    if (typeof django === 'undefined' || !django.ngettext || django.ngettext._robboTrainingOptions) {
+      return;
+    }
+    var catalogNgettext = django.ngettext;
+    django.ngettext = function (singular, plural, count) {
+      var match = /^([\s\S]*) - (\d+) point$/.exec(singular);
+      if (match && isRussianStudioUi()) {
+        return trainingOptionLabel(match[1], match[2]);
+      }
+      return catalogNgettext(singular, plural, count);
+    };
+    django.ngettext._robboTrainingOptions = true;
+  }
+
+  // The server template writes «3 баллов»: one form for every count, in an {% include %} we can't override.
+  function syncTrainingOptionLabels() {
+    if (!isRussianStudioUi()) {
+      return;
+    }
+    var options = document.querySelectorAll('.openassessment_training_example_criterion_option option[data-points]');
+    Array.prototype.forEach.call(options, function (option) {
+      var label = option.getAttribute('data-label') || window.gettext('Unnamed Option');
+      option.textContent = trainingOptionLabel(label, option.getAttribute('data-points'));
+    });
+  }
+
   function optionalTextBlockedMessage() {
     return t(OPTIONAL_TEXT_BLOCKED_MSG_EN, OPTIONAL_TEXT_BLOCKED_MSG_RU);
   }
@@ -507,8 +542,10 @@
     installNecessityFieldListeners();
     updateNecessityHintVisibility();
     initLargeFiles();
+    syncTrainingOptionLabels();
   }
 
+  installTrainingOptionNgettext();
   installSaveValidationGuard();
   installAjaxHooks();
 
