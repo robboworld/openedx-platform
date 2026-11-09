@@ -10,16 +10,19 @@
  * robbo_changelog API on the LMS session (guests get 401, accounts not activated yet 403: no button). Studio's Mako
  * pages load the same file from Studio, which serves a copy of the API (no cross-origin calls).
  *
- *   RobboWhatsNew.mount(container, {lmsUrl, lang, variant, profileToggle}) → {open, subscribe, unmount}
+ *   RobboWhatsNew.mount(container, {lmsUrl, lang, variant, profileToggle, initial}) → {open, subscribe, unmount}
  *       lmsUrl — host of the API (default: this page's origin); links in the panel come from the API.
+ *       initial — the status answer the page already has (Mako headers render it), so no first request.
  *       profileToggle — the profile menu button (element, selector list — the first visible one wins —
  *       or a function). With it, learners (status `in_menu`) get no header button: the header shows
  *       «Что нового» as a profile menu item and a dot on the menu button (`.robbo-wn-dot`, `.robbo-wn-count`
  *       come from here), and `open()` opens the panel under the menu button. Without it — the button for all.
  *       subscribe(fn) — fn({inMenu, unread, label}) now and on every change; returns unsubscribe.
+ *   RobboWhatsNew.prefetch({lmsUrl, lang}) — ask the status before the header mounts (MFEs call it while they
+ *       start); a mount with the same lmsUrl and lang within PREFETCH_TTL takes that answer instead of asking again.
  *   window event `robbo-whats-new:refresh` — every mounted widget asks the status again (the placement
  *       setting changed in account settings).
- *   <span data-robbo-whats-new data-lms-url data-lang data-variant data-profile-toggle> mounts itself
+ *   <span data-robbo-whats-new data-lms-url data-lang data-variant data-profile-toggle data-initial> mounts itself
  *       (LMS and Studio pages) and fills `[data-robbo-whats-new-item]` (menu item the server renders for
  *       learners, `[data-robbo-whats-new-count]` inside) and `[data-robbo-whats-new-dot]` anywhere on the page.
  *
@@ -38,6 +41,8 @@
   var REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
   var CLOSE_DELAY = 160;
   var REFRESH_EVENT = 'robbo-whats-new:refresh';
+  var PREFETCH_TTL = 10000;
+  var prefetched = {};
   var counter = 0;
 
   function svg(paths, size) {
@@ -290,6 +295,36 @@
       }
       return response.json();
     });
+  }
+
+  function apiOptions(options) {
+    return {
+      lmsUrl: String(options.lmsUrl || window.location.origin).replace(/\/+$/, ''),
+      lang: String(options.lang || document.documentElement.lang || 'ru').toLowerCase().split('-')[0],
+    };
+  }
+
+  function prefetch(options) {
+    var api = apiOptions(options || {});
+    var pending = request(api, 'status', 'GET');
+    pending.catch(function () {});
+    prefetched[api.lmsUrl + '|' + api.lang] = {pending: pending, time: Date.now()};
+  }
+
+  // The prefetched answer, once and while fresh.
+  function takePrefetched(state) {
+    var key = state.lmsUrl + '|' + state.lang;
+    var entry = prefetched[key];
+    delete prefetched[key];
+    return entry && Date.now() - entry.time < PREFETCH_TTL ? entry.pending : null;
+  }
+
+  function parseInitial(value) {
+    try {
+      return value ? JSON.parse(value) : null;
+    } catch (error) {
+      return null;
+    }
   }
 
   function csrfToken(state) {
@@ -603,14 +638,15 @@
     container.setAttribute('data-robbo-wn-mounted', '1');
     container.classList.add('robbo-wn', 'robbo-wn--' + (options.variant || 'on-dark'));
     counter += 1;
+    var api = apiOptions(options);
     var state = {
       id: counter,
-      lmsUrl: String(options.lmsUrl || window.location.origin).replace(/\/+$/, ''),
+      lmsUrl: api.lmsUrl,
       profileToggle: options.profileToggle || null,
       inMenu: false,
       label: '',
       subscribers: [],
-      lang: String(options.lang || document.documentElement.lang || 'ru').toLowerCase().split('-')[0],
+      lang: api.lang,
       texts: {},
       unread: 0,
       isOpen: false,
@@ -642,8 +678,8 @@
     setUnread(state, 0);
     container.hidden = true;
     container.appendChild(state.button);
-    function loadStatus() {
-      request(state, 'status', 'GET').then(function (data) {
+    function loadStatus(pending) {
+      (pending || request(state, 'status', 'GET')).then(function (data) {
         var inMenu = Boolean(data.in_menu && state.profileToggle);
         if (state.isOpen && inMenu !== state.inMenu) {
           close(state, false);
@@ -656,8 +692,11 @@
         container.hidden = true;
       });
     }
-    loadStatus();
-    window.addEventListener(REFRESH_EVENT, loadStatus);
+    function refresh() {
+      loadStatus();
+    }
+    loadStatus(options.initial ? Promise.resolve(options.initial) : takePrefetched(state));
+    window.addEventListener(REFRESH_EVENT, refresh);
     return {
       open: function () {
         if (!state.isOpen) {
@@ -672,7 +711,7 @@
         };
       },
       unmount: function () {
-        window.removeEventListener(REFRESH_EVENT, loadStatus);
+        window.removeEventListener(REFRESH_EVENT, refresh);
         state.subscribers = [];
         close(state, false);
         window.clearTimeout(state.closeTimer);
@@ -729,6 +768,7 @@
         lang: node.getAttribute('data-lang'),
         variant: node.getAttribute('data-variant'),
         profileToggle: toggleSelector,
+        initial: parseInitial(node.getAttribute('data-initial')),
       });
       if (widget && toggleSelector) {
         bindPageMenu(widget, toggleSelector);
@@ -736,7 +776,7 @@
     });
   }
 
-  window.RobboWhatsNew = {mount: mount};
+  window.RobboWhatsNew = {mount: mount, prefetch: prefetch};
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', autoMount);

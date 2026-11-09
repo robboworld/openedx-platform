@@ -5,16 +5,19 @@
 #
 # Part of the Robbo Open edX distribution (site changelog). See NOTICE at repository root.
 %>
-## «Что нового» button: the LMS widget (lms/djangoapps/robbo_changelog/widget) mounts into the span.
+## «Что нового» button: the LMS widget (lms/djangoapps/robbo_changelog/widget) mounts into the span;
+## data-initial (the status API answer) lets it show the button with the page, without a request.
 <%page expression_filter="h"/>
 <%!
 from django.urls import reverse
+from lms.djangoapps.robbo_changelog.header import initial_json
 from lms.djangoapps.robbo_changelog.labels import current_lang
 %>
 ## Accounts not activated yet see no «Что нового» (robbo_changelog.access.can_view).
 % if user.is_authenticated and user.is_active:
 ## Learners get it in the profile menu instead (user_dropdown.html, dot on the menu button or hamburger).
 <span class="robbo-header-whats-new" data-robbo-whats-new data-lang="${current_lang()}" data-variant="on-dark"
+      data-initial="${initial_json(user, current_lang())}"
       data-profile-toggle=".global-header .toggle-user-dropdown, .global-header .hamburger-menu"></span>
 <script src="${reverse('robbo_changelog:widget')}" defer></script>
 % endif
