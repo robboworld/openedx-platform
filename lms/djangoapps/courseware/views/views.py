@@ -1009,7 +1009,9 @@ def progress(request, course_id, student_id=None):
     if course_key.deprecated:
         raise Http404
 
-    if course_home_mfe_progress_tab_is_active(course_key) and not request.user.is_staff:
+    # Robbo: upstream keeps the legacy page for global staff, so admins saw a second, older
+    # progress page. The MFE shows any learner's progress to staff too (progress/<student_id>).
+    if course_home_mfe_progress_tab_is_active(course_key):
         end_of_redirect_url = 'progress' if not student_id else f'progress/{student_id}'
         raise Redirect(get_learning_mfe_home_url(
             course_key=course_key, url_fragment=end_of_redirect_url, params=request.GET,
