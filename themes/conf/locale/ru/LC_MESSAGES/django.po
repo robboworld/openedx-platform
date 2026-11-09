@@ -7748,3 +7748,8 @@ msgstr "Отчёт по распределению ответов, показа�
 msgctxt "course team role"
 msgid "Staff"
 msgstr "Сотрудник"
+
+#: lms/templates/courseware/tabs.html lms/templates/courseware/course_navigation.html
+msgctxt "course tab"
+msgid "Course"
+msgstr "Содержание"
