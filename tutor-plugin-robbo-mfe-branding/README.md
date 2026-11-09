@@ -43,7 +43,7 @@ tutor local launch   # или: tutor dev restart mfe
 
 ## Что делает
 
-- **`mfe-dockerfile-post-npm-install-{authoring,discussions,ora-grading}`**: `COPY` +
+- **`mfe-dockerfile-post-npm-install-{authoring,discussions,ora-grading,communications}`**: `COPY` +
   `npm install @edx/brand@file:…/robbo-brand-openedx` (зелёные токены Paragon)
 - **`mfe-lms-development-settings`**: `LOGO_*`, `FAVICON_URL` на
   `http://{{ LMS_HOST }}:8000/static/robbo-theme/...`

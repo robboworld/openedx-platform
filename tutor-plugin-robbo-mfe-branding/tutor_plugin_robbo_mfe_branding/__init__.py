@@ -839,6 +839,8 @@ hooks.Filters.ENV_PATCHES.add_items(
         ("mfe-dockerfile-post-npm-install-discussions", _PATCH_AUTHORING_ROBBO_BRAND),
         # ORA grading: stock brand compiles navy $primary (hover, tabs) under paragon-brand-robbo.css.
         ("mfe-dockerfile-post-npm-install-ora-grading", _PATCH_AUTHORING_ROBBO_BRAND),
+        # Communications (bulk email): same navy states as ORA grading.
+        ("mfe-dockerfile-post-npm-install-communications", _PATCH_AUTHORING_ROBBO_BRAND),
         ("mfe-dockerfile-pre-npm-build-authoring", _PATCH_AUTHORING_ROBBO_CHROME_SRC),
         ("mfe-env-config-runtime-definitions-authoring", _PATCH_AUTHORING_ROBBO_FOOTER_IMPORT),
         ("mfe-lms-common-settings", _PARAGON_THEME_URLS),
