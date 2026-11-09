@@ -352,49 +352,6 @@ nav.wrapper-preview-menu {
     }
   }
 }
-.wrapper-course-material[aria-label="Course Material"] {
-  margin: 0 auto;
-  max-width: 1600px;
-  padding: 20px 15px !important;
-
-  .course-material {
-    overflow: visible;
-  }
-
-  .tabs.course-tabs {
-    margin: 0 0 10px;
-    border-bottom: 1px solid $gray-light;
-    padding: 0;
-    li {
-      margin: 0 32px 0 0;
-
-      &.more {
-        margin-right: 0;
-      }
-
-      button {
-        border: 0;
-        background: none;
-      }
-
-      a,
-      button {
-        border-width: 2px;
-        font-size: 14px;
-        font-weight: 500;
-        color: $light-dark;
-        &:hover, &:visited {
-          color: $dark;
-          border-color: transparent;
-        }
-        &.active {
-          color: $dark;
-          border-color: $primary;
-        }
-      }
-    }
-  }
-}
 body.view-statictab, body.view-instructordash, body.view-teams, body.view-wiki,
 body.view-student-notes {
   #main {
@@ -1747,6 +1704,7 @@ body.indigo-dark-theme {
 @import '../../../courseware/discover';
 @import '../../../courseware/robbo-courses-catalog';
 @import '../../../courseware/robbo-instructor-certificates';
+@import '../../../courseware/robbo-course-tabs';
 @import '../../../courseware/robbo-instructor-ora';
 @import '../../../courseware/robbo-groups';
 @import '../../../courseware/about';

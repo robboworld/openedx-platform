@@ -7414,3 +7414,8 @@ msgstr[0] "Не размещён {missing_count} обязательный эле
 msgstr[1] "Не размещено {missing_count} обязательных элемента"
 msgstr[2] "Не размещено {missing_count} обязательных элементов"
 msgstr[3] "Не размещено {missing_count} обязательных элементов"
+
+#: lms/templates/courseware/tabs.html lms/templates/courseware/course_navigation.html
+msgctxt "course tab"
+msgid "Course"
+msgstr "Содержание"

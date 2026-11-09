@@ -11,6 +11,7 @@ from lms.djangoapps.course_goals.models import UserActivity
 from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import gettext as _
+from django.utils.translation import pgettext
 %>
 
 <%
@@ -57,7 +58,8 @@ masquerading_as_student = is_masquerading_as_student(request.user, course.id)
                         % else:
                             <li class="nav-item ${'active' if tab_is_active else ''}">
                                 <a href="${tab.link_func(course, reverse)}" class="nav-link">
-                                    ${_(tab.name)}
+                                    ## Robbo: «Содержание», as in tabs.html and the Learning MFE.
+                                    ${pgettext("course tab", "Course") if tab.type == 'courseware' else _(tab.name)}
                                     % if tab_is_active:
                                         <span class="sr-only">, ${_('current location')}</span>
                                     %endif

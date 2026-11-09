@@ -1,0 +1,132 @@
+// Copyright (C) 2026 Robbo <https://robbo.ru>
+// SPDX-License-Identifier: AGPL-3.0-only
+//
+// Course tab bar of the LMS pages outside the Learning MFE (instructor dashboard, wiki, static tabs:
+// templates/courseware/course_navigation.html + tabs.html), drawn like the Learning and Discussions
+// bar (frontend-app-learning src/course-tabs, src/index.scss) so switching tabs doesn't jump.
+// body.view-in-course nav: lms-course.css (base/_layouts.scss), loaded after this sheet, zeroes the padding
+// and widens the bar to 1920px with the same selectors.
+
+$robbo-course-tabs-max-width: 1600px; // Paragon .container-xl
+$robbo-course-tabs-gutter: 12px;
+$robbo-course-tabs-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+  'Noto Sans', sans-serif; // Paragon $font-family-sans-serif
+$robbo-course-tabs-border: #eaeaea;
+$robbo-course-tabs-text: #454545; // Paragon $gray-700
+$robbo-course-tabs-hover-bg: #e9e6e4; // Paragon $light-400
+$robbo-course-tabs-underline: 4px;
+
+// A tab link and the «Ещё…» button of the narrow bar (js/responsive-nav.js).
+@mixin robbo-course-tab-link {
+  display: block;
+  padding: 8px 16px;
+  border: 0;
+  border-top: $robbo-course-tabs-underline solid transparent;
+  border-bottom: $robbo-course-tabs-underline solid transparent;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  font-family: $robbo-course-tabs-font;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 28px;
+  color: $robbo-course-tabs-text;
+  text-decoration: none;
+  text-shadow: none;
+  white-space: nowrap;
+
+  &:hover,
+  &:focus,
+  &.active {
+    font-weight: 400;
+  }
+
+  &:hover,
+  &:focus {
+    color: $robbo-ui-primary;
+    border-bottom-color: $robbo-ui-primary;
+  }
+
+  &:not(.active):hover {
+    background: $robbo-course-tabs-hover-bg;
+  }
+
+  &.active {
+    color: $robbo-ui-primary-dark;
+    border-bottom-color: $robbo-ui-primary-dark;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $robbo-ui-primary-dark;
+    outline-offset: -2px;
+  }
+}
+
+body.view-in-course nav.wrapper-course-material {
+  max-width: none;
+  padding: 0;
+  background: $robbo-brand-white;
+  border-bottom: 1px solid $robbo-course-tabs-border;
+
+  // Visible, not scrolled: the «Ещё…» menu opens below the bar.
+  .course-material {
+    box-sizing: border-box;
+    max-width: $robbo-course-tabs-max-width;
+    margin: 0 auto;
+    padding: 0 $robbo-course-tabs-gutter;
+    overflow: visible;
+    white-space: nowrap;
+  }
+
+  .course-material .tabs.course-tabs {
+    display: flex;
+    margin: 0 0 -1px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+
+    > .tab {
+      flex-shrink: 0;
+      margin: 0;
+    }
+
+    > .tab > a,
+    > .tab > a:visited,
+    .more-button {
+      @include robbo-course-tab-link;
+    }
+
+    .more-button .fa {
+      margin-left: 4px;
+    }
+
+    .more-menu {
+      border: 1px solid $robbo-course-tabs-border;
+      border-radius: 4px;
+      background: $robbo-brand-white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+      .tab a,
+      .tab a:visited {
+        padding: 8px 16px;
+        border: 0;
+        font-family: $robbo-course-tabs-font;
+        font-size: 16px;
+        line-height: 24px;
+        color: $robbo-course-tabs-text;
+        text-align: left;
+        text-decoration: none;
+
+        &:hover,
+        &:focus {
+          background: $robbo-course-tabs-hover-bg;
+          color: $robbo-ui-primary;
+        }
+
+        &.active {
+          color: $robbo-ui-primary-dark;
+        }
+      }
+    }
+  }
+}
