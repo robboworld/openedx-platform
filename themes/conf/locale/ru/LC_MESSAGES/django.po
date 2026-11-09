@@ -7749,7 +7749,23 @@ msgctxt "course team role"
 msgid "Staff"
 msgstr "Сотрудник"
 
+msgid "Enrollment Tracks"
+msgstr "Режимы записи"
+
 #: lms/templates/courseware/tabs.html lms/templates/courseware/course_navigation.html
 msgctxt "course tab"
 msgid "Course"
 msgstr "Содержание"
+
+msgctxt "instructor dashboard tab"
+msgid "Email"
+msgstr "Рассылки"
+
+msgid "Send emails to yourself, the course team, all learners or the members of one group."
+msgstr "Письма себе, команде курса, всем учащимся или участникам одной группы."
+
+msgid "Send right away or schedule for later. Scheduled and previously sent emails are listed on the same page."
+msgstr "Отправляйте сразу или запланируйте на нужное время. Там же — запланированные и уже отправленные письма."
+
+msgid "Open bulk email"
+msgstr "Открыть рассылки"
