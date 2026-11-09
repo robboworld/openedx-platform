@@ -432,7 +432,8 @@ body.view-instructordash {
     }
   }
   .instructor-dashboard-content-2 {
-    padding: 0;
+    // top gap so the title and the Studio button don't sit on the course tabs' bottom border
+    padding: 20px 0 0;
 
     .wrap-instructor-info {
       @include media-breakpoint-down(xs) {
