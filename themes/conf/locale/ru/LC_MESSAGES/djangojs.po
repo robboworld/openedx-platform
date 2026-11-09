@@ -3208,3 +3208,288 @@ msgstr[0] "{numUsersAdded} слушатель добавлен в группу. 
 msgstr[1] "{numUsersAdded} слушателя добавлены в группу. "
 msgstr[2] "{numUsersAdded} слушателей добавлено в группу. "
 msgstr[3] "{numUsersAdded} слушателей добавлено в группу. "
+
+msgid "Error Ending Exam"
+msgstr "Не удалось завершить испытание"
+
+msgid "Something has gone wrong ending your exam. Please reload the page and start again."
+msgstr "При завершении испытания произошла ошибка. Обновите страницу и начните заново."
+
+msgid "Error Starting Exam"
+msgstr "Не удалось начать испытание"
+
+msgid "Something has gone wrong starting your exam. Please double-check that the application is running."
+msgstr "При запуске испытания произошла ошибка. Проверьте, что приложение запущено."
+
+msgid "Something has gone wrong starting your exam. Please reload the page and start again."
+msgstr "При запуске испытания произошла ошибка. Обновите страницу и начните заново."
+
+msgid "Something has gone wrong ending your exam. Please double-check that the application is running."
+msgstr "При завершении испытания произошла ошибка. Проверьте, что приложение запущено."
+
+msgid "Eligible"
+msgstr "Допущен"
+
+msgid "Created"
+msgstr "Создано"
+
+msgid "Download Software Clicked"
+msgstr "Скачивание приложения начато"
+
+msgid "Ready to start"
+msgstr "Готов начать"
+
+msgid "Started"
+msgstr "Начато"
+
+msgid "Ready to submit"
+msgstr "Готов отправить"
+
+msgid "Declined"
+msgstr "Отказ"
+
+msgid "Timed out"
+msgstr "Время вышло"
+
+msgid "Second Review Required"
+msgstr "Нужна повторная проверка"
+
+msgid "Verified"
+msgstr "Подтверждено"
+
+msgid "Rejected"
+msgstr "Отклонено"
+
+msgid "Onboarding Missing"
+msgstr "Подготовка не пройдена"
+
+msgid "Onboarding Pending"
+msgstr "Подготовка на проверке"
+
+msgid "Onboarding Failed"
+msgstr "Подготовка не принята"
+
+msgid "Onboarding Expired"
+msgstr "Срок подготовки истёк"
+
+msgid "Practice"
+msgstr "Пробное"
+
+msgid "Are you sure you want to remove this student's exam attempt?"
+msgstr "Удалить попытку этого слушателя?"
+
+msgid "Are you sure you want to resume this student's exam attempt?"
+msgstr "Возобновить попытку этого слушателя?"
+
+msgid "Required field"
+msgstr "Обязательное поле"
+
+msgid "You have not started your onboarding exam."
+msgstr "Вы ещё не начали подготовительное испытание."
+
+msgid "You have started your onboarding exam."
+msgstr "Вы начали подготовительное испытание."
+
+msgid "You have submitted your onboarding exam."
+msgstr "Вы отправили подготовительное испытание."
+
+msgid "Your onboarding exam has been approved in this course."
+msgstr "Подготовительное испытание принято на этом курсе."
+
+msgid "Your onboarding exam has been rejected. Please retry onboarding."
+msgstr "Подготовительное испытание отклонено. Пройдите его ещё раз."
+
+msgid "An error has occurred during your onboarding exam. Please retry onboarding."
+msgstr "Во время подготовительного испытания произошла ошибка. Пройдите его ещё раз."
+
+msgid "Approved in Another Course"
+msgstr "Принято на другом курсе"
+
+msgid "Your onboarding exam has been approved in another course."
+msgstr "Подготовительное испытание принято на другом курсе."
+
+msgid "If your device has changed, we recommend that you complete this course's onboarding exam in order to ensure that your setup still meets the requirements for proctoring."
+msgstr "Если вы сменили устройство, пройдите подготовительное испытание этого курса: так вы убедитесь, что оборудование подходит для наблюдаемых испытаний."
+
+msgid "Expiring Soon"
+msgstr "Скоро истекает"
+
+msgid "Your onboarding profile has been approved. However, your onboarding status is expiring soon. Please complete onboarding again to ensure that you will be able to continue taking proctored exams."
+msgstr "Ваш профиль подготовки принят, но срок его действия скоро истечёт. Пройдите подготовку ещё раз, чтобы и дальше сдавать наблюдаемые испытания."
+
+msgid "Expired"
+msgstr "Истекло"
+
+msgid "Your onboarding status has expired. Please complete onboarding again to continue taking proctored exams."
+msgstr "Срок действия подготовки истёк. Пройдите её ещё раз, чтобы и дальше сдавать наблюдаемые испытания."
+
+msgid "Review Policy Exception"
+msgstr "Исключение из правил проверки"
+
+msgid "Add Time(Minutes)"
+msgstr "Добавить время (минуты)"
+
+msgid "Add Multiplier as a Number Greater Than 1"
+msgstr "Укажите множитель — число больше 1"
+
+msgid "Add Policy Exception"
+msgstr "Добавить исключение из правил"
+
+msgid "Additional Time (minutes)"
+msgstr "Дополнительное время (минуты)"
+
+msgid "Time Multiplier"
+msgstr "Множитель времени"
+
+msgid "Setup Started"
+msgstr "Настройка начата"
+
+msgid "Onboarding Started"
+msgstr "Подготовка начата"
+
+msgid "Onboarding Reset Failed Due to Past Due Exam"
+msgstr "Подготовку нельзя сбросить: срок испытания прошёл"
+
+msgid "Audit"
+msgstr "Бесплатный доступ"
+
+msgid "Honor"
+msgstr "Кодекс чести"
+
+msgid "Professional"
+msgstr "Профессиональный"
+
+msgid "No ID Professional"
+msgstr "Профессиональный без удостоверения"
+
+msgid "Credit"
+msgstr "Зачётный"
+
+msgid "Master's"
+msgstr "Магистратура"
+
+msgid "Executive Education"
+msgstr "Программа для руководителей"
+
+msgid "Are you sure you want to leave this page? \nTo pass your proctored exam you must also pass the online proctoring session review."
+msgstr "Покинуть эту страницу? \nЧтобы сдать наблюдаемое испытание, нужно также пройти проверку записи сеанса."
+
+msgid "Add a New Allowance"
+msgstr "Новое послабление"
+
+msgid "Add Usernames or Emails seperated by commas"
+msgstr "Имена пользователей или адреса почты через запятую"
+
+msgid "Select Exam Type"
+msgstr "Выберите тип испытания"
+
+msgid "Select Exams"
+msgstr "Выберите испытания"
+
+msgid "Choose Exams Below"
+msgstr "Выберите испытания ниже"
+
+msgid "Allowance Type"
+msgstr "Тип послабления"
+
+msgid "Allowances"
+msgstr "Послабления"
+
+msgid "Add Allowance"
+msgstr "Добавить послабление"
+
+msgid "Exam Name"
+msgstr "Название испытания"
+
+msgid "Allowance Value"
+msgstr "Размер послабления"
+
+msgid "Onboarding Status"
+msgstr "Статус подготовки"
+
+msgid "Last Modified"
+msgstr "Последнее изменение"
+
+msgid "This course contains proctored exams"
+msgstr "В этом курсе есть наблюдаемые испытания"
+
+msgid "Current Onboarding Status:"
+msgstr "Текущий статус подготовки:"
+
+msgid "You must have a verified onboarding profile prior to taking any proctored exam."
+msgstr "Перед наблюдаемым испытанием нужен подтверждённый профиль подготовки."
+
+msgid "You have successfully submitted your onboarding profile for review."
+msgstr "Профиль подготовки отправлен на проверку."
+
+msgid "Onboarding profile review can take 2+ business days."
+msgstr "Проверка профиля подготовки может занять 2 рабочих дня и больше."
+
+msgid "Onboarding Past Due"
+msgstr "Срок подготовки прошёл"
+
+msgid "Onboarding Opens"
+msgstr "Подготовка откроется"
+
+msgid "View Onboarding Exam"
+msgstr "Открыть подготовительное испытание"
+
+msgid "Complete Onboarding"
+msgstr "Пройти подготовку"
+
+msgid "Review instructions and system requirements for proctored exams"
+msgstr "Инструкции и системные требования для наблюдаемых испытаний"
+
+msgid "Time Limit"
+msgstr "Ограничение по времени"
+
+msgid "Started At"
+msgstr "Начато"
+
+msgid "Completed At"
+msgstr "Завершено"
+
+msgid "Ready to Resume"
+msgstr "Можно возобновить"
+
+msgid "Available Actions"
+msgstr "Доступные действия"
+
+msgid "Resume"
+msgstr "Возобновить"
+
+msgid "Reset"
+msgstr "Сбросить"
+
+msgid "Edit Allowance"
+msgstr "Изменить послабление"
+
+msgid "Special Exam"
+msgstr "Контрольное испытание"
+
+msgid "Apply Filters"
+msgstr "Применить фильтры"
+
+msgid "There are no learners"
+msgstr "Нет слушателей"
+
+msgid "who fit this criteria."
+msgstr "с такими условиями."
+
+msgid "in this course who require onboarding exams."
+msgstr "на этом курсе, которым нужно подготовительное испытание."
+
+msgid "No exam results found."
+msgstr "Результатов испытаний нет."
+
+msgid "e.g johndoe or john.doe@gmail.com"
+msgstr "например, ivanov или ivanov@example.ru"
+
+msgid "Edit"
+msgstr "Изменить"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Enrollment Tracks"
+msgstr "Режимы записи"

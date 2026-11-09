@@ -1,0 +1,117 @@
+// Copyright (C) 2026 Robbo <https://robbo.ru>
+// SPDX-License-Identifier: AGPL-3.0-only
+//
+// Instructor dashboard «Рассылки» tab: card leading to the bulk email page
+// (templates/instructor/instructor_dashboard_2/_robbo-send-email-link.html).
+
+$robbo-email-border: #e5e7eb;
+$robbo-email-muted: #6b7280; // ≈4.8:1 on white
+$robbo-email-radius: 12px;
+$robbo-email-max-width: 75rem;
+$robbo-email-icon-glyph: 24px;
+$robbo-email-icon-padding: 12px; // 48px circle
+
+#send_email {
+  font-family: $robbo-font-body;
+  color: $robbo-brand-coal;
+
+  > h3#header-send_email {
+    margin: 1.5rem 0 1rem;
+    font-family: $robbo-font-headline;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $robbo-brand-coal;
+  }
+}
+
+.robbo-email-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem 1.25rem;
+  max-width: $robbo-email-max-width;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid $robbo-email-border;
+  border-radius: $robbo-email-radius;
+  background: $robbo-brand-white;
+
+  @include media-breakpoint-down(sm) {
+    grid-template-columns: auto minmax(0, 1fr);
+
+    .robbo-email-card__button {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+  }
+}
+
+.robbo-email-card__icon {
+  box-sizing: content-box;
+  width: $robbo-email-icon-glyph;
+  height: $robbo-email-icon-glyph;
+  padding: $robbo-email-icon-padding;
+  border-radius: 50%;
+  background: $robbo-ui-primary-light;
+  fill: none;
+  stroke: $robbo-ui-primary-dark;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.robbo-email-card__body {
+  min-width: 0;
+
+  p {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+.robbo-email-card__lead {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: $robbo-brand-coal;
+}
+
+.robbo-email-card__text {
+  font-size: .9rem;
+  line-height: 1.4;
+  color: $robbo-email-muted;
+
+  .robbo-email-card__body & {
+    margin-top: .25rem;
+  }
+}
+
+// #send_email: the LMS colours every `a:not(.btn)` / `a:visited:not(.btn)` blue
+#send_email .robbo-email-card__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: .5rem 1.25rem;
+  border-radius: 8px;
+  background: $robbo-ui-primary;
+  font-family: $robbo-font-body;
+  font-size: .95rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: $robbo-brand-white;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color .15s ease;
+
+  &:hover,
+  &:focus {
+    background: $robbo-ui-primary-dark;
+    color: $robbo-brand-white;
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba($robbo-brand-green, .45);
+    outline-offset: 2px;
+  }
+}

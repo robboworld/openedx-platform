@@ -1,0 +1,20 @@
+## Copyright (C) 2026 Robbo <https://robbo.ru>
+## SPDX-License-Identifier: AGPL-3.0-only
+## Part of the Robbo Open edX distribution. See NOTICE at repository root.
+##
+## «Рассылки» tab when the communications MFE is on: a card that leads to the bulk email page
+## instead of the stock one-line link. Same tab, the page has its own «back to dashboard» link.
+<%page args="url" expression_filter="h"/>
+<%! from django.utils.translation import gettext as _ %>
+
+<div class="robbo-email-card">
+    <svg class="robbo-email-card__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <rect x="3" y="5" width="18" height="14" rx="2"/>
+        <path d="M3.5 6.5 12 13l8.5-6.5"/>
+    </svg>
+    <div class="robbo-email-card__body">
+        <p class="robbo-email-card__lead">${_("Send emails to yourself, the course team, all learners or the members of one group.")}</p>
+        <p class="robbo-email-card__text">${_("Send right away or schedule for later. Scheduled and previously sent emails are listed on the same page.")}</p>
+    </div>
+    <a class="robbo-email-card__button" href="${url}">${_("Open bulk email")}</a>
+</div>

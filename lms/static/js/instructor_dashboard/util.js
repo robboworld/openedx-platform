@@ -7,7 +7,7 @@
         createEmailContentTable, createEmailMessageViews,
         findAndAssert, pWrapper, plantInterval, plantTimeout,
         sentToFormatter, setupCopyEmailButton, subjectFormatter,
-        taskStateLabels, taskTypeLabels, unknownIfNullFormatter, unknownP,
+        proctoringTemplateText, taskStateLabels, taskTypeLabels, unknownIfNullFormatter, unknownP,
         anyOf = [].indexOf || function(item) {
             var i, l;
             for (i = 0, l = this.length; i < l; i++) {
@@ -81,6 +81,30 @@
         SCHEDULED: gettext('Scheduled'),
         SUCCESS: gettext('Done')
     };
+
+    // Robbo: edx-proctoring fetches its templates by URL and some text in them skips gettext, so swap it on the way in.
+    proctoringTemplateText = [
+        ['>Edit</a>', '>' + gettext('Edit') + '</a>'],
+        ['>Delete</a>', '>' + gettext('Delete') + '</a>'],
+        ['>Apply Filters</button>', '>' + gettext('Apply Filters') + '</button>'],
+        ['There are no learners', gettext('There are no learners')],
+        ['who fit this criteria.', gettext('who fit this criteria.')],
+        ['in this course who require onboarding exams.', gettext('in this course who require onboarding exams.')],
+        ['No exam results found.', gettext('No exam results found.')],
+        ['e.g johndoe or john.doe@gmail.com', gettext('e.g johndoe or john.doe@gmail.com')],
+        ['aria-label="Previous"', 'aria-label="' + gettext('Previous') + '"'],
+        ['aria-label="Next"', 'aria-label="' + gettext('Next') + '"']
+    ];
+
+    $.ajaxPrefilter('html', function(options) {
+        if (options.url.indexOf('/static/proctoring/templates/') === 0) {
+            options.dataFilter = function(data) {
+                return _.reduce(proctoringTemplateText, function(text, pair) {
+                    return text.split(pair[0]).join(pair[1]);
+                }, data);
+            };
+        }
+    });
 
     this.createTaskListTable = function($tableTasks, tasksData) {
         var $tablePlaceholder, columns, options, tableData;

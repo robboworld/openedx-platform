@@ -16,6 +16,7 @@ from django.urls import reverse
 from django.utils.html import escape
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
+from django.utils.translation import pgettext
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
@@ -749,7 +750,8 @@ def _section_send_email(course, access):
     course_modes = CourseMode.modes_for_course(course_key, include_expired=True, only_selectable=False)
     section_data = {
         'section_key': 'send_email',
-        'section_display_name': _('Email'),
+        # Robbo: own context so the tab can read «Рассылки» without renaming every «Email» label
+        'section_display_name': pgettext('instructor dashboard tab', 'Email'),
         'access': access,
         'send_email': reverse('send_email', kwargs={'course_id': str(course_key)}),
         'editor': email_editor,
