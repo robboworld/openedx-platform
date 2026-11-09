@@ -6,14 +6,17 @@
 # Part of the Robbo Open edX distribution. See NOTICE at repository root.
 %>
 ## Notifications button: the LMS widget (lms/djangoapps/robbo_notifications/widget) mounts into the span.
-## It stays hidden until /api/notifications/count/ answers show_notifications_tray=true.
+## It stays hidden while show_notifications_tray is false: data-initial gives the first state with the page,
+## later the widget asks /api/notifications/count/.
 <%page expression_filter="h"/>
 <%!
 from django.urls import reverse
 from lms.djangoapps.robbo_changelog.labels import current_lang
+from lms.djangoapps.robbo_notifications.header import initial_json as notifications_initial_json
 %>
 % if user.is_authenticated and user.is_active:
 <span class="robbo-header-notifications" data-robbo-notifications data-lang="${current_lang()}" data-variant="on-dark"
+      data-initial="${notifications_initial_json(user)}"
   % if settings.ACCOUNT_MICROFRONTEND_URL:
       data-feed-url="${settings.ACCOUNT_MICROFRONTEND_URL.rstrip('/')}/notifications"
   % endif

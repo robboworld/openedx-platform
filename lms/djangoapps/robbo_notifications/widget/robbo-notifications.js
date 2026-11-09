@@ -10,10 +10,13 @@
  * Data: the stock notifications API on the LMS session (/api/notifications/…). The button stays hidden
  * for guests, accounts not activated yet and while show_notifications_tray is false.
  *
- *   RobboNotifications.mount(container, {lmsUrl, lang, variant, feedUrl})
+ *   RobboNotifications.mount(container, {lmsUrl, lang, variant, feedUrl, initial})
  *       lmsUrl — host of the API (default: this page's origin); feedUrl — the full list
- *       (Account MFE /account/notifications).
- *   <span data-robbo-notifications data-lms-url data-lang data-variant data-feed-url> mounts itself.
+ *       (Account MFE /account/notifications); initial — the count answer the page already has
+ *       (Mako headers render it), so no first request.
+ *   RobboNotifications.prefetch({lmsUrl}) — ask the count before the header mounts (MFEs call it while they
+ *       start); a mount with the same lmsUrl within PREFETCH_TTL takes that answer instead of asking again.
+ *   <span data-robbo-notifications data-lms-url data-lang data-variant data-feed-url data-initial> mounts itself.
  *
  * Opening the panel marks notifications "seen" (resets the counter); following one marks it "read", and so do
  * the tick on an unread entry and «Прочитать все» (POST /api/robbo/v1/notifications/read-all/) — without leaving
@@ -37,6 +40,8 @@
   var PAGE_SIZE = 10;
   var STYLE_ID = 'robbo-nt-style';
   var CHANGED_EVENT = 'robbo:notifications-changed';
+  var PREFETCH_TTL = 10000;
+  var prefetched = {};
   var NARROW_QUERY = '(max-width: 575.98px)';
   var REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
   var CLOSE_DELAY = 160;
@@ -698,8 +703,34 @@
     state.button.title = label;
   }
 
-  function loadStatus(state) {
-    return request(state, 'count/').then(function (data) {
+  function apiUrl(options) {
+    return String(options.lmsUrl || window.location.origin).replace(/\/+$/, '');
+  }
+
+  function prefetch(options) {
+    var lmsUrl = apiUrl(options || {});
+    var pending = request({lmsUrl: lmsUrl}, 'count/');
+    pending.catch(function () {});
+    prefetched[lmsUrl] = {pending: pending, time: Date.now()};
+  }
+
+  // The prefetched answer, once and while fresh.
+  function takePrefetched(state) {
+    var entry = prefetched[state.lmsUrl];
+    delete prefetched[state.lmsUrl];
+    return entry && Date.now() - entry.time < PREFETCH_TTL ? entry.pending : null;
+  }
+
+  function parseInitial(value) {
+    try {
+      return value ? JSON.parse(value) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function loadStatus(state, pending) {
+    return (pending || request(state, 'count/')).then(function (data) {
       state.byApp = data.count_by_app_name || {};
       state.container.hidden = !data.show_notifications_tray;
       setUnread(state, Number(data.count) || 0);
@@ -1116,7 +1147,7 @@
     container.setAttribute('data-robbo-nt-mounted', '1');
     container.classList.add('robbo-nt', 'robbo-nt--' + (options.variant || 'on-dark'));
     counter += 1;
-    var lmsUrl = String(options.lmsUrl || window.location.origin).replace(/\/+$/, '');
+    var lmsUrl = apiUrl(options);
     var lang = String(options.lang || document.documentElement.lang || 'ru').toLowerCase().split('-')[0];
     var state = {
       id: counter,
@@ -1165,7 +1196,7 @@
     container.appendChild(state.button);
     window.addEventListener(CHANGED_EVENT, state.listeners.changed);
     document.addEventListener('visibilitychange', state.listeners.visibility);
-    loadStatus(state);
+    loadStatus(state, options.initial ? Promise.resolve(options.initial) : takePrefetched(state));
     return {
       unmount: function () {
         close(state, false);
@@ -1190,11 +1221,12 @@
         lang: node.getAttribute('data-lang'),
         variant: node.getAttribute('data-variant'),
         feedUrl: node.getAttribute('data-feed-url'),
+        initial: parseInitial(node.getAttribute('data-initial')),
       });
     });
   }
 
-  window.RobboNotifications = {mount: mount};
+  window.RobboNotifications = {mount: mount, prefetch: prefetch};
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', autoMount);
