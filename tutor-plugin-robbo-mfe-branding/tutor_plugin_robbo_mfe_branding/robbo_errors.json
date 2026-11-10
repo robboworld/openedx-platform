@@ -41,7 +41,7 @@
       "ru": "Войти",
       "en": "Sign in"
     },
-    "support_url": "https://support.robbo.world/"
+    "support_url": "mailto:info@robbo.ru"
   },
   "codes": {
     "SRV-RESTART": {

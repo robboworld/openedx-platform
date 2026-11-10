@@ -41,7 +41,7 @@ class ErrorPagesTest(TestCase):
         self.assertIn('Страница не найдена', html)
         self.assertIn('NOT-FOUND · 7F3A-29C1', html)
         self.assertIn('Покажите это сообщение преподавателю или', html)
-        self.assertIn('https://support.robbo.world/', html)
+        self.assertIn('href="mailto:info@robbo.ru"', html)
         self.assertFalse(ErrorIncident.objects.exists())  # 404s are not counted
 
     def test_404_ajax(self, *_):

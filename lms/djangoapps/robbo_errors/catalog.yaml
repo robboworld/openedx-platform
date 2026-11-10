@@ -33,7 +33,7 @@ ui:
   back: {ru: "Вернуться назад", en: "Go back"}
   home: {ru: "На главную", en: "Go to the home page"}
   login: {ru: "Войти", en: "Sign in"}
-  support_url: "https://support.robbo.world/"
+  support_url: "mailto:info@robbo.ru"
 
 codes:
   NET-OFFLINE:

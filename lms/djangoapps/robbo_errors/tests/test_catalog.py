@@ -47,7 +47,7 @@ class CatalogTest(SimpleTestCase):
 
     def test_ui_texts(self):
         self.assertEqual(catalog.ui_text('code', lang='en'), 'Code')
-        self.assertTrue(catalog.support_url().startswith('https://'))
+        self.assertRegex(catalog.support_url(), r'^(https://|mailto:)')
 
 
 @ddt.ddt
