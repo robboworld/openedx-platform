@@ -36,7 +36,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import gettext as _
 from lxml import etree
 from opaque_keys.edx.keys import UsageKey
-from opaque_keys.edx.locator import LibraryLocator
+from opaque_keys.edx.locator import CourseLocator, LibraryLocator
 from openedx_events.content_authoring.data import CourseData
 from openedx_events.content_authoring.signals import COURSE_IMPORT_COMPLETED
 from path import Path as path
@@ -46,6 +46,7 @@ from xblock.runtime import DictKeyValueStore, KvsFieldData
 
 from common.djangoapps.util.monitoring import monitor_import_failure
 from openedx.core.djangoapps.content_tagging.api import import_course_tags_from_csv
+from openedx.core.lib.robbo_stack import default_display_organization
 from xmodule.assetstore import AssetMetadata
 from xmodule.contentstore.content import StaticContent
 from xmodule.contentstore.django import contentstore
@@ -449,6 +450,10 @@ class ImportManager:
         )
 
         with self.store.branch_setting(ModuleStoreEnum.Branch.draft_preferred, dest_id):
+            # Robbo: the archive's policy replaces all course settings; one without «Course Organization
+            # Display String» would leave it empty, so keep the target course's value or the default.
+            existing = self.store.get_course(dest_id) if isinstance(dest_id, CourseLocator) else None
+            previous_display_org = getattr(existing, 'display_organization', None)
             course = _update_and_import_block(
                 source_courselike, self.store, self.user_id,
                 courselike_key,
@@ -458,6 +463,8 @@ class ImportManager:
                 asset_links=self.robbo_asset_links,
             )
             self.static_updater(course, source_courselike, courselike_key, dest_id, runtime)
+            if isinstance(dest_id, CourseLocator) and not course.display_organization:
+                course.display_organization = previous_display_org or default_display_organization()
             self.store.update_item(course, self.user_id)
 
         return course, course_data_path

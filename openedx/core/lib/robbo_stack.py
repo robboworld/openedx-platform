@@ -18,6 +18,15 @@ def robbo_stack_letter() -> str:
     return ROBBO_STACK_PROFILE[:1].upper()
 
 
+def default_display_organization() -> str:
+    """
+    «Course Organization Display String» for a course that has none: the org of a course key is
+    Latin only (ROBBO), learners read this string (about page, certificates, Studio course cards).
+    «ROBBO» on courses (English by default), «РОББО» elsewhere.
+    """
+    return 'ROBBO' if ROBBO_STACK_PROFILE == 'courses' else 'РОББО'
+
+
 def user_can_see_robbo_stack_badge(user) -> bool:
     """Platform superuser or global staff (``is_staff``), as for other admin-only header items."""
     if user is None or not user.is_authenticated:

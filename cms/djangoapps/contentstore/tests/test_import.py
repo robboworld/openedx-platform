@@ -14,6 +14,7 @@ from django.conf import settings
 from django.test.client import Client
 from django.test.utils import override_settings
 
+from openedx.core.lib.robbo_stack import default_display_organization
 from xmodule.contentstore.django import contentstore
 from xmodule.exceptions import NotFoundError
 from xmodule.modulestore import ModuleStoreEnum
@@ -179,6 +180,19 @@ class ContentStoreImportTest(ModuleStoreTestCase):
     def test_reimport(self):
         __, __, course = self.load_test_import_course(create_if_not_present=True)
         self.load_test_import_course(target_id=course.id)
+
+    def test_robbo_import_keeps_display_organization(self):
+        """
+        Robbo: the archive has no «Course Organization Display String»; the target course keeps its
+        own value, and a course without one gets the default (РОББО / ROBBO on courses).
+        """
+        store, __, course = self.load_test_import_course()
+        self.assertEqual(course.display_organization, default_display_organization())
+
+        course.display_organization = 'Тест Орг'
+        store.update_item(course, self.user.id)
+        __, __, course = self.load_test_import_course(target_id=course.id)
+        self.assertEqual(course.display_organization, 'Тест Орг')
 
     @skip("OldMongo Deprecation")
     def test_rewrite_reference_list(self):
