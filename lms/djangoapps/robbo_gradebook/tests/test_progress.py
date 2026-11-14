@@ -66,11 +66,11 @@ class GradebookReportTests(SharedModuleStoreTestCase):
         self.staff = StaffFactory(course_key=self.course.id, password=TEST_PASSWORD)
         self.client.login(username=self.staff.username, password=TEST_PASSWORD)
 
-    def submit(self, user, block, earned, possible=1):
+    def submit(self, user, block, earned, possible=1, attempts=1):
         """A submitted answer of `user` with these points."""
         StudentModule.objects.create(
             student=user, course_id=self.course.id, module_state_key=block.location, module_type='problem',
-            grade=earned, max_grade=possible, state=json.dumps({'attempts': 1, 'done': True}),
+            grade=earned, max_grade=possible, state=json.dumps({'attempts': attempts, 'done': True}),
         )
 
     def progress(self, user=None, **params):
@@ -103,8 +103,8 @@ class GradebookReportTests(SharedModuleStoreTestCase):
 
     def test_progress_by_unit(self):
         self.submit(self.learner, self.p1, 1)
-        self.submit(self.learner, self.p2, 1)
-        self.submit(self.learner, self.p3, 0)
+        self.submit(self.learner, self.p2, 1, attempts=3)
+        self.submit(self.learner, self.p3, 0, attempts=2)
         CourseGradeFactory().update(self.learner, course_key=self.course.id, force_update_subsections=True)
 
         response = self.progress()
@@ -112,6 +112,8 @@ class GradebookReportTests(SharedModuleStoreTestCase):
         data = response.json()
         assert data['learner']['username'] == 'boris'
         assert (data['passedUnits'], data['units']) == (1, 2)
+        # Retries per problem: P1 1 submission (0), P2 3 (2), P3 2 (1).
+        assert data['retries'] == 3
         [section] = data['sections']
         assert section['name'] == 'Section 1'
         [homework] = section['subsections']
@@ -119,8 +121,8 @@ class GradebookReportTests(SharedModuleStoreTestCase):
         assert (homework['earned'], homework['possible']) == (2, 3)
         # The text unit has no points and is left out; a unit passes with all of its points only.
         assert homework['units'] == [
-            {'name': 'Unit 1', 'earned': 2, 'possible': 2, 'passed': True},
-            {'name': 'Unit 2', 'earned': 0, 'possible': 1, 'passed': False},
+            {'name': 'Unit 1', 'earned': 2, 'possible': 2, 'attempts': 4, 'retries': 2, 'passed': True},
+            {'name': 'Unit 2', 'earned': 0, 'possible': 1, 'attempts': 2, 'retries': 1, 'passed': False},
         ]
         assert data['percent'] == CourseGradeFactory().read(self.learner, course_key=self.course.id).percent
 
