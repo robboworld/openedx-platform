@@ -17,6 +17,7 @@ from rest_framework.views import APIView
 
 from common.djangoapps.student.models import CourseEnrollment
 from lms.djangoapps.courseware.models import StudentModule
+from lms.djangoapps.courseware.user_state_client import DjangoXBlockUserStateClient
 from lms.djangoapps.grades.api import CourseGradeFactory
 from lms.djangoapps.grades.rest_api.v1.gradebook_views import (
     course_author_access_required,
@@ -79,16 +80,32 @@ def _total(score):
     return {'earned': score.earned, 'possible': score.possible}
 
 
-def _units(structure, subsection_grade):
-    """Units of the subsection with the summed points of their scorable blocks; no units without points."""
+def _attempts(learner, block_keys):
+    """{block key: submissions} of the learner's blocks (capa problems count them, other blocks have none)."""
+    if not block_keys:
+        return {}
+    return {
+        user_state.block_key: user_state.state.get('attempts') or 0
+        for user_state in DjangoXBlockUserStateClient().get_many(learner.username, block_keys)
+    }
+
+
+def _units(blocks, subsection_grade, attempts):
+    """
+    Units of the subsection with the summed points and submissions of their scorable blocks
+    (`blocks`: scorable_blocks_in_units); no units without points.
+    """
     units = {}
-    for unit_key, unit_name, block_key in scorable_blocks_in_units(structure, subsection_grade.location):
+    for unit_key, unit_name, block_key in blocks:
         score = subsection_grade.problem_scores.get(block_key)
         if score is None:
             continue
-        unit = units.setdefault(unit_key, {'name': unit_name, 'earned': 0.0, 'possible': 0.0})
+        unit = units.setdefault(unit_key, {'name': unit_name, 'earned': 0.0, 'possible': 0.0, 'attempts': 0, 'retries': 0})
         unit['earned'] += score.earned
         unit['possible'] += score.possible
+        unit['attempts'] += attempts.get(block_key, 0)
+        # A retry is every submission after the first, per problem: 3 problems with 4, 6 and 1 submissions = 8.
+        unit['retries'] += max(attempts.get(block_key, 0) - 1, 0)
     return [
         {**unit, 'passed': unit['earned'] >= unit['possible']}
         for unit in units.values() if unit['possible'] > 0
@@ -102,11 +119,16 @@ def learner_progress(course_key, learner):
     """
     course_grade = CourseGradeFactory().read(learner, course_key=course_key)
     structure = course_grade.course_data.structure
+    blocks = {
+        subsection_grade.location: list(scorable_blocks_in_units(structure, subsection_grade.location))
+        for chapter in course_grade.chapter_grades.values() for subsection_grade in chapter['sections']
+    }
+    attempts = _attempts(learner, [block_key for found in blocks.values() for _, _, block_key in found])
     sections = []
     for chapter in course_grade.chapter_grades.values():
         subsections = []
         for subsection_grade in chapter['sections']:
-            units = _units(structure, subsection_grade)
+            units = _units(blocks[subsection_grade.location], subsection_grade, attempts)
             if not units:
                 continue
             total = subsection_grade.graded_total if subsection_grade.graded else subsection_grade.all_total
@@ -125,6 +147,7 @@ def learner_progress(course_key, learner):
         'percent': course_grade.percent,
         'passedUnits': sum(unit['passed'] for unit in units),
         'units': len(units),
+        'retries': sum(unit['retries'] for unit in units),
         'sections': sections,
     }
 
@@ -191,8 +214,9 @@ class LearnerProgressView(_GradebookReportView):
         learner: {id, username, fullName, email}
         percent: the course grade (0..1), as in the gradebook,
         passedUnits, units: units with all their points / units with points,
+        retries: resubmissions of all problems (submissions after the first, summed over the problems),
         sections: [{name, subsections: [{id, name, graded, format, earned, possible,
-            units: [{name, earned, possible, passed}]}]}] — only what has points, in outline order.
+            units: [{name, earned, possible, attempts, retries, passed}]}]}] — only what has points, in outline order.
 
     Only learners of this course (enrolled now or before): other user ids get the same 404 as
     unknown ones.
