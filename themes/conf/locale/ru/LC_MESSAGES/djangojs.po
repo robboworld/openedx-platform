@@ -3501,3 +3501,83 @@ msgstr "Удалить"
 
 msgid "Enrollment Tracks"
 msgstr "Режимы записи"
+
+# SCORM XBlock (openedx-scorm-xblock 19.0.5), загрузка пакета в редакторе курсов.
+msgid "SCORM upload still processing"
+msgstr "SCORM-пакет ещё обрабатывается"
+
+msgid "The package was uploaded, but the server is still extracting it. Large packages can take several minutes. Close this editor and reload the page in a few minutes to see the result. If this happens with every large package, ask your administrator to raise the request timeout of the web server."
+msgstr "Пакет загружен, но сервер ещё распаковывает его. Большие пакеты обрабатываются до нескольких минут. Закройте окно редактирования и обновите страницу через несколько минут, чтобы увидеть результат. Если так происходит с каждым большим пакетом, попросите администратора увеличить время ожидания запроса на веб-сервере."
+
+msgid "Unknown error"
+msgstr "Неизвестная ошибка"
+
+msgid "Scorm component save error"
+msgstr "Не удалось сохранить SCORM-компонент"
+
+msgid "Uploading package..."
+msgstr "Загрузка пакета…"
+
+msgid "Extracting package on the server, please wait..."
+msgstr "Сервер распаковывает пакет, подождите…"
+
+msgid "Still extracting on the server. Reload the page in a few minutes."
+msgstr "Сервер всё ещё распаковывает пакет. Обновите страницу через несколько минут."
+
+# SCORM XBlock, форк robbo/teak: отчёт по учащемуся и статус прохождения.
+msgid "No learners found"
+msgstr "Учащиеся не найдены"
+
+msgid "%(count)s h"
+msgstr "%(count)s ч"
+
+msgid "%(count)s min"
+msgstr "%(count)s мин"
+
+msgid "%(count)s s"
+msgstr "%(count)s с"
+
+msgid "Result"
+msgstr "Результат"
+
+msgid "Score in the package"
+msgstr "Баллы в пакете"
+
+msgid "Share of the maximum score"
+msgstr "Доля от максимального балла"
+
+msgid "Time in the last session"
+msgstr "Время последнего занятия"
+
+msgid "Where the learner stopped"
+msgstr "Где остановился учащийся"
+
+msgid "The learner has not opened this SCORM content yet."
+msgstr "Учащийся ещё не открывал этот материал."
+
+msgid "All data sent by the package"
+msgstr "Все данные, переданные пакетом"
+
+msgid "Loading..."
+msgstr "Загрузка…"
+
+msgid "Could not load the report. Try again later."
+msgstr "Не удалось загрузить отчёт. Попробуйте позже."
+
+msgid "not attempted"
+msgstr "не начато"
+
+msgid "browsed"
+msgstr "просмотрено"
+
+msgid "completed"
+msgstr "завершено"
+
+msgid "incomplete"
+msgstr "не закончено"
+
+msgid "passed"
+msgstr "пройдено"
+
+msgid "failed"
+msgstr "не пройдено"

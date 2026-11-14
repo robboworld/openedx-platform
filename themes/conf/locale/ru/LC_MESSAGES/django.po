@@ -7769,3 +7769,123 @@ msgstr "Отправляйте сразу или запланируйте на �
 
 msgid "Open bulk email"
 msgstr "Открыть рассылки"
+
+# SCORM XBlock (openedx-scorm-xblock 19.0.5): строки без русского перевода в пакете и в Atlas.
+msgid "Scorm module"
+msgstr "SCORM-пакет"
+
+msgid "This SCORM package does not appear to report completion to the LMS: it never references \"cmi.core.lesson_status\" (SCORM 1.2), \"cmi.completion_status\" (SCORM 2004), or \"cmi.progress_measure\". Learners may go through the whole content and still be marked as not completed. Fix the package in your authoring tool so it reports completion, then upload it again."
+msgstr "Похоже, этот SCORM-пакет не сообщает платформе о завершении: в нём нет обращений к \"cmi.core.lesson_status\" (SCORM 1.2), \"cmi.completion_status\" (SCORM 2004) и \"cmi.progress_measure\". Учащиеся могут пройти весь материал, но так и не получить отметку о завершении. Исправьте пакет в программе, в которой он создан, чтобы он сообщал о завершении, и загрузите его заново."
+
+msgid "Display name for this module"
+msgstr "Название компонента, которое видят учащиеся"
+
+msgid "Path to the index page in scorm file"
+msgstr "Путь к стартовой странице в SCORM-пакете"
+
+msgid "Weight/Maximum grade"
+msgstr "Вес — максимальный балл за компонент"
+
+msgid "Select False if this component will not receive a numerical score from the Scorm"
+msgstr "Выберите «Нет», если SCORM-пакет не передаёт оценку в баллах"
+
+msgid "Display width (px)"
+msgstr "Ширина (пикс.)"
+
+msgid "Width of iframe (default: 100%)"
+msgstr "Ширина окна с материалом (по умолчанию 100%)"
+
+msgid "Display height (px)"
+msgstr "Высота (пикс.)"
+
+msgid "Height of iframe"
+msgstr "Высота окна с материалом"
+
+msgid "Launch in pop-up window"
+msgstr "Открывать в отдельном окне"
+
+msgid "Launch in pop-up window instead of embedding the SCORM content in an iframe. Enable this for older packages that need to be run in separate window."
+msgstr "Открывать материал SCORM в отдельном окне, а не встраивать его в страницу. Включите для старых пакетов, которые работают только в отдельном окне."
+
+msgid "Display navigation menu"
+msgstr "Показывать меню навигации"
+
+msgid "Select True to display a navigation menu on the left side to display table of contents"
+msgstr "Выберите «Да», чтобы слева от материала показывалось меню с оглавлением пакета"
+
+msgid "Show Fullscreen Button"
+msgstr "Показывать кнопку «Во весь экран»"
+
+msgid "Select True to show fullscreen button in the SCORM content"
+msgstr "Выберите «Да», чтобы у материала SCORM была кнопка «Во весь экран»"
+
+msgid "Display width of navigation menu(px)"
+msgstr "Ширина меню навигации (пикс.)"
+
+msgid "Width of navigation menu. This assumes that Navigation Menu is enabled. (default: 30%)"
+msgstr "Ширина меню навигации, если оно включено (по умолчанию 30%)"
+
+msgid "Fullscreen"
+msgstr "Во весь экран"
+
+msgid "Exit fullscreen"
+msgstr "Выйти из полноэкранного режима"
+
+msgid "Launch unit in new window"
+msgstr "Открыть в новом окне"
+
+msgid "View SCORM reports"
+msgstr "Отчёты по SCORM"
+
+msgid "Upload .zip package"
+msgstr "Загрузить пакет (.zip)"
+
+# SCORM: статус прохождения рядом с баллами ("incomplete" уже переведён платформой: «не закончено»).
+msgid "not attempted"
+msgstr "не начато"
+
+msgid "browsed"
+msgstr "просмотрено"
+
+msgid "completed"
+msgstr "завершено"
+
+msgid "passed"
+msgstr "пройдено"
+
+msgid "failed"
+msgstr "не пройдено"
+
+msgid "unknown"
+msgstr "неизвестно"
+
+# SCORM XBlock, форк robbo/teak: подгон под экран и отчёты для команды курса.
+msgid "Fit to the learner's screen"
+msgstr "Подгонять под экран учащегося"
+
+msgid "Select True to fit the SCORM content to the width of the learner's screen. If both width and height are set, the content keeps these proportions and is scaled as a whole. iSpring packages are scaled the same way by the slide size they declare; other packages get the full width and a 16:9 height."
+msgstr "Выберите «Да», чтобы материал SCORM подстраивался под ширину экрана учащегося. Если заданы и ширина, и высота, материал сохраняет эти пропорции и масштабируется целиком. Пакеты iSpring масштабируются так же — по размеру слайда, указанному в пакете; остальные занимают всю ширину, а высота подбирается в пропорции 16:9."
+
+msgid "Table of contents"
+msgstr "Оглавление"
+
+msgid "Find a learner"
+msgstr "Найти учащегося"
+
+msgid "Start typing a username or email"
+msgstr "Начните вводить имя пользователя или почту"
+
+# SCORM: шаблон редактора выводит подсказки через {% trans переменная %}, а Django
+# удваивает в них «%» перед поиском перевода.
+msgid "Width of iframe (default: 100%%)"
+msgstr "Ширина окна с материалом (по умолчанию 100%%)"
+
+msgid "Width of navigation menu. This assumes that Navigation Menu is enabled. (default: 30%%)"
+msgstr "Ширина меню навигации, если оно включено (по умолчанию 30%%)"
+
+# SCORM: подсказки ширины и высоты с классическим размером пакета.
+msgid "Width of the SCORM area in pixels; empty means the full page width. The classic package size, shown without margins, is 960 × 600."
+msgstr "Ширина области SCORM в пикселях; если оставить пустым — вся ширина страницы. Классический размер пакета, при котором он показывается без полей, — 960 × 600."
+
+msgid "Height of the SCORM area in pixels. The classic package size, shown without margins, is 960 × 600."
+msgstr "Высота области SCORM в пикселях. Классический размер пакета, при котором он показывается без полей, — 960 × 600."
